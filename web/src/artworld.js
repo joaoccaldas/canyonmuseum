@@ -56,7 +56,7 @@
         console.info('Blender asset pack: gzip stream unavailable; procedural fallback stays active.');
         return;
       }
-      const gltf = await museum.loader.parseAsync(bytes.buffer, '');
+      const gltf = await new Promise((resolve, reject) => museum.loader.parse(bytes.buffer, '', resolve, reject));
       blenderRoot = gltf.scene;
       blenderRoot.name = 'BLENDER ASSET PACK · immersive art';
       const assetByName = name => blenderRoot.getObjectByName(name);
@@ -119,7 +119,8 @@
       blenderReady = true;
       window.dispatchEvent(new CustomEvent('museum-blender-ready'));
     } catch (err) {
-      console.warn('Blender asset pack unavailable; keeping procedural fallback.', err);
+      window.__museumArtLastError = String(err?.stack || err);
+      console.warn('Blender asset pack unavailable; keeping procedural fallback.', window.__museumArtLastError);
     }
   }
 
@@ -288,6 +289,17 @@
   const ghostBikes = [];
   let collectionBuilt = false;
 
+  function cloneBikeSafe(source) {
+    const saved = [];
+    source.traverse(o => {
+      if (o.userData && Object.keys(o.userData).length) { saved.push([o, o.userData]); o.userData = {}; }
+    });
+    let copy;
+    try { copy = source.clone(true); }
+    finally { for (const [o, data] of saved) o.userData = data; }
+    return copy;
+  }
+
   function cloneMaterials(rootObj, theme, simplified = false) {
     rootObj.traverse(o => {
       if (!o.isMesh) return;
@@ -328,7 +340,7 @@
 
     for (let i = 0; i < fullCount; i++) {
       const theme = HORROR_THEMES[i];
-      const holder = source.bike.clone(true);
+      const holder = cloneBikeSafe(source.bike);
       cloneMaterials(holder, theme, false);
       holder.scale.setScalar(1);
       const left = i % 2 === 0;
@@ -351,7 +363,7 @@
     const ghostCount = mobile ? 5 : 10;
     for (let i = 0; i < ghostCount; i++) {
       const theme = HORROR_THEMES[i % HORROR_THEMES.length];
-      const g = source.bike.clone(true); cloneMaterials(g, theme, true);
+      const g = cloneBikeSafe(source.bike); cloneMaterials(g, theme, true);
       const col = i % 5, row = Math.floor(i / 5);
       g.scale.setScalar(.68);
       g.position.set(39.0 + col * 3.05, 2.6 + row * 1.55, -43.0);
