@@ -95,7 +95,7 @@
       if (psrc) {
         const p = psrc.clone(true);
         p.position.set(.08, -.05, 0);
-        p.rotation.y = 0; // parent wall group already faces the aisle
+        p.rotation.y = Math.PI / 2;
         p.scale.setScalar(1.28);
         p.traverse(o => { if (o.isMesh) { o.userData.artPortal = { id:'horror-in', label:'Hidden collection' }; pickables.push(o); } });
         secretPortal.add(p);
@@ -104,7 +104,7 @@
       }
 
       const props = [
-        ['HORROR_ARCH', 45, 0, -42.5, 1.6, 0],
+        ['HORROR_ARCH', 45, 0, -42.2, 2.25, 0],
         ['HORROR_TOTEM', 42.1, 0, -36.2, 1.05, .3],
         ['HORROR_TOTEM', 47.9, 0, -23.0, .9, -0.5],
         ['HORROR_CARNIVAL', 52.4, .2, -36.0, 1.15, .25],
@@ -224,7 +224,7 @@
   const secretPortal = new Group();
   secretPortal.name = 'ART · hidden eclipse';
   secretPortal.position.set(-6.78, 1.65, -38.2);
-  secretPortal.rotation.y = Math.PI / 2;
+  // Keep the portal in the wall's own plane. RingGeometry supplies its own Y rotation.
   root.add(secretPortal);
 
   const portalBack = box(.12, 2.65, 2.25, std('#111217', .22, .45));
@@ -254,9 +254,17 @@
   horror.visible = false;
   scene.add(horror);
 
-  const roomFloor = box(HORROR.x1 - HORROR.x0, .28, HORROR.z1 - HORROR.z0, std('#151316', .24, .18));
+  const roomFloor = box(HORROR.x1 - HORROR.x0, .28, HORROR.z1 - HORROR.z0, std('#151316', .18, .24));
   roomFloor.position.set((HORROR.x0 + HORROR.x1) / 2, -.14, (HORROR.z0 + HORROR.z1) / 2);
   roomFloor.receiveShadow = true; roomFloor.userData.floor = true; horror.add(roomFloor);
+
+  const ceiling = box(HORROR.x1 - HORROR.x0, .22, HORROR.z1 - HORROR.z0, std('#0c0b0f', .42, .06));
+  ceiling.position.set(45, HORROR.h + .1, (HORROR.z0 + HORROR.z1) / 2); horror.add(ceiling);
+  for (let i = 0; i < 7; i++) {
+    const z = -40.5 + i * 3.7;
+    const spine = box(.075, .018, 2.7, glow(i % 2 ? '#6b365f' : '#713839', .28));
+    spine.rotation.y = Math.PI / 2; spine.position.set(45, .012, z); horror.add(spine);
+  }
 
   const wallMat = std('#161417', .6, .12);
   const back = box(HORROR.x1 - HORROR.x0, HORROR.h, .35, wallMat); back.position.set(45, HORROR.h / 2, HORROR.z0); horror.add(back);
@@ -478,8 +486,13 @@
     const inside = region === 'horror' || !!regionOf(visitor.x, visitor.z);
     if (inside) buildCollection();
     horror.visible = inside;
-    scene.environmentIntensity = inside ? 1.25 : .55;
-    museum.renderer.toneMappingExposure = inside ? 1.12 : .96;
+    scene.environmentIntensity = inside ? 1.38 : .55;
+    museum.renderer.toneMappingExposure = inside ? 1.18 : .96;
+    if (scene.fog) {
+      scene.fog.color.set(inside ? '#17131d' : '#e6eef0');
+      scene.fog.near = inside ? 5 : 70;
+      scene.fog.far = inside ? 38 : 420;
+    }
     if (inside) {
       // Slight material shimmer on the hero bikes: enough to make carbon read as lacquer,
       // not enough to become a nightclub.
