@@ -147,15 +147,25 @@ function bakedAssetMesh(src) {
 }
 
 function normalizeAssetGroup(g) {
+  // Normalize in authored local space, independent of where the exhibit will live.
+  // Restoring the transform afterwards keeps placement and centering as separate concerns.
+  const pos = g.position.clone(), quat = g.quaternion.clone(), scale = g.scale.clone();
+  g.position.set(0,0,0);
+  g.quaternion.identity();
+  g.scale.set(1,1,1);
   g.updateMatrixWorld(true);
   const bounds = new THREE.Box3().setFromObject(g);
-  if (bounds.isEmpty()) return g;
-  const center = bounds.getCenter(new THREE.Vector3());
-  const dy = bounds.min.y;
-  g.traverse(o => {
-    if (!o.isMesh) return;
-    o.geometry.translate(-center.x, -dy, -center.z);
-  });
+  if (!bounds.isEmpty()) {
+    const center = bounds.getCenter(new THREE.Vector3());
+    const dy = bounds.min.y;
+    g.traverse(o => {
+      if (o.isMesh) o.geometry.translate(-center.x, -dy, -center.z);
+    });
+  }
+  g.position.copy(pos);
+  g.quaternion.copy(quat);
+  g.scale.copy(scale);
+  g.updateMatrixWorld(true);
   return g;
 }
 
