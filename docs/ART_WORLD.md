@@ -28,11 +28,11 @@ A dark eclipse-like wall sculpture acts as an unlabelled portal. Selecting it op
 
 The room intentionally uses large negative space and repeated bays rather than dense prop dressing. Its collection contains:
 
-- a small set of full-detail themed bikes;
+- eight full-detail themed bikes on desktop and four on mobile;
 - a larger back-wall archive of simplified bike silhouettes using the same source geometry with most small parts hidden;
 - lacquered materials with lower roughness, clearcoat and stronger environment reflections so the bikes read as the brightest objects in the room.
 
-Current themes are generic visual studies: witchcraft, stitched, pagan, moonlit, carnival and ritual forest.
+Current themes are generic visual studies: witchcraft, stitched-doll, pagan runes, moon ritual, haunted carnival, ritual forest, slasher and Viking night.
 
 The room is hidden when the visitor is elsewhere, and the main hall's bikes are hidden while the visitor is inside. This keeps the additional draw cost bounded.
 
@@ -40,7 +40,7 @@ The room is hidden when the visitor is elsewhere, and the main hall's bikes are 
 
 The existing touch joystick and look controls remain the navigation model.
 
-On coarse-pointer/mobile devices the hidden room renders fewer full-detail bikes and fewer archive silhouettes. The geometry still reads as a large collection, but the renderer avoids drawing an excessive number of complete drivetrains.
+On coarse-pointer/mobile devices the hidden room renders four full-detail bikes and five archive silhouettes; desktop renders eight full-detail bikes and twelve archive silhouettes. The geometry still reads as a large collection, but the renderer avoids drawing an excessive number of complete drivetrains.
 
 ## Runtime wiring
 
