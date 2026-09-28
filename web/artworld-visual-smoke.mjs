@@ -87,11 +87,13 @@ try {
       { timeout: 45000 },
     );
     await page.waitForFunction(
-      () => window.__museumArt?.ready &&
-        window.__museumArt?.asset?.children?.length > 0 &&
-        window.__museum?.PIECES?.some(p => p.bike),
-      { timeout: 60000 },
+      () => window.__museumArt?.ready,
+      { timeout: 30000 },
     );
+    await page.waitForFunction(
+      () => window.__museum?.PIECES?.some(p => p.bike),
+      { timeout: 30000 },
+    ).catch(() => {});
 
     await page.evaluate(() => {
       try { localStorage.setItem('speedmax.coach.v1', '1'); } catch (_) {}
@@ -108,6 +110,7 @@ try {
         artChildren: art?.children?.length || 0,
         objChildren: window.__museumArt.asset?.children?.length || 0,
         bikeCount: window.__museum.PIECES.filter(p => p.bike).length,
+        artLoadError: window.__museumArt.loadError || null,
         invalidArtGeometry: (() => {
           let invalid = 0;
           art?.traverse(o => {
@@ -163,7 +166,7 @@ try {
     });
 
     const expectedArchive = cfg.isMobile ? 8 : 18;
-    if (pageErrors.length || consoleErrors.length || metadata.invalidArtGeometry || sceneState.archiveBikes !== expectedArchive) failed = true;
+    if (pageErrors.length || consoleErrors.length || metadata.artLoadError || metadata.invalidArtGeometry || sceneState.archiveBikes !== expectedArchive || metadata.objChildren === 0) failed = true;
     await context.close();
   }
 } finally {

@@ -530,7 +530,8 @@ export async function initArtWorld(museum) {
   }
 
   loadAssets().catch(err => {
-    console.warn('art world asset load failed',err);
+    api.loadError = err?.stack || err?.message || String(err);
+    console.warn('art world asset load failed', api.loadError);
     api.ready = true;
   });
 
