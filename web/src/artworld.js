@@ -314,6 +314,7 @@ export async function initArtWorld(museum) {
     floor.userData.floor = true;
     floor.receiveShadow = true;
     hiddenRoom.add(floor);
+    pickables.push(floor);                                           // click-to-walk works inside the hidden collection too
 
     const wallMat = matte('#141216',.72,.04);
     const back = box(HORROR.x1-HORROR.x0,HORROR.h,.35,wallMat);
