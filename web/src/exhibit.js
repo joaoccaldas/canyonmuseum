@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import {BIKE} from './data.js';
-export const TOUR = [
+const P = globalThis.__BIKE_PROFILE || {};
+export const TOUR = (P.tour && P.tour.length ? P.tour : [
   { view: 'side', title: 'A silhouette shaped by air', text: 'Deep aero sections, a close-fitting front-wheel cutout and dropped stays. This reconstruction follows Canyon’s studio profile at a fixed, wheelbase-calibrated scale.' },
   { view: 'cockpit', title: 'One integrated cockpit', text: 'AeroShield, extensions and the rear fuel tray form one continuous surface. The side profile is traced; hidden depths and internal fittings remain interpreted.' },
   { view: 'drivetrain', title: 'Every revolution counts', text: 'A 50/37 crankset, a 10–33 cassette and individually modelled chain links. Switch to Ride to see cadence drive the wheels through the selected 50 × 14 ratio.' },
   { view: 'nds', title: 'The other side of speed', text: 'Disc rotors, calipers and the wide fork stance come into view. The Splitter Plate seatpost continues the aerodynamic profile behind the saddle.' },
   { view: 'hero', title: 'The first exhibit', text: 'A study of the MY2027 Speedmax CFR AXS. Orbit freely, inspect a part, or explore the construction in exploded view. Earlier bikes will enter the collection as individually researched exhibits.' },
-];
-if(BIKE.key==='slx'){TOUR[1].text='AeroShield supports the forearms above the shared adjustable cockpit platform. Component depths and hardware details remain interpreted.';TOUR[2].text='Shimano Ultegra 52/36, an 11–30 cassette and a 4iiii left-crank power meter. Ride uses the 52 × 14 ratio.';TOUR[3].text='Shimano RT-CL800 rotors, hydraulic calipers and a standard SP102 seatpost distinguish this build.';TOUR[4]={view:'hero',title:'The second exhibit',text:'MY2027 Speedmax CF SLX 8 Di2, researched and reconstructed as its own model. Return to Collection to compare it with the CFR AXS.'};}
+]);
 export function makeGallery() {
   const g = new THREE.Group(); g.name = 'Museum architecture';
   const stone = new THREE.MeshStandardMaterial({color:0x070b10,roughness:.9,envMapIntensity:.15});

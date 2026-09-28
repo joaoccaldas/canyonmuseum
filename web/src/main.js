@@ -52,6 +52,29 @@ function saveCfg() {
 }
 
 // ------------------------------------------------------------------ renderer
+// Populate profile-driven identity text (title, brand, hero, loader).
+(function identity(){
+  const H = PROFILE.hero || {};
+  const B = BIKE;
+  const fam = (H.title || B.family || 'Speedmax').toUpperCase().replace(/ /g, '\u00a0');
+  const name = H.titleSpan || B.name || '';
+  const sub = H.sub || B.claim || '';
+  const year = String(B.year || '2027');
+  const set = (id, v) => { const e = document.getElementById(id); if (e && v) e.textContent = v; };
+  set('brand-name', fam);
+  const withYear = name.includes(year) ? name : `${name} · MY${year}`;
+  set('brand-sub', `${withYear} · size ${B.size || 'M'}`.toUpperCase());
+  set('load-name', fam);
+  set('load-sub', `${name} · Model year ${year}`.toUpperCase());
+  set('hero-eyebrow', H.eyebrow || `Canyon collection · Exhibit ${B.exhibit || '01'}`);
+  set('hero-lede', H.lede || (PROFILE.bike?.specs ? '' : ''));
+  const t = document.getElementById('hero-title');
+  if (t && (H.title || H.titleSpan)) t.innerHTML = `${H.title || B.family}<br>${H.titleSpan || B.name}<span>${sub}</span>`;
+  else if (t) { const s = t.querySelector('span'); if (s) s.textContent = sub; }
+  set('stat-weight-sub', `kg · size ${B.size || 'M'}`);
+  set('stat-rims-sub', /^[\d/ ]+$/.test(String(B.rims || '')) ? 'mm rims' : 'wheels');
+})();
+
 const canvas = $('#canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -182,6 +205,7 @@ loader.parse(GLB.buffer, '', gltf => {
   lab = makeLab({getCfg:()=>S.cfg,setCfg:p=>setCfg(p,true),download,
     enter:()=>{closeDrawers();select(null);$('#tour').hidden=true;setMode('assembled');setEnv('tunnel');flyTo('lab');document.body.classList.add('engaged');},
     leave:()=>{setEnv('museum');flyTo('hero');},onResult:r=>{Object.assign(flowState,r);tunnel.rotation.y=-r.yaw;}});
+  if (PROFILE.discOption === false) $('#wheel-choice')?.closest('label')?.setAttribute('hidden', '');
   $('#wheel-choice').onchange=e=>setCfg({rearDisc:e.target.value!=='stock',wheelModel:e.target.value},true);
   paint=makePaint(M.paint,{flyTo,download,getCfg:exportCfg});
   const workshop=makeWorkshop({parts,PARTS,explodables,scene,download,select,getCfg:exportCfg,profile:PROFILE});
@@ -209,7 +233,8 @@ function mapMaterial(m, mesh) {
 
 // ------------------------------------------------------------------ chain (instanced, animated)
 function buildChain() {
-  if (!chainNode) return;
+  // Heritage meshes carry a static modelled chain (no path data): leave it as-is.
+  if (!chainNode || !chainNode.userData.chain_path) return;
   const pts = JSON.parse(chainNode.userData.chain_path).map(B2T);
   const pitch = chainNode.userData.chain_pitch, N = chainNode.userData.chain_links;
   const L = [0];
@@ -272,6 +297,8 @@ function buildDisc() {
 const dims = new THREE.Group(); dims.visible = false; scene.add(dims);
 const dimLabels = [];
 function buildDims() {
+  // The overlay is drawn from the CFR/SLX size-M geometry; other frames opt out.
+  if (PROFILE.dimsOverlay === false) { const b = $('#dimsBtn'); if (b) b.style.display = 'none'; return; }
   const BB = new THREE.Vector3(0, .2645, .16), HT = new THREE.Vector3(.44, .7455, .16);
   const AR = new THREE.Vector3(-.41325, .3395, .16), AF = new THREE.Vector3(.59975, .3395, .16);
   const mat = new THREE.LineBasicMaterial({ color: 0x19b3ff, transparent: true, opacity: .95, depthTest: false });
@@ -359,17 +386,18 @@ function applyCfg() {
   M.rimGraphic.color.set(c.rimText);
   M.rim.map?.dispose(); M.rim.map = TX.rimTexture(c.rimText, c.rimBase || '#0b0b0c', c.rimLabels ?? false); M.rim.needsUpdate = true;
   if (M.tyreF.map) { M.tyreF.map.dispose(); M.tyreR.map.dispose(); }
-  M.tyreF.map = TX.tyreTexture('CONTINENTAL', 'AERO 111  ·  26-622', c.tyreText || '#6b6b6b');
-  M.tyreR.map = TX.tyreTexture('CONTINENTAL', BIKE.key==='slx'?'GRAND PRIX 5000 S TR  ·  28-622':'GRAND PRIX 5000 TT TR  ·  28-622', c.tyreText || '#6b6b6b');
+  M.tyreF.map = TX.tyreTexture('CONTINENTAL', BIKE.tyreFront || 'AERO 111  ·  26-622', c.tyreText || '#6b6b6b');
+  M.tyreR.map = TX.tyreTexture(BIKE.tyreRearBrand || 'CONTINENTAL', BIKE.tyreRear || (BIKE.key==='slx'?'GRAND PRIX 5000 S TR  ·  28-622':'GRAND PRIX 5000 TT TR  ·  28-622'), c.tyreText || '#6b6b6b');
   M.tyreF.needsUpdate = M.tyreR.needsUpdate = true;
   if (discMesh) discMesh.traverse(o => { if (o.isMesh && o.material?.color) { o.material.color.set(c.discColor || '#141416'); o.material.needsUpdate = true; } });
   const vis = (id, v) => { if (parts[id]) parts[id].visible = v; };
-  vis('aerofuel_front', c.aerofuel && c.shield); vis('bottle_front', c.frontBottle && c.aerofuel && c.shield);
-  vis('bottles_rear', c.rearBottles); vis('bottle_cages_rear', c.rearBottles);
-  vis('aeroshield', c.shield); vis('arm_pads', c.shield);
-  if (discMesh) {discMesh.visible=c.rearDisc&&c.wheelModel!=='zipp';vis('spokes_rear',!c.rearDisc);}
-  if(zippMesh)zippMesh.visible=c.rearDisc&&c.wheelModel==='zipp';
-  vis('rim_rear',!(c.rearDisc&&c.wheelModel==='zipp'));vis('hub_rear',!(c.rearDisc&&c.wheelModel==='zipp'));
+  const off = k => PROFILE.unavailableOptions?.includes(k);
+  vis('aerofuel_front', !off('aerofuel') && c.aerofuel && (!off('shield') && c.shield)); vis('bottle_front', !off('frontBottle') && c.frontBottle && c.aerofuel && (!off('shield') && c.shield));
+  vis('bottles_rear', !off('rearBottles') && c.rearBottles); vis('bottle_cages_rear', !off('rearBottles') && c.rearBottles);
+  vis('aeroshield', !off('shield') && c.shield); vis('arm_pads', !off('shield') && c.shield);
+  if (discMesh && !off('rearDisc')) {discMesh.visible=c.rearDisc&&c.wheelModel!=='zipp';vis('spokes_rear',!c.rearDisc);}
+  if(zippMesh && !off('rearDisc'))zippMesh.visible=c.rearDisc&&c.wheelModel==='zipp';
+  if (off('rearDisc')) { vis('rim_rear',true); vis('hub_rear',true); } else { vis('rim_rear',!(c.rearDisc&&c.wheelModel==='zipp'));vis('hub_rear',!(c.rearDisc&&c.wheelModel==='zipp')); }
   if($('#wheel-choice'))$('#wheel-choice').value=c.rearDisc?(c.wheelModel==='zipp'?'zipp':'cover'):'stock';
   $('#specWheelR') && ($('#specWheelR').textContent = c.rearDisc ? (c.wheelModel==='zipp'?'Zipp Super-9 B1 · 28 mm tubeless':'Generic carbon disc cover') : PARTS.wheel_rear.name+' · 85 mm');
   lab?.refresh();
@@ -535,9 +563,9 @@ function buildUI() {
   // Dynamic hero stats from active profile (weight / gear / rims).
   const _w = $('#stat-weight'), _g = $('#stat-gear'), _gs = $('#stat-gear-sub'), _r = $('#stat-rims');
   if(_w) _w.textContent = String(BIKE.weight ?? '—');
-  if(_g) _g.textContent = BIKE.chainring && BIKE.cog ? `${BIKE.chainring}/${BIKE.key==='slx'?'36':'37'}` : '—';
-  if(_gs) _gs.textContent = (BIKE.key==='slx' ? '11–30' : '10–33') + ' · 12 sp';
-  if(_r) _r.textContent = BIKE.key==='slx' ? '65/85' : '85';
+  if(_g) _g.textContent = BIKE.gear || '—';
+  if(_gs) _gs.textContent = BIKE.gearSub || '';
+  if(_r) _r.textContent = BIKE.rims || '—';
   let tourIndex = -1;
   const showTour = i => {
     tourIndex = i; const stop = TOUR[i];
@@ -622,8 +650,14 @@ function buildUI() {
   $('#pickFrame').oninput = e => setCfg({ frame: e.target.value, wyld: false });
   $('#pickDecal').oninput = e => setCfg({ decal: e.target.value });
   $('#irid').oninput = e => setCfg({ irid: +e.target.value });
-  $('#optFuel').onchange = e => setCfg({ aerofuel: e.target.checked }, true);
-  if(PROFILE.unavailableOptions?.includes('rearBottles')){$('#optRear').disabled=true;$('#optRear').closest('label').title='The standard SP102 seatpost has no modelled rear bottle carrier.';}
+  // Options this bike's model does not carry: disable honestly with a reason.
+  for (const k of (PROFILE.unavailableOptions || [])) {
+    const id = { aerofuel: '#optFuel', frontBottle: '#optFront', rearBottles: '#optRear', shield: '#optShield', rearDisc: '#optDisc' }[k];
+    const el = id && $(id); if (!el) continue;
+    el.disabled = true; el.checked = false;
+    const lbl = el.closest('label'); if (lbl) { lbl.title = PROFILE.unavailableReason?.[k] || 'Not part of this model'; lbl.style.opacity = .5; }
+  }
+  if(PROFILE.unavailableOptions?.includes('rearBottles') && !$('#optRear').disabled){$('#optRear').disabled=true;$('#optRear').closest('label').title='The standard SP102 seatpost has no modelled rear bottle carrier.';}
   $('#optRear').onchange = e => setCfg({ rearBottles: e.target.checked }, true);
   $('#optShield').onchange = e => setCfg({ shield: e.target.checked }, true);
   $('#optDisc').onchange = e => setCfg({ rearDisc: e.target.checked }, true);
@@ -677,6 +711,7 @@ function toggleDrawer(id) { const d = $('#' + id), open = !d.classList.contains(
 function closeDrawers() { $$('.drawer').forEach(d => d.classList.remove('open')); $$('[data-drawer]').forEach(b => b.classList.remove('active')); }
 function setMode(m, fromSlider) {
   S.mode = m;
+  document.body.dataset.mode = m;
   $$('[data-mode]').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
   if (m === 'exploded') { if (!fromSlider) S.eT = 1; }
   else if (!fromSlider) S.eT = 0;

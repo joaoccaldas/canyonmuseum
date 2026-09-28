@@ -8,24 +8,15 @@ const app = res.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 const glb = fs.readFileSync(glbPath).toString('base64');
 const tpl = fs.readFileSync(path.join(here, 'index.template.html'), 'utf8');
 const profile=JSON.parse(fs.readFileSync(process.env.BIKE_PROFILE||path.join(here,'../museum/viewer-cfr.json'),'utf8'));
-let template=tpl;
-if(profile.bike.key==='slx'){
-  template=template
-    .replaceAll('Speedmax<br>CFR AXS','Speedmax<br>CF SLX 8 Di2')
-    .replaceAll('Speedmax CFR AXS','Speedmax CF SLX 8 Di2')
-    .replaceAll('SPEEDMAX CFR','SPEEDMAX CF SLX')
-    .replaceAll('CFR AXS','CF SLX 8 Di2')
-    .replaceAll('AXS · MY2027','Di2 · MY2027')
-    .replaceAll('9.1 kg','9.56 kg')
-    .replaceAll('50 × 14','52 × 14')
-    .replaceAll('50×14','52×14')
-    .replaceAll('Canyon collection · Exhibit 01','Canyon collection · Exhibit 02')
-    .replaceAll('The architecture of speed.','The second-generation racer.')
-    .replaceAll("Canyon's fastest and most adjustable triathlon bike yet","Canyon's second-tier triathlon platform, Di2-equipped.")
-    .replaceAll('SRAM Red AXS with dual-sided power, DT Swiss ARC 1100 85 mm wheels, AeroShield cockpit and AeroFuel storage.',
-      'Shimano Ultegra Di2 with 4iiii power, DT Swiss ARC 1600 65/85 mm wheels, AeroShield cockpit and AeroFuel storage.');
-}
-const html = template.replace('<head>','<head><script>window.__BIKE_PROFILE='+JSON.stringify(profile).replaceAll('<','\\u003c')+';</script>').replace('__GLB__', () => glb).replace('__APP__', () => '/* Speedmax CFR study · three.js (MIT) bundled */\n' + app);
+// Identity text is populated at runtime from the profile (see identity() in main.js);
+// only the static <title> and meta description differ per build.
+const b = profile.bike || {};
+const docTitle = b.pageTitle || `Canyon Museum — ${b.name || 'Speedmax'} (${b.year || '2027'})`;
+let template=tpl
+  .replace('<title>Canyon Collection — Speedmax CFR AXS</title>', `<title>${docTitle.replace(/</g,'&lt;')}</title>`)
+  .replace('Speedmax CFR AXS (MY2027) — an unofficial, fully procedural Blender model you can explode, ride, inspect and repaint in the browser.',
+    `${b.name || 'Speedmax'} (${b.year || 'MY2027'}) — an unofficial, fully procedural Blender model you can explode, ride, inspect and repaint in the browser.`);
+const html = template.replace('<head>','<head><script>window.__BIKE_PROFILE='+JSON.stringify(profile).replaceAll('<','\\u003c')+';</script>').replace('__GLB__', () => glb).replace('__APP__', () => '/* Speedmax study · three.js (MIT) bundled */\n' + app);
 const out = process.env.OUT_HTML || path.join(here, 'dist', 'index.html');
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, html);

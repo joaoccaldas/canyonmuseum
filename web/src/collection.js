@@ -9,7 +9,7 @@ for(const [i,b] of bikes.entries()){
   const img=b.image
     ?`<img class="bike-image" src="${b.image}" alt="${esc(b.name)} official side reference">`
     :`<div class="bike-image placeholder" aria-hidden="true"><span>3D exhibit<br>coming soon</span></div>`;
-  card.innerHTML=`<div class="card-top"><div><span>MY2027 · SIZE M · ${esc(b.series)}</span><h2>${esc(b.name)}</h2></div><div class="card-number">${String(i+1).padStart(2,'0')}</div></div>${img}<div class="card-stats"><div><b>${b.weightKg} kg</b><small>Complete bike · M</small></div><div><b>${esc(b.gear)}</b><small>Chainrings</small></div><div><b>${money(b.priceSEK)}</b><small>Canyon Sweden · from</small></div></div>${actions}${b.notModelled?'':`<label class="compare-check"><input type="checkbox" checked data-select="${b.key}">Compare this bike</label>`}`;
+  card.innerHTML=`<div class="card-top"><div><span>MY${esc(b.year||'2027')} · SIZE ${esc(b.size||'M')} · ${esc(b.series)}</span><h2>${esc(b.name)}</h2></div><div class="card-number">${String(i+1).padStart(2,'0')}</div></div>${img}<div class="card-stats"><div><b>${b.weightKg??'—'} kg</b><small>Complete bike · ${esc(b.size||'M')}</small></div><div><b>${esc(b.gear)}</b><small>Chainrings</small></div>${b.priceSEK==null?`<div><b>${esc(b.era||'Archive')}</b><small>In production</small></div>`:`<div><b>${money(b.priceSEK)}</b><small>Canyon Sweden · from</small></div>`}</div>${actions}${b.notModelled?'':`<label class="compare-check"><input type="checkbox" checked data-select="${b.key}">Compare this bike</label>`}`;
   $('carousel').append(card);
 }
 function scroll(dir){$('carousel').scrollBy({left:dir*($('carousel').firstElementChild.getBoundingClientRect().width+22),behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});} $('previous').onclick=()=>scroll(-1);$('next').onclick=()=>scroll(1);$('carousel').onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();scroll(e.key==='ArrowRight'?1:-1);}};
@@ -42,5 +42,12 @@ if($('wing-modern-body')){
  const ex=bikes.filter(b=>!b.notModelled).length,total=bikes.length;
  m.innerHTML=`<div><b>${String(ex).padStart(2,'0')}</b><small>Interactive exhibits</small></div><div><b>1999</b><small>First Speedmax</small></div><div><b>2027</b><small>Latest CFR AXS</small></div><div><b>${(total-ex).toString().padStart(2,'0')}</b><small>Awaiting research</small></div>`;
  document.querySelector('.intro')?.append(m);})();
+
+// ---- Archive: every Speedmax generation, modelled or documented only ----
+(function(){const A=window.__ARCHIVE||[],tl=$('timeline');if(!tl||!A.length)return;
+ tl.innerHTML=A.map(h=>{const live=h.status==='reference-study'&&h.viewer;
+  const act=live?`<a class="tl-enter" href="${esc(h.viewer)}">Enter exhibit →</a>`:`<span class="tl-muted">${esc(h.why||'Not yet modelled')}</span>`;
+  const src=h.source?`<a href="${esc(h.source)}" target="_blank" rel="noopener">Archive source ↗</a>`:'';
+  return `<article class="tl-item${live?'':' tl-soon'}"><div class="tl-years">${esc(h.years)}</div><h3>${esc(h.name)}</h3><div class="tl-mat">${esc(h.material)}</div><p>${esc(h.note)}</p><div class="tl-actions">${act}${src}</div></article>`;}).join('');})();
 
 window.__collection={bikes,selected};

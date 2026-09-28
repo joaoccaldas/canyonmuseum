@@ -6,7 +6,10 @@ export const BIKE = {
   name: 'Speedmax CFR AXS', year: '2027', size: 'M', weight: 9.1, price: 'from 125 000 SEK',
   claim: "Canyon's fastest and most adjustable triathlon bike yet",...PROFILE.bike,
 };
-
+// Gear/rims defaults: keep the CFR/SLX behaviour when the profile omits them.
+if (BIKE.gear === undefined) BIKE.gear = `${BIKE.chainring}/${BIKE.key==='slx'?'36':'37'}`;
+if (BIKE.gearSub === undefined) BIKE.gearSub = (BIKE.key==='slx' ? '11–30' : '10–33') + ' · 12 sp';
+if (BIKE.rims === undefined) BIKE.rims = BIKE.key==='slx' ? '65/85' : '85';
 export const GEOMETRY = {
   sizes: ['S', 'M', 'L', 'XL'],
   rows: [
@@ -25,7 +28,9 @@ export const GEOMETRY = {
     ['BB drop', 75, 75, 75, 72],
     ['Crank length', 165, 165, 165, 165],
   ],
+  ...PROFILE.geometry,
 };
+if (PROFILE.geometry && PROFILE.geometryNote) GEOMETRY.note = PROFILE.geometryNote;
 
 // group: frame | cockpit | hydration | drivetrain | wheels | brakes | contact
 export const PARTS = {
@@ -96,6 +101,7 @@ export const PRESETS = {
   deep: { name: 'Deep Ocean', sub: 'Metallic navy', frame: '#15254a', finish: 'gloss', irid: .45, decal: '#e9ecef', cockpit: 'carbon', rimText: '#cfd8e6' },
   moss: { name: 'Moss', sub: 'Satin olive', frame: '#4c5a3f', finish: 'satin', irid: .1, decal: '#e8e3d4', cockpit: 'carbon', rimText: '#d8d2bd' },
   wyld: { name: 'Wyld', sub: 'Hand-dyed pink × aqua', frame: '#ff8fbf', finish: 'gloss', irid: 0, decal: '#141416', cockpit: 'carbon', rimText: '#e9cde8', wyld: true },
+  ...(PROFILE.presets || {}),
 };
 
 if(PROFILE.bike?.key==='slx')Object.assign(PRESETS.aurora,{name:'Light Lavender',frame:'#cdc8dd',decal:'#ffffff',finish:'satin'});
