@@ -137,6 +137,34 @@ body.walking.touch #joy{display:block}
 body.touch.card-open #joy{opacity:0;pointer-events:none}
 body.touch #toast{top:calc(84px + env(safe-area-inset-top));bottom:auto}
 
+/* guided tour pill */
+#tourPill{position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top));transform:translate(-50%,-160%);z-index:22;display:flex;align-items:center;gap:10px;
+  padding:8px 8px 8px 16px;border-radius:999px;background:rgba(18,24,29,.88);color:#fbf9f5;font-size:12.5px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:transform .5s cubic-bezier(.2,.8,.2,1);overflow:hidden;white-space:nowrap}
+body.touring #tourPill{transform:translate(-50%,0)}
+#tourPill b{font-weight:700}#tourStep{color:#9fb0ba;font-variant-numeric:tabular-nums}
+#tourPill button{color:#fbf9f5;background:rgba(255,255,255,.1);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:600;min-height:36px}
+#tourPill button:hover{background:rgba(255,255,255,.2)}
+.tp-dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(#5fd8d3 0 33%,#ff3d8e 0 66%,#e8471c 0);animation:tp 1.6s ease-in-out infinite}
+@keyframes tp{50%{transform:scale(1.5)}}
+#tourBar{position:absolute;left:0;bottom:0;height:3px;width:calc(var(--p,0) * 100%);background:linear-gradient(90deg,#ff3d8e,#5fd8d3)}
+body.touring #joy{opacity:.35}
+/* first-visit coach marks */
+#coach{position:fixed;inset:0;z-index:40;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;padding:0 20px calc(250px + var(--safe-b))}
+#coach[hidden]{display:none}
+#coach>div{pointer-events:auto;background:var(--ink);color:var(--paper);border-radius:20px;padding:14px 16px 12px 18px;box-shadow:0 20px 40px -18px rgba(0,0,0,.55);display:grid;gap:6px;max-width:320px;animation:cin .4s cubic-bezier(.2,.8,.2,1)}
+#coach b{font-size:16px;font-weight:700}.coach-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#coach small{font-size:12px;color:#9fb0ba}#coachOk{color:var(--ink);background:var(--paper);border-radius:999px;padding:8px 14px;font-size:12.5px;font-weight:700;min-height:36px}
+.coach-ring{position:fixed;border-radius:50%;box-shadow:0 0 0 4px #ff3d8e;animation:cr 1.4s ease-in-out infinite;pointer-events:none}
+#coach[data-kind=joy] .coach-ring{left:calc(max(16px,env(safe-area-inset-left)) - 8px);bottom:calc(90px + var(--safe-b));width:144px;height:144px}
+#coach[data-kind=look] .coach-ring{left:50%;top:40%;width:90px;height:90px;margin-left:-45px}
+#coach[data-kind=tap] .coach-ring{display:none}
+@keyframes cin{from{transform:translateY(12px);opacity:0}}
+@keyframes cr{50%{transform:scale(1.08);opacity:.7}}
+button,a,.chip{touch-action:manipulation}
+@media (max-width:760px){#tourPill{font-size:12px;gap:6px;padding-left:12px}#tourPill b{display:none}body.touring header .logo,body.touring header nav{opacity:0;pointer-events:none}}
+header .logo,header nav{transition:opacity .4s}
+
 /* hover label */
 #tag{position:fixed;z-index:12;pointer-events:none;padding:8px 12px;border-radius:10px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:600;
   opacity:0;transform:translate(-50%,-140%);transition:opacity .2s;white-space:nowrap}
@@ -211,7 +239,7 @@ body.walking .credit{display:none}
     <p class="lede">A sunlit gallery on the Kona coast. Every Speedmax generation stands on lava stone along the Ironman bike course — walk the timeline, study each bike as a piece of art, then step inside its 3D studio.</p>
     <div class="cta">
       <button class="btn primary" id="enterBtn" disabled>Loading the hall…</button>
-      <a class="btn ghost" href="Canyon_Collection.html">Compare the bikes</a>
+      <button class="btn ghost" id="tourBtn"><span aria-hidden="true">▶</span> Guided tour · 3 min</button>
     </div>
     <div class="keys" aria-hidden="true">
       <div><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>Walk</div>
@@ -251,6 +279,9 @@ body.walking .credit{display:none}
   </svg>
   <div class="joy-knob"><i></i></div>
 </div>
+<div id="tourPill" role="status" aria-live="polite"><span class="tp-dot"></span><b>Guided tour</b><span id="tourStep">1 / 12</span>
+  <button id="tourPause">Pause</button><button id="tourNext" aria-label="Next stop">Next ›</button><button id="tourStop" aria-label="End tour">✕</button><i id="tourBar"></i></div>
+<div id="coach" hidden role="status" aria-live="polite"><span class="coach-ring"></span><div><b></b><span class="coach-row"><small></small><button id="coachOk">Got it</button></span></div></div>
 <div id="tag"></div>
 <div id="toast"></div>
 

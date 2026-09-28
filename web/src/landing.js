@@ -10,6 +10,7 @@ import { applyWyld } from './skins/wyld.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const PIECES = window.__PIECES || [];
+const sway = [];                                                     // palm crowns moving in the trade wind
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
 const WROOMDATA = window.__WYLDROOM || null;
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
@@ -43,7 +44,7 @@ heritage.forEach((p, i) => {
   p.plinth = [2.35, .5, 1.05];
 });
 flagships.forEach((p, i) => {
-  p.pos = new THREE.Vector3(i === 0 ? -2.1 : 2.1, 0, -41.4);
+  p.pos = new THREE.Vector3(i === 0 ? -1.75 : 1.75, 0, -41.4);
   p.rotY = 0; p.plinth = null;                                      // shared apse plinth
 });
 PIECES.forEach((p, i) => {
@@ -89,18 +90,34 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.5 : 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.AgXToneMapping;
 renderer.toneMappingExposure = .96;
-renderer.shadowMap.enabled = !lite;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = true;                                   // the slatted-roof stripes are the museum's signature
+renderer.shadowMap.type = lite ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog('#e6eef0', 70, 420);
-const camera = new THREE.PerspectiveCamera(coarse && innerHeight > innerWidth ? 68 : 56, 1, .05, 900);
+const portraitFov = () => innerHeight > innerWidth ? 74 : 56;          // phones: a wider view, not a letterbox
+const camera = new THREE.PerspectiveCamera(portraitFov(), 1, .05, 900);
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 scene.environmentIntensity = .55;
 
 // ------------------------------------------------------------------ canvas textures (plaster, travertine, basalt, lettering)
 const lettered = [];                                                 // redrawn once web fonts arrive
+let washTex = null;
+function wallWash(w, h, strength = .5) {                              // a picture light's cone, painted on (no real light: keeps 60 fps)
+  washTex ||= (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 512; const g = c.getContext('2d');
+    const r = g.createRadialGradient(128, 0, 10, 128, 60, 470); r.addColorStop(0, 'rgba(255,238,210,1)'); r.addColorStop(.45, 'rgba(255,232,200,.45)'); r.addColorStop(1, 'rgba(255,232,200,0)');
+    g.fillStyle = r; g.fillRect(0, 0, 256, 512); return new THREE.CanvasTexture(c); })();
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: washTex, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+}
+let contactTex = null;
+function contactShadow(len, wid) {                                   // soft dark footprint where the tyres meet the plinth
+  contactTex ||= (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d');
+    const r = g.createRadialGradient(128, 64, 4, 128, 64, 124); r.addColorStop(0, 'rgba(0,0,0,.55)'); r.addColorStop(.55, 'rgba(0,0,0,.2)'); r.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = r; g.scale(1, 1); g.fillRect(0, 0, 256, 128); return new THREE.CanvasTexture(c); })();
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(len, wid), new THREE.MeshBasicMaterial({ map: contactTex, transparent: true, depthWrite: false, fog: false }));
+  m.rotation.x = -Math.PI / 2; m.renderOrder = 1; return m;
+}
 function canvasTex(w, h, draw, repeat, text) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   const paint = () => { const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, w, h); draw(g, w, h); };
@@ -276,7 +293,8 @@ glassRun('x', HALL.x0, HALL.x1, HALL.z1);
       const f = new THREE.Mesh(frondG[i % 2], frondM); f.castShadow = true;
       f.rotation.set(0, i / 11 * Math.PI * 2 + rnd() * .3, 0); f.rotateZ(.25 - rnd() * .35); crown.add(f);
     }
-    g.position.set(x, -.02, z); g.rotation.y = rnd() * 6.28; scene.add(g); return g;
+    g.position.set(x, -.02, z); g.rotation.y = rnd() * 6.28; scene.add(g);
+    sway.push({ o: crown, phase: rnd() * 6.28, amp: .045 }); return g;
   }
   for (let i = 0; i < 7; i++) palm(HALL.x1 + 2.2 + rnd() * 2.5, 2 - i * 7.2 - rnd() * 2, 6 + rnd() * 2.5, .8 + rnd() * 1.4);
   palm(-2, HALL.z1 - 3.4, 7.2, 1.3); palm(5.5, HALL.z1 - 3.1, 6.3, -1);
@@ -347,7 +365,7 @@ const champs = [];
   const inside2 = tapestry(5.2, 1.9, 1.7, 2.2); inside2.position.set(ROOM.x1 - .02, 3.4, (DOOR.z0 + DOOR.z1) / 2 - 4.6); inside2.rotation.y = -Math.PI / 2; room.add(inside2);
   box(.3, ROOM.h, (ROOM.z0 - DOOR.z1), ROOM.x1 + .15, ROOM.h / 2, (ROOM.z0 + DOOR.z1) / 2).visible = false;   // east face is the hall wall
   const warm = new THREE.PointLight('#ffe9cf', lite ? 22 : 16, 20, 1.3); warm.position.set(RCX, ROOM.h - .5, RCZ); room.add(warm);
-  const pictureLight = (x, z, tx, tz) => { if (lite) return; const sp = new THREE.SpotLight('#fff1dd', 30, 7, .5, .6, 1.4); sp.position.set(x, ROOM.h - .2, z); sp.target.position.set(tx, 1.9, tz); room.add(sp, sp.target); };
+  const pictureLight = (x, wallZ, north) => { const wsh = wallWash(2.6, 4.2, .42); wsh.position.set(x, ROOM.h - 2.1, wallZ + (north ? -.035 : .035)); wsh.rotation.y = north ? Math.PI : 0; room.add(wsh); };
 
   // framed photographs (Wikimedia Commons, CORS-enabled) with credit plates
   const tl = new THREE.TextureLoader(); tl.setCrossOrigin('anonymous');
@@ -373,7 +391,7 @@ const champs = [];
   KONA.titles.forEach((t, i) => {
     const north = i < 3, k = i % 3;
     const x = ROOM.x1 - 2.6 - k * 3.4, z = north ? ROOM.z0 - .02 : ROOM.z1 + .02, face = north ? Math.PI : 0;   // face into the room
-    pictureLight(x, z + (north ? -1.6 : 1.6), x, z);
+    pictureLight(x, z, north);
     const ph = framed(t.photo, 1.35, 1.7, t.photo.file.startsWith('File:Iron man') ? 'Kailua Bay — the swim start' : t.photoCaption); ph.position.set(x, 2.5, z); ph.rotation.y = face; room.add(ph);
     const nrm = new THREE.Vector3(0, 0, north ? -1 : 1);
     const st = new THREE.Group(); st.position.set(x, 0, z + nrm.z * 1.35); st.rotation.y = face; room.add(st);
@@ -389,7 +407,7 @@ const champs = [];
     room.add(placed(lightPool(1.9, 1.9, i % 2 ? WYLD.aqua : WYLD.pink, .32), x, .006, z + nrm.z * 1.35));
     const c = { ...t, kind: 'champion', index: i, pos: new THREE.Vector3(x, 0, z + nrm.z * 1.35), normal: nrm, photoY: 2.5 };
     c.view = c.pos.clone().addScaledVector(nrm, 2.6 + (coarse && innerHeight > innerWidth ? .8 : 0));
-    c.face = new THREE.Vector3(x, 1.5, z);
+    c.face = new THREE.Vector3(x, coarse && innerHeight > innerWidth ? 2.2 : 1.5, z);   // phones: keep the photo clear of the card
     slab.userData.champ = c; face2.userData.champ = c; ph.children[2].userData.champ = c;
     pickables.push(slab, face2, ph.children[2]); champs.push(c);
     obstacles.push({ c: c.pos, r: .8 });
@@ -515,6 +533,7 @@ async function loadWyldBikes() {
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
     const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = b.rotY; holder.position.y = b.top; b.group.add(holder); b.bike = holder;
+    const cs = contactShadow(2.1, .55); cs.position.y = b.top + .004; cs.rotation.z = b.rotY; b.group.add(cs);
     holder.updateMatrixWorld(true);
     bike.traverse(o => {
       if (!o.isMesh) return;
@@ -556,7 +575,8 @@ const spinners = [];
       }
     }
     g.add(new THREE.Mesh(mergeGeometries(stems), trunkM));
-    const crown = new THREE.Mesh(mergeGeometries(leaves), leafM); crown.castShadow = !lite; g.add(crown);
+    const crown = new THREE.Mesh(mergeGeometries(leaves), leafM); crown.castShadow = true; g.add(crown);
+    sway.push({ o: crown, phase: seed * 1.7, amp: .012, pivot: true });
     scene.add(g); obstacles.push({ c: new THREE.Vector3(x, 0, z), r: .55 }); return g;
   }
   [[6.1, 2.6], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, 3.6], [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
@@ -579,7 +599,7 @@ const spinners = [];
     const plate = lettering(1.9, .22, gg => { gg.fillStyle = '#12181d'; gg.font = `700 .06px ${FONT}`; gg.fillText(title.toUpperCase(), 0, .08);
       gg.fillStyle = '#6d7479'; gg.font = `500 .04px ${FONT}`; gg.fillText(`${ph.caption.slice(0, 48)} · © ${ph.author} · ${ph.license}`, 0, .17); }, 1024);
     plate.position.set(-w / 2 + .95, -h / 2 - .28, .03); g.add(plate);
-    if (!lite) { const sp = new THREE.SpotLight('#fff3e2', 24, 6, .55, .6, 1.4); sp.position.set(HALL.x0 + 1.4, 4.9, z); sp.target = g; hall.add(sp); }
+    const wsh = wallWash(w + 1.6, 4.4, .3); wsh.position.set(0, 2.2 - 2.55 + .15, .036); g.add(wsh);
     const info = { kind: 'info', eyebrow: 'Kona · the race', title, sub: ph.caption, text: title.startsWith('Swim') ? 'A deep-water start in Kailua Bay beside the pier — 2.4 miles out and back before the bikes.' : title.startsWith('Run') ? 'The marathon heads south along Ali‘i Drive before turning onto the Queen K and out to the Energy Lab.' : 'The last metres on Ali‘i Drive, a block from the pier where the day began.', photo: ph, pos: new THREE.Vector3(HALL.x0 + 2.6, 0, z) };
     pic.userData.info = info; pickables.push(pic); infos.push(info);
   }
@@ -628,15 +648,27 @@ const spinners = [];
   }
 }
 
+// ------------------------------------------------------------------ seabirds circling over the ocean
+const birds = [];
+{
+  const wm = new THREE.MeshBasicMaterial({ color: '#f7f7f4', side: THREE.DoubleSide, fog: true });
+  const wg = new THREE.PlaneGeometry(.55, .16); wg.translate(.27, 0, 0); wg.rotateX(-Math.PI / 2);
+  for (let i = 0; i < 7; i++) {
+    const o = new THREE.Group(), l = new THREE.Mesh(wg, wm), r2 = new THREE.Mesh(wg, wm); r2.scale.x = -1; o.add(l, r2);
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(.03, .015, .35, 6), wm); body.rotation.x = Math.PI / 2; o.add(body);
+    o.scale.setScalar(1.4 + (i % 3) * .3); scene.add(o);
+    birds.push({ o, l, r2, c: new THREE.Vector3(24 + (i % 3) * 14, 9 + (i % 4) * 2.5, -10 - i * 7), r: 7 + (i % 3) * 3, speed: .11 + (i % 4) * .03, phase: i * 1.9, flap: 7 + (i % 3) });
+  }
+}
+
 // ------------------------------------------------------------------ light
 const hemi = new THREE.HemisphereLight('#e3eef3', '#cdb89c', lite ? 1.3 : .9); scene.add(hemi);
 const sun = new THREE.DirectionalLight('#ffe9cc', lite ? 2 : 2.45);
 sun.position.set(3, 15, -16); sun.target.position.set(-6, 0, -22); scene.add(sun, sun.target);
-if (!lite) {
-  sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
-  Object.assign(sun.shadow.camera, { left: -36, right: 36, top: 36, bottom: -36, near: 1, far: 70 });
-  sun.shadow.bias = -.0004; sun.shadow.normalBias = .02;
-}
+sun.castShadow = true; sun.shadow.mapSize.set(lite ? 1024 : 2048, lite ? 1024 : 2048);
+Object.assign(sun.shadow.camera, { left: -36, right: 36, top: 36, bottom: -36, near: 1, far: 70 });
+sun.shadow.bias = -.0004; sun.shadow.normalBias = .02;
+if (lite) sun.shadow.autoUpdate = true;
 
 // ------------------------------------------------------------------ plinths, lecterns, floor years
 function textCard(p) {
@@ -682,10 +714,6 @@ for (const p of PIECES) {
   }
   const ring = new THREE.Mesh(new THREE.RingGeometry(1.05, 1.12, 64), M.ring.clone());
   ring.rotation.x = -Math.PI / 2; ring.position.y = p.top + .012; g.add(ring); p.ring = ring;
-  if (!lite && p.glb) {
-    const spot = new THREE.SpotLight('#fff6ea', 38, 9, .42, .7, 1.6);
-    spot.position.set(p.normal.x * 1.2, 4.9, p.normal.z * 1.2); spot.target = g; g.add(spot);
-  }
 }
 heritage.forEach((p, i) => {
   if (p.pos.x < 0) { const tp = tapestry(2.6, 3.3, i * 1.37 + .4, .35 + i * .5); tp.position.set(HALL.x0 + .02, 2.75, p.pos.z); tp.rotation.y = Math.PI / 2; hall.add(tp); }
@@ -752,6 +780,7 @@ async function loadBike(p) {
   p.ex = 0; p.exT = 0;
   const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = p.rotY; holder.position.y = p.top;
   holder.scale.setScalar(.001); p.group.add(holder); p.bike = holder; p.bikeIn = 0;
+  const cs = contactShadow(2.1, .55); cs.position.y = p.top + .004; cs.rotation.z = p.rotY; p.group.add(cs);
   bike.traverse(o => { if (o.isMesh) pickables.push(o); });
 }
 async function loadAll() {
@@ -808,7 +837,8 @@ function openChamp(c) {
   $('cMat').textContent = `${c.time} · ${c.bike}`;
   $('cNote').textContent = c.note;
   $('cStats').hidden = false;
-  $('cStats').innerHTML = [[c.time, 'finish'], [c.splits.includes('·') ? c.splits.split('·')[1].trim() : '—', c.splits.includes('·') ? 'bike split' : c.splits], [c.country, 'nation']]
+  $('cMat').textContent = `${c.time} · ${c.splits}`;
+  $('cStats').innerHTML = [[c.time, 'finish'], [c.bike.replace('Speedmax ', ''), 'Speedmax'], [c.country, 'nation']]
     .map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
   const m = KONA.machines.find(x => x.generation === c.generation);
   $('cMedia').innerHTML = `<figure class="c-photo"><img src="${esc(c.photo.src)}" alt="${esc(c.athlete)} — ${esc(c.photoCaption)}" referrerpolicy="no-referrer"><figcaption>${esc(c.photoCaption)}<br><a href="${esc(c.photo.page)}" target="_blank" rel="noopener">© ${esc(c.photo.author)} · ${esc(c.photo.license)} ↗</a></figcaption></figure>`
@@ -853,11 +883,73 @@ function openInfo(n) {
   $('cInfoClose').onclick = () => closeCard();
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
+// ------------------------------------------------------------------ guided tour: hands-free walk through the highlights
+const tour = { on: false, i: -1, t: 0, paused: false, stops: [] };
+const DWELL = 9;                                                     // seconds at each stop
+function tourStops() {
+  const H = PIECES.filter(p => p.glb && !p.flagship), F = PIECES.filter(p => p.flagship);
+  const stops = [...H.map(p => ({ kind: 'piece', p })),
+    ...[0, 2, 4, 5].map(i => champs[i]).filter(Boolean).map(c => ({ kind: 'champ', c })),
+    ...[0, 3].map(i => wyldBikes[i]).filter(Boolean).map(v => ({ kind: 'wyld', v })),
+    ...F.map(p => ({ kind: 'piece', p }))];
+  return stops;
+}
+function tourGo(i) {
+  tour.i = i; tour.t = 0; const st = tour.stops[i];
+  if (!st) return tourEnd(true);
+  if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else visitWyld(st.v);
+  $('tourStep').textContent = `${i + 1} / ${tour.stops.length}`;
+  $('tourBar').style.setProperty('--p', 0);
+}
+function tourStart() {
+  $('coach').hidden = true;
+  if (!started) enter();
+  tour.stops = tourStops(); tour.on = true; tour.paused = false; document.body.classList.add('touring');
+  $('tourPause').textContent = 'Pause'; haptic(12);
+  tourGo(0);
+}
+function tourEnd(finished) {
+  if (!tour.on) return;
+  tour.on = false; document.body.classList.remove('touring');
+  toast(finished ? 'That was the collection. Walk on, or tap any piece to revisit it.' : 'Tour paused — you have the controls.');
+}
+function tourTick(dt) {
+  if (!tour.on || tour.paused || path) return;
+  if (!$('card').classList.contains('on')) return;                   // wait until we've arrived and the card is up
+  tour.t += dt; $('tourBar').style.setProperty('--p', Math.min(1, tour.t / DWELL));
+  if (tour.t >= DWELL) tourGo(tour.i + 1);
+}
+$('tourBtn')?.addEventListener('click', tourStart);
+$('tourPause')?.addEventListener('click', () => { tour.paused = !tour.paused; $('tourPause').textContent = tour.paused ? 'Resume' : 'Pause'; });
+$('tourNext')?.addEventListener('click', () => tourGo(tour.i + 1));
+$('tourStop')?.addEventListener('click', () => tourEnd(false));
+function haptic(ms = 8) { try { if (coarse) navigator.vibrate?.(ms); } catch (_) { } }
+
+// ------------------------------------------------------------------ first visit on a phone: three quick coach marks
+const coachState = { k: -1, steps: [] };
+function coach() {
+  let seen = false; try { seen = localStorage.getItem('speedmax.coach.v1') === '1'; } catch (_) { }
+  if (seen || !coarse) return;
+  coachState.steps = [['joy', 'Push the tri-stick to walk'], ['look', 'Drag anywhere to look around'], ['tap', 'Tap a bike to visit it']];
+  setTimeout(() => { if (!tour.on) coachShow(0); }, 900);
+}
+function coachShow(k) {
+  const el = $('coach'); coachState.k = k;
+  if (k >= coachState.steps.length) { el.hidden = true; try { localStorage.setItem('speedmax.coach.v1', '1'); } catch (_) { } return; }
+  const [kind, txt] = coachState.steps[k];
+  el.dataset.kind = kind; el.querySelector('b').textContent = txt; el.querySelector('small').textContent = `${k + 1} of ${coachState.steps.length}`; el.hidden = false;
+}
+function coachDid(kind) {                                            // the hint advances when the visitor does the thing
+  if (coachState.k < 0 || $('coach').hidden) return;
+  if (coachState.steps[coachState.k]?.[0] === kind) { haptic(6); coachShow(coachState.k + 1); }
+}
+$('coachOk')?.addEventListener('click', () => coachShow(coachState.k + 1));
+
 function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
   toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
-  path = [{ x: 0, z: .6 }]; canvas.focus({ preventScroll: true });
+  path = [{ x: 0, z: .6 }]; canvas.focus({ preventScroll: true }); haptic(10); coach();
 }
 $('enterBtn').onclick = enter;
 
@@ -866,7 +958,7 @@ $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? ''
   <span class="n">${p.thumb ? `<img src="${esc(p.thumb)}" alt="" loading="lazy">` : i + 1}</span><span><small>${esc(p.years)}</small><b>${esc(p.name.replace(/^Speed[Mm]ax /, ''))}</b></span></button>`).join('');
 if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
-$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
+$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8); if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
 function railActive(p) {
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', +c.dataset.i === p?.index));
   document.querySelector(`.chip[data-i="${p?.index}"]`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
@@ -896,7 +988,7 @@ function closeCard(keepCurrent) {
   $('card').classList.remove('on'); document.body.classList.remove('card-open');
   if (!keepCurrent) { if (exploded) setExploded(exploded, false); current = null; railActive(null); }
 }
-$('cardClose').onclick = () => closeCard();
+$('cardClose').onclick = () => { tourEnd(false); closeCard(); };
 let toastT; function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200); }
 
 // ------------------------------------------------------------------ exploded view: parts with their stories
@@ -973,7 +1065,7 @@ canvas.addEventListener('pointermove', e => {
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
     const k = coarse ? .0055 : .0038;
     P.yaw = drag.yaw + dx * k; P.pitch = clamp(drag.pitch + dy * k * .8, -.9, .7);
-    if (drag.moved > 6) path = null;
+    if (drag.moved > 6) { if (tour.on) tourEnd(false); path = null; if (drag.moved > 60) coachDid('look'); }
   } else if (started && !coarse) hover = { x: e.clientX, y: e.clientY };
 });
 canvas.addEventListener('pointerup', e => {
@@ -984,6 +1076,7 @@ canvas.addEventListener('pointerup', e => {
   const hit = pick(e.clientX, e.clientY);
   if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
+  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info) { haptic(8); tourEnd(false); coachDid('tap'); }
   if (hit?.champ) { visitChamp(hit.champ); return; }
   if (hit?.wyld) { visitWyld(hit.wyld); return; }
   if (hit?.info) { openInfo(hit.info); return; }
@@ -998,7 +1091,7 @@ addEventListener('keydown', e => {
   if (e.target.closest?.('input,textarea,select,a')) return;
   const k = e.key.toLowerCase();
   if (!started) { if (k === 'enter' && !$('enterBtn').disabled) { e.preventDefault(); enter(); } return; }
-  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'q', 'e'].includes(k)) { keys.add(k); path = null; if (k.startsWith('arrow')) e.preventDefault(); }
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'q', 'e'].includes(k)) { keys.add(k); path = null; tourEnd(false); if (k.startsWith('arrow')) e.preventDefault(); }
   if (k >= '1' && k <= '9' && PIECES[+k - 1]) visit(PIECES[+k - 1]);
   if (k === 'escape') { if (partSel && current) openCard(current); else closeCard(); }
   if (k === 'x' && current?.bike) setExploded(current, !(current.exT > 0));
@@ -1017,7 +1110,7 @@ const joy = { on: false, x: 0, y: 0, id: null };
   const move = e => { const r = pad.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     let dx = e.clientX - cx, dy = e.clientY - cy; const d = Math.hypot(dx, dy); if (d > R) { dx *= R / d; dy *= R / d; }
     joy.x = dx / R; joy.y = dy / R; knob.style.transform = `translate(${dx}px,${dy}px)`; };
-  pad?.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); joy.on = true; joy.id = e.pointerId; pad.setPointerCapture(e.pointerId); pad.classList.add('on'); path = null; move(e); });
+  pad?.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); tourEnd(false); setTimeout(() => coachDid('joy'), 700); joy.on = true; joy.id = e.pointerId; pad.setPointerCapture(e.pointerId); pad.classList.add('on'); path = null; move(e); });
   pad?.addEventListener('pointermove', e => { if (joy.on && e.pointerId === joy.id) move(e); });
   const end = e => { if (e.pointerId !== joy.id) return; joy.on = false; joy.x = joy.y = 0; knob.style.transform = ''; pad.classList.remove('on'); };
   pad?.addEventListener('pointerup', end); pad?.addEventListener('pointercancel', end);
@@ -1045,7 +1138,7 @@ $('soundBtn').onclick = () => {
 function resize() {
   const w = innerWidth, h = innerHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h;
-  camera.fov = coarse && h > w ? 68 : 56; camera.updateProjectionMatrix();
+  camera.fov = portraitFov(); camera.updateProjectionMatrix();
 }
 addEventListener('resize', resize); resize();
 let last = performance.now(), shift = 0;
@@ -1136,7 +1229,11 @@ function frame(now) {
     for (const p of PIECES) if (p.bike) p.bike.visible = reg === 'hall' || Math.abs(p.pos.z - DOORZ[reg]) < 7;
     for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg === 'hall' && P.z < -20 && P.x < 3);
   }
+  tourTick(dt);
   if (!reduce) for (const s2 of spinners) s2.o.rotation[s2.axis] += dt * s2.speed;
+  if (!reduce) for (const w of sway) { const a = Math.sin(t * .9 + w.phase) * w.amp + Math.sin(t * 2.3 + w.phase * 2) * w.amp * .3; w.o.rotation.z = a; w.o.rotation.x = a * .5; }
+  if (!reduce) for (const bd of birds) { const a = t * bd.speed + bd.phase; bd.o.position.set(bd.c.x + Math.cos(a) * bd.r, bd.c.y + Math.sin(a * 1.7) * .8, bd.c.z + Math.sin(a) * bd.r);
+    bd.o.rotation.y = -a; const f = Math.sin(t * bd.flap + bd.phase) * .6; bd.l.rotation.z = f; bd.r2.rotation.z = -f; }
   if (window.__ocean) window.__ocean.uniforms.t.value = t;
   if (window.__foam) window.__foam.opacity = .38 + Math.sin(t * .9) * .14;
   renderer.render(scene, camera);
@@ -1144,4 +1241,4 @@ function frame(now) {
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 loadAll().then(loadWyldBikes).catch(e => console.warn('wyld room', e));
-window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer };
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart };
