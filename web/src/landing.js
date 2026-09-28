@@ -1244,4 +1244,4 @@ function frame(now) {
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 loadAll().then(loadWyldBikes).catch(e => console.warn('wyld room', e));
-window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pickables, obstacles };
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pickables, obstacles, loader };
