@@ -72,6 +72,8 @@
         if (!source) continue;
         const clone = source.clone(true);
         clone.name = 'BLENDER · ' + inst.cfg.title;
+        clone.scale.setScalar(1.22);
+        clone.position.set(0, .02, -.04);
         clone.traverse(o => {
           if (o.isMesh) {
             o.castShadow = !matchMedia('(pointer: coarse)').matches;
@@ -92,9 +94,9 @@
       const psrc = assetByName('PORTAL_ECLIPSE');
       if (psrc) {
         const p = psrc.clone(true);
-        p.position.set(.10, -.05, 0);
-        p.rotation.y = -Math.PI / 2;
-        p.scale.setScalar(1.12);
+        p.position.set(.08, -.05, 0);
+        p.rotation.y = 0; // parent wall group already faces the aisle
+        p.scale.setScalar(1.28);
         p.traverse(o => { if (o.isMesh) { o.userData.artPortal = { id:'horror-in', label:'Hidden collection' }; pickables.push(o); } });
         secretPortal.add(p);
         portalBack.visible = false;
@@ -185,6 +187,7 @@
     const g = new Group();
     g.name = 'ART · ' + cfg.title;
     g.position.set(5.72, 0, cfg.z);
+    g.rotation.y = -Math.PI / 2; // face the aisle; reveal depth as the visitor approaches
     root.add(g);
 
     const base = box(1.85, .18, .95, std('#242529', .3, .2));
@@ -279,11 +282,13 @@
 
   const HORROR_THEMES = [
     { name: 'Witchcraft', paint: '#17101f', accent: '#8757bb', note: 'Black violet clearcoat with a quiet ritual glow.' },
-    { name: 'Stitched', paint: '#ded5c4', accent: '#8f2734', note: 'Bone-toned shell, red seam accents, polished hardware.' },
-    { name: 'Pagan', paint: '#272017', accent: '#8a6a2f', note: 'Dark bronze and runic gold, restrained rather than costume-like.' },
-    { name: 'Moonlit', paint: '#0d1828', accent: '#94a8c9', note: 'Midnight blue carbon that changes under cold highlights.' },
-    { name: 'Carnival', paint: '#501420', accent: '#dfc3a0', note: 'Oxblood with pale graphic fragments and lacquered shine.' },
-    { name: 'Ritual Forest', paint: '#102019', accent: '#557c58', note: 'Black-green carbon with mossy reflections and bronze details.' }
+    { name: 'Stitched Doll', paint: '#ded5c4', accent: '#8f2734', note: 'Bone-toned shell, red seam accents and polished hardware.' },
+    { name: 'Pagan Runes', paint: '#272017', accent: '#a37b35', note: 'Dark bronze and runic gold, restrained rather than costume-like.' },
+    { name: 'Moon Ritual', paint: '#0d1828', accent: '#94a8c9', note: 'Midnight blue carbon that changes under cold highlights.' },
+    { name: 'Haunted Carnival', paint: '#501420', accent: '#dfc3a0', note: 'Oxblood with pale graphic fragments and lacquered shine.' },
+    { name: 'Ritual Forest', paint: '#102019', accent: '#557c58', note: 'Black-green carbon with mossy reflections and bronze details.' },
+    { name: 'Slasher', paint: '#151515', accent: '#b1222f', note: 'Near-black carbon cut by one severe crimson graphic line.' },
+    { name: 'Viking Night', paint: '#0b151d', accent: '#9a7b48', note: 'Cold blue-black lacquer with aged-metal runic accents.' }
   ];
   const fullBikes = [];
   const ghostBikes = [];
@@ -335,32 +340,37 @@
     collectionBuilt = true;
 
     const mobile = innerWidth < 760 || matchMedia('(pointer: coarse)').matches;
-    const fullCount = mobile ? 4 : 6;
-    const zSlots = [-39, -33.4, -27.8, -22.2, -16.8, -19.4];
+    const fullCount = mobile ? 4 : 8;
 
     for (let i = 0; i < fullCount; i++) {
       const theme = HORROR_THEMES[i];
       const holder = cloneBikeSafe(source.bike);
       cloneMaterials(holder, theme, false);
-      holder.scale.setScalar(1);
-      const left = i % 2 === 0;
-      holder.position.set(left ? 38.1 : 51.9, .42, zSlots[i]);
+      holder.scale.setScalar(mobile ? .93 : 1.02);
+      const left = i % 2 === 0, row = Math.floor(i / 2);
+      const z = -38.5 + row * 5.8;
+      const x = left ? 39.5 : 50.5;
+      holder.position.set(x, .46, z);
       holder.rotation.y = left ? Math.PI / 2 : -Math.PI / 2;
       horror.add(holder);
       fullBikes.push(holder);
 
-      const plinth = box(3.7, .32, 1.45, std('#222025', .22, .25));
-      plinth.position.set(left ? 38.1 : 51.9, .16, zSlots[i]);
+      const plinth = box(3.65, .34, 1.5, std('#242126', .16, .32));
+      plinth.position.set(x, .17, z);
       horror.add(plinth);
-      const trim = box(3.45, .035, 1.2, glow(theme.accent, .72));
-      trim.position.set(plinth.position.x, .34, plinth.position.z); horror.add(trim);
+      const trim = box(3.42, .04, 1.26, glow(theme.accent, .84));
+      trim.position.set(x, .36, z); horror.add(trim);
+      const beacon = box(.045, 2.15, .72, glow(theme.accent, .46));
+      beacon.position.set(left ? x - 2.25 : x + 2.25, 1.35, z); horror.add(beacon);
+      const halo = box(3.9, .012, 1.9, glow(theme.accent, .13));
+      halo.position.set(x, .015, z); horror.add(halo);
       addInfoTarget(plinth, { eyebrow: 'Secret collection', title: theme.name, sub: 'Experimental bike livery', text: theme.note });
-      obstacles.push({ c: new Vec3(plinth.position.x, 0, plinth.position.z), r: 1.65 });
+      obstacles.push({ c: new Vec3(x, 0, z), r: 1.58 });
     }
 
     // A long back-wall archive of lightweight bike silhouettes makes the room feel vast
     // without rendering a dozen full-detail drivetrains on a phone.
-    const ghostCount = mobile ? 5 : 10;
+    const ghostCount = mobile ? 5 : 12;
     for (let i = 0; i < ghostCount; i++) {
       const theme = HORROR_THEMES[i % HORROR_THEMES.length];
       const g = cloneBikeSafe(source.bike); cloneMaterials(g, theme, true);
@@ -373,9 +383,18 @@
   }
 
   if (dirSource) {
-    const key = dirSource.clone();
-    key.color?.set('#b7b0ff'); key.intensity = 1.25; key.position.set(45, 8, -26);
-    key.castShadow = false; horror.add(key);
+    const rigs = [
+      ['#d9d0ff', 2.4, [45,9,-13], [45,1,-28]],
+      ['#ffb2b8', 1.35, [32,5,-24], [42,1,-30]],
+      ['#8fc8ff', 1.4, [58,6,-35], [48,1,-30]],
+    ];
+    for (const [color,intensity,pos,target] of rigs) {
+      const key = dirSource.clone();
+      key.color?.set(color); key.intensity = intensity; key.position.set(...pos);
+      key.castShadow = false;
+      key.target.position.set(...target);
+      horror.add(key, key.target);
+    }
   }
   if (hemiSource) {
     const fill = hemiSource.clone();
@@ -401,10 +420,11 @@
   function enter(portal) {
     if (!portal) return;
     if (portal.id === 'horror-in') {
-      P.x = 36.0; P.z = -29.5; P.yaw = -Math.PI / 2; P.pitch = -.04; P.vx = P.vz = 0;
+      P.x = 45.0; P.z = -16.7; P.yaw = 0; P.pitch = -.035; P.vx = P.vz = 0;
       horror.visible = true;
+      document.getElementById('coach')?.setAttribute('hidden', '');
       buildCollection();
-      toast('Secret collection unlocked · look closer, the bikes change with the light.');
+      toast('Secret collection unlocked · the darker the room, the brighter the bikes.');
     } else if (portal.id === 'horror-out') {
       P.x = -5.35; P.z = -38.2; P.yaw = Math.PI / 2; P.pitch = -.04; P.vx = P.vz = 0;
       horror.visible = false;
@@ -458,6 +478,8 @@
 
     const inside = region === 'horror' || !!regionOf(visitor.x, visitor.z);
     horror.visible = inside;
+    scene.environmentIntensity = inside ? 1.25 : .55;
+    museum.renderer.toneMappingExposure = inside ? 1.12 : .96;
     if (inside) {
       // Slight material shimmer on the hero bikes: enough to make carbon read as lacquer,
       // not enough to become a nightclub.
