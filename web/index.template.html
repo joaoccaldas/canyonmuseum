@@ -187,7 +187,7 @@ footer{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(10px
 
 <header>
   <div class="brand"><a class="collection-back" href="Canyon_Collection.html">← Collection</a><b>SPEEDMAX CFR</b><small>AXS · MY2027 · size M</small></div>
-  <div class="hr"><button class="pill glass" id="labOpen" aria-label="Open wind tunnel">Aero lab</button><button class="pill glass" id="riderOpen" aria-label="Rider measurements and fit">Fit</button><button class="pill glass" id="tourStart">Explore</button>
+  <div class="hr"><button class="pill glass" id="labOpen" aria-label="Open wind tunnel">Aero lab</button><button class="pill glass" id="tourStart">Explore</button>
     <button class="pill glass" data-drawer="build"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18M3 12h18"/></svg><span>Customize</span></button>
     <button class="pill glass" data-drawer="parts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Parts & print</span></button>
     <button class="pill glass" data-drawer="geometry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20L20 4M4 20h16M4 20V4"/></svg><span>Specs</span></button>
@@ -238,6 +238,15 @@ footer{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(10px
   <h3>Frame colour</h3><div class="sw" id="swFrame"></div>
   <h3>Finish</h3><div class="chips"><button data-finish="gloss">Gloss</button><button data-finish="satin">Satin</button><button data-finish="matte">Matte</button></div>
   <div class="row"><span>Pearl shift</span><input id="irid" type="range" min="0" max="1" step=".01"></div>
+  <div id="wyldControls" hidden>
+    <h3>Wyld dye studio</h3>
+    <p class="note">Hand-dyed waves flow through the frame — hot pink through blush and lilac into aqua. Tune the dye, then open the Aero lab to study it under tunnel light.</p>
+    <div class="lab-grid">
+      <label class="lab-field">Night dye<input type="range" id="wyldDark" min="0" max="1" step="0.01" value="0"></label>
+      <label class="lab-field">Sheer over carbon<input type="range" id="wyldSheer" min="0" max="1" step="0.01" value="0"></label>
+      <label class="lab-field">Dye transparency<input type="range" id="wyldAlpha" min="0.15" max="1" step="0.01" value="1"></label>
+    </div>
+  </div>
   <h3>Logos</h3><div class="sw" id="swDecal"></div>
   <h3>Cockpit</h3><div class="chips"><button data-cockpit="carbon">Raw carbon</button><button data-cockpit="frame">Frame colour</button><button data-cockpit="white">White</button></div>
   <h3>Setup</h3>
@@ -260,7 +269,7 @@ footer{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(10px
   <div id="discArtControls" hidden>
     <label class="lab-upload" style="margin-top:8px">Upload disc artwork<input id="discFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
     <p id="discArtStatus" class="note" role="status">No artwork loaded.</p>
-    <div class="lab-grid">${[['scale','Artwork size',.5,3,.01,1],['angle','Rotate · degrees',-180,180,1,0],['opacity','Image opacity',0,1,.01,1]].map(([k,l,min,max,step,val])=>`<label class="lab-field">${l}<input type="range" id="disc-${k}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`).join('')}</div>
+    <div class="lab-grid"><label class="lab-field">Artwork size<input type="range" id="disc-scale" min="0.5" max="3" step="0.01" value="1"></label><label class="lab-field">Rotate · degrees<input type="range" id="disc-angle" min="-180" max="180" step="1" value="0"></label><label class="lab-field">Image opacity<input type="range" id="disc-opacity" min="0" max="1" step="0.01" value="1"></label></div>
     <div class="actions"><button id="disc-art-save">Save wheeled exhibit</button><button id="disc-art-remove">Remove artwork</button></div>
   </div>
   <div class="actions"><button id="reset">Reset to stock</button><button id="share" class="primary">Copy link</button></div>

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {BIKE} from './data.js';
 export const TOUR = [
   { view: 'side', title: 'A silhouette shaped by air', text: 'Deep aero sections, a close-fitting front-wheel cutout and dropped stays. This reconstruction follows Canyon’s studio profile at a fixed, wheelbase-calibrated scale.' },
-  { view: 'cockpit', title: 'The rider meets the machine', text: 'AeroShield, extensions and the rear fuel tray form one integrated cockpit. The side profile is traced; hidden depths and internal fittings remain interpreted.' },
+  { view: 'cockpit', title: 'One integrated cockpit', text: 'AeroShield, extensions and the rear fuel tray form one continuous surface. The side profile is traced; hidden depths and internal fittings remain interpreted.' },
   { view: 'drivetrain', title: 'Every revolution counts', text: 'A 50/37 crankset, a 10–33 cassette and individually modelled chain links. Switch to Ride to see cadence drive the wheels through the selected 50 × 14 ratio.' },
   { view: 'nds', title: 'The other side of speed', text: 'Disc rotors, calipers and the wide fork stance come into view. The Splitter Plate seatpost continues the aerodynamic profile behind the saddle.' },
   { view: 'hero', title: 'The first exhibit', text: 'A study of the MY2027 Speedmax CFR AXS. Orbit freely, inspect a part, or explore the construction in exploded view. Earlier bikes will enter the collection as individually researched exhibits.' },

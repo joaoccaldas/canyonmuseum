@@ -24,4 +24,23 @@ const drag=new Map(bikes.filter(b=>!b.notModelled).map(b=>[b.key,.23]));
 function aero(list){$('drag-inputs').innerHTML=list.map(b=>`<label class="field">${esc(b.name)} · CdAx m²<input data-drag="${b.key}" type="number" min="0.05" max="0.6" step="0.001" value="${drag.get(b.key)}"></label>`).join('');document.querySelectorAll('[data-drag]').forEach(e=>e.oninput=()=>{if(e.checkValidity()&&e.value){drag.set(e.dataset.drag,+e.value);calculate(list);}});calculate(list);}
 function calculate(list){const fields=['compare-speed','compare-mass','compare-wind','compare-grade'];if(fields.some(id=>!$(id).checkValidity()||!$(id).value))return;const env={...DEFAULT_AIR,speed:+$('compare-speed').value,mass:+$('compare-mass').value,headwind:+$('compare-wind').value,grade:+$('compare-grade').value};const results=list.map(b=>({b,f:forces({...env,mass:env.mass+b.weightKg},{base:drag.get(b.key),deltas:{}},STOCK)}));const base=results[0].f;$('aero-cards').innerHTML=results.map(({b,f})=>`<article class="aero-card"><div class="eyebrow">${esc(b.name)}</div><strong>${f?f.power.toFixed(1)+' W':'Unsupported'}</strong><small>${f?`${f.aero.toFixed(1)} W aero · ${f.rolling.toFixed(1)} W rolling<br>${base?(f.power-base.power>=0?'+':'')+(f.power-base.power).toFixed(2)+' W versus first selected bike':''}`:'Wind/speed outside this model.'}</small></article>`).join('');const curves=list.map(b=>Array.from({length:31},(_,i)=>forces({...env,speed:20+i,mass:env.mass+b.weightKg},{base:drag.get(b.key),deltas:{}},STOCK)?.power));const max=Math.max(300,...curves.flat().filter(Number.isFinite)),colors=['#bde9d9','#bbabdf','#8dcbea','#dfa99e'];$('aero-chart').innerHTML=`<path d="M25 10V155H780" fill="none" stroke="#6c7c85"/><text x="30" y="175" fill="#93a4af" font-size="11">20 → 50 km/h · required crank power · top ${Math.ceil(max)} W</text>`+curves.map((v,i)=>`<polyline points="${v.map((w,j)=>w===null?'':`${25+j*25},${155-w/max*140}`).join(' ')}" fill="none" stroke="${colors[i%colors.length]}" stroke-width="2"/>`).join('');window.__comparison={env,results:results.map(({b,f})=>({bike:b.key,...f}))};}
 for(const id of ['compare-speed','compare-mass','compare-wind','compare-grade'])$(id).oninput=()=>calculate(bikes.filter(b=>selected.has(b.key)));
-document.querySelectorAll('[data-select]').forEach(e=>e.onchange=()=>{e.checked?selected.add(e.dataset.select):selected.delete(e.dataset.select);render();});document.querySelectorAll('[data-compare]').forEach(e=>e.onclick=()=>{tab=e.dataset.compare;document.querySelectorAll('[data-compare]').forEach(x=>x.classList.toggle('active',x===e));render();});render();window.__collection={bikes,selected};
+document.querySelectorAll('[data-select]').forEach(e=>e.onchange=()=>{e.checked?selected.add(e.dataset.select):selected.delete(e.dataset.select);render();});document.querySelectorAll('[data-compare]').forEach(e=>e.onclick=()=>{tab=e.dataset.compare;document.querySelectorAll('[data-compare]').forEach(x=>x.classList.toggle('active',x===e));render();});render();
+// ---- Museum wings: every bike, grouped by era ----
+const heritageSet=new Set(['speedmax-three-2005','speedmax-2007','speedmax-al-2011','speedmax-cf-2011']);
+function wingCard(b,i){
+  const img=b.image?`<img src="${b.image}" alt="${esc(b.name)} reference" loading="lazy">`:`<div class="wc-soon-img"></div>`;
+  return `<a class="wing-card${b.notModelled?' wc-soon':''}" ${b.notModelled?'':`href="${esc(b.viewer)}"`}>${img}<span class="wc-info"><h3>${esc(b.name)}</h3><small>${esc(b.era||b.series||'')}</small></span><span class="wc-go">${b.notModelled?'Coming soon':'Enter exhibit →'}</span></a>`;
+}
+if($('wing-modern-body')){
+  const modern=bikes.filter(b=>!heritageSet.has(b.key||b.id)&&!b.notModelled);
+  const heritage=bikes.filter(b=>heritageSet.has(b.key||b.id));
+  $('wing-modern-body').innerHTML=modern.map(wingCard).join('');
+  $('wing-heritage-body').innerHTML=heritage.map(wingCard).join('');
+}
+// hero metrics: real counts
+(function(){const m=document.createElement('div');m.className='hero-metrics';
+ const ex=bikes.filter(b=>!b.notModelled).length,total=bikes.length;
+ m.innerHTML=`<div><b>${String(ex).padStart(2,'0')}</b><small>Interactive exhibits</small></div><div><b>1999</b><small>First Speedmax</small></div><div><b>2027</b><small>Latest CFR AXS</small></div><div><b>${(total-ex).toString().padStart(2,'0')}</b><small>Awaiting research</small></div>`;
+ document.querySelector('.intro')?.append(m);})();
+
+window.__collection={bikes,selected};

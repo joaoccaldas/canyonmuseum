@@ -95,6 +95,7 @@ export const PRESETS = {
   kona: { name: 'Kona Lava', sub: 'Race-day orange', frame: '#e8471c', finish: 'gloss', irid: .15, decal: '#101012', cockpit: 'carbon', rimText: '#f0f0f0' },
   deep: { name: 'Deep Ocean', sub: 'Metallic navy', frame: '#15254a', finish: 'gloss', irid: .45, decal: '#e9ecef', cockpit: 'carbon', rimText: '#cfd8e6' },
   moss: { name: 'Moss', sub: 'Satin olive', frame: '#4c5a3f', finish: 'satin', irid: .1, decal: '#e8e3d4', cockpit: 'carbon', rimText: '#d8d2bd' },
+  wyld: { name: 'Wyld', sub: 'Hand-dyed pink × aqua', frame: '#ff8fbf', finish: 'gloss', irid: 0, decal: '#141416', cockpit: 'carbon', rimText: '#e9cde8', wyld: true },
 };
 
 if(PROFILE.bike?.key==='slx')Object.assign(PRESETS.aurora,{name:'Light Lavender',frame:'#cdc8dd',decal:'#ffffff',finish:'satin'});

@@ -3,8 +3,7 @@ import {makeWorkshop} from './workshop.js';
 import {makeZipp} from './wheels.js';
 import { makeLab, makeChamber } from './lab.js';
 import { makePaint } from './paint.js';
-import { makeRider } from './rider.js';
-import { pose as fitPose } from './fit.mjs';
+import { applyWyld } from './skins/wyld.js';
 import { TOUR, makeGallery } from './exhibit.js';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -30,9 +29,10 @@ const R_WHEEL = .3395, R_RING = .0127/(2*Math.sin(Math.PI/(BIKE.chainring||50)))
 const DEFAULT_CFG = { preset: 'aurora', ...PRESETS.aurora, aerofuel: true, frontBottle: false, rearBottles: false, shield: true, rearDisc: false,
   rimBase: '#0b0b0c', rimText: '#d9d9d9', rimLabels: false, tyreText: '#6b6b6b', discColor: '#141416',
   ...PROFILE.defaultCfg };
-let lab = null, rider = null, paint = null;
+let lab = null, paint = null;
+let wyldCtl = null;
 const flowState = {air:40/3.6,yaw:0,paused:false};
-let flowClock=0, riderPhase=0;
+let flowClock=0;
 const S = {
   mode: 'assembled', e: 0, eT: 0, ride: false, cadence: 90, env: 'museum', dims: false, spin: false,
   quality: coarse ? 'balanced' : 'high', sel: null, hover: null, isolate: false, xray: false,
@@ -44,7 +44,7 @@ function loadCfg() {
   try { const s = localStorage.getItem('speedmax.museum.v2.'+(BIKE.key||'cfr')+'.cfg'); if (s) return { ...DEFAULT_CFG, ...JSON.parse(s) }; } catch (_) { }
   return { ...DEFAULT_CFG };
 }
-function exportCfg() { const {fitKey,riderDelta,riderEnabled,fitValid,...cfg}=S.cfg;return cfg; }
+function exportCfg() { return { ...S.cfg }; }
 function saveCfg() {
   const cfg=exportCfg();
   try { localStorage.setItem('speedmax.museum.v2.'+(BIKE.key||'cfr')+'.cfg', JSON.stringify(cfg)); } catch (_) { }
@@ -180,21 +180,12 @@ loader.parse(GLB.buffer, '', gltf => {
   buildUI();
   makeSpecs({profile:PROFILE,parts});
   lab = makeLab({getCfg:()=>S.cfg,setCfg:p=>setCfg(p,true),download,
-    enter:()=>{closeDrawers();select(null);$('#tour').hidden=true;setMode('assembled');setEnv('tunnel');if(!rider.enabled)rider.enable(true);flyTo('rider');document.body.classList.add('engaged');},
+    enter:()=>{closeDrawers();select(null);$('#tour').hidden=true;setMode('assembled');setEnv('tunnel');flyTo('lab');document.body.classList.add('engaged');},
     leave:()=>{setEnv('museum');flyTo('hero');},onResult:r=>{Object.assign(flowState,r);tunnel.rotation.y=-r.yaw;}});
-  rider = makeRider({scene,parts,explodables,flyTo,download,onChange:r=>{
-    const riderChanged=S.cfg.riderEnabled!==r.enabled;
-    Object.assign(S.cfg,{fitKey:r.signature,riderDelta:r.delta,riderEnabled:r.enabled,fitValid:r.valid});
-    if(lab&&!lab.state.model.curve&&riderChanged) {lab.state.model.base=r.enabled?.23:.055;$('#lab-base').min=.02;$('#lab-base').value=lab.state.model.base;}
-    flowState.riderFit=r.fit;buildTunnel();lab?.refresh();
-  }});
   $('#wheel-choice').onchange=e=>setCfg({rearDisc:e.target.value!=='stock',wheelModel:e.target.value},true);
-  paint=makePaint(M.paint,{flyTo:n=>{rider.enable(false);flyTo(n);},download,getCfg:exportCfg});
-  $('#riderOpen').onclick=()=>{closeDrawers();select(null);$('#tour').hidden=true;setMode('assembled');rider.enable(true);rider.open();document.body.classList.add('engaged');};
+  paint=makePaint(M.paint,{flyTo,download,getCfg:exportCfg});
   const workshop=makeWorkshop({parts,PARTS,explodables,scene,download,select,getCfg:exportCfg,profile:PROFILE});
-  Object.assign(window.__sm,{lab,rider,paint,discMesh,zippMesh,workshop});
-  // Start with a bike-only gallery; entering the tunnel enables the rider.
-  Object.assign(S.cfg,{riderEnabled:false,riderDelta:0,fitKey:'',fitValid:true});
+  Object.assign(window.__sm,{lab,paint,discMesh,zippMesh,workshop});
   lab.refresh();
   progress(1, 'Ready');
   setTimeout(() => document.body.classList.add('ready'), 250);
@@ -311,7 +302,6 @@ let tunnelMat;
 function buildTunnel() {
   const obst = [[.47, .72, 0, .09], [.25, .5, 0, .07], [.02, .3, 0, .08], [-.1, .62, 0, .07], [-.16, .99, 0, .1], [.62, .98, 0, .15],
     [.4, .95, 0, .1], [-.33, 1.05, 0, .1], [.6, .34, 0, .05], [-.41, .34, 0, .06], [.14, .74, 0, .06]];
-  if(flowState.riderFit&&S.cfg.riderEnabled){const p=fitPose(flowState.riderFit);if(p){obst.push([p.head[0],p.head[1],0,.13],[p.shoulder[0],p.shoulder[1],0,.17],[p.hip[0],p.hip[1],0,.15]);}}
   for(const child of [...tunnel.children]){child.geometry?.dispose();child.material?.dispose();tunnel.remove(child);}
   const lines = coarse ? 32 : 64, seg = 90;
   const pos = [], along = [], seed = [];
@@ -352,6 +342,10 @@ function buildTunnel() {
 function applyCfg() {
   const c = S.cfg;
   if(PROFILE.unavailableOptions?.includes('rearBottles'))c.rearBottles=false;
+  // Wyld procedural dye skin (chained after any artwork projection shader).
+  const wp = { darkness: c.wyldDark || 0, sheer: c.wyldSheer || 0, opacity: c.wyldAlpha ?? 1 };
+  if (c.wyld) { wyldCtl ? wyldCtl.set(wp) : (wyldCtl = applyWyld(M.paint, bike, wp)); }
+  else if (wyldCtl) { wyldCtl.remove(); wyldCtl = null; }
   M.paint.color.set(c.frame);
   const fin = { gloss: [.26, 1, .03], satin: [.5, .45, .3], matte: [.72, 0, .6] }[c.finish] || [.3, 1, .04];
   M.paint.roughness = fin[0]; M.paint.clearcoat = fin[1]; M.paint.clearcoatRoughness = fin[2];
@@ -474,7 +468,7 @@ function focusPart(id) {
 let tw = null;
 function tween(p0, t0, p1, t1, dur = 1.4) { if(reduced){ camera.position.copy(p1);controls.target.copy(t1);tw=null;return; } tw = { p0, t0, p1, t1, t: 0, dur }; }
 function flyTo(name, dur = 1.4) {
-  const v = name==='riderSide'?{p:[.18,1.0,3.25],t:[.18,.78,0]}:name==='rider'?{p:[2.55,1.8,3.7],t:[.15,.87,0]}:VIEWS[name]; if (!v) return;
+  const v = name==='lab'?{p:[2.55,1.8,3.7],t:[.15,.87,0]}:VIEWS[name]; if (!v) return;
   const p1 = new THREE.Vector3(...v.p), t1 = new THREE.Vector3(...v.t);
   if (coarse && name === 'hero') p1.multiplyScalar(1.25);
   if (innerWidth < innerHeight) { p1.sub(t1).multiplyScalar(1.55).add(t1); }
@@ -518,6 +512,8 @@ const road = new THREE.Group(); scene.add(road); road.visible = false;
 function syncUI() {
   const c = S.cfg;
   $$('[data-preset]').forEach(b => b.classList.toggle('active', b.dataset.preset === c.preset));
+  const wc=$('#wyldControls'); if (wc) wc.hidden = !c.wyld;
+  if (c.wyld) { const m={'#wyldDark':'wyldDark','#wyldSheer':'wyldSheer','#wyldAlpha':'wyldAlpha'}; for(const [id,k] of Object.entries(m)){const e=$(id); if(e){e.value=c[k]??(id==='#wyldAlpha'?1:0);paintRange(e);}} }
   $$('[data-frame]').forEach(b => b.classList.toggle('active', b.dataset.frame.toLowerCase() === c.frame.toLowerCase()));
   $$('[data-decal]').forEach(b => b.classList.toggle('active', b.dataset.decal.toLowerCase() === c.decal.toLowerCase()));
   $$('[data-finish]').forEach(b => b.classList.toggle('active', b.dataset.finish === c.finish));
@@ -545,7 +541,7 @@ function buildUI() {
   let tourIndex = -1;
   const showTour = i => {
     tourIndex = i; const stop = TOUR[i];
-    closeDrawers(); select(null); rider?.enable(false);setMode('assembled'); setEnv('museum');
+    closeDrawers(); select(null); setMode('assembled'); setEnv('museum');
     $('#tour').hidden = false;
     $('#tourCount').textContent = `${i+1} / ${TOUR.length}`;
     $('#tourTitle').textContent = stop.title; $('#tourText').textContent = stop.text;
@@ -608,41 +604,22 @@ function buildUI() {
     URL.revokeObjectURL(url);
     e.target.value = '';
   };
-  for (const k of ['scale', 'angle', 'opacity']) {
-    const id = '#disc-' + k;
-    const el = $(id); if (el) el.oninput = () => {
-      discArt.uniforms.artScale.value = +$('#disc-scale').value;
-      discArt.uniforms.artAngle.value = +$('#disc-angle').value * Math.PI / 180;
-      discArt.uniforms.artOpacity.value = +$('#disc-opacity').value;
-    };
+  for (const [id, key] of [['#wyldDark', 'wyldDark'], ['#wyldSheer', 'wyldSheer'], ['#wyldAlpha', 'wyldAlpha']]) {
+    const el = $(id); if (el) el.oninput = () => { setCfg({ [key]: +el.value, wyld: true }, true); paintRange(el); };
   }
-  const daRemove = $('#disc-art-remove');
-  if (daRemove) daRemove.onclick = () => { discArt.uniforms.artOn.value = 0; $('#discArtControls').hidden = true; $('#discArtStatus').textContent = 'Artwork removed.'; };
-  const daSave = $('#disc-art-save');
-  if (daSave) daSave.onclick = () => {
-    // Save exhibit with current cfg — artwork embedded in disc texture, not in the URL.
-    const doc = document.documentElement.cloneNode(true);
-    for (const id of ['lab', 'lab-hud', 'rider-panel']) doc.querySelector('#' + id)?.remove();
-    doc.querySelector('.paint-studio')?.remove(); doc.querySelector('#museum-paint-data')?.remove();
-    doc.querySelector('body').classList.remove('ready', 'engaged'); doc.querySelectorAll('.drawer').forEach(d => d.classList.remove('open')); doc.querySelector('#tour').hidden = true;
-    const script = document.createElement('script'); script.id = 'museum-paint-data';
-    script.textContent = 'window.__MUSEUM_CFG=' + JSON.stringify(S.cfg).replace(/</g, '\\u003c') + ';';
-    doc.querySelector('body').prepend(script);
-    download(new Blob(['<!doctype html>\n' + doc.outerHTML], { type: 'text/html' }), 'Speedmax_Wheel_Art.html');
-  };
   $('#optFront').onchange = e => setCfg({ frontBottle: e.target.checked }, true);
 
   // presets
   $('#presets').innerHTML = Object.entries(PRESETS).map(([k, p]) =>
-    `<button data-preset="${k}"><i style="background:linear-gradient(135deg,${p.frame} 55%,${p.decal} 55%)"></i><strong>${p.name}</strong><span>${p.sub}</span></button>`).join('');
+    `<button data-preset="${k}"><i style="${p.wyld?'background:linear-gradient(135deg,#ff3d8e,#ff8fbf 28%,#e9cde8 46%,#8fe7dc 66%,#5fd8d3)':`background:linear-gradient(135deg,${p.frame} 55%,${p.decal} 55%)`}"></i><strong>${p.name}</strong><span>${p.sub}</span></button>`).join('');
   $('#swFrame').innerHTML = SWATCHES.map(c => `<button data-frame="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickFrame"></label>`;
   $('#swDecal').innerHTML = DECALS.map(c => `<button data-decal="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickDecal"></label>`;
-  $$('[data-preset]').forEach(b => b.onclick = () => setCfg({ ...PRESETS[b.dataset.preset], preset: b.dataset.preset }, true));
-  $$('[data-frame]').forEach(b => b.onclick = () => setCfg({ frame: b.dataset.frame }));
+  $$('[data-preset]').forEach(b => b.onclick = () => setCfg({ ...PRESETS[b.dataset.preset], preset: b.dataset.preset, wyld: !!PRESETS[b.dataset.preset].wyld }, true));
+  $$('[data-frame]').forEach(b => b.onclick = () => setCfg({ frame: b.dataset.frame, wyld: false }));
   $$('[data-decal]').forEach(b => b.onclick = () => setCfg({ decal: b.dataset.decal }));
   $$('[data-finish]').forEach(b => b.onclick = () => setCfg({ finish: b.dataset.finish }));
   $$('[data-cockpit]').forEach(b => b.onclick = () => setCfg({ cockpit: b.dataset.cockpit }));
-  $('#pickFrame').oninput = e => setCfg({ frame: e.target.value });
+  $('#pickFrame').oninput = e => setCfg({ frame: e.target.value, wyld: false });
   $('#pickDecal').oninput = e => setCfg({ decal: e.target.value });
   $('#irid').oninput = e => setCfg({ irid: +e.target.value });
   $('#optFuel').onchange = e => setCfg({ aerofuel: e.target.checked }, true);
@@ -650,7 +627,7 @@ function buildUI() {
   $('#optRear').onchange = e => setCfg({ rearBottles: e.target.checked }, true);
   $('#optShield').onchange = e => setCfg({ shield: e.target.checked }, true);
   $('#optDisc').onchange = e => setCfg({ rearDisc: e.target.checked }, true);
-  $('#reset').onclick = () => { S.cfg = { ...DEFAULT_CFG }; rider?.refresh();applyCfg(); toast('Back to Pro White'); };
+  $('#reset').onclick = () => { S.cfg = { ...DEFAULT_CFG }; applyCfg(); toast('Back to Pro White'); };
   $('#share').onclick = async () => { saveCfg(); try { await navigator.clipboard.writeText(location.href); toast('Link to this build copied'); } catch (_) { toast('Copy the address bar to share this build'); } };
 
   // build sheet
@@ -771,7 +748,6 @@ function tick(now) {
   if(S.env==='tunnel'&&!S.ride&&!flowState.paused&&!reduced){const wr=(lab?.state.env.speed||40)/3.6/R_WHEEL*dt;if(wheelR)wheelR.rotation.z-=wr;if(wheelF)wheelF.rotation.z-=wr;}
   if(!flowState.paused&&!reduced)flowClock+=dt*flowState.air/(40/3.6);
   if (tunnelMat) tunnelMat.uniforms.t.value = flowClock;
-  if(rider?.enabled){ rider.draw(crankset.rotation.z-12*Math.PI/180);rider.root.visible=S.mode!=='exploded';if(S.mode==='exploded')rider.guides.visible=false; }
   // camera tween
   if (tw) {
     tw.t += dt / tw.dur; const k = ease(clamp(tw.t));

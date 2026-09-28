@@ -30,7 +30,7 @@ export function makePaint(material,{flyTo,download,getCfg}) {
  $('paint-save').onclick=()=>{
   if(!encoded)return;
   // Clone the document and return all UI to boot state. App creates its dynamic panels again.
-  const doc=document.documentElement.cloneNode(true);for(const id of ['lab','lab-hud','rider-panel'])doc.querySelector('#'+id)?.remove();doc.querySelector('.paint-studio')?.remove();doc.querySelector('#museum-paint-data')?.remove();
+  const doc=document.documentElement.cloneNode(true);for(const id of ['lab','lab-hud'])doc.querySelector('#'+id)?.remove();doc.querySelector('.paint-studio')?.remove();doc.querySelector('#museum-paint-data')?.remove();
   doc.querySelector('body').classList.remove('ready','engaged');doc.querySelectorAll('.drawer').forEach(d=>d.classList.remove('open'));doc.querySelector('#tour').hidden=true;
   const script=document.createElement('script');script.id='museum-paint-data';script.textContent='window.__MUSEUM_PAINT='+JSON.stringify({image:encoded,settings:settings()})+';window.__MUSEUM_CFG='+JSON.stringify(getCfg()).replace(/</g,'\\u003c')+';';doc.querySelector('body').prepend(script);
   download(new Blob(['<!doctype html>\n'+doc.outerHTML],{type:'text/html'}),'Speedmax_Your_Paint.html');

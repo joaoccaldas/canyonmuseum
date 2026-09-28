@@ -7,7 +7,7 @@ export function density(temp,pressure,humidity) {
   return (pressure*100-vapour)/(287.05*(temp+273.15))+vapour/(461.495*(temp+273.15));
 }
 export function active(cfg) {return {rearDisc:!!cfg.rearDisc,shield:!!cfg.shield,aerofuel:!!(cfg.aerofuel&&cfg.shield),frontBottle:!!(cfg.frontBottle&&cfg.aerofuel&&cfg.shield),rearBottles:!!cfg.rearBottles};}
-export function signature(cfg) {return JSON.stringify({...active(cfg),wheelModel:cfg.rearDisc?(cfg.wheelModel||'cover'):'stock',fitKey:cfg.fitKey||''});}
+export function signature(cfg) {return JSON.stringify({...active(cfg),wheelModel:cfg.rearDisc?(cfg.wheelModel||'cover'):'stock'});}
 export function interpolate(curve,yaw) {
  if(yaw<curve[0][0]-1e-8||yaw>curve.at(-1)[0]+1e-8)return null;
  for(let i=1;i<curve.length;i++)if(yaw<=curve[i][0]+1e-8){const [x,a]=curve[i-1],[z,b]=curve[i];return a+(b-a)*(yaw-x)/(z-x);}
@@ -21,12 +21,10 @@ export function parseCurve(text) {
  return rows;
 }
 export function cdaAt(model,cfg,yaw) {
- if(cfg.fitValid===false)return null;
  if(model.curve){if(model.signature!==signature(cfg))return null;return interpolate(model.curve,yaw);}
- if(cfg.fitValid===false)return null;
  if(Math.abs(yaw)>25)return null; // Constant axial coefficient is only a bounded sensitivity assumption.
  const a=active(cfg),b=active(STOCK);
- const value=model.base+(cfg.riderDelta||0)+Object.keys(a).reduce((sum,k)=>sum+(Number(a[k])-Number(b[k]))*(model.deltas[k]||0),0);
+ const value=model.base+Object.keys(a).reduce((sum,k)=>sum+(Number(a[k])-Number(b[k]))*(model.deltas[k]||0),0);
  return value>0&&value<=1.5?value:null;
 }
 export function forces(env,model,cfg,speed=env.speed) {
@@ -49,7 +47,7 @@ export function solveSpeed(env,model,cfg) {
  }return null;
 }
 export function compare(env,current,baseline,cfg,baseCfg) {
- const now=forces(env,current,cfg),sameSystem=cfg.riderEnabled===baseCfg.riderEnabled,before=sameSystem?forces(env,baseline,baseCfg):null;
- const speed=solveSpeed(env,current,cfg),baseSpeed=sameSystem?solveSpeed(env,baseline,baseCfg):null;
+ const now=forces(env,current,cfg),before=forces(env,baseline,baseCfg);
+ const speed=solveSpeed(env,current,cfg),baseSpeed=solveSpeed(env,baseline,baseCfg);
  return {now,before,speed,baseSpeed,wattsSaved:now&&before?before.power-now.power:null,timeSaved:speed&&baseSpeed?env.distance*3600*(1/baseSpeed-1/speed):null};
 }
