@@ -8,6 +8,8 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 const PIECES = window.__PIECES || [];
+const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
+const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -21,6 +23,9 @@ const B2T = v => new THREE.Vector3(v[0], v[2], -v[1]);            // Blender (Z-
 const HALL = { x0: -7, x1: 7, z0: 5, z1: -46.5, h: 5.4 };
 const WALK = { x0: -6.4, x1: 6.4, z0: 4.4, z1: -45.8 };
 const EYE = 1.6;
+// Kona Champions room, through a doorway in the plaster wall
+const DOOR = { z0: -18.8, z1: -15.6, h: 3.4 };
+const ROOM = { x0: -19.3, x1: -7.3, z0: -8.8, z1: -25.6, h: 4.6 };
 const STEP = 5.4, FIRST = -1;
 const TILT = .38;                                                   // plinths turn toward the approaching visitor
 const heritage = PIECES.filter(p => !p.flagship), flagships = PIECES.filter(p => p.flagship);
@@ -42,12 +47,16 @@ PIECES.forEach((p, i) => {
   p.view = p.pos.clone().addScaledVector(p.normal, back);
   p.view.x = clamp(p.view.x, WALK.x0 + .3, WALK.x1 - .3);
 });
+const pickables = [];
 const obstacles = [
   ...heritage.map(p => ({ c: p.pos, r: 1.45 })),
   { box: [-4.5, 4.5, -42.9, -39.9] },                               // apse plinth
 ];
 function walkable(x, z) {
-  if (x < WALK.x0 || x > WALK.x1 || z > WALK.z0 || z < WALK.z1) return false;
+  const inHall = x >= WALK.x0 && x <= WALK.x1 && z <= WALK.z0 && z >= WALK.z1;
+  const inDoor = x < WALK.x0 + .1 && x > ROOM.x1 - .6 && z < DOOR.z1 - .45 && z > DOOR.z0 + .45;
+  const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
+  if (!inHall && !inDoor && !inRoom) return false;
   for (const o of obstacles) {
     if (o.c && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
     if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
@@ -70,7 +79,7 @@ try {
 renderer.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.5 : 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.AgXToneMapping;
-renderer.toneMappingExposure = 1.12;
+renderer.toneMappingExposure = .96;
 renderer.shadowMap.enabled = !lite;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -94,7 +103,7 @@ function canvasTex(w, h, draw, repeat, text) {
 }
 const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
 const travertine = canvasTex(1024, 1024, (g, w, h) => {
-  g.fillStyle = '#ece5d8'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#e2d7c6'; g.fillRect(0, 0, w, h);
   for (let i = 0; i < 1400; i++) {                                  // soft veining and pores
     g.fillStyle = `rgba(${150 + rnd() * 40},${130 + rnd() * 30},${100 + rnd() * 30},${rnd() * .06})`;
     const y = rnd() * h; g.fillRect(0, y, w, 1 + rnd() * 3);
@@ -117,7 +126,7 @@ const FONT = "'Manrope',system-ui,sans-serif", SERIF = "'Instrument Serif',Georg
 // ------------------------------------------------------------------ the hall
 const M = {
   floor: new THREE.MeshStandardMaterial({ map: travertine, roughness: .38, metalness: 0, envMapIntensity: .7 }),
-  plaster: new THREE.MeshStandardMaterial({ color: '#f7f4ef', roughness: .95, envMapIntensity: .4 }),
+  plaster: new THREE.MeshStandardMaterial({ color: '#efe7dc', roughness: .95, envMapIntensity: .35 }),
   slat: new THREE.MeshStandardMaterial({ color: '#f3efe8', roughness: .8 }),
   basalt: new THREE.MeshStandardMaterial({ map: basaltTex, roughness: .82, metalness: .05, envMapIntensity: .5 }),
   basaltPolished: new THREE.MeshStandardMaterial({ map: basaltTex, roughness: .28, metalness: .1, envMapIntensity: 1 }),
@@ -140,8 +149,12 @@ floor.position.set(0, -.2, CZ); floor.receiveShadow = true; floor.userData.floor
   for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .004, -16.5); hall.add(e); }
 }
 // plaster wall (lava side) with a shadow-gap skirting
-const wall = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h, D), M.plaster);
-wall.position.set(HALL.x0 - .15, HALL.h / 2, CZ); wall.receiveShadow = true; wall.castShadow = true; hall.add(wall);
+for (const [a, b] of [[HALL.z0, DOOR.z1], [DOOR.z0, HALL.z1]]) {
+  const seg = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h, a - b), M.plaster);
+  seg.position.set(HALL.x0 - .15, HALL.h / 2, (a + b) / 2); seg.receiveShadow = seg.castShadow = true; hall.add(seg);
+}
+{ const lintel = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h - DOOR.h, DOOR.z1 - DOOR.z0), M.plaster);
+  lintel.position.set(HALL.x0 - .15, DOOR.h + (HALL.h - DOOR.h) / 2, (DOOR.z0 + DOOR.z1) / 2); hall.add(lintel); }
 const backWall = new THREE.Mesh(new THREE.BoxGeometry(L, HALL.h, .3), M.plaster);
 backWall.position.set(0, HALL.h / 2, HALL.z0 + .15); backWall.receiveShadow = true; hall.add(backWall);
 // glass wall to the ocean, and the apse's glass end wall
@@ -258,9 +271,134 @@ glassRun('x', HALL.x0, HALL.x1, HALL.z1);
   palm(-2, HALL.z1 - 3.4, 7.2, 1.3); palm(5.5, HALL.z1 - 3.1, 6.3, -1);
 }
 
+// ------------------------------------------------------------------ WYLD: hand-dyed tapestries and light pools
+const hexRGB = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const RAMP = [WYLD.pink, WYLD.pink, WYLD.blush, WYLD.lilac, WYLD.mint, WYLD.aqua, WYLD.lilac, WYLD.blush, WYLD.pink].map(hexRGB);
+function dyeTex(seed, angle, soften = .18) {
+  const W = lite ? 256 : 512, H = W * 2;
+  const tex = canvasTex(W, H, (g) => {
+    const img = g.createImageData(W, H), d = img.data, ca = Math.cos(angle), sa = Math.sin(angle);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const u = x / W, v = y / H;
+      let t = (u * ca + v * 2 * sa) * 1.35 + .13 * Math.sin(v * 8.5 + seed) + .07 * Math.sin(u * 15 + v * 6 + seed * 2.1) + seed * .17;
+      t = ((t % 1) + 1) % 1 * 8; const i = Math.floor(t), f = t - i, s = f * f * (3 - 2 * f), a = RAMP[i], b = RAMP[i + 1];
+      const fold = .9 + .1 * Math.sin(u * 42 + Math.sin(v * 3) * 2);             // soft fabric folds
+      const k = (y * W + x) * 4;
+      for (let c = 0; c < 3; c++) d[k + c] = ((a[c] + (b[c] - a[c]) * s) * (1 - soften) + 243 * soften) * fold;
+      d[k + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+  });
+  return tex;
+}
+const glowTex = canvasTex(256, 256, (g, w, h) => {
+  const r = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+  r.addColorStop(0, 'rgba(255,255,255,.9)'); r.addColorStop(.45, 'rgba(255,255,255,.35)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, w, h);
+});
+const placed = (o, x, y, z) => { o.position.set(x, y, z); return o; };
+function lightPool(w, d, color, strength = .5) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: glowTex, color, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+  m.rotation.x = -Math.PI / 2; m.position.y = .004; return m;
+}
+function tapestry(w, h, seed, angle) {
+  const g = new THREE.Group();
+  const cloth = new THREE.Mesh(new THREE.PlaneGeometry(w, h, 24, 1), new THREE.MeshStandardMaterial({ map: dyeTex(seed, angle), roughness: .92, side: THREE.DoubleSide }));
+  const pos = cloth.geometry.attributes.position;                                  // gentle drape
+  for (let i = 0; i < pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i) / w * Math.PI * 7) * .025);
+  cloth.geometry.computeVertexNormals(); cloth.receiveShadow = true; g.add(cloth);
+  const rod = new THREE.Mesh(new THREE.CylinderGeometry(.018, .018, w + .24, 12), new THREE.MeshStandardMaterial({ color: '#b08a4e', metalness: .9, roughness: .3 }));
+  rod.rotation.z = Math.PI / 2; rod.position.y = h / 2 + .03; g.add(rod);
+  return g;
+}
+
+// ------------------------------------------------------------------ Kona Champions room
+const champs = [];
+{
+  const RW = ROOM.x1 - ROOM.x0, RD = ROOM.z0 - ROOM.z1, RCX = (ROOM.x0 + ROOM.x1) / 2, RCZ = (ROOM.z0 + ROOM.z1) / 2;
+  const ink = new THREE.MeshStandardMaterial({ color: '#34302c', roughness: .88, envMapIntensity: .3 });
+  const room = new THREE.Group(); scene.add(room);
+  const rf = basaltTex.clone(); rf.repeat.set(6, 8); rf.needsUpdate = true;
+  const rfloor = new THREE.Mesh(new THREE.BoxGeometry(RW, .2, RD), new THREE.MeshStandardMaterial({ map: rf, color: '#8c8580', roughness: .22, metalness: .15, envMapIntensity: .9 }));
+  rfloor.position.set(RCX, -.1, RCZ); rfloor.receiveShadow = true; rfloor.userData.floor = true; room.add(rfloor); window.__roomFloor = rfloor;
+  const ceil = new THREE.Mesh(new THREE.BoxGeometry(RW, .2, RD), ink); ceil.position.set(RCX, ROOM.h + .1, RCZ); room.add(ceil);
+  const box = (w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), ink); m.position.set(x, y, z); room.add(m); return m; };
+  box(.3, ROOM.h, RD, ROOM.x0 - .15, ROOM.h / 2, RCZ);                                    // west
+  box(RW, ROOM.h, .3, RCX, ROOM.h / 2, ROOM.z0 + .15);                                    // north
+  box(RW, ROOM.h, .3, RCX, ROOM.h / 2, ROOM.z1 - .15);                                    // south
+  // WYLD cove light: a dyed ribbon of light running round the ceiling edge
+  const cove = new THREE.MeshBasicMaterial({ map: dyeTex(2.3, .1, 0), toneMapped: false, fog: false });
+  for (const [w, x, z, ry] of [[RD, ROOM.x0 + .02, RCZ, Math.PI / 2], [RW, RCX, ROOM.z0 - .02, 0], [RW, RCX, ROOM.z1 + .02, Math.PI]]) {
+    const strip = new THREE.Mesh(new THREE.PlaneGeometry(w, .07), cove); strip.position.set(x, ROOM.h - .25, z); strip.rotation.y = ry; room.add(strip);
+  }
+  room.add(placed(lightPool(RW * .9, RD * .9, WYLD.lilac, .18), RCX, .004, RCZ));
+  const inside = tapestry(5.2, 1.9, 4.1, .5); inside.position.set(ROOM.x1 - .02, 3.4, (DOOR.z0 + DOOR.z1) / 2 + 4.6); inside.rotation.y = -Math.PI / 2; room.add(inside);
+  const inside2 = tapestry(5.2, 1.9, 1.7, 2.2); inside2.position.set(ROOM.x1 - .02, 3.4, (DOOR.z0 + DOOR.z1) / 2 - 4.6); inside2.rotation.y = -Math.PI / 2; room.add(inside2);
+  box(.3, ROOM.h, (ROOM.z0 - DOOR.z1), ROOM.x1 + .15, ROOM.h / 2, (ROOM.z0 + DOOR.z1) / 2).visible = false;   // east face is the hall wall
+  const warm = new THREE.PointLight('#ffe9cf', lite ? 22 : 16, 20, 1.3); warm.position.set(RCX, ROOM.h - .5, RCZ); room.add(warm);
+  const pictureLight = (x, z, tx, tz) => { if (lite) return; const sp = new THREE.SpotLight('#fff1dd', 30, 7, .5, .6, 1.4); sp.position.set(x, ROOM.h - .2, z); sp.target.position.set(tx, 1.9, tz); room.add(sp, sp.target); };
+
+  // framed photographs (Wikimedia Commons, CORS-enabled) with credit plates
+  const tl = new THREE.TextureLoader(); tl.setCrossOrigin('anonymous');
+  const matWhite = new THREE.MeshStandardMaterial({ color: '#f6f2ea', roughness: .7 });
+  const frameM = new THREE.MeshStandardMaterial({ color: '#0e0f12', roughness: .35, metalness: .4 });
+  function framed(photo, maxW, maxH, caption) {
+    const g = new THREE.Group(), ar = photo.w / photo.h;
+    let w = maxW, h = w / ar; if (h > maxH) { h = maxH; w = h * ar; }
+    const fr = new THREE.Mesh(new THREE.BoxGeometry(w + .22, h + .22, .05), frameM); g.add(fr);
+    const mat = new THREE.Mesh(new THREE.PlaneGeometry(w + .16, h + .16), matWhite); mat.position.z = .026; g.add(mat);
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: '#d8d2c8' })); pic.position.z = .028; g.add(pic);
+    tl.load(photo.src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; pic.material.map = t; pic.material.color.set('#ffffff'); pic.material.needsUpdate = true; }, undefined, () => {});
+    const plate = lettering(Math.max(1.4, w * .9), .2, gg => {
+      const W = Math.max(1.4, w * .9);
+      gg.fillStyle = '#e9e3d8'; gg.font = `600 .05px ${FONT}`; gg.fillText(caption || '', 0, .07);
+      gg.fillStyle = '#9d978d'; gg.font = `500 .036px ${FONT}`; gg.fillText(`© ${photo.author} · ${photo.license} · Wikimedia Commons`.slice(0, 90), 0, .15);
+    }, 1024);
+    plate.position.set(-(w + .22) / 2 + Math.max(1.4, w * .9) / 2, -h / 2 - .28, .03); g.add(plate);
+    g.userData.size = [w, h]; return g;
+  }
+  // the six titles: photo on the wall, a basalt stele in front
+  const steleM = new THREE.MeshStandardMaterial({ map: basaltTex, roughness: .5, metalness: .1 });
+  KONA.titles.forEach((t, i) => {
+    const north = i < 3, k = i % 3;
+    const x = ROOM.x1 - 2.6 - k * 3.4, z = north ? ROOM.z0 - .02 : ROOM.z1 + .02, face = north ? Math.PI : 0;   // face into the room
+    pictureLight(x, z + (north ? -1.6 : 1.6), x, z);
+    const ph = framed(t.photo, 1.35, 1.7, t.photo.file.startsWith('File:Iron man') ? 'Kailua Bay — the swim start' : t.photoCaption); ph.position.set(x, 2.5, z); ph.rotation.y = face; room.add(ph);
+    const nrm = new THREE.Vector3(0, 0, north ? -1 : 1);
+    const st = new THREE.Group(); st.position.set(x, 0, z + nrm.z * 1.35); st.rotation.y = face; room.add(st);
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(.9, 1.05, .34), steleM); slab.position.y = .525; slab.castShadow = !lite; st.add(slab);
+    const face2 = lettering(.8, .9, g => {
+      g.fillStyle = '#f3ede4'; g.font = `400 .3px ${SERIF}`; g.fillText(String(t.year), .04, .3);
+      g.fillStyle = WYLD.aqua; g.font = `700 .045px ${FONT}`; g.fillText(t.athlete.toUpperCase(), .05, .43);
+      g.fillStyle = '#f3ede4'; g.font = `500 .1px ${FONT}`; g.fillText(t.time, .05, .58);
+      g.fillStyle = '#a9a39a'; g.font = `600 .036px ${FONT}`; g.fillText(t.bike.toUpperCase(), .05, .68);
+      g.fillStyle = WYLD.pink; g.fillRect(.05, .76, .16, .012);
+    }, 512);
+    face2.position.set(0, .6, .172); st.add(face2);
+    room.add(placed(lightPool(1.9, 1.9, i % 2 ? WYLD.aqua : WYLD.pink, .32), x, .006, z + nrm.z * 1.35));
+    const c = { ...t, kind: 'champion', index: i, pos: new THREE.Vector3(x, 0, z + nrm.z * 1.35), normal: nrm, photoY: 2.5 };
+    c.view = c.pos.clone().addScaledVector(nrm, 2.6 + (coarse && innerHeight > innerWidth ? .8 : 0));
+    c.face = new THREE.Vector3(x, 1.5, z);
+    slab.userData.champ = c; face2.userData.champ = c; ph.children[2].userData.champ = c;
+    pickables.push(slab, face2, ph.children[2]); champs.push(c);
+    obstacles.push({ c: c.pos, r: .8 });
+  });
+  // west wall: the two machines that carried the titles, and the course between them
+  KONA.machines.forEach((m, i) => {
+    const ph = framed(m.photo, 2.8, 2.1, m.name); ph.position.set(ROOM.x0 + .02, 2.35, i ? RCZ - 4.4 : RCZ + 4.4); ph.rotation.y = Math.PI / 2; room.add(ph);
+  });
+  if (KONA.scenery[0]) { const sc = framed(KONA.scenery[0], 2.6, 1.8, 'The Queen K — the Ironman bike course'); sc.position.set(ROOM.x0 + .02, 2.35, RCZ); sc.rotation.y = Math.PI / 2; room.add(sc); }
+  // title over the doorway, hall side
+  const sign = lettering(3.6, .9, g => {
+    g.fillStyle = '#12181d'; g.font = `700 .15px ${FONT}`; g.letterSpacing = '.05px'; g.fillText('KONA CHAMPIONS', 0, .3);
+    g.fillStyle = WYLD.pink; g.font = `italic 400 .3px ${SERIF}`; g.letterSpacing = '0px'; g.fillText('Six titles on a Speedmax', 0, .72);
+  }, 1024);
+  sign.position.set(HALL.x0 + .02, DOOR.h + .75, (DOOR.z0 + DOOR.z1) / 2 + .2); sign.rotation.y = Math.PI / 2; hall.add(sign);
+}
+
 // ------------------------------------------------------------------ light
-const hemi = new THREE.HemisphereLight('#e6f3f7', '#d6c6ab', lite ? 1.5 : 1.05); scene.add(hemi);
-const sun = new THREE.DirectionalLight('#fff0d8', lite ? 2.2 : 2.8);
+const hemi = new THREE.HemisphereLight('#e3eef3', '#cdb89c', lite ? 1.3 : .9); scene.add(hemi);
+const sun = new THREE.DirectionalLight('#ffe9cc', lite ? 2 : 2.45);
 sun.position.set(9, 15, -14); sun.target.position.set(0, 0, -20); scene.add(sun, sun.target);
 if (!lite) {
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
@@ -269,7 +407,6 @@ if (!lite) {
 }
 
 // ------------------------------------------------------------------ plinths, lecterns, floor years
-const pickables = [];
 function textCard(p) {
   return lettering(.62, .42, g => {
     g.fillStyle = '#faf8f4'; g.fillRect(0, 0, .62, .42);
@@ -318,6 +455,12 @@ for (const p of PIECES) {
     spot.position.set(p.normal.x * 1.2, 4.9, p.normal.z * 1.2); spot.target = g; g.add(spot);
   }
 }
+heritage.forEach((p, i) => {
+  if (p.pos.x < 0) { const tp = tapestry(2.6, 3.3, i * 1.37 + .4, .35 + i * .5); tp.position.set(HALL.x0 + .02, 2.75, p.pos.z); tp.rotation.y = Math.PI / 2; hall.add(tp); }
+  const pool = lightPool(3.4, 2.2, i % 2 ? WYLD.aqua : WYLD.pink, p.glb ? .38 : .22); pool.rotation.z = p.rotY - Math.PI / 2; pool.position.x = p.pos.x; pool.position.z = p.pos.z; hall.add(pool);
+});
+{ const ap = lightPool(10, 4, WYLD.lilac, .45); ap.position.set(0, .004, -41.4); hall.add(ap);
+  const t2 = tapestry(7.5, 1.4, 3.3, 1.2); t2.position.set(0, 4.35, -45.9); hall.add(t2); }
 { // apse plinth for the MY2027 flagships + hanging sign
   const ap = new THREE.Mesh(new THREE.BoxGeometry(8.2, .32, 2.2), M.basaltPolished);
   ap.position.set(0, .16, -41.4); ap.castShadow = ap.receiveShadow = true; hall.add(ap);
@@ -395,10 +538,18 @@ const P = { x: 0, z: 3.4, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
 let started = false, path = null, keys = new Set(), current = null, drag = null, bob = 0;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 
+const DZ = (DOOR.z0 + DOOR.z1) / 2, inRoom = x => x < WALK.x0 - .05;
 function route(to, face, piece) {                                   // via the open aisle, never through plinths
   const pts = [];
+  if (inRoom(P.x) && !inRoom(to.x)) { pts.push({ x: -9, z: DZ }, { x: -5.4, z: DZ }); P.x = P.x; }
+  if (inRoom(P.x) && inRoom(to.x)) { path = [{ x: to.x, z: to.z }]; path.face = face; path.piece = piece || null; return; }
+  if (!inRoom(P.x) && inRoom(to.x)) {
+    if (Math.abs(P.z - DZ) > 2.5) pts.push({ x: clamp(P.x, -1.2, 1.2), z: P.z }, { x: 0, z: DZ });
+    pts.push({ x: -5.4, z: DZ }, { x: -9, z: DZ }, { x: to.x, z: to.z }); path = pts; path.face = face; path.piece = piece || null; return;
+  }
+  const from = pts.length ? pts[pts.length - 1] : P;
   const aisleX = x => clamp(x, -1.2, 1.2);
-  if (Math.abs(P.z - to.z) > 2.5) { pts.push({ x: aisleX(P.x), z: P.z }, { x: aisleX(to.x), z: to.z + (to.z < P.z ? 1.2 : -1.2) }); }
+  if (Math.abs(from.z - to.z) > 2.5) { pts.push({ x: aisleX(from.x), z: from.z }, { x: aisleX(to.x), z: to.z + (to.z < from.z ? 1.2 : -1.2) }); }
   pts.push({ x: to.x, z: to.z });
   path = pts; path.face = face; path.piece = piece || null;
 }
@@ -407,6 +558,32 @@ function visit(p) {
   partSel = null; closeCard(true);
   route(p.view, p.pos.clone().setY(p.top + .75), p);
   current = p; railActive(p);
+}
+let champ = null;
+function visitChamp(c) {
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = c;
+  route(c.view, c.face, null); path.champ = c;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'kona'));
+}
+function openChamp(c) {
+  champ = c;
+  $('cYears').textContent = `Kona ${c.year} · World Champion`;
+  $('cName').textContent = c.athlete;
+  $('cMat').textContent = `${c.time} · ${c.bike}`;
+  $('cNote').textContent = c.note;
+  $('cStats').hidden = false;
+  $('cStats').innerHTML = [[c.time, 'finish'], [c.splits.includes('·') ? c.splits.split('·')[1].trim() : '—', c.splits.includes('·') ? 'bike split' : c.splits], [c.country, 'nation']]
+    .map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
+  const m = KONA.machines.find(x => x.generation === c.generation);
+  $('cMedia').innerHTML = `<figure class="c-photo"><img src="${esc(c.photo.src)}" alt="${esc(c.athlete)} — ${esc(c.photoCaption)}" referrerpolicy="no-referrer"><figcaption>${esc(c.photoCaption)}<br><a href="${esc(c.photo.page)}" target="_blank" rel="noopener">© ${esc(c.photo.author)} · ${esc(c.photo.license)} ↗</a></figcaption></figure>`
+    + (m ? `<p class="c-note" style="margin-top:14px"><b class="c-spec">${esc(m.name)}</b>${esc(m.text)} Its 3D reconstruction is in the workshop.</p>` : '')
+    + `<a class="c-src" href="${esc(c.source)}" target="_blank" rel="noopener">Race record ↗</a>`;
+  const next = champs[(c.index + 1) % champs.length];
+  $('cActions').innerHTML = `<button class="btn primary" id="cNextChamp">Next: ${esc(String(next.year))} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back to the hall</button>`;
+  $('cNextChamp').onclick = () => visitChamp(next);
+  $('cHall').onclick = () => { closeCard(); champ = null; route({ x: 0, z: DZ }, null, null); };
+  $('card').classList.add('on');
 }
 function enter() {
   if (started) return; started = true;
@@ -419,7 +596,8 @@ $('enterBtn').onclick = enter;
 // ------------------------------------------------------------------ UI: rail, card, toast, hover tag
 $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? '' : ' ghost'}" data-i="${i}" aria-label="${esc(p.name)}, ${esc(p.years)}">
   <span class="n">${p.thumb ? `<img src="${esc(p.thumb)}" alt="" loading="lazy">` : i + 1}</span><span><small>${esc(p.years)}</small><b>${esc(p.name.replace(/^Speed[Mm]ax /, ''))}</b></span></button>`).join('');
-$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { if (!started) enter(); visit(PIECES[+b.dataset.i]); } });
+if (KONA.titles.length) $('railInner').insertAdjacentHTML('beforeend', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
+$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); if (b.dataset.room === 'kona') visitChamp(champs[0]); else visit(PIECES[+b.dataset.i]); });
 function railActive(p) {
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', +c.dataset.i === p?.index));
   document.querySelector(`.chip[data-i="${p?.index}"]`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
@@ -508,8 +686,8 @@ function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.user
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
-  const hits = ray.intersectObjects([...pickables, floor], false);
-  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.floor) return { point: h.point }; }
+  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor].filter(Boolean), false);
+  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
   return null;
 }
 canvas.addEventListener('pointerdown', e => {
@@ -533,6 +711,7 @@ canvas.addEventListener('pointerup', e => {
   const hit = pick(e.clientX, e.clientY);
   if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
+  if (hit?.champ) { visitChamp(hit.champ); return; }
   if (hit?.piece) visit(hit.piece);
   else if (hit?.point) { closeCard(); if (walkable(hit.point.x, hit.point.z)) path = [{ x: hit.point.x, z: hit.point.z }]; }
 });
@@ -548,6 +727,7 @@ addEventListener('keydown', e => {
   if (k >= '1' && k <= '9' && PIECES[+k - 1]) visit(PIECES[+k - 1]);
   if (k === 'escape') { if (partSel && current) openCard(current); else closeCard(); }
   if (k === 'x' && current?.bike) setExploded(current, !(current.exT > 0));
+  if (k === 'k' && champs.length) visitChamp(champs[0]);
   if (k === 'enter' && current?.viewer) location.href = current.viewer;
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
@@ -609,7 +789,7 @@ function frame(now) {
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const wantPitch = Math.atan2(path.face.y - EYE, Math.hypot(fx, fz));
     P.yaw += dyaw * (1 - Math.exp(-dt * 3.5)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 3));
-    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece; path = null; if (pc) openCard(pc); }
+    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ; path = null; if (pc) openCard(pc); if (ch) openChamp(ch); }
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 9); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
@@ -630,8 +810,9 @@ function frame(now) {
   else if (camera.view?.enabled) camera.clearViewOffset();
   // hover (desktop): halo + name tag
   let hot = null;
-  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const tag = $('tag');
-    tag.classList.toggle('on', !!hot); canvas.classList.toggle('hot', !!hot);
+  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || null; const tag = $('tag');
+    tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
+    if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
   for (const p of PIECES) {
     const want = p === current ? .85 : p === hot ? .6 : 0;
@@ -663,4 +844,4 @@ function frame(now) {
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 loadAll();
-window.__museum = { P, PIECES, visit, enter, scene, camera };
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp };

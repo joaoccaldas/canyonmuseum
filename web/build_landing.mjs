@@ -109,6 +109,7 @@ const res = await build({ entryPoints: [path.join(here, 'src/landing.js')], bund
 const app = res.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 const html = fs.readFileSync(path.join(here, 'landing.template.html'), 'utf8')
   .replace('__PIECES__', () => JSON.stringify(pieces).replaceAll('<', '\\u003c'))
+  .replace('__KONA__', () => fs.readFileSync(path.join(root, 'museum/kona_champions.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__APP__', () => app);
 const out = process.env.OUT_HTML || path.join(root, 'index.html');
 fs.writeFileSync(out, html);
