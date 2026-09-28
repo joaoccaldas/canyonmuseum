@@ -367,6 +367,14 @@ async function loadBike(p) {
   const bike = gltf.scene; dressBike(bike, p);
   const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
   bike.position.set(-c.x, -box.min.y, -c.z);
+  p.explodables = []; p.nodes = {};
+  bike.traverse(o => {
+    const ud = o.userData || {};
+    if (ud.part && !p.nodes[ud.part]) p.nodes[ud.part] = o;
+    if (ud.explode) p.explodables.push({ node: o, base: o.position.clone(), vec: B2T(ud.explode) });
+  });
+  [...p.explodables].sort((a, b) => a.vec.length() - b.vec.length()).forEach((x, i, a) => x.delay = i / a.length);
+  p.ex = 0; p.exT = 0;
   const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = p.rotY; holder.position.y = p.top;
   holder.scale.setScalar(.001); p.group.add(holder); p.bike = holder; p.bikeIn = 0;
   bike.traverse(o => { if (o.isMesh) pickables.push(o); });
@@ -395,7 +403,8 @@ function route(to, face, piece) {                                   // via the o
   path = pts; path.face = face; path.piece = piece || null;
 }
 function visit(p) {
-  closeCard(true);
+  if (current && current !== p && current.exT > 0) setExploded(current, false);
+  partSel = null; closeCard(true);
   route(p.view, p.pos.clone().setY(p.top + .75), p);
   current = p; railActive(p);
 }
@@ -420,24 +429,87 @@ function openCard(p) {
   $('cName').textContent = p.name; $('cMat').textContent = p.material || '';
   $('cNote').textContent = p.glb ? p.note : `${p.note} ${p.why || ''}`.trim();
   $('cStats').innerHTML = p.stats ? p.stats.map(([b, s]) => `<div><b>${esc(b)}</b><small>${esc(s)}</small></div>`).join('') : '';
-  $('cStats').hidden = !p.stats;
+  $('cStats').hidden = !p.stats; partSel = null; highlight(p, null);
+  document.querySelectorAll('.plabel').forEach(b => b.classList.remove('on'));
+  const exploded = p.exT > 0;
+  $('cMedia').innerHTML = (exploded && p.anchors ? `<div class="c-parts"><small>Parts · tap to read</small><div>${p.anchors.map((a, i) => `<button data-part="${a.id}"><i>${i + 1}</i>${esc(p.parts[a.id].name)}</button>`).join('')}</div></div>` : '')
+    + (p.photo ? `<figure class="c-photo"><img src="${esc(p.photo.src)}" alt="${esc(p.name)}, ${esc(p.photo.credit)}" referrerpolicy="no-referrer" onerror="this.closest('figure').remove()"><figcaption><a href="${esc(p.photo.href)}" target="_blank" rel="noopener">${esc(p.photo.credit)} ↗</a></figcaption></figure>` : '')
+    + (p.uncertain?.length ? `<details class="c-unc"><summary>What is reconstructed</summary><ul>${p.uncertain.map(u => `<li>${esc(u)}</li>`).join('')}</ul></details>` : '');
+  $('cMedia').querySelectorAll('.c-parts button').forEach(b => b.onclick = () => openPart(p, b.dataset.part));
   const next = PIECES[(p.index + 1) % PIECES.length];
-  $('cActions').innerHTML = (p.viewer ? `<a class="btn primary" href="${esc(p.viewer)}">Enter 3D studio <span aria-hidden="true">→</span></a>` : '')
-    + `<button class="btn ghost" id="cNext">Next: ${esc(next.years)} <span aria-hidden="true">→</span></button>`
+  $('cActions').innerHTML = (p.bike ? `<button class="btn ghost" id="cExplode" aria-pressed="${exploded}">${exploded ? 'Assemble' : 'Explode'}</button>` : '')
+    + (p.viewer ? `<a class="btn primary" href="${esc(p.viewer)}"><span class="long">Enter </span>3D studio <span aria-hidden="true">→</span></a>` : '')
+    + `<button class="btn ghost" id="cNext" aria-label="Next piece: ${esc(next.years)}">Next<span class="long">: ${esc(next.years)}</span> <span aria-hidden="true">→</span></button>`
     + (p.source && !p.viewer ? `<a class="c-src" href="${esc(p.source)}" target="_blank" rel="noopener">Archive source ↗</a>` : '');
   $('cNext').onclick = () => visit(next);
+  if ($('cExplode')) $('cExplode').onclick = () => setExploded(p, !(p.exT > 0));
   $('card').classList.add('on');
 }
 function closeCard(keepCurrent) { $('card').classList.remove('on'); if (!keepCurrent) { current = null; railActive(null); } }
 $('cardClose').onclick = () => closeCard();
 let toastT; function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200); }
 
+// ------------------------------------------------------------------ exploded view: parts with their stories
+const LABEL_ORDER = ['frame', 'fork', 'wheel_front', 'wheel_rear', 'aeroshield', 'extensions', 'basebar', 'base_bar', 'stem', 'riser',
+  'aerofuel_front', 'crankset', 'chain', 'cassette', 'rear_derailleur', 'front_derailleur', 'caliper_front', 'brake_front', 'brake_rear',
+  'brake_levers', 'seatpost', 'saddle', 'toptube_storage_lid'];
+function labelled(p) {
+  if (!p.parts || !p.nodes) return [];
+  return LABEL_ORDER.filter(id => p.nodes[id] && p.parts[id]).slice(0, lite ? 10 : 14);
+}
+let partSel = null;
+function setExploded(p, on) {
+  if (!p?.bike) return;
+  p.exT = on ? 1 : 0;
+  if (on) {
+    const ids = labelled(p);
+    const wp = new THREE.Vector3();
+    p.bike.updateMatrixWorld(true);
+    p.anchors = ids.map(id => {                                     // label anchor: the part's own centre, in its node space
+      const n = p.nodes[id], box = new THREE.Box3().setFromObject(n);
+      return { id, node: n, local: n.worldToLocal(box.getCenter(wp).clone()) };
+    });
+    $('labels').innerHTML = p.anchors.map((a, i) => `<button class="plabel" data-part="${a.id}"><i>${i + 1}</i><span>${esc(p.parts[a.id].name)}</span></button>`).join('');
+  } else { $('labels').innerHTML = ''; p.anchors = null; highlight(p, null); }
+  $('labels').classList.toggle('on', on);
+  if (current === p && $('card').classList.contains('on') && !partSel) openCard(p);
+}
+const hlMats = new Map();
+function highlight(p, id) {
+  for (const [m, orig] of hlMats) { m.emissive.copy(orig.e); m.emissiveIntensity = orig.i; }
+  hlMats.clear();
+  if (!p?.nodes || !id || !p.nodes[id]) return;
+  p.nodes[id].traverse(o => {
+    if (!o.isMesh) return;
+    if (!o.userData.ownMat) { o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); o.userData.ownMat = true; }
+    for (const m of [].concat(o.material)) if (m.emissive) { hlMats.set(m, { e: m.emissive.clone(), i: m.emissiveIntensity }); m.emissive.set('#1ba7a3'); m.emissiveIntensity = .55; }
+  });
+}
+function openPart(p, id) {
+  const info = p.parts?.[id]; if (!info) return;
+  partSel = id; highlight(p, id);
+  document.querySelectorAll('.plabel').forEach(b => b.classList.toggle('on', b.dataset.part === id));
+  $('cYears').textContent = `${p.name} · ${info.group || 'part'}`;
+  $('cName').textContent = info.name;
+  $('cMat').textContent = info.specLabel ? `Archived spec · ${info.specLabel}` : info.weight ? `${info.weight} g · manufacturer weight` : '';
+  $('cNote').innerHTML = [info.spec ? `<b class="c-spec">${esc(info.spec)}</b>` : '', info.note ? esc(info.note) : ''].filter(Boolean).join('<br>');
+  $('cStats').hidden = true; $('cMedia').innerHTML = '';
+  const ids = (p.anchors || []).map(a => a.id), i = ids.indexOf(id), nxt = ids[(i + 1) % ids.length];
+  $('cActions').innerHTML = `<button class="btn ghost" id="cBack">← ${esc(p.name.replace(/^Speed[Mm]ax /, ''))}</button>`
+    + (nxt && nxt !== id ? `<button class="btn primary" id="cNextPart">Next part <span aria-hidden="true">→</span></button>` : '');
+  $('cBack').onclick = () => openCard(p);
+  if ($('cNextPart')) $('cNextPart').onclick = () => openPart(p, nxt);
+  $('card').classList.add('on');
+}
+$('labels').addEventListener('click', e => { const b = e.target.closest('.plabel'); if (b && current) openPart(current, b.dataset.part); });
+function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id] && labelled(p).includes(id)) return id; } for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id]) return id; } return null; }
+
 // ------------------------------------------------------------------ input
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
   const hits = ray.intersectObjects([...pickables, floor], false);
-  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.piece) return { piece: h.object.userData.piece }; if (h.object.userData.floor) return { point: h.point }; }
+  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.floor) return { point: h.point }; }
   return null;
 }
 canvas.addEventListener('pointerdown', e => {
@@ -459,6 +531,8 @@ canvas.addEventListener('pointerup', e => {
   const moved = drag.moved; drag = null;
   if (moved > 6) return;
   const hit = pick(e.clientX, e.clientY);
+  if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
+  if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
   if (hit?.piece) visit(hit.piece);
   else if (hit?.point) { closeCard(); if (walkable(hit.point.x, hit.point.z)) path = [{ x: hit.point.x, z: hit.point.z }]; }
 });
@@ -472,7 +546,8 @@ addEventListener('keydown', e => {
   if (!started) { if (k === 'enter' && !$('enterBtn').disabled) { e.preventDefault(); enter(); } return; }
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'q', 'e'].includes(k)) { keys.add(k); path = null; if (k.startsWith('arrow')) e.preventDefault(); }
   if (k >= '1' && k <= '9' && PIECES[+k - 1]) visit(PIECES[+k - 1]);
-  if (k === 'escape') closeCard();
+  if (k === 'escape') { if (partSel && current) openCard(current); else closeCard(); }
+  if (k === 'x' && current?.bike) setExploded(current, !(current.exT > 0));
   if (k === 'enter' && current?.viewer) location.href = current.viewer;
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
@@ -520,7 +595,7 @@ function frame(now) {
   if (ix || iz) {
     const s = Math.sin(P.yaw), c = Math.cos(P.yaw), l = Math.hypot(ix, iz);
     wx = (-s * iz + c * ix) / l * sp; wz = (-c * iz - s * ix) / l * sp;
-    if (current) closeCard();
+    if (current) { if (current.exT > 0) setExploded(current, false); closeCard(); }
   } else if (path && path.length) {
     const g = path[0], dx = g.x - P.x, dz = g.z - P.z, d = Math.hypot(dx, dz);
     if (d < .22) { path.shift(); }
@@ -562,6 +637,24 @@ function frame(now) {
     const want = p === current ? .85 : p === hot ? .6 : 0;
     p.ring.material.opacity += (want - p.ring.material.opacity) * (1 - Math.exp(-dt * 6));
     if (p.bike && p.bikeIn < 1) { p.bikeIn = Math.min(1, p.bikeIn + dt * 1.4); const e = 1 - Math.pow(1 - p.bikeIn, 3); p.bike.scale.setScalar(Math.max(.001, e)); }
+  }
+  for (const p of PIECES) {
+    if (!p.explodables || Math.abs(p.ex - p.exT) < .0005) continue;
+    p.ex += Math.sign(p.exT - p.ex) * Math.min(Math.abs(p.exT - p.ex), dt * (reduce ? 10 : 1.1));
+    for (const x of p.explodables) {
+      const u = clamp((p.ex * 1.35 - x.delay * .35), 0, 1), e = u * u * (3 - 2 * u);
+      x.node.position.copy(x.base).addScaledVector(x.vec, e * 1.15);
+    }
+  }
+  if (current?.anchors && current.ex > .05) {
+    const v = new THREE.Vector3(), els = $('labels').children;
+    current.anchors.forEach((a, i) => {
+      a.node.localToWorld(v.copy(a.local)); v.project(camera);
+      const el = els[i]; if (!el) return;
+      const vis = v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
+      el.style.opacity = vis ? Math.min(1, (current.ex - .05) * 2) : 0; el.style.pointerEvents = vis ? '' : 'none';
+      el.style.transform = `translate(${(v.x * .5 + .5) * innerWidth}px,${(-v.y * .5 + .5) * innerHeight}px)`;
+    });
   }
   if (window.__ocean) window.__ocean.uniforms.t.value = t;
   if (window.__foam) window.__foam.opacity = .38 + Math.sin(t * .9) * .14;
