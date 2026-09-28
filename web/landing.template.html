@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Speedmax Museum — Kona</title>
+<meta name="description" content="Walk the Queen K: every Canyon Speedmax generation from 1999 to 2027, displayed as art in a sunlit museum on the Kona coast. Enter any bike's 3D studio.">
+<meta name="theme-color" content="#f4efe7">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sand:#f4efe7;--paper:#fbf9f5;--ink:#12181d;--muted:#5f6a72;--faint:#8e979d;--line:rgba(18,24,29,.11);
+  --reef:#138a8f;--reef-soft:#d5ecea;--lava:#e8471c;--basalt:#1c1d20;--sun:#f3b64f;
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Manrope',system-ui,-apple-system,sans-serif;
+  --safe-b:env(safe-area-inset-bottom);
+}
+html,body{height:100%;background:var(--sand);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--reef);outline-offset:3px;border-radius:8px}
+#hall{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none;outline:none}
+body.walking #hall{cursor:grab}body.walking #hall.hot{cursor:pointer}
+
+/* header */
+header{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:max(18px,env(safe-area-inset-top)) max(28px,env(safe-area-inset-right)) 0 max(28px,env(safe-area-inset-left));pointer-events:none}
+header>*{pointer-events:auto}
+.logo{display:flex;flex-direction:column;gap:3px}
+.logo b{font-weight:700;letter-spacing:.34em;font-size:14px}
+.logo small{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+nav{display:flex;gap:6px;align-items:center}
+nav a,nav button{font-size:12px;font-weight:600;padding:10px 16px;border-radius:999px;background:rgba(251,249,245,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);transition:.2s}
+nav a:hover,nav button:hover{background:var(--paper);border-color:rgba(18,24,29,.25)}
+#soundBtn[aria-pressed=true]{color:var(--reef)}
+
+/* intro */
+#intro{position:fixed;inset:0;z-index:10;display:flex;align-items:center;padding:0 max(28px,7vw);
+  background:linear-gradient(90deg,rgba(244,239,231,.94) 0%,rgba(244,239,231,.82) 36%,rgba(244,239,231,.12) 70%,transparent 100%);transition:opacity .9s ease,visibility .9s}
+#intro.off{opacity:0;visibility:hidden}
+.intro-inner{max-width:760px}
+.eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--reef);font-weight:600}
+.eyebrow:before{content:"";width:34px;height:1.5px;background:currentColor}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(48px,7.4vw,108px);line-height:.95;letter-spacing:-.02em;margin:22px 0 22px}
+h1 em{font-style:italic;color:var(--lava)}
+.lede{font-size:16px;line-height:1.7;color:var(--muted);max-width:500px;font-weight:400}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.04em;transition:.25s}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:var(--reef)}
+.btn.primary[disabled]{opacity:.55;cursor:progress}
+.btn.ghost{border:1px solid rgba(18,24,29,.22);background:rgba(251,249,245,.6)}
+.btn.ghost:hover{border-color:var(--ink)}
+.keys{display:flex;gap:26px;margin-top:34px;flex-wrap:wrap}
+.keys div{display:flex;flex-direction:column;gap:7px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.keys kbd{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border:1px solid var(--line);border-radius:6px;font:600 11px var(--sans);color:var(--ink);background:var(--paper);margin-right:3px}
+.touch-only{display:none}
+#loadstate{margin-top:22px;font-size:11px;color:var(--faint);letter-spacing:.08em;min-height:16px}
+#loadstate i{display:inline-block;width:120px;height:2px;background:var(--line);vertical-align:middle;margin-left:10px;position:relative;overflow:hidden}
+#loadstate i b{position:absolute;inset:0 auto 0 0;background:var(--reef);width:0;transition:width .4s}
+
+/* rail of pieces */
+#rail{position:fixed;left:0;right:0;bottom:0;z-index:15;padding:0 max(20px,env(safe-area-inset-left)) calc(16px + var(--safe-b));display:flex;justify-content:center;
+  transform:translateY(120%);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+body.walking #rail{transform:none}
+.rail-inner{display:flex;gap:6px;padding:6px;border-radius:20px;background:rgba(251,249,245,.8);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);
+  overflow-x:auto;scrollbar-width:none;max-width:100%;scroll-snap-type:x proximity}
+.rail-inner::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:7px 14px 7px 7px;border-radius:14px;text-align:left;scroll-snap-align:center;transition:.2s;min-height:52px}
+.chip:hover{background:rgba(18,24,29,.05)}
+.chip.on{background:var(--ink);color:var(--paper)}
+.chip .n{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--sand);font-size:12px;font-weight:700;overflow:hidden;flex:0 0 auto}
+.chip .n img{width:100%;height:100%;object-fit:cover}
+.chip.on .n{background:#2a3138}
+.chip.ghost .n{background:transparent;border:1px dashed rgba(18,24,29,.25);color:var(--faint)}
+.chip span{display:flex;flex-direction:column;gap:2px}
+.chip small{font-size:10px;letter-spacing:.12em;color:var(--faint);font-weight:600}
+.chip.on small{color:#9fb0ba}
+.chip b{font-size:12.5px;font-weight:600;white-space:nowrap}
+
+/* piece card */
+#card{position:fixed;z-index:16;right:max(24px,env(safe-area-inset-right));top:96px;width:min(390px,calc(100vw - 32px));
+  padding:28px 28px 24px;border-radius:24px;background:rgba(251,249,245,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid var(--line);
+  box-shadow:0 30px 60px -30px rgba(18,24,29,.35);transform:translateX(calc(100% + 40px));transition:transform .6s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 210px);overflow:auto}
+#card.on{transform:none}
+#card .close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);font-size:18px;line-height:1}
+.c-years{font-size:11px;letter-spacing:.26em;color:var(--reef);font-weight:700;text-transform:uppercase}
+#card h2{font-family:var(--serif);font-weight:400;font-size:40px;line-height:1;letter-spacing:-.01em;margin:12px 0 8px;padding-right:30px}
+.c-mat{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.c-note{font-size:14px;line-height:1.7;color:var(--muted);margin:16px 0 0}
+.c-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 4px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.c-stats b{display:block;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.c-stats small{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.c-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.c-actions .btn{height:46px;padding:0 20px;font-size:12px}
+.c-src{display:inline-block;margin-top:14px;font-size:12px;color:var(--reef);font-weight:600}
+
+/* hover label */
+#tag{position:fixed;z-index:12;pointer-events:none;padding:8px 12px;border-radius:10px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:600;
+  opacity:0;transform:translate(-50%,-140%);transition:opacity .2s;white-space:nowrap}
+#tag.on{opacity:1}
+#toast{position:fixed;left:50%;bottom:calc(104px + var(--safe-b));transform:translateX(-50%);z-index:14;font-size:12px;color:var(--muted);background:rgba(251,249,245,.85);
+  padding:9px 16px;border-radius:999px;border:1px solid var(--line);opacity:0;transition:opacity .5s;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1}
+
+#fallback{display:none;position:fixed;inset:0;z-index:30;background:var(--sand);padding:120px 28px;overflow:auto}
+#fallback ul{list-style:none;margin-top:24px;display:grid;gap:10px;max-width:520px}
+#fallback a{display:block;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+body.nogl #fallback{display:block}
+.credit{position:fixed;left:max(28px,env(safe-area-inset-left));bottom:14px;z-index:9;font-size:10px;color:var(--faint);max-width:430px;line-height:1.5}
+body.walking .credit{display:none}
+
+@media (max-width:760px){
+  header{padding:max(14px,env(safe-area-inset-top)) 16px 0}
+  .logo b{font-size:12px}.logo small{font-size:9px}
+  nav a,nav button{padding:9px 13px;font-size:11px}
+  nav .wide{display:none}
+  #intro{align-items:flex-end;padding:0 22px calc(28px + var(--safe-b));
+    background:linear-gradient(0deg,rgba(244,239,231,.97) 0%,rgba(244,239,231,.9) 48%,rgba(244,239,231,.1) 78%,transparent 100%)}
+  h1{font-size:clamp(44px,13vw,64px);margin:16px 0}
+  .lede{font-size:14.5px}
+  .cta{margin-top:22px}.btn{height:50px}
+  .cta .btn{flex:1 1 auto;justify-content:center}
+  .keys{display:none}.touch-only{display:block}
+  .credit{display:none}
+  #card{left:10px;right:10px;top:auto;bottom:calc(88px + var(--safe-b));width:auto;padding:22px 20px 18px;max-height:56dvh;transform:translateY(calc(100% + 120px))}
+  #card h2{font-size:32px}
+  .c-note{font-size:13px;margin-top:12px}
+  .c-stats{margin-top:14px;padding:12px 0}
+  .c-actions{flex-wrap:nowrap}.c-actions .btn{flex:1 1 0;justify-content:center;padding:0 12px}
+  #card{max-height:48dvh}
+  .chip{padding:6px 10px 6px 6px;min-height:48px}.chip .n{width:34px;height:34px}.chip b{font-size:12px}
+  #rail{padding:0 8px calc(8px + var(--safe-b))}
+  #toast{bottom:calc(92px + var(--safe-b))}
+}
+@media (pointer:coarse){.keys{display:none}.touch-only{display:block}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<canvas id="hall" aria-label="A walkable museum hall with every Canyon Speedmax generation on display" tabindex="0"></canvas>
+
+<header>
+  <a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
+  <nav>
+    <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
+    <a href="Canyon_Collection.html#compare">Compare</a>
+    <a class="wide" href="Canyon_Collection.html#archive">Archive</a>
+  </nav>
+</header>
+
+<section id="intro">
+  <div class="intro-inner">
+    <div class="eyebrow">Canyon Speedmax · 1999 — 2027</div>
+    <h1>Twenty-eight years<br>on the <em>Queen K.</em></h1>
+    <p class="lede">A sunlit gallery on the Kona coast. Every Speedmax generation stands on lava stone along the Ironman bike course — walk the timeline, study each bike as a piece of art, then step inside its 3D studio.</p>
+    <div class="cta">
+      <button class="btn primary" id="enterBtn" disabled>Loading the hall…</button>
+      <a class="btn ghost" href="Canyon_Collection.html">Compare the bikes</a>
+    </div>
+    <div class="keys" aria-hidden="true">
+      <div><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>Walk</div>
+      <div><span><kbd>Drag</kbd></span>Look around</div>
+      <div><span><kbd>Click</kbd></span>Visit a bike</div>
+      <div><span><kbd>1</kbd>–<kbd>9</kbd></span>Jump to a piece</div>
+    </div>
+    <p class="touch-only lede" style="margin-top:18px;font-size:12.5px">Drag to look · tap the floor to walk · tap a bike to visit it.</p>
+    <div id="loadstate" aria-live="polite"></div>
+  </div>
+</section>
+
+<div id="rail" aria-label="Pieces in the collection"><div class="rail-inner" id="railInner"></div></div>
+
+<aside id="card" aria-live="polite" aria-label="Piece details">
+  <button class="close" id="cardClose" aria-label="Close">×</button>
+  <div class="c-years" id="cYears"></div>
+  <h2 id="cName"></h2>
+  <div class="c-mat" id="cMat"></div>
+  <p class="c-note" id="cNote"></p>
+  <div class="c-stats" id="cStats"></div>
+  <div class="c-actions" id="cActions"></div>
+</aside>
+
+<div id="tag"></div>
+<div id="toast"></div>
+
+<div id="fallback">
+  <div class="eyebrow">Speedmax Museum</div>
+  <h1 style="font-size:44px">The collection</h1>
+  <p class="lede">This browser can't render the 3D hall. Every exhibit is still one tap away:</p>
+  <ul id="fallbackList"></ul>
+</div>
+
+<p class="credit">Independent study from public references. Not affiliated with or endorsed by Canyon Bicycles. 3D models are visual reconstructions.</p>
+
+<script>window.__PIECES=__PIECES__;</script>
+<script>__APP__</script>
+</body>
+</html>
