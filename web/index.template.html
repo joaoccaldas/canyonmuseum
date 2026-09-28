@@ -211,6 +211,33 @@ footer{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(10px
   .intro{top:64px}
   body.engaged .intro{opacity:0;pointer-events:none;transition:opacity .5s}
 }
+
+/* ---- studio polish: readable active tabs; phones get a half-height sheet, colours first ---- */
+@media (min-width:761px){.hr .pill.active{background:#e8f4f2;color:#0b1016}.hr .pill.active svg{color:#0f8c78}}
+.drawer [hidden]{display:none!important}
+#setupNote{margin:0 0 10px}
+@media (max-width:760px){
+  .hr .pill,.hr #tourStart,.hr #labOpen{font-size:11px!important}
+  .hr .pill.active,body[data-ui=light] .hr .pill.active{color:#f1f6f7!important}
+  .hr{background:#0b1016f2!important;border-top-color:#c8e9ed1f!important}
+  body[data-ui=light] .hr .pill,body[data-ui=light] .hr #labOpen{color:#98a9b3}
+  .drawer{max-height:54dvh;padding:18px 18px 22px;border-radius:24px 24px 18px 18px}
+  .drawer::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:rgba(127,127,127,.35);margin:-6px auto 12px}
+  .drawer .eyebrow{font-size:10px}.drawer h2{font-size:21px;margin:6px 0 2px}.drawer .lead{display:none}
+  .drawer h3{font-size:11px;margin:18px 0 10px}
+  .drawer .x{top:12px;right:12px;width:40px;height:40px;font-size:18px}
+  .presets{display:flex;overflow-x:auto;gap:10px;scroll-snap-type:x mandatory;margin:0 -18px;padding:2px 18px 6px;scrollbar-width:none}
+  .presets::-webkit-scrollbar{display:none}
+  .presets button{flex:0 0 58%;scroll-snap-align:start;padding:13px;min-height:64px}
+  .presets strong{font-size:14.5px}.presets span{font-size:12px}
+  .presets button i{width:32px;height:32px}
+  .sw button{width:38px;height:38px}
+  .chips button{padding:11px 16px;font-size:13.5px}
+  .check{padding:12px 0}.check div{font-size:14px}.check small{font-size:12px}
+  .note{font-size:12.5px}
+  .seg button{font-size:13px;padding:11px 14px}
+  .views button{font-size:13px;padding:10px 13px}
+}
 </style>
 </head>
 <body data-ui="light">

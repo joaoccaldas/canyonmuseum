@@ -188,5 +188,47 @@
       "license": "CC BY 2.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
     }
+  ],
+  "gallery": [
+    {
+      "file": "File:Iron man Kona Hawaii bike course Big island Hawaii (32405173528).jpg",
+      "caption": "The Queen K — the bike course north of Kailua-Kona",
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Iron_man_Kona_Hawaii_bike_course_Big_island_Hawaii_%2832405173528%29.jpg/1280px-Iron_man_Kona_Hawaii_bike_course_Big_island_Hawaii_%2832405173528%29.jpg",
+      "w": 1280,
+      "h": 853,
+      "page": "https://commons.wikimedia.org/wiki/File:Iron_man_Kona_Hawaii_bike_course_Big_island_Hawaii_(32405173528).jpg",
+      "author": "dronepicr",
+      "license": "CC BY 2.0"
+    },
+    {
+      "file": "File:Iron man Laufstrecke Start Alii drive Kailua Kona Big island Hawaii (45364178655).jpg",
+      "caption": "Ali‘i Drive — where the marathon begins",
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Iron_man_Laufstrecke_Start_Alii_drive_Kailua_Kona_Big_island_Hawaii_%2845364178655%29.jpg/1280px-Iron_man_Laufstrecke_Start_Alii_drive_Kailua_Kona_Big_island_Hawaii_%2845364178655%29.jpg",
+      "w": 1280,
+      "h": 1920,
+      "page": "https://commons.wikimedia.org/wiki/File:Iron_man_Laufstrecke_Start_Alii_drive_Kailua_Kona_Big_island_Hawaii_(45364178655).jpg",
+      "author": "dronepicr",
+      "license": "CC BY 2.0"
+    },
+    {
+      "file": "File:Iron man finish Alii drive course Kailua Kona Big island Hawaii (46276765411).jpg",
+      "caption": "The finish on Ali‘i Drive",
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Iron_man_finish_Alii_drive_course_Kailua_Kona_Big_island_Hawaii_%2846276765411%29.jpg/1280px-Iron_man_finish_Alii_drive_course_Kailua_Kona_Big_island_Hawaii_%2846276765411%29.jpg",
+      "w": 1280,
+      "h": 853,
+      "page": "https://commons.wikimedia.org/wiki/File:Iron_man_finish_Alii_drive_course_Kailua_Kona_Big_island_Hawaii_(46276765411).jpg",
+      "author": "dronepicr",
+      "license": "CC BY 2.0"
+    },
+    {
+      "file": "File:Iron man swim start Kailua Bay Kona Big island Hawaii (46226569742).jpg",
+      "caption": "Kailua Bay — the swim start",
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Iron_man_swim_start_Kailua_Bay_Kona_Big_island_Hawaii_%2846226569742%29.jpg/1280px-Iron_man_swim_start_Kailua_Bay_Kona_Big_island_Hawaii_%2846226569742%29.jpg",
+      "w": 1280,
+      "h": 844,
+      "page": "https://commons.wikimedia.org/wiki/File:Iron_man_swim_start_Kailua_Bay_Kona_Big_island_Hawaii_(46226569742).jpg",
+      "author": "dronepicr",
+      "license": "CC BY 2.0"
+    }
   ]
 }

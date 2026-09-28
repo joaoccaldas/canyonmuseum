@@ -2,7 +2,8 @@ import * as THREE from 'three';
 export function makePaint(material,{flyTo,download,getCfg}) {
  const root=document.querySelector('#build'),box=document.createElement('section');box.className='paint-studio';
  box.innerHTML=`<h3>Your artwork. Your bike.</h3><p class="note">Project an image onto the painted frame and fork. PNG, JPEG or WebP, up to 12 MB. Stays on this device.</p><label class="lab-upload">Upload artwork<input id="paintFile" type="file" accept="image/png,image/jpeg,image/webp"></label><p id="paintStatus" class="note" role="status">No artwork loaded.</p><div id="paintControls" hidden><div class="lab-grid">${[['scale','Artwork size',.3,3,.01,1],['x','Move forward',-.8,.8,.01,0],['y','Move up',-.8,.8,.01,0],['angle','Rotate · degrees',-180,180,1,0],['opacity','Image opacity',0,1,.01,1]].map(([k,l,min,max,step,val])=>`<label class="lab-field">${l}<input type="range" id="paint-${k}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`).join('')}</div><label class="check">Repeat pattern<input id="paint-repeat" type="checkbox"></label><div class="actions"><button id="paint-save">Save painted exhibit</button><button id="paint-remove">Remove artwork</button></div><p class="note">Copy-link and master GLB omit artwork. “Save painted exhibit” embeds it in a new offline HTML file.</p></div>`;
- root.insertBefore(box,root.querySelector('h3'));
+ // after the colours and setup, so a phone opens straight onto the colourways
+ root.insertBefore(box,[...root.querySelectorAll('h3')].find(h=>/Wheel artwork/.test(h.textContent))||root.querySelector('.actions'));
  const U={artTexture:{value:new THREE.Texture()},artOn:{value:0},artScale:{value:1},artOffset:{value:new THREE.Vector2()},artAngle:{value:0},artOpacity:{value:1},artAspect:{value:1},artRepeat:{value:0}};
  material.onBeforeCompile=shader=>{
   Object.assign(shader.uniforms,U);

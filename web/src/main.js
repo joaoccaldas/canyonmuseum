@@ -40,7 +40,8 @@ const S = {
 };
 function loadCfg() {
   if(window.__MUSEUM_CFG)return {...DEFAULT_CFG,...window.__MUSEUM_CFG};
-  try { const h = new URLSearchParams(location.hash.slice(1)).get('cfg'); if (h) return { ...DEFAULT_CFG, ...JSON.parse(decodeURIComponent(escape(atob(h)))) }; } catch (_) { }
+  // Read #cfg= by hand: URLSearchParams turns base64 '+' into ' ', which silently dropped shared builds.
+  try { const m = location.hash.match(/(?:^#|&)cfg=([^&]+)/); if (m) { const h = decodeURIComponent(m[1]).replace(/ /g, '+'); return { ...DEFAULT_CFG, ...JSON.parse(decodeURIComponent(escape(atob(h)))) }; } } catch (_) { }
   try { const s = localStorage.getItem('speedmax.museum.v2.'+(BIKE.key||'cfr')+'.cfg'); if (s) return { ...DEFAULT_CFG, ...JSON.parse(s) }; } catch (_) { }
   return { ...DEFAULT_CFG };
 }
@@ -48,7 +49,7 @@ function exportCfg() { return { ...S.cfg }; }
 function saveCfg() {
   const cfg=exportCfg();
   try { localStorage.setItem('speedmax.museum.v2.'+(BIKE.key||'cfr')+'.cfg', JSON.stringify(cfg)); } catch (_) { }
-  try { history.replaceState(null, '', '#cfg=' + btoa(unescape(encodeURIComponent(JSON.stringify(cfg))))); } catch (_) { }
+  try { history.replaceState(null, '', '#cfg=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))))); } catch (_) { }
 }
 
 // ------------------------------------------------------------------ renderer
@@ -655,8 +656,9 @@ function buildUI() {
     const id = { aerofuel: '#optFuel', frontBottle: '#optFront', rearBottles: '#optRear', shield: '#optShield', rearDisc: '#optDisc' }[k];
     const el = id && $(id); if (!el) continue;
     el.disabled = true; el.checked = false;
-    const lbl = el.closest('label'); if (lbl) { lbl.title = PROFILE.unavailableReason?.[k] || 'Not part of this model'; lbl.style.opacity = .5; }
+    const lbl = el.closest('label'); if (lbl) lbl.hidden = true;           // not on this frame: don't offer a dead switch
   }
+  if (PROFILE.unavailableOptions?.length && !$('#setupNote')) $('#optShield')?.closest('label')?.insertAdjacentHTML('beforebegin', `<p class="note" id="setupNote">${PROFILE.unavailableNote || 'This frame predates AeroShield, AeroFuel storage and the disc-wheel option, so they are not offered here.'}</p>`);
   if(PROFILE.unavailableOptions?.includes('rearBottles') && !$('#optRear').disabled){$('#optRear').disabled=true;$('#optRear').closest('label').title='The standard SP102 seatpost has no modelled rear bottle carrier.';}
   $('#optRear').onchange = e => setCfg({ rearBottles: e.target.checked }, true);
   $('#optShield').onchange = e => setCfg({ shield: e.target.checked }, true);
@@ -707,8 +709,8 @@ function buildUI() {
 }
 function paintRange(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
 function syncList() { $$('[data-part]').forEach(b => b.classList.toggle('active', b.dataset.part === S.sel)); }
-function toggleDrawer(id) { const d = $('#' + id), open = !d.classList.contains('open'); closeDrawers(); d.classList.toggle('open', open); $$(`[data-drawer="${id}"]`).forEach(b => b.classList.toggle('active', open)); }
-function closeDrawers() { $$('.drawer').forEach(d => d.classList.remove('open')); $$('[data-drawer]').forEach(b => b.classList.remove('active')); }
+function toggleDrawer(id) { const d = $('#' + id), open = !d.classList.contains('open'); closeDrawers(); d.classList.toggle('open', open); $$(`[data-drawer="${id}"]`).forEach(b => b.classList.toggle('active', open)); applyShift(); }
+function closeDrawers() { $$('.drawer').forEach(d => d.classList.remove('open')); $$('[data-drawer]').forEach(b => b.classList.remove('active')); applyShift(); }
 function setMode(m, fromSlider) {
   S.mode = m;
   document.body.dataset.mode = m;
@@ -743,7 +745,9 @@ function applyQuality() {
 let shift = 0, shiftT = 0;
 function applyShift() {
   const w = innerWidth, h = innerHeight;
-  const up = (S.env==='tunnel'||document.body.classList.contains('painting')) && w<760 ? h*.15 : 0;
+  // Phones: keep the bike in the free space above any open sheet, so every change is visible.
+  const sheet = document.querySelector('.drawer.open');
+  const up = w < 760 ? (sheet ? h * .24 : (S.env==='tunnel'||document.body.classList.contains('painting')) ? h*.15 : 0) : 0;
   if (Math.abs(shift) < 1e-4&&!up) camera.clearViewOffset(); else camera.setViewOffset(w, h, -shift * w, up, w, h);
 }
 function resize() {

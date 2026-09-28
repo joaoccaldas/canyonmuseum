@@ -7,6 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { applyWyld } from './skins/wyld.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const PIECES = window.__PIECES || [];
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
@@ -16,6 +17,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const coarse = matchMedia('(pointer: coarse)').matches;
+if (coarse) document.body.classList.add('touch');
 const small = innerWidth < 760;
 const lite = coarse || small;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -525,6 +527,107 @@ async function loadWyldBikes() {
   }
 }
 
+// ------------------------------------------------------------------ decor: palms, race paintings, sculptures, memorabilia
+const infos = [];                                                   // decor with a story: picked like pieces
+const spinners = [];
+{
+  // potted palms — a tall, slender indoor palm in a basalt pot
+  const potM = new THREE.MeshStandardMaterial({ map: basaltTex, color: '#9a938c', roughness: .6 });
+  const trunkM = new THREE.MeshStandardMaterial({ color: '#9b8467', roughness: .95 });
+  const leafM = new THREE.MeshStandardMaterial({ color: '#3e7a4c', roughness: .7, side: THREE.DoubleSide });
+  const leaf = (() => { const len = 1.35, g = new THREE.PlaneGeometry(len, .34, 12, 2), pos = g.attributes.position;
+    for (let i = 0; i < pos.count; i++) { const u = (pos.getX(i) + len / 2) / len, y = pos.getY(i);
+      pos.setY(i, y * Math.sin(Math.PI * Math.min(1, u * 1.1)) * (1 - u * .3)); pos.setZ(i, -u * u * len * .5 + Math.abs(y) * .2); pos.setX(i, u * len); }
+    g.computeVertexNormals(); g.rotateX(-Math.PI / 2); return g; })();
+  const pot = new THREE.CylinderGeometry(.34, .27, .56, 28), soil = new THREE.CircleGeometry(.31, 20);
+  function pottedPalm(x, z, h = 2.3, seed = 1) {
+    const g = new THREE.Group(); g.position.set(x, 0, z);
+    const pm = new THREE.Mesh(pot, potM); pm.position.y = .28; pm.castShadow = !lite; g.add(pm);
+    const sl = new THREE.Mesh(soil, new THREE.MeshStandardMaterial({ color: '#3b2f27', roughness: 1 })); sl.rotation.x = -Math.PI / 2; sl.position.y = .545; g.add(sl);
+    const stems = [], leaves = [], o = new THREE.Object3D();                // merged: one mesh for stems, one for leaves
+    for (let s2 = 0; s2 < 3; s2++) {                                   // a small clump of stems
+      const lean = (s2 - 1) * .22 + Math.sin(seed * 3.1) * .08, hh = h * (1 - s2 * .12);
+      const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, .5, 0), new THREE.Vector3(lean * .4, .5 + hh * .5, s2 * .05 - .05), new THREE.Vector3(lean, .5 + hh, s2 * .1 - .1)]);
+      stems.push(new THREE.TubeGeometry(curve, 10, .035, 6));
+      const top = curve.getPoint(1);
+      for (let i = 0; i < 9; i++) {
+        o.position.copy(top); o.rotation.set(0, i / 9 * Math.PI * 2 + s2 + seed, 0); o.rotateZ(.35 - ((i * 7 + seed * 13) % 5) * .09); o.updateMatrix();
+        leaves.push(leaf.clone().applyMatrix4(o.matrix));
+      }
+    }
+    g.add(new THREE.Mesh(mergeGeometries(stems), trunkM));
+    const crown = new THREE.Mesh(mergeGeometries(leaves), leafM); crown.castShadow = !lite; g.add(crown);
+    scene.add(g); obstacles.push({ c: new THREE.Vector3(x, 0, z), r: .55 }); return g;
+  }
+  [[6.1, 2.6], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, 3.6], [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
+    .forEach(([x, z], i) => pottedPalm(x, z, 2.2 + (i % 3) * .25, i + 1));
+  if (WROOMDATA) [[WROOM.x0 + 3.2, WROOM.z0 - .8], [WROOM.x0 + 3.2, WROOM.z1 + .8], [WROOM.x1 - 1.1, WROOM.z1 + .8]].forEach(([x, z], i) => pottedPalm(x, z, 2.6, i + 7));
+  [[ROOM.x0 + .9, ROOM.z0 - .9], [ROOM.x0 + .9, ROOM.z1 + .9]].forEach(([x, z], i) => pottedPalm(x, z, 2.4, i + 11));
+
+  // race paintings on the plaster wall: swim, run, finish (Wikimedia Commons, CC BY)
+  const tl3 = new THREE.TextureLoader(); tl3.setCrossOrigin('anonymous');
+  const gold = new THREE.MeshStandardMaterial({ color: '#b8925a', metalness: .85, roughness: .32 });
+  const gallery = KONA.gallery || [];
+  const slots = [[gallery[3], -6.4, 3.3, 2.3, 'Swim · 3.8 km'], [gallery[1], -25.75, 1.9, 2.7, 'Run · 42.2 km'], [gallery[2], -39.6, 3.3, 2.3, 'The finish']];
+  for (const [ph, z, mw, mh, title] of slots) {
+    if (!ph) continue;
+    const ar = ph.w / ph.h; let w = mw, h = w / ar; if (h > mh) { h = mh; w = h * ar; }
+    const g = new THREE.Group(); g.position.set(HALL.x0 + .03, 2.55, z); g.rotation.y = Math.PI / 2; hall.add(g);
+    const fr = new THREE.Mesh(new THREE.BoxGeometry(w + .16, h + .16, .06), gold); g.add(fr);
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: '#d9d2c6' })); pic.position.z = .032; g.add(pic);
+    tl3.load(ph.src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; pic.material.map = t; pic.material.color.set('#ffffff'); pic.material.needsUpdate = true; });
+    const plate = lettering(1.9, .22, gg => { gg.fillStyle = '#12181d'; gg.font = `700 .06px ${FONT}`; gg.fillText(title.toUpperCase(), 0, .08);
+      gg.fillStyle = '#6d7479'; gg.font = `500 .04px ${FONT}`; gg.fillText(`${ph.caption.slice(0, 48)} · © ${ph.author} · ${ph.license}`, 0, .17); }, 1024);
+    plate.position.set(-w / 2 + .95, -h / 2 - .28, .03); g.add(plate);
+    if (!lite) { const sp = new THREE.SpotLight('#fff3e2', 24, 6, .55, .6, 1.4); sp.position.set(HALL.x0 + 1.4, 4.9, z); sp.target = g; hall.add(sp); }
+    const info = { kind: 'info', eyebrow: 'Kona · the race', title, sub: ph.caption, text: title.startsWith('Swim') ? 'A deep-water start in Kailua Bay beside the pier — 2.4 miles out and back before the bikes.' : title.startsWith('Run') ? 'The marathon heads south along Ali‘i Drive before turning onto the Queen K and out to the Energy Lab.' : 'The last metres on Ali‘i Drive, a block from the pier where the day began.', photo: ph, pos: new THREE.Vector3(HALL.x0 + 2.6, 0, z) };
+    pic.userData.info = info; pickables.push(pic); infos.push(info);
+  }
+
+  // sculpture: a two-metre polished chainring at the entrance
+  { const R = 1.0, teeth = 50, sh = new THREE.Shape();
+    for (let i = 0; i <= teeth * 4; i++) { const a = i / (teeth * 4) * Math.PI * 2, k = i % 4, r = k === 1 || k === 2 ? R : R - .055; i ? sh.lineTo(Math.cos(a) * r, Math.sin(a) * r) : sh.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+    const hole = new THREE.Path(); hole.absarc(0, 0, R - .16, 0, Math.PI * 2, true); sh.holes.push(hole);
+    const ringG = new THREE.ExtrudeGeometry(sh, { depth: .06, bevelEnabled: true, bevelSize: .012, bevelThickness: .012, bevelSegments: 2, curveSegments: 6 });
+    ringG.center();
+    const steel = new THREE.MeshStandardMaterial({ color: '#dfe4e8', metalness: 1, roughness: .16 });
+    const g = new THREE.Group(); g.position.set(3.9, 0, .9); hall.add(g);
+    const base = new THREE.Mesh(new THREE.BoxGeometry(1.1, .7, .7), M.basalt); base.position.y = .35; base.castShadow = !lite; g.add(base);
+    const ring = new THREE.Mesh(ringG, steel); ring.position.y = .7 + R + .06; ring.castShadow = !lite; g.add(ring);
+    for (let i = 0; i < 5; i++) { const arm = new THREE.Mesh(new THREE.BoxGeometry(.07, R - .15, .05), steel); arm.position.set(Math.cos(i / 5 * 6.283) * (R - .15) / 2, Math.sin(i / 5 * 6.283) * (R - .15) / 2, 0); arm.rotation.z = i / 5 * 6.283 - Math.PI / 2; ring.add(arm); }
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.1, .1, .12, 24), steel); hub.rotation.x = Math.PI / 2; ring.add(hub);
+    spinners.push({ o: ring, axis: 'y', speed: .18 });
+    const info = { kind: 'info', eyebrow: 'Sculpture', title: 'Fifty teeth', sub: 'Polished steel · 2 m', text: 'A 50-tooth chainring blown up to two metres — the big ring every Speedmax in this hall has pushed along the Queen K.', pos: new THREE.Vector3(3.9, 0, .9) };
+    ring.userData.info = info; base.userData.info = info; pickables.push(ring, base); infos.push(info); obstacles.push({ c: g.position, r: .95 });
+  }
+  // sculpture: a WYLD-dyed disc wheel turning slowly above the aisle
+  { const g = new THREE.Group(); g.position.set(0, 3.45, -21); g.rotation.y = .9; hall.add(g);
+    const face = new THREE.MeshStandardMaterial({ map: dyeTex(3.7, .8, 0), roughness: .35, metalness: .1 });
+    const disc = new THREE.Group(); g.add(disc);
+    for (const sgn of [1, -1]) { const c = new THREE.Mesh(new THREE.SphereGeometry(.7, 48, 12, 0, Math.PI * 2, 0, .42), face); c.scale.y = .12; c.rotation.x = sgn * Math.PI / 2; disc.add(c); }
+    const tyre = new THREE.Mesh(new THREE.TorusGeometry(.66, .028, 10, 72), new THREE.MeshStandardMaterial({ color: '#141416', roughness: .8 })); disc.add(tyre);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, .16, 20), new THREE.MeshStandardMaterial({ color: '#c9ced3', metalness: .9, roughness: .25 })); hub.rotation.x = Math.PI / 2; disc.add(hub);
+    for (const dx of [-.5, .5]) { const w = new THREE.Mesh(new THREE.CylinderGeometry(.004, .004, 1.9, 4), M.mullion); w.position.set(dx, .95, 0); g.add(w); }
+    spinners.push({ o: disc, axis: 'z', speed: .25 });
+  }
+  // vitrine of memorabilia: race bib, finisher medal, bidon
+  { const g = new THREE.Group(); g.position.set(3.95, 0, -34.2); g.rotation.y = -Math.PI / 2 + .25; hall.add(g);
+    const base = new THREE.Mesh(new THREE.BoxGeometry(1.5, .92, .75), new THREE.MeshStandardMaterial({ color: '#faf7f3', roughness: .5 })); base.position.y = .46; base.castShadow = !lite; g.add(base);
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(1.46, .62, .71), new THREE.MeshStandardMaterial({ color: '#e8f6f6', transparent: true, opacity: .12, roughness: .05, depthWrite: false })); glass.position.y = 1.23; g.add(glass);
+    const bib = lettering(.42, .3, gg => { gg.fillStyle = '#ffffff'; gg.fillRect(0, 0, .42, .3); gg.fillStyle = WYLD.pink; gg.fillRect(0, 0, .42, .05);
+      gg.fillStyle = '#12181d'; gg.font = `700 .022px ${FONT}`; gg.fillText('WORLD CHAMPIONSHIP · KAILUA-KONA', .02, .035);
+      gg.font = `800 .15px ${FONT}`; gg.textAlign = 'center'; gg.fillText('1', .21, .2); gg.font = `600 .02px ${FONT}`; gg.fillText('PRO · SWIM · BIKE · RUN', .21, .27); }, 512);
+    bib.material.transparent = false; bib.position.set(-.35, 1.14, -.1); bib.rotation.x = -.35; g.add(bib);
+    const medal = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, .012, 40), new THREE.MeshStandardMaterial({ color: '#d9b35a', metalness: 1, roughness: .25 })); medal.rotation.x = Math.PI / 2; medal.position.set(.12, 1.1, 0); g.add(medal);
+    const ribbon = new THREE.Mesh(new THREE.PlaneGeometry(.06, .3), new THREE.MeshStandardMaterial({ map: dyeTex(.4, 1.57, 0), side: THREE.DoubleSide })); ribbon.position.set(.12, 1.28, -.01); g.add(ribbon);
+    const bottle = new THREE.Mesh(new THREE.CylinderGeometry(.037, .037, .21, 24), new THREE.MeshStandardMaterial({ color: '#f2f4f5', roughness: .4 })); bottle.position.set(.46, 1.03, 0); g.add(bottle);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(.02, .03, .04, 16), new THREE.MeshStandardMaterial({ color: WYLD.aqua, roughness: .4 })); cap.position.set(.46, 1.155, 0); g.add(cap);
+    const info = { kind: 'info', eyebrow: 'Memorabilia', title: 'Race-day kit', sub: 'Bib · finisher medal · bidon', text: 'What comes home from Kona: a number, a medal on a dyed ribbon and a scuffed bottle. Replicas made for the museum — no real race items are shown.', pos: new THREE.Vector3(3.95, 0, -34.2) };
+    for (const o of [base, glass, bib, medal, bottle]) { o.userData.info = info; pickables.push(o); }
+    infos.push(info); obstacles.push({ c: g.position, r: 1 });
+  }
+}
+
 // ------------------------------------------------------------------ light
 const hemi = new THREE.HemisphereLight('#e3eef3', '#cdb89c', lite ? 1.3 : .9); scene.add(hemi);
 const sun = new THREE.DirectionalLight('#ffe9cc', lite ? 2 : 2.45);
@@ -715,11 +818,11 @@ function openChamp(c) {
   $('cActions').innerHTML = `<button class="btn primary" id="cNextChamp">Next: ${esc(String(next.year))} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back to the hall</button>`;
   $('cNextChamp').onclick = () => visitChamp(next);
   $('cHall').onclick = () => { closeCard(); champ = null; route({ x: 0, z: DZ }, null, null); };
-  $('card').classList.add('on');
+  $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 function studioLink(v) {                                            // open the exhibit already dyed
   const cfg = { preset: 'wyld', wyld: true, wyldDark: v.wyld.darkness, wyldSheer: v.wyld.sheer, decal: v.decal };
-  return `${WROOMDATA.bike.viewer}#cfg=${btoa(unescape(encodeURIComponent(JSON.stringify(cfg))))}`;
+  return `${WROOMDATA.bike.viewer}#cfg=${encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))))}`;
 }
 function visitWyld(v) {
   if (current && current.exT > 0) setExploded(current, false);
@@ -738,12 +841,22 @@ function openWyld(v) {
   const next = wyldBikes[(v.index + 1) % wyldBikes.length];
   $('cActions').innerHTML = `<a class="btn primary" href="${esc(studioLink(v))}"><span class="long">Open in&nbsp;</span>3D studio <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextDye">Next<span class="long">:&nbsp;${esc(next.name.replace('WYLD ', ''))}</span> <span aria-hidden="true">→</span></button>`;
   $('cNextDye').onclick = () => visitWyld(next);
-  $('card').classList.add('on');
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+function openInfo(n) {
+  if (exploded) setExploded(exploded, false);
+  current = null; champ = null;
+  $('cYears').textContent = n.eyebrow; $('cName').textContent = n.title; $('cMat').textContent = n.sub; $('cNote').textContent = n.text;
+  $('cStats').hidden = true;
+  $('cMedia').innerHTML = n.photo ? `<figure class="c-photo"><img src="${esc(n.photo.src)}" alt="${esc(n.photo.caption)}" referrerpolicy="no-referrer"><figcaption>${esc(n.photo.caption)}<br><a href="${esc(n.photo.page)}" target="_blank" rel="noopener">© ${esc(n.photo.author)} · ${esc(n.photo.license)} ↗</a></figcaption></figure>` : '';
+  $('cActions').innerHTML = `<button class="btn ghost" id="cInfoClose">Keep walking</button>`;
+  $('cInfoClose').onclick = () => closeCard();
+  $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
-  toast(coarse ? 'Drag to look · tap the floor to walk · tap a bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
+  toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
   path = [{ x: 0, z: .6 }]; canvas.focus({ preventScroll: true });
 }
 $('enterBtn').onclick = enter;
@@ -751,8 +864,8 @@ $('enterBtn').onclick = enter;
 // ------------------------------------------------------------------ UI: rail, card, toast, hover tag
 $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? '' : ' ghost'}" data-i="${i}" aria-label="${esc(p.name)}, ${esc(p.years)}">
   <span class="n">${p.thumb ? `<img src="${esc(p.thumb)}" alt="" loading="lazy">` : i + 1}</span><span><small>${esc(p.years)}</small><b>${esc(p.name.replace(/^Speed[Mm]ax /, ''))}</b></span></button>`).join('');
-if (KONA.titles.length) $('railInner').insertAdjacentHTML('beforeend', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
-if (WROOMDATA) $('railInner').insertAdjacentHTML('beforeend', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
+if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
+if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
 $('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
 function railActive(p) {
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', +c.dataset.i === p?.index));
@@ -777,10 +890,10 @@ function openCard(p) {
     + (p.source && !p.viewer ? `<a class="c-src" href="${esc(p.source)}" target="_blank" rel="noopener">Archive source ↗</a>` : '');
   $('cNext').onclick = () => visit(next);
   if ($('cExplode')) $('cExplode').onclick = () => setExploded(p, !(p.exT > 0));
-  $('card').classList.add('on');
+  $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 function closeCard(keepCurrent) {
-  $('card').classList.remove('on');
+  $('card').classList.remove('on'); document.body.classList.remove('card-open');
   if (!keepCurrent) { if (exploded) setExploded(exploded, false); current = null; railActive(null); }
 }
 $('cardClose').onclick = () => closeCard();
@@ -837,7 +950,7 @@ function openPart(p, id) {
     + (nxt && nxt !== id ? `<button class="btn primary" id="cNextPart">Next part <span aria-hidden="true">→</span></button>` : '');
   $('cBack').onclick = () => openCard(p);
   if ($('cNextPart')) $('cNextPart').onclick = () => openPart(p, nxt);
-  $('card').classList.add('on');
+  $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 $('labels').addEventListener('click', e => { const b = e.target.closest('.plabel'); if (b && exploded) { current = exploded; openPart(exploded, b.dataset.part); } });
 function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id] && labelled(p).includes(id)) return id; } for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id]) return id; } return null; }
@@ -847,7 +960,7 @@ const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
   const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor].filter(Boolean), false);
-  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.wyldBike) return { wyld: h.object.userData.wyldBike }; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
+  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.info) return { info: h.object.userData.info }; if (h.object.userData.wyldBike) return { wyld: h.object.userData.wyldBike }; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
   return null;
 }
 canvas.addEventListener('pointerdown', e => {
@@ -873,6 +986,7 @@ canvas.addEventListener('pointerup', e => {
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
   if (hit?.champ) { visitChamp(hit.champ); return; }
   if (hit?.wyld) { visitWyld(hit.wyld); return; }
+  if (hit?.info) { openInfo(hit.info); return; }
   if (hit?.piece) visit(hit.piece);
   else if (hit?.point) { closeCard(); if (walkable(hit.point.x, hit.point.z)) path = [{ x: hit.point.x, z: hit.point.z }]; }
 });
@@ -894,6 +1008,20 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 addEventListener('blur', () => keys.clear());
+
+// ------------------------------------------------------------------ triathlon joystick: swim · bike · run ring, walk with the thumb
+const joy = { on: false, x: 0, y: 0, id: null };
+{
+  const pad = $('joy'), knob = pad?.querySelector('.joy-knob');
+  const R = 46;
+  const move = e => { const r = pad.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    let dx = e.clientX - cx, dy = e.clientY - cy; const d = Math.hypot(dx, dy); if (d > R) { dx *= R / d; dy *= R / d; }
+    joy.x = dx / R; joy.y = dy / R; knob.style.transform = `translate(${dx}px,${dy}px)`; };
+  pad?.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); joy.on = true; joy.id = e.pointerId; pad.setPointerCapture(e.pointerId); pad.classList.add('on'); path = null; move(e); });
+  pad?.addEventListener('pointermove', e => { if (joy.on && e.pointerId === joy.id) move(e); });
+  const end = e => { if (e.pointerId !== joy.id) return; joy.on = false; joy.x = joy.y = 0; knob.style.transform = ''; pad.classList.remove('on'); };
+  pad?.addEventListener('pointerup', end); pad?.addEventListener('pointercancel', end);
+}
 
 // ------------------------------------------------------------------ ocean ambience (synthesised, opt-in)
 let audio = null;
@@ -932,10 +1060,11 @@ function frame(now) {
   if (keys.has('d')) ix += 1;
   if (keys.has('arrowleft') || keys.has('q')) P.yaw += dt * 1.7;
   if (keys.has('arrowright') || keys.has('e')) P.yaw -= dt * 1.7;
-  const sp = keys.has('shift') ? 4.4 : 2.4;
+  if (joy.on) { ix += joy.x; iz += -joy.y; }                          // triathlon joystick (touch)
+  const sp = (keys.has('shift') ? 4.4 : 2.4) * (joy.on ? Math.min(1, Math.hypot(joy.x, joy.y)) * 1.15 : 1);
   let wx = 0, wz = 0;
-  if (ix || iz) {
-    const s = Math.sin(P.yaw), c = Math.cos(P.yaw), l = Math.hypot(ix, iz);
+  if (Math.hypot(ix, iz) > .08) {
+    const s = Math.sin(P.yaw), c = Math.cos(P.yaw), l = Math.max(1e-3, Math.hypot(ix, iz));
     wx = (-s * iz + c * ix) / l * sp; wz = (-c * iz - s * ix) / l * sp;
     if (current) { if (current.exT > 0) setExploded(current, false); closeCard(); }
   } else if (path && path.length) {
@@ -972,7 +1101,7 @@ function frame(now) {
   else if (camera.view?.enabled) camera.clearViewOffset();
   // hover (desktop): halo + name tag
   let hot = null;
-  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : null); const tag = $('tag');
+  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
     if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
@@ -1007,6 +1136,7 @@ function frame(now) {
     for (const p of PIECES) if (p.bike) p.bike.visible = reg === 'hall' || Math.abs(p.pos.z - DOORZ[reg]) < 7;
     for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg === 'hall' && P.z < -20 && P.x < 3);
   }
+  if (!reduce) for (const s2 of spinners) s2.o.rotation[s2.axis] += dt * s2.speed;
   if (window.__ocean) window.__ocean.uniforms.t.value = t;
   if (window.__foam) window.__foam.opacity = .38 + Math.sin(t * .9) * .14;
   renderer.render(scene, camera);

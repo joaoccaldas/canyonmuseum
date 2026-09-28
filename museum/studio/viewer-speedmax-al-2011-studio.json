@@ -58,7 +58,7 @@
   "presets": {
     "race_black": {
       "name": "Race Black",
-      "sub": "Team (white / black) · reference colour",
+      "sub": "Team (white / black) · as photographed",
       "frame": "#050506",
       "finish": "gloss",
       "irid": 0,
@@ -68,7 +68,7 @@
     },
     "team_white": {
       "name": "Team White",
-      "sub": "Team (white / black) · reference colour",
+      "sub": "Archived Canyon colourway",
       "frame": "#e4e4e4",
       "finish": "gloss",
       "irid": 0,
@@ -78,54 +78,13 @@
     },
     "pro_white_red": {
       "name": "Pro White / red",
-      "sub": "Team (white / black) · reference colour",
+      "sub": "Archived Canyon colourway",
       "frame": "#eeeeee",
       "finish": "gloss",
       "irid": 0,
       "decal": "#c8102e",
       "cockpit": "carbon",
       "rimText": "#c8102e"
-    },
-    "stealth": {
-      "name": "Stealth",
-      "sub": "Matte black, gloss logos",
-      "frame": "#141416",
-      "finish": "matte",
-      "irid": 0,
-      "decal": "#050506",
-      "cockpit": "carbon",
-      "rimText": "#2a2a2c"
-    },
-    "glacier": {
-      "name": "Glacier",
-      "sub": "Satin white, ice logos",
-      "frame": "#f4f6f8",
-      "finish": "satin",
-      "irid": 0.25,
-      "decal": "#9fb7c6",
-      "cockpit": "carbon",
-      "rimText": "#e8eef2"
-    },
-    "kona_lava": {
-      "name": "Kona Lava",
-      "sub": "Race-day orange",
-      "frame": "#e8471c",
-      "finish": "gloss",
-      "irid": 0.15,
-      "decal": "#101012",
-      "cockpit": "carbon",
-      "rimText": "#f0f0f0"
-    },
-    "wyld": {
-      "name": "Wyld",
-      "sub": "Hand-dyed pink × aqua",
-      "frame": "#ff8fbf",
-      "finish": "gloss",
-      "irid": 0,
-      "decal": "#141416",
-      "cockpit": "carbon",
-      "rimText": "#e9cde8",
-      "wyld": true
     }
   },
   "defaultCfg": {

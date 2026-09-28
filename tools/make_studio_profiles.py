@@ -15,12 +15,9 @@ OUT = ROOT / 'museum/studio'
 OUT.mkdir(parents=True, exist_ok=True)
 
 # Shared configurator ideas that the user wants on every bike (Kona Lava, Wyld, ...).
-SHARED_PRESETS = [
-    { 'name': 'Stealth', 'sub': 'Matte black, gloss logos', 'frame': '#141416', 'finish': 'matte', 'irid': 0, 'decal': '#050506', 'cockpit': 'carbon', 'rimText': '#2a2a2c' },
-    { 'name': 'Glacier', 'sub': 'Satin white, ice logos', 'frame': '#f4f6f8', 'finish': 'satin', 'irid': .25, 'decal': '#9fb7c6', 'cockpit': 'carbon', 'rimText': '#e8eef2' },
-    { 'name': 'Kona Lava', 'sub': 'Race-day orange', 'frame': '#e8471c', 'finish': 'gloss', 'irid': .15, 'decal': '#101012', 'cockpit': 'carbon', 'rimText': '#f0f0f0' },
-    { 'name': 'Wyld', 'sub': 'Hand-dyed pink × aqua', 'frame': '#ff8fbf', 'finish': 'gloss', 'irid': 0, 'decal': '#141416', 'cockpit': 'carbon', 'rimText': '#e9cde8', 'wyld': True },
-]
+# Stealth, Glacier, Kona Lava and Wyld already come from web/src/data.js PRESETS for every bike;
+# repeating them here produced duplicate chips (two "Kona Lava").
+SHARED_PRESETS = []
 
 BIKES = {
     'speedmax-three-2005': dict(
@@ -55,11 +52,11 @@ for key, extra in BIKES.items():
 
     # ---- colourways: the documented finish first, then the shared configurator ideas
     presets = []
-    for p in src.get('presets', [])[:3]:
+    for i, p in enumerate(src.get('presets', [])[:3]):
         c = p.get('colors', {})
         presets.append({
             'name': p['name'].replace('Explore · ', ''),
-            'sub': f"{b.get('finishName','documented finish')} · reference colour",
+            'sub': 'Archived Canyon colourway' if i else f"{b.get('finishName','documented finish')} · as photographed",
             'frame': c.get('paint_frame', '#0d0d0f'),
             'finish': 'gloss',
             'irid': 0,
