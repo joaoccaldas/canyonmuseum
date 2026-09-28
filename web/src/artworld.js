@@ -41,6 +41,88 @@
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const smooth = t => t * t * (3 - 2 * t);
 
+  let blenderReady = false;
+  let blenderRoot = null;
+  async function loadBlenderAssets() {
+    if (!museum.loader || blenderReady) return;
+    try {
+      const b64 = (await fetch('assets/artworld/artworld_assets.glb.gz.b64')).then(r => r.text());
+      const raw = Uint8Array.from(atob(b64.trim()), c => c.charCodeAt(0));
+      let bytes = raw;
+      if ('DecompressionStream' in window) {
+        const stream = new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'));
+        bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+      } else {
+        console.info('Blender asset pack: gzip stream unavailable; procedural fallback stays active.');
+        return;
+      }
+      const gltf = await museum.loader.parseAsync(bytes.buffer, '');
+      blenderRoot = gltf.scene;
+      blenderRoot.name = 'BLENDER ASSET PACK · immersive art';
+      const assetByName = name => blenderRoot.getObjectByName(name);
+
+      const map = {
+        'st-george': 'ART_ST_GEORGE',
+        'vegas': 'ART_VEGAS',
+        'nice': 'ART_NICE',
+        'kona': 'ART_KONA',
+      };
+      for (const inst of installations) {
+        const source = assetByName(map[inst.cfg.id]);
+        if (!source) continue;
+        const clone = source.clone(true);
+        clone.name = 'BLENDER · ' + inst.cfg.title;
+        clone.traverse(o => {
+          if (o.isMesh) {
+            o.castShadow = !matchMedia('(pointer: coarse)').matches;
+            o.receiveShadow = false;
+            for (const m of [].concat(o.material || [])) {
+              m.envMapIntensity = 1.8;
+              if ('clearcoat' in m) { m.clearcoat = Math.max(.8, m.clearcoat || 0); m.clearcoatRoughness = .08; }
+            }
+          }
+          o.userData.home = { x:o.position.x, y:o.position.y, z:o.position.z, ry:o.rotation.y, rz:o.rotation.z };
+        });
+        inst.fins.forEach(o => o.visible = false);
+        inst.coreBars.forEach(o => o.visible = false);
+        inst.g.add(clone);
+        inst.asset = clone;
+      }
+
+      const psrc = assetByName('PORTAL_ECLIPSE');
+      if (psrc) {
+        const p = psrc.clone(true);
+        p.position.set(.10, -.05, 0);
+        p.rotation.y = -Math.PI / 2;
+        p.scale.setScalar(1.12);
+        p.traverse(o => { if (o.isMesh) { o.userData.artPortal = { id:'horror-in', label:'Hidden collection' }; pickables.push(o); } });
+        secretPortal.add(p);
+        portalBack.visible = false;
+        portalSlits.forEach(o => o.visible = false);
+      }
+
+      const props = [
+        ['HORROR_ARCH', 45, 0, -42.5, 1.6, 0],
+        ['HORROR_TOTEM', 42.1, 0, -36.2, 1.05, .3],
+        ['HORROR_TOTEM', 47.9, 0, -23.0, .9, -0.5],
+        ['HORROR_CARNIVAL', 52.4, .2, -36.0, 1.15, .25],
+      ];
+      for (const [name,x,y,z,s,ry] of props) {
+        const src = assetByName(name);
+        if (!src) continue;
+        const p = src.clone(true);
+        p.position.set(x,y,z); p.scale.setScalar(s); p.rotation.y = ry;
+        p.traverse(o => { if(o.isMesh) { o.castShadow=false; for(const m of [].concat(o.material||[])) m.envMapIntensity=1.4; } });
+        horror.add(p);
+      }
+
+      blenderReady = true;
+      window.dispatchEvent(new CustomEvent('museum-blender-ready'));
+    } catch (err) {
+      console.warn('Blender asset pack unavailable; keeping procedural fallback.', err);
+    }
+  }
+
   function std(color, roughness = .42, metalness = .08, extra = {}) {
     const m = new StandardMaterial({ color, roughness, metalness, ...extra });
     m.envMapIntensity = 1.35;
@@ -325,6 +407,21 @@
     for (const inst of installations) {
       const d = Math.hypot(cpos.x - inst.g.position.x, cpos.z - inst.g.position.z);
       const open = smooth(clamp((7.0 - d) / 4.4, 0, 1));
+      if (inst.asset) {
+        let j = 0;
+        inst.asset.traverse(o => {
+          if (!o.userData?.home || !o.isMesh) return;
+          const h = o.userData.home, s = j++ - 3;
+          if (/STG_LAYER|VEGAS_PRISM|KONA_SHARD/.test(o.name)) {
+            o.position.x = h.x + s * .055 * open;
+            o.position.z = h.z + Math.abs(s) * .045 * open;
+            o.rotation.y = h.ry + s * .07 * open;
+          } else if (/NICE_RIBBON/.test(o.name)) {
+            o.rotation.y = h.ry + open * .32;
+            o.scale.z = .85 + open * .35;
+          }
+        });
+      }
       inst.fins.forEach((fin, i) => {
         const s = i - 3;
         fin.position.x = fin.userData.home.x + s * .075 * open;
@@ -365,5 +462,6 @@
     }
   }
 
-  window.__museumArt = { regionOf, walkable, enter, update, root, horror, buildCollection };
+  loadBlenderAssets();
+  window.__museumArt = { regionOf, walkable, enter, update, root, horror, buildCollection, loadBlenderAssets, get blenderReady(){ return blenderReady; } };
 })();
