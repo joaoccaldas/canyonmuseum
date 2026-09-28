@@ -6,9 +6,11 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { applyWyld } from './skins/wyld.js';
 
 const PIECES = window.__PIECES || [];
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
+const WROOMDATA = window.__WYLDROOM || null;
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -26,6 +28,9 @@ const EYE = 1.6;
 // Kona Champions room, through a doorway in the plaster wall
 const DOOR = { z0: -18.8, z1: -15.6, h: 3.4 };
 const ROOM = { x0: -19.3, x1: -7.3, z0: -8.8, z1: -25.6, h: 4.6 };
+// WYLD room, second doorway: a bright loft with a window onto Kailua Pier
+const WDOOR = { z0: -30.8, z1: -27.6, h: 3.4 };
+const WROOM = { x0: -23.3, x1: -7.3, z0: -26.6, z1: -45.4, h: 5.2 };
 const STEP = 5.4, FIRST = -1;
 const TILT = .38;                                                   // plinths turn toward the approaching visitor
 const heritage = PIECES.filter(p => !p.flagship), flagships = PIECES.filter(p => p.flagship);
@@ -56,7 +61,9 @@ function walkable(x, z) {
   const inHall = x >= WALK.x0 && x <= WALK.x1 && z <= WALK.z0 && z >= WALK.z1;
   const inDoor = x < WALK.x0 + .1 && x > ROOM.x1 - .6 && z < DOOR.z1 - .45 && z > DOOR.z0 + .45;
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
-  if (!inHall && !inDoor && !inRoom) return false;
+  const inDoor2 = x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
+  const inWyld = x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
+  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld) return false;
   for (const o of obstacles) {
     if (o.c && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
     if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
@@ -149,12 +156,13 @@ floor.position.set(0, -.2, CZ); floor.receiveShadow = true; floor.userData.floor
   for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .004, -16.5); hall.add(e); }
 }
 // plaster wall (lava side) with a shadow-gap skirting
-for (const [a, b] of [[HALL.z0, DOOR.z1], [DOOR.z0, HALL.z1]]) {
+for (const [a, b] of [[HALL.z0, DOOR.z1], [DOOR.z0, WDOOR.z1], [WDOOR.z0, HALL.z1]]) {
   const seg = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h, a - b), M.plaster);
   seg.position.set(HALL.x0 - .15, HALL.h / 2, (a + b) / 2); seg.receiveShadow = seg.castShadow = true; hall.add(seg);
 }
 { const lintel = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h - DOOR.h, DOOR.z1 - DOOR.z0), M.plaster);
-  lintel.position.set(HALL.x0 - .15, DOOR.h + (HALL.h - DOOR.h) / 2, (DOOR.z0 + DOOR.z1) / 2); hall.add(lintel); }
+  lintel.position.set(HALL.x0 - .15, DOOR.h + (HALL.h - DOOR.h) / 2, (DOOR.z0 + DOOR.z1) / 2); hall.add(lintel);
+  const l2 = lintel.clone(); l2.position.z = (WDOOR.z0 + WDOOR.z1) / 2; hall.add(l2); }
 const backWall = new THREE.Mesh(new THREE.BoxGeometry(L, HALL.h, .3), M.plaster);
 backWall.position.set(0, HALL.h / 2, HALL.z0 + .15); backWall.receiveShadow = true; hall.add(backWall);
 // glass wall to the ocean, and the apse's glass end wall
@@ -218,6 +226,7 @@ glassRun('x', HALL.x0, HALL.x1, HALL.z1);
       float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
         return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }
       void main(){
+        if (vW.x < -23.2 && length(vW.xz - vec2(-13.3, -36.)) < 27.) discard;   // inside the WYLD window's photo screen
         vec3 v = cameraPosition - vW; float d = length(v); v /= d;
         vec2 p = vW.xz * .35; float w = n(p + t*.25) * .6 + n(p*2.3 - t*.35) * .4;
         float shore = smoothstep(4., 60., vW.x - 11.);                      // turquoise shallows at the lava shore
@@ -237,8 +246,8 @@ glassRun('x', HALL.x0, HALL.x1, HALL.z1);
   const shoreEnd = new THREE.Mesh(new THREE.BoxGeometry(L + 12, 1.3, 5), M.basalt);
   shoreEnd.position.set(3, -.66, HALL.z1 - 2.6); shoreEnd.receiveShadow = true; scene.add(shoreEnd);
   const fieldTex = basaltTex.clone(); fieldTex.repeat.set(160, 160); fieldTex.needsUpdate = true;
-  const field = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshStandardMaterial({ map: fieldTex, color: '#6b625a', roughness: 1 }));
-  field.rotation.x = -Math.PI / 2; field.position.set(-460, -.05, 0); scene.add(field);
+  const field = new THREE.Mesh(new THREE.PlaneGeometry(900, 459), new THREE.MeshStandardMaterial({ map: fieldTex, color: '#6b625a', roughness: 1 }));
+  field.rotation.x = -Math.PI / 2; field.position.set(-460, -.05, 220.5); scene.add(field);   // stops short of the WYLD window's sightlines
   // surf line along the lava edge
   const foam = new THREE.Mesh(new THREE.PlaneGeometry(.9, D + 16), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .5, fog: false }));
   foam.rotation.x = -Math.PI / 2; foam.position.set(HALL.x1 + 6.3, -1.08, CZ - 4); scene.add(foam); window.__foam = foam.material;
@@ -396,13 +405,133 @@ const champs = [];
   sign.position.set(HALL.x0 + .02, DOOR.h + .75, (DOOR.z0 + DOOR.z1) / 2 + .2); sign.rotation.y = Math.PI / 2; hall.add(sign);
 }
 
+// ------------------------------------------------------------------ WYLD room: bright, pink and blue, a window onto Kailua Pier
+const wyldBikes = [];
+if (WROOMDATA) {
+  const W = WROOMDATA, RW = WROOM.x1 - WROOM.x0, RD = WROOM.z0 - WROOM.z1, CX = (WROOM.x0 + WROOM.x1) / 2, CZ2 = (WROOM.z0 + WROOM.z1) / 2;
+  const room = new THREE.Group(); scene.add(room);
+  // white terrazzo flecked with the dye colours
+  const terr = canvasTex(1024, 1024, (g, w, h) => {
+    g.fillStyle = '#f7f3f1'; g.fillRect(0, 0, w, h);
+    const chips = [WYLD.pink, WYLD.blush, WYLD.lilac, WYLD.mint, WYLD.aqua, '#d9d2cc', '#bfb6ad'];
+    for (let i = 0; i < 2600; i++) { g.fillStyle = chips[i % chips.length]; g.globalAlpha = .35 + rnd() * .5; g.beginPath();
+      const x = rnd() * w, y = rnd() * h, r = 1.2 + rnd() * 4.5; g.moveTo(x + r, y); for (let k = 1; k < 6; k++) { const a = k / 6 * 6.28 + rnd(); g.lineTo(x + Math.cos(a) * r * (.6 + rnd() * .6), y + Math.sin(a) * r * (.6 + rnd() * .6)); } g.fill(); }
+    g.globalAlpha = 1;
+  }, [RW / 3, RD / 3]);
+  const wfloor = new THREE.Mesh(new THREE.BoxGeometry(RW + 2.4, .2, RD), new THREE.MeshStandardMaterial({ map: terr, roughness: .22, metalness: 0, envMapIntensity: 1 }));
+  wfloor.position.set(CX - 1.2, -.1, CZ2); wfloor.receiveShadow = true; wfloor.userData.floor = true; room.add(wfloor); window.__wyldFloor = wfloor;
+  const white = new THREE.MeshStandardMaterial({ color: '#fbf8f7', roughness: .9, envMapIntensity: .4 });
+  const wall = (w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), white); m.position.set(x, y, z); m.receiveShadow = true; room.add(m); return m; };
+  wall(RW, WROOM.h, .3, CX, WROOM.h / 2, WROOM.z0 + .15);                                  // north
+  wall(RW, WROOM.h, .3, CX, WROOM.h / 2, WROOM.z1 - .15);                                  // south
+  wall(.3, WROOM.h - HALL.h, RD, WROOM.x1 + .15, HALL.h + (WROOM.h - HALL.h) / 2, CZ2);     // above the hall wall
+  // dyed murals on the long walls
+  for (const [z, ry, seed] of [[WROOM.z0 - .01, Math.PI, 5.2], [WROOM.z1 + .01, 0, 2.9]]) {
+    const mural = new THREE.Mesh(new THREE.PlaneGeometry(RW - 4.2, 3.4), new THREE.MeshStandardMaterial({ map: dyeTex(seed, .55, .08), roughness: .85 }));
+    mural.position.set(CX + 1.2, 2.55, z); mural.rotation.y = ry; room.add(mural);
+  }
+  // open slatted roof, like the hall: sun stripes across the terrazzo
+  { const n = Math.floor(RD / .7), slats = new THREE.InstancedMesh(new THREE.BoxGeometry(RW + .3, .08, .22), M.slat, n);
+    for (let i = 0; i < n; i++) slats.setMatrixAt(i, new THREE.Matrix4().setPosition(CX, WROOM.h, WROOM.z0 - .35 - i * .7)); slats.castShadow = true; room.add(slats); }
+  // the window wall: slim white mullions, a balcony and a glass balustrade
+  const mullW = new THREE.MeshStandardMaterial({ color: '#f4efee', roughness: .35, metalness: .2 });
+  for (let i = 0; i <= 6; i++) { const m = new THREE.Mesh(new THREE.BoxGeometry(.12, WROOM.h, .08), mullW); m.position.set(WROOM.x0, WROOM.h / 2, WROOM.z0 - i * RD / 6); room.add(m); }
+  const pane = new THREE.Mesh(new THREE.PlaneGeometry(RD, WROOM.h), M.glass); pane.rotation.y = Math.PI / 2; pane.position.set(WROOM.x0, WROOM.h / 2, CZ2); room.add(pane);
+  const balcony = new THREE.Mesh(new THREE.BoxGeometry(2.3, .22, RD), new THREE.MeshStandardMaterial({ map: terr, roughness: .3 })); balcony.position.set(WROOM.x0 - 1.15, -.11, CZ2); room.add(balcony);
+  const bal = new THREE.Mesh(new THREE.PlaneGeometry(RD, 1.05), M.glass); bal.rotation.y = Math.PI / 2; bal.position.set(WROOM.x0 - 2.25, .55, CZ2); room.add(bal);
+  const rail = new THREE.Mesh(new THREE.BoxGeometry(.06, .05, RD), mullW); rail.position.set(WROOM.x0 - 2.25, 1.08, CZ2); room.add(rail);
+  // the view: a real aerial photograph of Kailua Pier on a curved screen, horizon at eye level
+  const V = W.view, R = 26, arc = Math.PI * (V.arc ?? .5), H = R * arc / (V.w / V.h);
+  const focus = V.focus ?? .62, vy = (V.focusY ?? 3.6) + (focus - .5) * H;      // put the pier, not the skyline, in the window
+  const screen = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H, 96, 1, true, -Math.PI / 2 - arc / 2, arc), new THREE.ShaderMaterial({
+    side: THREE.BackSide, transparent: true, depthWrite: false, fog: false,
+    uniforms: { map: { value: null }, ready: { value: 0 } },
+    vertexShader: 'varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+    fragmentShader: `varying vec2 vU; uniform sampler2D map; uniform float ready;
+      void main(){
+        vec2 uv = vec2(1. - vU.x, vU.y);
+        vec3 c = texture2D(map, uv).rgb;
+        c = mix(c, c * c * (3. - 2. * c), .35);                                     // gentle contrast against the overcast
+        float l = dot(c, vec3(.299,.587,.114)); c = mix(vec3(l), c, 1.38);          // happier: more colour,
+        c = c * vec3(1.03, 1.02, 1.0) * 1.06 + .02; c = pow(max(c, 0.), vec3(.92));   // warmer, lighter, open shadows
+        float a = smoothstep(.97, .8, vU.y) * smoothstep(0., .05, vU.x) * smoothstep(1., .95, vU.x);  // overcast top fades into our sky
+        gl_FragColor = vec4(mix(vec3(.93,.95,.95), c, ready), a); }`,
+  }));
+  screen.position.set(CX + 2, vy, CZ2); screen.renderOrder = -1; room.add(screen);
+  const tl2 = new THREE.TextureLoader(); tl2.setCrossOrigin('anonymous');
+  tl2.load(lite ? V.srcSmall : V.src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; screen.material.uniforms.map.value = t; screen.material.uniforms.ready.value = 1; });
+  // light: a soft white fill with pink and aqua washes
+  const fill = new THREE.PointLight('#ffffff', lite ? 30 : 22, 26, 1.2); fill.position.set(CX, WROOM.h - .6, CZ2); room.add(fill);
+  if (!lite) for (const [c, z] of [[WYLD.pink, WROOM.z0 - 2], [WYLD.aqua, WROOM.z1 + 2]]) { const pl = new THREE.PointLight(c, 9, 12, 1.5); pl.position.set(CX + 2, 1.2, z); room.add(pl); }
+  // the WYLD wordmark over the doorway (inside) and the sign in the hall
+  const mark = lettering(4.4, 1.2, g => {
+    const gr = g.createLinearGradient(0, 0, 4.4, 0); gr.addColorStop(0, WYLD.pink); gr.addColorStop(.5, '#b98be0'); gr.addColorStop(1, WYLD.aqua);
+    g.fillStyle = gr; g.font = `800 1.0px ${FONT}`; g.letterSpacing = '.12px'; g.fillText('WYLD', .1, .95);
+  }, 1024);
+  mark.position.set(WROOM.x1 - .02, 4.2, WZ); mark.rotation.y = -Math.PI / 2; room.add(mark);
+  const hs = lettering(3.6, .9, g => {
+    g.fillStyle = '#12181d'; g.font = `700 .15px ${FONT}`; g.letterSpacing = '.05px'; g.fillText('THE WYLD ROOM', 0, .3);
+    const gr = g.createLinearGradient(0, 0, 3.4, 0); gr.addColorStop(0, WYLD.pink); gr.addColorStop(1, WYLD.aqua);
+    g.fillStyle = gr; g.font = `italic 400 .3px ${SERIF}`; g.letterSpacing = '0px'; g.fillText('One Speedmax, four dyes', 0, .72);
+  }, 1024);
+  hs.position.set(HALL.x0 + .02, WDOOR.h + .75, WZ + .2); hs.rotation.y = Math.PI / 2; hall.add(hs);
+  // a white bench to sit and look out
+  const bench = new THREE.Mesh(new THREE.BoxGeometry(.7, .44, 3.2), new THREE.MeshStandardMaterial({ color: '#fbf7f6', roughness: .5 })); bench.position.set(WROOM.x0 + 3.4, .22, CZ2); bench.castShadow = !lite; room.add(bench);
+  obstacles.push({ box: [WROOM.x0 + 2.9, WROOM.x0 + 3.9, CZ2 - 1.9, CZ2 + 1.9] });
+  // four pearl plinths, two each side of the aisle, bikes turned toward the door
+  const pearl = new THREE.MeshStandardMaterial({ color: '#fdf9fa', roughness: .28, metalness: .05, envMapIntensity: 1 });
+  W.variants.forEach((v, i) => {
+    const north = i % 2 === 0, col = Math.floor(i / 2);
+    const x = WROOM.x1 - 4.4 - col * 5.6, z = north ? WROOM.z0 - 3.6 : WROOM.z1 + 3.6;
+    const rotY = north ? Math.PI - .32 : .32;
+    const g = new THREE.Group(); g.position.set(x, 0, z); room.add(g);
+    const pl = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.2, .36, 72), pearl); pl.position.y = .18; pl.castShadow = pl.receiveShadow = !lite; g.add(pl);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.16, .018, 8, 96), new THREE.MeshBasicMaterial({ color: i % 2 ? WYLD.aqua : WYLD.pink, toneMapped: false }));
+    ring.rotation.x = Math.PI / 2; ring.position.y = .36; g.add(ring);
+    g.add(placed(lightPool(4, 4, i % 2 ? WYLD.aqua : WYLD.pink, .42), 0, .004, 0));
+    const b = { ...v, index: i, kind: 'wyld', pos: new THREE.Vector3(x, 0, z), rotY, group: g, top: .36 };
+    b.normal = new THREE.Vector3(Math.sin(rotY), 0, Math.cos(rotY));
+    b.view = b.pos.clone().addScaledVector(b.normal, 2.9 + (coarse && innerHeight > innerWidth ? 1 : 0));
+    b.view.x = clamp(b.view.x, WROOM.x0 + 1.2, WROOM.x1 - .8); b.view.z = clamp(b.view.z, WROOM.z1 + 1, WROOM.z0 - 1);
+    b.face = b.pos.clone().setY(b.top + .75);
+    pl.userData.wyldBike = b; pickables.push(pl); obstacles.push({ c: b.pos, r: 1.45 }); wyldBikes.push(b);
+  });
+  // caption for the view, on the sill
+  const vc = lettering(4.4, .34, g => {
+    g.fillStyle = '#12181d'; g.font = `600 .07px ${FONT}`; g.fillText(V.caption.slice(0, 64), 0, .12);
+    g.fillStyle = '#6d7479'; g.font = `500 .052px ${FONT}`; g.fillText(`© ${V.author} · ${V.license} · Wikimedia Commons · ${V.changes}`, 0, .26);
+  }, 1024);
+  vc.position.set(WROOM.x0 + .35, .62, CZ2 + 4.4); vc.rotation.set(-Math.PI / 2 + .5, Math.PI / 2, 0, 'YXZ'); room.add(vc);
+}
+async function loadWyldBikes() {
+  if (!wyldBikes.length) return;
+  const gltf = await loader.loadAsync(WROOMDATA.bike.glb);
+  for (const b of wyldBikes) {
+    const bike = gltf.scene.clone(true);
+    bike.traverse(o => { if (o.isMesh) o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); });
+    dressBike(bike, { key: 'cfr', finish: null }); bike.traverse(o => { o.castShadow = false; });
+    const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
+    bike.position.set(-c.x, -box.min.y, -c.z);
+    const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = b.rotY; holder.position.y = b.top; b.group.add(holder); b.bike = holder;
+    holder.updateMatrixWorld(true);
+    bike.traverse(o => {
+      if (!o.isMesh) return;
+      pickables.push(o); o.userData.wyldBike = b; delete o.userData.piece;
+      for (const m of [].concat(o.material)) {
+        if (m.name === 'paint_frame') { m.roughness = b.wyld.sheer > .5 ? .18 : .3; if ('clearcoat' in m) m.clearcoat = 1; b.ctl = applyWyld(m, bike, b.wyld); }
+        if (m.name === 'decal_dark') m.color.set(b.decal);
+      }
+    });
+  }
+}
+
 // ------------------------------------------------------------------ light
 const hemi = new THREE.HemisphereLight('#e3eef3', '#cdb89c', lite ? 1.3 : .9); scene.add(hemi);
 const sun = new THREE.DirectionalLight('#ffe9cc', lite ? 2 : 2.45);
-sun.position.set(9, 15, -14); sun.target.position.set(0, 0, -20); scene.add(sun, sun.target);
+sun.position.set(3, 15, -16); sun.target.position.set(-6, 0, -22); scene.add(sun, sun.target);
 if (!lite) {
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
-  Object.assign(sun.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 60 });
+  Object.assign(sun.shadow.camera, { left: -36, right: 36, top: 36, bottom: -36, near: 1, far: 70 });
   sun.shadow.bias = -.0004; sun.shadow.normalBias = .02;
 }
 
@@ -538,20 +667,23 @@ const P = { x: 0, z: 3.4, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
 let started = false, path = null, keys = new Set(), current = null, drag = null, bob = 0;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 
-const DZ = (DOOR.z0 + DOOR.z1) / 2, inRoom = x => x < WALK.x0 - .05;
-function route(to, face, piece) {                                   // via the open aisle, never through plinths
-  const pts = [];
-  if (inRoom(P.x) && !inRoom(to.x)) { pts.push({ x: -9, z: DZ }, { x: -5.4, z: DZ }); P.x = P.x; }
-  if (inRoom(P.x) && inRoom(to.x)) { path = [{ x: to.x, z: to.z }]; path.face = face; path.piece = piece || null; return; }
-  if (!inRoom(P.x) && inRoom(to.x)) {
-    if (Math.abs(P.z - DZ) > 2.5) pts.push({ x: clamp(P.x, -1.2, 1.2), z: P.z }, { x: 0, z: DZ });
-    pts.push({ x: -5.4, z: DZ }, { x: -9, z: DZ }, { x: to.x, z: to.z }); path = pts; path.face = face; path.piece = piece || null; return;
-  }
-  const from = pts.length ? pts[pts.length - 1] : P;
+const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
+const roomOf = (x, z) => x >= WALK.x0 - .05 ? 'hall' : z > -26.1 ? 'champ' : 'wyld';
+const DOORZ = { champ: DZ, wyld: WZ };
+function route(to, face, piece) {                                   // via doorways and the open aisle, never through plinths
+  const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
+  const done = () => { path = pts; path.face = face; path.piece = piece || null; };
+  if (a === b && a !== 'hall') { pts.push({ x: to.x, z: to.z }); return done(); }
+  let from = { x: P.x, z: P.z };
+  if (a !== 'hall') { pts.push({ x: -9.2, z: DOORZ[a] }, { x: -5.4, z: DOORZ[a] }); from = pts[pts.length - 1]; }
   const aisleX = x => clamp(x, -1.2, 1.2);
+  if (b !== 'hall') {
+    if (Math.abs(from.z - DOORZ[b]) > 2.5) pts.push({ x: aisleX(from.x), z: from.z }, { x: aisleX(0), z: DOORZ[b] });
+    pts.push({ x: -5.4, z: DOORZ[b] }, { x: -9.2, z: DOORZ[b] }, { x: to.x, z: to.z }); return done();
+  }
   if (Math.abs(from.z - to.z) > 2.5) { pts.push({ x: aisleX(from.x), z: from.z }, { x: aisleX(to.x), z: to.z + (to.z < from.z ? 1.2 : -1.2) }); }
   pts.push({ x: to.x, z: to.z });
-  path = pts; path.face = face; path.piece = piece || null;
+  done();
 }
 function visit(p) {
   if (current && current !== p && current.exT > 0) setExploded(current, false);
@@ -585,6 +717,29 @@ function openChamp(c) {
   $('cHall').onclick = () => { closeCard(); champ = null; route({ x: 0, z: DZ }, null, null); };
   $('card').classList.add('on');
 }
+function studioLink(v) {                                            // open the exhibit already dyed
+  const cfg = { preset: 'wyld', wyld: true, wyldDark: v.wyld.darkness, wyldSheer: v.wyld.sheer, decal: v.decal };
+  return `${WROOMDATA.bike.viewer}#cfg=${btoa(unescape(encodeURIComponent(JSON.stringify(cfg))))}`;
+}
+function visitWyld(v) {
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null;
+  route(v.view, v.face, null); path.wyld = v;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'wyld'));
+}
+function openWyld(v) {
+  const B = WROOMDATA.bike, P2 = WROOMDATA.palette;
+  $('cYears').textContent = `WYLD Room · ${B.name} · ${B.year}`;
+  $('cName').textContent = v.name; $('cMat').textContent = v.sub; $('cNote').textContent = v.text;
+  $('cStats').hidden = false; $('cStats').innerHTML = B.stats.map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
+  const V = WROOMDATA.view;
+  $('cMedia').innerHTML = `<div class="c-dyes">${Object.entries(P2).map(([k, c]) => `<span style="background:${c}" title="${k} ${c}"></span>`).join('')}</div>`
+    + `<p class="c-view">Through the window: ${esc(V.caption)}. <a href="${esc(V.page)}" target="_blank" rel="noopener">© ${esc(V.author)} · ${esc(V.license)} ↗</a> (${esc(V.changes)})</p>`;
+  const next = wyldBikes[(v.index + 1) % wyldBikes.length];
+  $('cActions').innerHTML = `<a class="btn primary" href="${esc(studioLink(v))}"><span class="long">Open in&nbsp;</span>3D studio <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextDye">Next<span class="long">:&nbsp;${esc(next.name.replace('WYLD ', ''))}</span> <span aria-hidden="true">→</span></button>`;
+  $('cNextDye').onclick = () => visitWyld(next);
+  $('card').classList.add('on');
+}
 function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
@@ -597,7 +752,8 @@ $('enterBtn').onclick = enter;
 $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? '' : ' ghost'}" data-i="${i}" aria-label="${esc(p.name)}, ${esc(p.years)}">
   <span class="n">${p.thumb ? `<img src="${esc(p.thumb)}" alt="" loading="lazy">` : i + 1}</span><span><small>${esc(p.years)}</small><b>${esc(p.name.replace(/^Speed[Mm]ax /, ''))}</b></span></button>`).join('');
 if (KONA.titles.length) $('railInner').insertAdjacentHTML('beforeend', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
-$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); if (b.dataset.room === 'kona') visitChamp(champs[0]); else visit(PIECES[+b.dataset.i]); });
+if (WROOMDATA) $('railInner').insertAdjacentHTML('beforeend', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
+$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
 function railActive(p) {
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', +c.dataset.i === p?.index));
   document.querySelector(`.chip[data-i="${p?.index}"]`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
@@ -623,7 +779,10 @@ function openCard(p) {
   if ($('cExplode')) $('cExplode').onclick = () => setExploded(p, !(p.exT > 0));
   $('card').classList.add('on');
 }
-function closeCard(keepCurrent) { $('card').classList.remove('on'); if (!keepCurrent) { current = null; railActive(null); } }
+function closeCard(keepCurrent) {
+  $('card').classList.remove('on');
+  if (!keepCurrent) { if (exploded) setExploded(exploded, false); current = null; railActive(null); }
+}
 $('cardClose').onclick = () => closeCard();
 let toastT; function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200); }
 
@@ -635,10 +794,11 @@ function labelled(p) {
   if (!p.parts || !p.nodes) return [];
   return LABEL_ORDER.filter(id => p.nodes[id] && p.parts[id]).slice(0, lite ? 10 : 14);
 }
-let partSel = null;
+let partSel = null, exploded = null;                                 // the one bike currently apart
 function setExploded(p, on) {
   if (!p?.bike) return;
-  p.exT = on ? 1 : 0;
+  if (on && exploded && exploded !== p) setExploded(exploded, false);
+  p.exT = on ? 1 : 0; exploded = on ? p : (exploded === p ? null : exploded);
   if (on) {
     const ids = labelled(p);
     const wp = new THREE.Vector3();
@@ -679,15 +839,15 @@ function openPart(p, id) {
   if ($('cNextPart')) $('cNextPart').onclick = () => openPart(p, nxt);
   $('card').classList.add('on');
 }
-$('labels').addEventListener('click', e => { const b = e.target.closest('.plabel'); if (b && current) openPart(current, b.dataset.part); });
+$('labels').addEventListener('click', e => { const b = e.target.closest('.plabel'); if (b && exploded) { current = exploded; openPart(exploded, b.dataset.part); } });
 function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id] && labelled(p).includes(id)) return id; } for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id]) return id; } return null; }
 
 // ------------------------------------------------------------------ input
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
-  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor].filter(Boolean), false);
-  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
+  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor].filter(Boolean), false);
+  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.wyldBike) return { wyld: h.object.userData.wyldBike }; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
   return null;
 }
 canvas.addEventListener('pointerdown', e => {
@@ -712,6 +872,7 @@ canvas.addEventListener('pointerup', e => {
   if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
   if (hit?.champ) { visitChamp(hit.champ); return; }
+  if (hit?.wyld) { visitWyld(hit.wyld); return; }
   if (hit?.piece) visit(hit.piece);
   else if (hit?.point) { closeCard(); if (walkable(hit.point.x, hit.point.z)) path = [{ x: hit.point.x, z: hit.point.z }]; }
 });
@@ -728,6 +889,7 @@ addEventListener('keydown', e => {
   if (k === 'escape') { if (partSel && current) openCard(current); else closeCard(); }
   if (k === 'x' && current?.bike) setExploded(current, !(current.exT > 0));
   if (k === 'k' && champs.length) visitChamp(champs[0]);
+  if (k === 'y' && wyldBikes.length) visitWyld(wyldBikes[0]);
   if (k === 'enter' && current?.viewer) location.href = current.viewer;
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
@@ -789,7 +951,7 @@ function frame(now) {
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const wantPitch = Math.atan2(path.face.y - EYE, Math.hypot(fx, fz));
     P.yaw += dyaw * (1 - Math.exp(-dt * 3.5)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 3));
-    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ; path = null; if (pc) openCard(pc); if (ch) openChamp(ch); }
+    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld; path = null; if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); }
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 9); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
@@ -810,7 +972,7 @@ function frame(now) {
   else if (camera.view?.enabled) camera.clearViewOffset();
   // hover (desktop): halo + name tag
   let hot = null;
-  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || null; const tag = $('tag');
+  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : null); const tag = $('tag');
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
     if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
@@ -827,15 +989,23 @@ function frame(now) {
       x.node.position.copy(x.base).addScaledVector(x.vec, e * 1.15);
     }
   }
-  if (current?.anchors && current.ex > .05) {
+  if (exploded && Math.hypot(P.x - exploded.pos.x, P.z - exploded.pos.z) > 7.5) setExploded(exploded, false);   // walked away
+  const lab = exploded?.anchors ? exploded : null;
+  $('labels').style.visibility = lab && lab.ex > .05 ? 'visible' : 'hidden';
+  if (lab && lab.ex > .05) {
     const v = new THREE.Vector3(), els = $('labels').children;
-    current.anchors.forEach((a, i) => {
+    lab.anchors.forEach((a, i) => {
       a.node.localToWorld(v.copy(a.local)); v.project(camera);
       const el = els[i]; if (!el) return;
       const vis = v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
-      el.style.opacity = vis ? Math.min(1, (current.ex - .05) * 2) : 0; el.style.pointerEvents = vis ? '' : 'none';
+      el.style.opacity = vis ? Math.min(1, (lab.ex - .05) * 2) : 0; el.style.pointerEvents = vis ? '' : 'none';
       el.style.transform = `translate(${(v.x * .5 + .5) * innerWidth}px,${(-v.y * .5 + .5) * innerHeight}px)`;
     });
+  }
+  { // draw only what can be seen: rooms hide each other's bikes (walls between them)
+    const reg = roomOf(P.x, P.z);
+    for (const p of PIECES) if (p.bike) p.bike.visible = reg === 'hall' || Math.abs(p.pos.z - DOORZ[reg]) < 7;
+    for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg === 'hall' && P.z < -20 && P.x < 3);
   }
   if (window.__ocean) window.__ocean.uniforms.t.value = t;
   if (window.__foam) window.__foam.opacity = .38 + Math.sin(t * .9) * .14;
@@ -843,5 +1013,5 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
-loadAll();
-window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp };
+loadAll().then(loadWyldBikes).catch(e => console.warn('wyld room', e));
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer };

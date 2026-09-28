@@ -76,6 +76,7 @@ body.walking #rail{transform:none}
 .chip .n img{width:100%;height:100%;object-fit:cover}
 .chip.on .n{background:#2a3138}
 .chip.kona .n{background:linear-gradient(135deg,var(--wyld),var(--wyld-lilac) 50%,var(--wyld-aqua));color:#fff}
+.chip.wyld .n{background:linear-gradient(135deg,#ff3d8e,#ff8fbf 30%,#e9cde8 50%,#8fe7dc 70%,#5fd8d3);color:#fff}
 .chip.ghost .n{background:transparent;border:1px dashed rgba(18,24,29,.25);color:var(--faint)}
 .chip span{display:flex;flex-direction:column;gap:2px}
 .chip small{font-size:10px;letter-spacing:.12em;color:var(--faint);font-weight:600}
@@ -119,6 +120,10 @@ body.walking #rail{transform:none}
 .c-photo a:hover{color:var(--reef)}
 .c-unc{margin-top:14px;font-size:12px;color:var(--muted)}.c-unc summary{cursor:pointer;font-weight:600;color:var(--ink)}
 .c-unc ul{margin:8px 0 0 16px;line-height:1.6}
+
+/* WYLD room card */
+.c-dyes{display:flex;gap:6px;margin:18px 0 0}.c-dyes span{flex:1;height:26px;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(18,24,29,.08)}
+.c-view{font-size:12px;line-height:1.6;color:var(--muted);margin-top:12px}.c-view a{color:var(--reef);font-weight:600}
 
 /* hover label */
 #tag{position:fixed;z-index:12;pointer-events:none;padding:8px 12px;border-radius:10px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:600;
@@ -223,7 +228,7 @@ body.walking .credit{display:none}
 
 <p class="credit">Independent study from public references. Not affiliated with or endorsed by Canyon Bicycles. 3D models are visual reconstructions.</p>
 
-<script>window.__PIECES=__PIECES__;window.__KONA=__KONA__;</script>
+<script>window.__PIECES=__PIECES__;window.__KONA=__KONA__;window.__WYLDROOM=__WYLDROOM__;</script>
 <script>__APP__</script>
 </body>
 </html>
