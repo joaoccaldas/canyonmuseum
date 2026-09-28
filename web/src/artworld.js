@@ -297,11 +297,11 @@ export async function initArtWorld(museum) {
     g.position.set(-6.76,0,-36.4);
     g.rotation.set(Math.PI/2,Math.PI/2,0);
     g.scale.setScalar(1.15);
-    for (const src of asset.children) {
-      if (!src.name.startsWith('PORTAL_')) continue;
-      const c = src.clone();
+    for (const src of assetMeshes(asset, ['PORTAL_'])) {
+      const c = src.clone(false);
       c.geometry = src.geometry.clone();
       c.material = src.name.includes('RING') ? physical('#261833',.1,.18,'#a568d0') : physical('#121318',.16,.36);
+      c.userData = {};
       g.add(c);
     }
     root.add(g);

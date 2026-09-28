@@ -41,5 +41,7 @@ test('hidden collection scales down on mobile but remains visually large', () =>
   assert.ok(src.includes('wireBike'));
   assert.ok(src.includes('repaintBike'));
   assert.ok(src.includes('cloneBikeForCollection'));
+  assert.ok(src.includes("assetMeshes(asset, ['PORTAL_'])"));
   assert.ok(!src.includes('source.bike.clone(true)'));
+  assert.ok(!src.includes('for (const src of asset.children)'));
 });

@@ -99,7 +99,13 @@ try {
       try { localStorage.setItem('speedmax.coach.v1', '1'); } catch (_) {}
       window.__museum.enter();
     });
-    await pause(1500);
+    // Let the museum's own entrance route finish before deterministic camera teleports.
+    // Otherwise its private path follower keeps pulling screenshots back toward the lobby.
+    await page.waitForFunction(() => {
+      const p = window.__museum?.P;
+      return p && Math.abs(p.z - 0.6) < 0.3 && Math.hypot(p.vx || 0, p.vz || 0) < 0.45;
+    }, { timeout: 10000 }).catch(() => {});
+    await pause(450);
 
     const metadata = await page.evaluate(() => {
       const gl = window.__museum.renderer.getContext();
@@ -108,7 +114,7 @@ try {
       return {
         renderer: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
         artChildren: art?.children?.length || 0,
-        objChildren: window.__museumArt.asset?.children?.length || 0,
+        assetChildren: window.__museumArt.asset?.children?.length || 0,
         bikeCount: window.__museum.PIECES.filter(p => p.bike).length,
         artLoadError: window.__museumArt.loadError || null,
         invalidArtGeometry: (() => {
@@ -166,7 +172,7 @@ try {
     });
 
     const expectedArchive = cfg.isMobile ? 8 : 18;
-    if (pageErrors.length || consoleErrors.length || metadata.artLoadError || metadata.invalidArtGeometry || sceneState.archiveBikes !== expectedArchive || metadata.objChildren === 0) failed = true;
+    if (pageErrors.length || consoleErrors.length || metadata.artLoadError || metadata.invalidArtGeometry || sceneState.archiveBikes !== expectedArchive || metadata.assetChildren === 0) failed = true;
     await context.close();
   }
 } finally {
