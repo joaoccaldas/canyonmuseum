@@ -209,7 +209,7 @@ export async function initArtWorld(museum) {
   hiddenRoom.visible = false;
   scene.add(hiddenRoom);
 
-  const HORROR = { x0: 33, x1: 57, z0: -45, z1: -13.5, h: 6.4 };
+  const HORROR = { x0: 35, x1: 55, z0: -44, z1: -15.5, h: 5.6 };
   let collectionBuilt = false;
   const fullBikes = [];
   const artLights = [];
@@ -265,8 +265,10 @@ export async function initArtWorld(museum) {
     const g = new THREE.Group();
     g.name = 'ART ' + def.title;
     g.position.set(...def.position);
-    g.rotation.x = Math.PI/2;
-    g.scale.setScalar(1.02);
+    // GLB already carries Blender's axis conversion. Rotate only around Y so the relief faces the aisle.
+    g.rotation.y = Math.PI/2;
+    g.position.y = .18;
+    g.scale.setScalar(1.28);
 
     const parts = [];
     for (const src of assetMeshes(asset, def.prefix)) {
@@ -295,8 +297,10 @@ export async function initArtWorld(museum) {
     const g = new THREE.Group();
     g.name = 'HIDDEN PORTAL';
     g.position.set(-6.76,0,-36.4);
-    g.rotation.set(Math.PI/2,Math.PI/2,0);
-    g.scale.setScalar(1.15);
+    // Portal geometry is authored vertical in the GLB; turn it toward the hall without tipping it sideways.
+    g.rotation.y = Math.PI/2;
+    g.position.y = .08;
+    g.scale.setScalar(1.42);
     for (const src of assetMeshes(asset, ['PORTAL_'])) {
       const c = src.clone(false);
       c.geometry = src.geometry.clone();
@@ -318,7 +322,6 @@ export async function initArtWorld(museum) {
 
   function clonePrefabs(asset, prefixes) {
     const g = new THREE.Group();
-    g.rotation.x = Math.PI/2;
     for (const src of assetMeshes(asset, prefixes)) {
       const c = src.clone(false);
       c.geometry = src.geometry.clone();
@@ -389,11 +392,11 @@ export async function initArtWorld(museum) {
     hiddenRoom.add(exit);
     pickables.push(exit);
 
-    const cold = new THREE.HemisphereLight('#73678b','#1a1014',.42);
+    const cold = new THREE.HemisphereLight('#9b88bd','#170d12',.72);
     hiddenRoom.add(cold);
     for (const [x,z,c] of [[38,-38,'#7b4ea0'],[52,-33,'#8e2635'],[38,-22,'#33576e'],[52,-18,'#6c5735']]) {
-      const l = new THREE.PointLight(c,2.2,8,2.2);
-      l.position.set(x,4.2,z);
+      const l = new THREE.PointLight(c,7.5,14,1.8);
+      l.position.set(x,3.9,z);
       l.castShadow = false;
       hiddenRoom.add(l);
       artLights.push(l);
@@ -406,25 +409,25 @@ export async function initArtWorld(museum) {
     if (!source?.bike) return;
     const fullCount = mobile ? 4 : 6;
     const slots = [
-      [38.2,-39.0,Math.PI/2],[51.8,-36.2,-Math.PI/2],
-      [38.2,-30.8,Math.PI/2],[51.8,-27.6,-Math.PI/2],
-      [38.2,-21.4,Math.PI/2],[51.8,-18.2,-Math.PI/2],
+      [39.1,-38.6,Math.PI/2],[50.9,-36.0,-Math.PI/2],
+      [39.1,-30.1,Math.PI/2],[50.9,-27.4,-Math.PI/2],
+      [39.1,-21.8,Math.PI/2],[50.9,-19.0,-Math.PI/2],
     ];
 
     for (let i=0;i<fullCount;i++) {
       const theme = HORROR_THEMES[i];
       const holder = cloneBikeForCollection(source.bike);
       repaintBike(holder,theme,false);
-      holder.scale.setScalar(1);
+      holder.scale.setScalar(mobile ? 1.16 : 1.32);
       holder.position.set(slots[i][0],.34,slots[i][1]);
       holder.rotation.y = slots[i][2];
       hiddenRoom.add(holder);
       fullBikes.push({ holder, theme, i });
 
-      const plinth = box(3.6,.30,1.38,physical('#1d1b20',.14,.34));
+      const plinth = box(4.15,.34,1.58,physical('#16141a',.11,.42));
       plinth.position.set(slots[i][0],.15,slots[i][1]);
       hiddenRoom.add(plinth);
-      const seam = box(3.28,.025,1.1,glow(theme.accent,.68));
+      const seam = box(3.78,.028,1.28,glow(theme.accent,.86));
       seam.position.set(slots[i][0],.32,slots[i][1]);
       hiddenRoom.add(seam);
       addInfo(plinth,{
@@ -433,7 +436,7 @@ export async function initArtWorld(museum) {
         sub:'Experimental bike livery',
         text:theme.note,
       });
-      obstacles.push({ c:new THREE.Vector3(slots[i][0],0,slots[i][1]), r:1.58 });
+      obstacles.push({ c:new THREE.Vector3(slots[i][0],0,slots[i][1]), r:1.82 });
     }
 
     const archiveMat = new THREE.MeshBasicMaterial({ color:'#736c82', transparent:true, opacity:.34, toneMapped:false });
@@ -443,8 +446,8 @@ export async function initArtWorld(museum) {
     for (let i=0;i<total;i++) {
       const b = wireBike(archiveMat.clone());
       const row = Math.floor(i/6), col = i%6;
-      b.position.set(36.7+col*3.35,2.05+row*1.35,-44.72);
-      b.scale.setScalar(.72);
+      b.position.set(37.1+col*2.58,1.85+row*1.28,-43.72);
+      b.scale.setScalar(.66);
       archive.add(b);
     }
     hiddenRoom.add(archive);
@@ -466,7 +469,7 @@ export async function initArtWorld(museum) {
   function enter(portal) {
     if (!portal) return;
     if (portal.id === 'horror-in') {
-      P.x=35.25; P.z=-29.2; P.yaw=-Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
+      P.x=36.15; P.z=-29.2; P.yaw=-Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
       hiddenRoom.visible=true;
       buildCollection();
       toast('Secret collection unlocked. The room changes as you move through it.');
@@ -480,7 +483,7 @@ export async function initArtWorld(museum) {
   function goto(id) {
     if (id === 'horror') {
       enter({id:'horror-in'});
-      P.x=45; P.z=-15.8; P.yaw=0; P.pitch=-.03;
+      P.x=45; P.z=-17.0; P.yaw=0; P.pitch=-.045;
       return;
     }
     const i = installations.find(x => x.def.id === id);
