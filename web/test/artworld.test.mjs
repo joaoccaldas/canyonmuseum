@@ -20,7 +20,7 @@ test('distance-reactive place studies and hidden collection stay wired', () => {
 });
 
 test('hidden collection uses sparse full-detail bikes plus lightweight archive silhouettes', () => {
-  assert.match(src, /fullCount\s*=\s*mobile\s*\?\s*4\s*:\s*6/);
-  assert.match(src, /ghostCount\s*=\s*mobile\s*\?\s*5\s*:\s*10/);
+  assert.match(src, /fullCount\\s*=\\s*mobile\\s*\\?\\s*4\\s*:\\s*8/);
+  assert.match(src, /ghostCount\\s*=\\s*mobile\\s*\\?\\s*5\\s*:\\s*12/);
   assert.match(src, /simplified/);
 });
