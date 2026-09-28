@@ -8,7 +8,8 @@ import { build } from 'esbuild';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../..');
 const file = path.join(root, 'web/src/artworld.js');
-const asset = path.join(root, 'assets/artworld/artworld_assets.obj');
+const asset = path.join(root, 'assets/artworld/artworld_assets.glb');
+const packed = path.join(root, 'assets/artworld/artworld_assets.glb.gz.b64');
 const src = fs.readFileSync(file, 'utf8');
 
 test('art world bundles as part of the browser museum', async () => {
@@ -16,11 +17,16 @@ test('art world bundles as part of the browser museum', async () => {
   assert.ok(result.outputFiles[0].text.length > 1000);
 });
 
-test('Blender-authored asset exists and is referenced by the runtime', () => {
+test('Blender-authored GLB exists, is valid, and is referenced by the runtime', () => {
+  assert.ok(fs.existsSync(packed));
+  assert.ok(fs.statSync(packed).size > 10000);
   assert.ok(fs.existsSync(asset));
-  assert.ok(fs.statSync(asset).size > 10000);
-  assert.ok(src.includes('assets/artworld/artworld_assets.obj'));
-  assert.ok(src.includes('OBJLoader'));
+  const bytes = fs.readFileSync(asset);
+  assert.equal(bytes.subarray(0,4).toString('ascii'), 'glTF');
+  assert.ok(bytes.length > 10000);
+  assert.ok(src.includes('assets/artworld/artworld_assets.glb'));
+  assert.ok(src.includes('GLTFLoader'));
+  assert.ok(!src.includes('OBJLoader'));
 });
 
 test('distance-reactive place studies and hidden collection stay wired', () => {
@@ -34,4 +40,6 @@ test('hidden collection scales down on mobile but remains visually large', () =>
   assert.ok(src.includes('const total = mobile ? 8 : 18;'));
   assert.ok(src.includes('wireBike'));
   assert.ok(src.includes('repaintBike'));
+  assert.ok(src.includes('cloneBikeForCollection'));
+  assert.ok(!src.includes('source.bike.clone(true)'));
 });

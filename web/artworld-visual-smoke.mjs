@@ -29,13 +29,13 @@ const report = {
 
 const scenes = [
   { name: 'main-entrance', pose: { x: 0, z: 3.15, yaw: 0, pitch: -0.035 } },
-  { name: 'st-george-far', pose: { x: -2.4, z: -8.2, yaw: -Math.PI / 2, pitch: -0.045 } },
+  { name: 'st-george-far', pose: { x: -1.5, z: -11.8, yaw: -Math.PI / 2, pitch: -0.045 } },
   { name: 'st-george-near', goto: 'st-george' },
-  { name: 'vegas-far', pose: { x: -2.4, z: -18.0, yaw: -Math.PI / 2, pitch: -0.045 } },
+  { name: 'vegas-far', pose: { x: -1.5, z: -22.6, yaw: -Math.PI / 2, pitch: -0.045 } },
   { name: 'vegas-near', goto: 'las-vegas' },
   { name: 'nice-near', goto: 'nice' },
   { name: 'kona-near', goto: 'kona' },
-  { name: 'secret-portal', pose: { x: -3.7, z: -37.9, yaw: Math.PI / 2, pitch: -0.035 } },
+  { name: 'secret-portal', pose: { x: -3.5, z: -36.4, yaw: Math.PI / 2, pitch: -0.035 } },
   { name: 'horror-room-wide', goto: 'horror' },
   { name: 'horror-bikes-close', horror: true, pose: { x: 45, z: -23.8, yaw: 0, pitch: -0.055 } },
 ];
@@ -75,7 +75,7 @@ try {
     const pageErrors = [];
     const consoleErrors = [];
     const consoleWarnings = [];
-    page.on('pageerror', e => pageErrors.push(e.message));
+    page.on('pageerror', e => pageErrors.push(e.stack || e.message));
     page.on('console', m => {
       if (m.type() === 'error') consoleErrors.push(m.text());
       if (m.type() === 'warn') consoleWarnings.push(m.text());
@@ -93,10 +93,9 @@ try {
       { timeout: 60000 },
     );
 
-    await page.evaluate(async () => {
+    await page.evaluate(() => {
       try { localStorage.setItem('speedmax.coach.v1', '1'); } catch (_) {}
       window.__museum.enter();
-      if (document.fonts?.ready) await document.fonts.ready;
     });
     await pause(1500);
 
@@ -109,6 +108,14 @@ try {
         artChildren: art?.children?.length || 0,
         objChildren: window.__museumArt.asset?.children?.length || 0,
         bikeCount: window.__museum.PIECES.filter(p => p.bike).length,
+        invalidArtGeometry: (() => {
+          let invalid = 0;
+          art?.traverse(o => {
+            const a = o.isMesh && o.geometry?.attributes?.position?.array;
+            if (a && Array.from(a).some(v => !Number.isFinite(v))) invalid++;
+          });
+          return invalid;
+        })(),
       };
     });
 
@@ -155,7 +162,8 @@ try {
       consoleWarnings,
     });
 
-    if (pageErrors.length) failed = true;
+    const expectedArchive = cfg.isMobile ? 8 : 18;
+    if (pageErrors.length || consoleErrors.length || metadata.invalidArtGeometry || sceneState.archiveBikes !== expectedArchive) failed = true;
     await context.close();
   }
 } finally {

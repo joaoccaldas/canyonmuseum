@@ -30,6 +30,19 @@ jobs:
         working-directory: web
         run: npm ci
 
+      - name: Restore canonical Blender GLB
+        run: |
+          base64 -d assets/artworld/artworld_assets.glb.gz.b64 | gunzip -c > assets/artworld/artworld_assets.glb
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('assets/artworld/artworld_assets.glb')
+          b = p.read_bytes()
+          assert b[:4] == b'glTF', 'invalid GLB magic'
+          assert int.from_bytes(b[8:12], 'little') == len(b), 'GLB length mismatch'
+          print(f'validated {p}: {len(b)} bytes')
+          PY
+          rm -f assets/artworld/artworld_assets.obj
+
       - name: Rebuild canonical museum landing
         run: node web/build_landing.mjs
 
@@ -47,21 +60,21 @@ jobs:
           cat /tmp/canyonmuseum-http.log
           exit 1
 
-      - name: Capture desktop and Samsung visual gate
-        run: node web/artworld-visual-smoke.mjs
-
-      - name: Sync generated index back to the feature branch
+      - name: Sync generated runtime artifacts to the feature branch
         continue-on-error: true
         run: |
-          if git diff --quiet -- index.html; then
-            echo "index.html already matches the canonical build"
-            exit 0
+          if git diff --quiet -- index.html assets/artworld; then
+            echo "runtime artifacts already match the canonical build"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A index.html assets/artworld
+            git commit -m "build: sync art-world GLB and landing bundle"
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "build: sync landing bundle after art-world changes"
-          git push origin HEAD:${GITHUB_REF_NAME}
+
+      - name: Capture desktop and Samsung visual gate
+        run: node web/artworld-visual-smoke.mjs
 
       - name: Upload visual evidence
         if: always()

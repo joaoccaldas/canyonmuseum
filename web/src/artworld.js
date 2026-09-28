@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const ASSET_URL = 'assets/artworld/artworld_assets.obj';
+const ASSET_URL = 'assets/artworld/artworld_assets.glb';
 
 const PLACE_DEFS = [
   {
@@ -10,7 +10,7 @@ const PLACE_DEFS = [
     sub: 'Red rock / contour study',
     text: 'One canyon silhouette from the aisle. Up close it separates into contour fins and a warm seam.',
     prefix: ['STG_'],
-    position: [5.25, 0, -8.2],
+    position: [5.25, 0, -11.8],
     color: '#8f311f',
     accent: '#ff8c42',
     split: .34,
@@ -21,7 +21,7 @@ const PLACE_DEFS = [
     sub: 'Mirror / neon study',
     text: 'A dark reflective object from far away. Walk closer and the surface breaks into offset neon planes.',
     prefix: ['VEGAS_'],
-    position: [5.25, 0, -18.0],
+    position: [5.25, 0, -22.6],
     color: '#111218',
     accent: '#ff3d8e',
     split: .42,
@@ -32,7 +32,7 @@ const PLACE_DEFS = [
     sub: 'Sea glass / coastal study',
     text: 'A quiet coastal ribbon at distance, then layered translucent geometry appears as you move around it.',
     prefix: ['NICE_'],
-    position: [5.25, 0, -27.8],
+    position: [5.25, 0, -33.4],
     color: '#8bd4dc',
     accent: '#c8f5f2',
     split: .16,
@@ -43,7 +43,7 @@ const PLACE_DEFS = [
     sub: 'Obsidian / heat study',
     text: 'An obsidian marker from the hall. Close up, black shards expose a hot volcanic core.',
     prefix: ['KONA_'],
-    position: [5.25, 0, -37.8],
+    position: [5.25, 0, -43.3],
     color: '#121419',
     accent: '#ff592c',
     split: .38,
@@ -122,6 +122,29 @@ function wireBike(material) {
     g.add(makeTube(pts[a], pts[b], .018, material));
   }
   return g;
+}
+
+function assetMeshes(asset, prefixes) {
+  const matches = [];
+  asset.traverse(src => {
+    if (src.isMesh && prefixes.some(p => src.name.startsWith(p))) matches.push(src);
+  });
+  return matches;
+}
+
+function cloneBikeForCollection(root) {
+  // Three.js deep-clones userData with JSON serialization. Museum bike meshes carry
+  // a live back-reference to their piece, so sanitize only during the synchronous clone.
+  const saved = [];
+  root.traverse(o => {
+    saved.push([o, o.userData]);
+    o.userData = o.userData?.part ? { part: o.userData.part } : {};
+  });
+  try {
+    return root.clone(true);
+  } finally {
+    for (const [o, userData] of saved) o.userData = userData;
+  }
 }
 
 function repaintBike(root, theme, simplified=false) {
@@ -246,13 +269,13 @@ export async function initArtWorld(museum) {
     g.scale.setScalar(1.02);
 
     const parts = [];
-    for (const src of asset.children) {
-      if (!def.prefix.some(p => src.name.startsWith(p))) continue;
-      const c = src.clone();
+    for (const src of assetMeshes(asset, def.prefix)) {
+      const c = src.clone(false);
       c.geometry = src.geometry.clone();
       c.material = materialForName(c.name, def);
-      c.userData.home = c.position.clone();
-      c.userData.index = parts.length;
+      c.userData = { home: c.position.clone(), index: parts.length };
+      c.castShadow = !mobile;
+      c.receiveShadow = true;
       parts.push(c);
       g.add(c);
     }
@@ -271,7 +294,7 @@ export async function initArtWorld(museum) {
   function mountPortal(asset) {
     const g = new THREE.Group();
     g.name = 'HIDDEN PORTAL';
-    g.position.set(-6.76,0,-37.9);
+    g.position.set(-6.76,0,-36.4);
     g.rotation.set(Math.PI/2,Math.PI/2,0);
     g.scale.setScalar(1.15);
     for (const src of asset.children) {
@@ -284,7 +307,7 @@ export async function initArtWorld(museum) {
     root.add(g);
 
     const hit = box(.15,2.6,1.65,new THREE.MeshBasicMaterial({ transparent:true, opacity:.001, depthWrite:false }));
-    hit.position.set(-6.62,1.35,-37.9);
+    hit.position.set(-6.62,1.35,-36.4);
     hit.userData.artPortal = { id:'horror-in', label:'Hidden collection' };
     root.add(hit);
     pickables.push(hit);
@@ -296,9 +319,8 @@ export async function initArtWorld(museum) {
   function clonePrefabs(asset, prefixes) {
     const g = new THREE.Group();
     g.rotation.x = Math.PI/2;
-    for (const src of asset.children) {
-      if (!prefixes.some(p => src.name.startsWith(p))) continue;
-      const c = src.clone();
+    for (const src of assetMeshes(asset, prefixes)) {
+      const c = src.clone(false);
       c.geometry = src.geometry.clone();
       if (/CARNIVAL/i.test(c.name)) c.material = physical('#5c1524',.12,.24,'#8a2236');
       else if (/TOTEM/i.test(c.name)) c.material = physical('#4c331b',.2,.58);
@@ -317,6 +339,10 @@ export async function initArtWorld(museum) {
     pickables.push(floor);                                           // click-to-walk works inside the hidden collection too
 
     const wallMat = matte('#141216',.72,.04);
+    const ceiling = box(HORROR.x1-HORROR.x0,.24,HORROR.z1-HORROR.z0,matte('#0a090c',.82,.04));
+    ceiling.position.set((HORROR.x0+HORROR.x1)/2,HORROR.h+.12,(HORROR.z0+HORROR.z1)/2);
+    hiddenRoom.add(ceiling);
+
     const back = box(HORROR.x1-HORROR.x0,HORROR.h,.35,wallMat);
     back.position.set(45,HORROR.h/2,HORROR.z0);
     hiddenRoom.add(back);
@@ -378,8 +404,6 @@ export async function initArtWorld(museum) {
     if (collectionBuilt) return;
     const source = PIECES.find(p => p.key === 'cfr' && p.bike) || PIECES.find(p => p.bike);
     if (!source?.bike) return;
-    collectionBuilt = true;
-
     const fullCount = mobile ? 4 : 6;
     const slots = [
       [38.2,-39.0,Math.PI/2],[51.8,-36.2,-Math.PI/2],
@@ -389,7 +413,7 @@ export async function initArtWorld(museum) {
 
     for (let i=0;i<fullCount;i++) {
       const theme = HORROR_THEMES[i];
-      const holder = source.bike.clone(true);
+      const holder = cloneBikeForCollection(source.bike);
       repaintBike(holder,theme,false);
       holder.scale.setScalar(1);
       holder.position.set(slots[i][0],.34,slots[i][1]);
@@ -424,10 +448,13 @@ export async function initArtWorld(museum) {
       archive.add(b);
     }
     hiddenRoom.add(archive);
+    collectionBuilt = true;
   }
 
   async function loadAssets() {
-    const asset = await new OBJLoader().loadAsync(ASSET_URL);
+    const gltf = await new GLTFLoader().loadAsync(ASSET_URL);
+    const asset = gltf.scene;
+    asset.updateMatrixWorld(true);
     for (const def of PLACE_DEFS) mountAssetGroup(asset,def);
     mountPortal(asset);
     buildRoomShell(asset);
@@ -444,7 +471,7 @@ export async function initArtWorld(museum) {
       buildCollection();
       toast('Secret collection unlocked. The room changes as you move through it.');
     } else if (portal.id === 'horror-out') {
-      P.x=-5.3; P.z=-37.9; P.yaw=Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
+      P.x=-5.3; P.z=-36.4; P.yaw=Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
       hiddenRoom.visible=false;
       toast('Back in the main gallery.');
     }
@@ -458,7 +485,7 @@ export async function initArtWorld(museum) {
     }
     const i = installations.find(x => x.def.id === id);
     if (!i) return;
-    P.x=2.9; P.z=i.def.position[2]+1.4; P.yaw=-Math.PI/2; P.pitch=-.05; P.vx=P.vz=0;
+    P.x=1.9; P.z=i.def.position[2]; P.yaw=-Math.PI/2; P.pitch=-.05; P.vx=P.vz=0;
   }
 
   function update(dt,t,visitor,cam,region) {
