@@ -507,11 +507,13 @@ export async function initArtWorld(museum) {
     if (portal.id === 'horror-in') {
       P.x=36.15; P.z=-29.2; P.yaw=-Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
       hiddenRoom.visible=true;
+      document.body.classList.add('secret-room');
       buildCollection();
       toast('Secret collection unlocked. The room changes as you move through it.');
     } else if (portal.id === 'horror-out') {
       P.x=-5.3; P.z=-36.4; P.yaw=Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
       hiddenRoom.visible=false;
+      document.body.classList.remove('secret-room');
       toast('Back in the main gallery.');
     }
   }
