@@ -7,6 +7,7 @@ Run:
 Outputs:
   artworld_assets.blend
   artworld_assets.glb
+  artworld_assets.obj
 
 Geometry is intentionally original, procedural, low-to-medium poly, and public-safe.
 No personal data is embedded in the assets.
@@ -180,7 +181,12 @@ scene['provenance'] = 'Original procedural Blender geometry. Public-safe; no per
 
 blend = os.path.join(OUT, 'artworld_assets.blend')
 glb = os.path.join(OUT, 'artworld_assets.glb')
+obj = os.path.join(OUT, 'artworld_assets.obj')
 bpy.ops.wm.save_as_mainfile(filepath=blend)
 bpy.ops.export_scene.gltf(filepath=glb, export_format='GLB', export_apply=True)
+# OBJ is intentionally emitted as the web-runtime artifact: it is compact, diffable,
+# and can be loaded by Three.js while the editable .blend remains reproducible from this script.
+bpy.ops.wm.obj_export(filepath=obj, export_materials=False, export_uv=False, export_normals=True)
 print(blend)
 print(glb)
+print(obj)
