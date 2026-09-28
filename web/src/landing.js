@@ -929,11 +929,12 @@ function haptic(ms = 8) { try { if (coarse) navigator.vibrate?.(ms); } catch (_)
 
 // ------------------------------------------------------------------ first visit on a phone: three quick coach marks
 const coachState = { k: -1, steps: [] };
-function coach() {
+function coach() {                                                  // returns true when the coach will speak
   let seen = false; try { seen = localStorage.getItem('speedmax.coach.v1') === '1'; } catch (_) { }
-  if (seen || !coarse) return;
+  if (seen || !coarse) return false;
   coachState.steps = [['joy', 'Push the tri-stick to walk'], ['look', 'Drag anywhere to look around'], ['tap', 'Tap a bike to visit it']];
   setTimeout(() => { if (!tour.on) coachShow(0); }, 900);
+  return true;
 }
 function coachShow(k) {
   const el = $('coach'); coachState.k = k;
@@ -950,7 +951,8 @@ $('coachOk')?.addEventListener('click', () => coachShow(coachState.k + 1));
 function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
-  toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
+  const coaching = coarse && (() => { try { return localStorage.getItem('speedmax.coach.v1') !== '1'; } catch (_) { return true; } })();
+  if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
   path = [{ x: 0, z: .6 }]; canvas.focus({ preventScroll: true }); haptic(10); coach();
 }
 $('enterBtn').onclick = enter;
