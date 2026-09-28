@@ -132,6 +132,33 @@ function assetMeshes(asset, prefixes) {
   return matches;
 }
 
+function bakedAssetMesh(src) {
+  // Blender's glTF exporter may put the Z-up -> Y-up conversion on parent empties.
+  // We intentionally reparent meshes into runtime exhibit groups, so preserve the full
+  // authored transform by baking matrixWorld into the cloned geometry first.
+  const c = new THREE.Mesh(src.geometry.clone(), src.material);
+  c.name = src.name;
+  c.geometry.applyMatrix4(src.matrixWorld);
+  c.position.set(0,0,0);
+  c.rotation.set(0,0,0);
+  c.scale.set(1,1,1);
+  c.updateMatrix();
+  return c;
+}
+
+function normalizeAssetGroup(g) {
+  g.updateMatrixWorld(true);
+  const bounds = new THREE.Box3().setFromObject(g);
+  if (bounds.isEmpty()) return g;
+  const center = bounds.getCenter(new THREE.Vector3());
+  const dy = bounds.min.y;
+  g.traverse(o => {
+    if (!o.isMesh) return;
+    o.geometry.translate(-center.x, -dy, -center.z);
+  });
+  return g;
+}
+
 function cloneBikeForCollection(root) {
   // Three.js deep-clones userData with JSON serialization. Museum bike meshes carry
   // a live back-reference to their piece, so sanitize only during the synchronous clone.
@@ -272,15 +299,15 @@ export async function initArtWorld(museum) {
 
     const parts = [];
     for (const src of assetMeshes(asset, def.prefix)) {
-      const c = src.clone(false);
-      c.geometry = src.geometry.clone();
+      const c = bakedAssetMesh(src);
       c.material = materialForName(c.name, def);
-      c.userData = { home: c.position.clone(), index: parts.length };
+      c.userData = { index: parts.length };
       c.castShadow = !mobile;
       c.receiveShadow = true;
       parts.push(c);
       g.add(c);
     }
+    normalizeAssetGroup(g);
     root.add(g);
 
     makePlinth(def.position, {
@@ -302,12 +329,12 @@ export async function initArtWorld(museum) {
     g.position.y = .08;
     g.scale.setScalar(1.42);
     for (const src of assetMeshes(asset, ['PORTAL_'])) {
-      const c = src.clone(false);
-      c.geometry = src.geometry.clone();
-      c.material = src.name.includes('RING') ? physical('#261833',.1,.18,'#a568d0') : physical('#121318',.16,.36);
+      const c = bakedAssetMesh(src);
+      c.material = src.name.includes('RING') ? physical('#261833',.08,.22,'#a568d0') : physical('#121318',.14,.42);
       c.userData = {};
       g.add(c);
     }
+    normalizeAssetGroup(g);
     root.add(g);
 
     const hit = box(.15,2.6,1.65,new THREE.MeshBasicMaterial({ transparent:true, opacity:.001, depthWrite:false }));
@@ -323,14 +350,13 @@ export async function initArtWorld(museum) {
   function clonePrefabs(asset, prefixes) {
     const g = new THREE.Group();
     for (const src of assetMeshes(asset, prefixes)) {
-      const c = src.clone(false);
-      c.geometry = src.geometry.clone();
+      const c = bakedAssetMesh(src);
       if (/CARNIVAL/i.test(c.name)) c.material = physical('#5c1524',.12,.24,'#8a2236');
       else if (/TOTEM/i.test(c.name)) c.material = physical('#4c331b',.2,.58);
       else c.material = physical('#17151a',.38,.16);
       g.add(c);
     }
-    return g;
+    return normalizeAssetGroup(g);
   }
 
   function buildRoomShell(asset) {
