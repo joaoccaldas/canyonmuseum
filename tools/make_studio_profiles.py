@@ -70,8 +70,25 @@ for key, extra in BIKES.items():
 
     default = presets[0]
 
-    # ---- parts: map heritage partLabels into PARTS name overrides
-    parts = {pid: {'name': label} for pid, label in src.get('partLabels', {}).items()}
+    # ---- parts: a complete list from the archived specification. It replaces the MY2027
+    # catalogue outright, so a 2011 frame is never described with CFR names, weights or prices.
+    rows = {k.lower(): (k, v) for k, v in b.get('spec', [])}
+    SPEC = {'frame': ['Frame'], 'fork': ['Fork'], 'crankset': ['Crankset', 'Cranks'], 'chainrings': ['Crankset'], 'crank_arm_ds': ['Crankset'], 'crank_arm_nds': ['Crankset'],
+            'spindle': ['Bottom bracket', 'Crankset'], 'cassette': ['Cassette'], 'chain': ['Chain', 'Drivetrain'], 'rear_derailleur': ['Rear derailleur', 'Drivetrain'],
+            'front_derailleur': ['Front derailleur', 'Drivetrain'], 'brake_front': ['Brakes'], 'brake_rear': ['Brakes'], 'brake_levers': ['Brake levers', 'Shifters'],
+            'wheel_front': ['Wheels', 'Front wheel'], 'wheel_rear': ['Wheels', 'Rear wheel'], 'saddle': ['Saddle'], 'seatpost': ['Seatpost'], 'stem': ['Stem', 'Cockpit'],
+            'base_bar': ['Handlebar', 'Base bar', 'Cockpit'], 'extensions': ['Aerobar', 'Extensions', 'Cockpit'], 'cables': ['Drivetrain']}
+    GROUP = {'frame': 'frame', 'fork': 'frame', 'wheel_front': 'wheels', 'wheel_rear': 'wheels', 'saddle': 'contact', 'seatpost': 'contact', 'stem': 'cockpit',
+             'base_bar': 'cockpit', 'extensions': 'cockpit', 'brake_levers': 'cockpit', 'brake_front': 'brakes', 'brake_rear': 'brakes', 'cables': 'cockpit'}
+    NICE = {'wheel_front': 'Front wheel', 'wheel_rear': 'Rear wheel', 'brake_front': 'Front brake', 'brake_rear': 'Rear brake', 'crank_arm_ds': 'Drive-side crank',
+            'crank_arm_nds': 'Non-drive crank', 'rear_derailleur': 'Rear derailleur', 'front_derailleur': 'Front derailleur', 'spindle': 'Bottom-bracket spindle', 'base_bar': 'Base bar'}
+    labels = src.get('partLabels', {})
+    parts = {}
+    for pid, keys in SPEC.items():
+        hit = next((rows[k.lower()] for k in keys if k.lower() in rows), None)
+        parts[pid] = {'name': labels.get(pid) or NICE.get(pid) or pid.replace('_', ' ').capitalize(), 'group': GROUP.get(pid, 'drivetrain'),
+                      'spec': hit[1] if hit else 'Simplified external form rebuilt from the archived specification.',
+                      'note': (f"Archived {hit[0].lower()} specification, {extra['year']}." if hit else 'Shape interpreted from the archive photograph.')}
 
     # ---- geometry rows for the Specs drawer (single size, honest source)
     geo_rows = [[label, value] for label, value in b.get('geometry', [])]
@@ -116,6 +133,7 @@ for key, extra in BIKES.items():
             'rimText': default['rimText'],
         },
         'parts': parts,
+        'partsReplace': True,
         'tour': [
             { 'view': 'side', 'title': 'A silhouette from the archive', 'text': b['story'] },
             { 'view': 'cockpit', 'title': 'Cockpit of its era', 'text': 'Clip-on extensions, cable housings and the cockpit hardware documented for this build. Side profiles are traced from the archived photograph; depths remain interpreted.' },

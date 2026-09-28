@@ -56,8 +56,10 @@ export function makeLab({getCfg,setCfg,enter,leave,download,onResult}) {
  $('#lab-pause').onclick=()=>{state.paused=!state.paused;$('#lab-pause').textContent=state.paused?'Resume airflow':'Pause airflow';redraw();};
  $('#lab-exit').onclick=()=>{panel.classList.remove('open');leave();};
  const open=()=>{enter();panel.classList.add('open');redraw();};
- panel.querySelector('.x').onclick=()=>panel.classList.remove('open');
- $('#labOpen').onclick=open;
+ // Closing the lab leaves the tunnel: on phones the view dock is hidden in there, so a bare close stranded visitors.
+ const exit=()=>{panel.classList.remove('open');leave();};
+ panel.querySelector('.x').onclick=exit;
+ $('#labOpen').onclick=()=>document.body.classList.contains('in-lab')?exit():open();
  return {state,refresh:redraw,open,setVisible(v){hud.hidden=!v;if(!v)panel.classList.remove('open');},get result(){return result;}};
 }
 export function makeChamber(){

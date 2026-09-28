@@ -73,6 +73,8 @@ function saveCfg() {
   if (t && (H.title || H.titleSpan)) t.innerHTML = `${H.title || B.family}<br>${H.titleSpan || B.name}<span>${sub}</span>`;
   else if (t) { const s = t.querySelector('span'); if (s) s.textContent = sub; }
   set('stat-weight-sub', `kg · size ${B.size || 'M'}`);
+  set('bom-size', `Complete bike, size ${B.size || 'M'}`); set('bom-weight', B.weight ? `${B.weight} kg` : '—');
+  set('collection-note', `Exhibit ${B.exhibit || '01'} of six in the Speedmax Museum: ${[B.family && !String(B.name).startsWith(B.family) ? B.family : '', B.name].filter(Boolean).join(' ')}${B.era ? ', ' + B.era : ''}.`);
   set('stat-rims-sub', /^[\d/ ]+$/.test(String(B.rims || '')) ? 'mm rims' : 'wheels');
 })();
 

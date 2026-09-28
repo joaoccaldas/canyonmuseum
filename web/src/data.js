@@ -85,7 +85,8 @@ export const PARTS = {
   thru_axle_rear: { name: 'DT Swiss thru-axle (rear)', group: 'wheels', spec: '12×142 with lever', note: '' },
 };
 
-for(const [id,p] of Object.entries(PROFILE.parts||{}))PARTS[id]={...PARTS[id],...p};
+if (PROFILE.partsReplace) { for (const k of Object.keys(PARTS)) delete PARTS[k]; }   // heritage: its own archived parts list only
+for(const [id,p] of Object.entries(PROFILE.parts||{}))PARTS[id]=PROFILE.partsReplace?{...p}:{...PARTS[id],...p};
 
 export const GROUPS = {
   frame: 'Frame & fork', cockpit: 'Cockpit', hydration: 'AeroFuel', drivetrain: 'Drivetrain', wheels: 'Wheels',

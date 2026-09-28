@@ -97,16 +97,140 @@
     "rimText": "#d9d9d9"
   },
   "parts": {
+    "frame": {
+      "name": "Frame",
+      "group": "frame",
+      "spec": "New MR3, 7005 Ultralight Aluminium, SuperAero shape, Opti-Size tubeset",
+      "note": "Archived frame specification, 2007."
+    },
+    "fork": {
+      "name": "Fork",
+      "group": "frame",
+      "spec": "Smolik Motivation",
+      "note": "Archived fork specification, 2007."
+    },
+    "crankset": {
+      "name": "Crankset",
+      "group": "drivetrain",
+      "spec": "FSA Team Issue MegaExo TT 54/42",
+      "note": "Archived crankset specification, 2007."
+    },
+    "chainrings": {
+      "name": "Chainrings",
+      "group": "drivetrain",
+      "spec": "FSA Team Issue MegaExo TT 54/42",
+      "note": "Archived crankset specification, 2007."
+    },
+    "crank_arm_ds": {
+      "name": "Drive-side crank",
+      "group": "drivetrain",
+      "spec": "FSA Team Issue MegaExo TT 54/42",
+      "note": "Archived crankset specification, 2007."
+    },
+    "crank_arm_nds": {
+      "name": "Non-drive crank",
+      "group": "drivetrain",
+      "spec": "FSA Team Issue MegaExo TT 54/42",
+      "note": "Archived crankset specification, 2007."
+    },
+    "spindle": {
+      "name": "Bottom-bracket spindle",
+      "group": "drivetrain",
+      "spec": "FSA Team Issue MegaExo TT 54/42",
+      "note": "Archived crankset specification, 2007."
+    },
+    "cassette": {
+      "name": "Cassette",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace 11-23",
+      "note": "Archived cassette specification, 2007."
+    },
+    "chain": {
+      "name": "Chain",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2007."
+    },
+    "rear_derailleur": {
+      "name": "Rear derailleur",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2007."
+    },
+    "front_derailleur": {
+      "name": "Front derailleur",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2007."
+    },
+    "brake_front": {
+      "name": "Front brake",
+      "group": "brakes",
+      "spec": "Shimano Dura-Ace",
+      "note": "Archived brakes specification, 2007."
+    },
+    "brake_rear": {
+      "name": "Rear brake",
+      "group": "brakes",
+      "spec": "Shimano Dura-Ace",
+      "note": "Archived brakes specification, 2007."
+    },
+    "brake_levers": {
+      "name": "Brake levers",
+      "group": "cockpit",
+      "spec": "Syntace SpaceControl",
+      "note": "Archived brake levers specification, 2007."
+    },
+    "wheel_front": {
+      "name": "Front wheel",
+      "group": "wheels",
+      "spec": "Mavic Cosmic Elite front · Carbotec disc rear (Citec hub)",
+      "note": "Archived wheels specification, 2007."
+    },
+    "wheel_rear": {
+      "name": "Rear wheel",
+      "group": "wheels",
+      "spec": "Mavic Cosmic Elite front · Carbotec disc rear (Citec hub)",
+      "note": "Archived wheels specification, 2007."
+    },
+    "saddle": {
+      "name": "Saddle",
+      "group": "contact",
+      "spec": "Selle Italia SLR T1",
+      "note": "Archived saddle specification, 2007."
+    },
+    "seatpost": {
+      "name": "Seatpost",
+      "group": "contact",
+      "spec": "Iridium Carbon Aero",
+      "note": "Archived seatpost specification, 2007."
+    },
+    "stem": {
+      "name": "Stem",
+      "group": "cockpit",
+      "spec": "Syntace F99 stem · Stratos 200 bar · SLS aerobar",
+      "note": "Archived cockpit specification, 2007."
+    },
     "base_bar": {
-      "name": "Base bar"
+      "name": "Base bar",
+      "group": "cockpit",
+      "spec": "Syntace F99 stem · Stratos 200 bar · SLS aerobar",
+      "note": "Archived cockpit specification, 2007."
     },
     "extensions": {
-      "name": "Clip-on extensions"
+      "name": "Clip-on extensions",
+      "group": "cockpit",
+      "spec": "Syntace F99 stem · Stratos 200 bar · SLS aerobar",
+      "note": "Archived cockpit specification, 2007."
     },
     "cables": {
-      "name": "Cable housings"
+      "name": "Cable housings",
+      "group": "cockpit",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2007."
     }
   },
+  "partsReplace": true,
   "tour": [
     {
       "view": "side",

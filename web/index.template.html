@@ -340,7 +340,7 @@ footer{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(10px
   <div class="eyebrow">Build sheet</div>
   <h2>Every component</h2>
   <p class="lead">Tap a component to highlight it and fly the camera to it. Weights are the listed manufacturer figures.</p>
-  <div class="total"><span class="eyebrow">Complete bike, size M</span><b>9.1 kg</b></div>
+  <div class="total"><span class="eyebrow" id="bom-size">Complete bike, size M</span><b id="bom-weight">9.1 kg</b></div>
   <div id="bom"></div>
 </aside>
 
@@ -360,7 +360,7 @@ footer{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(10px
   <div class="envs"><button data-env="museum"><b>Gallery</b>The collection</button><button data-env="studio"><b>Studio</b>Soft daylight</button><button data-env="midnight"><b>Midnight</b>Rim-lit</button><button data-env="tunnel"><b>Wind tunnel</b>Interactive aero lab</button></div>
   <h3>Rendering</h3>
   <div class="row"><span>Quality</span><select id="quality" class="sel"><option value="high">High · ambient occlusion</option><option value="balanced">Balanced</option><option value="low">Battery saver</option></select></div>
-  <h3>Collection</h3><p class="note">01 — Speedmax CFR AXS · MY2027. Earlier generations will be added after individual reference research and modelling.</p><h3>Asset</h3>
+  <h3>Collection</h3><p class="note" id="collection-note">One of six Speedmax exhibits in the museum.</p><p class="note"><a href="index.html">Walk the whole collection in the Kona museum →</a></p><h3>Asset</h3>
   <div class="actions" style="margin-top:6px"><button id="glbBtn">Download GLB</button></div>
   <p class="note">The downloaded file is the web master (meshopt-compressed glTF, metres, Y-up, named parts with explode vectors in <code>extras</code>). A simplified game-ready pack with separate wheel, crank and steering pivots is in <code>export/zwift/</code> in the source.</p>
   <h3>Keys</h3>

@@ -97,16 +97,140 @@
     "rimText": "#d9d9d9"
   },
   "parts": {
+    "frame": {
+      "name": "Frame",
+      "group": "frame",
+      "spec": "Canyon New F8 Technology · 7005 Ultralight Aluminium, AeroShape, multi-butted",
+      "note": "Archived frame specification, 2011."
+    },
+    "fork": {
+      "name": "Fork",
+      "group": "frame",
+      "spec": "Canyon Aero Fork CF",
+      "note": "Archived fork specification, 2011."
+    },
+    "crankset": {
+      "name": "Crankset",
+      "group": "drivetrain",
+      "spec": "FSA Vision TriMax Carbon 53/39",
+      "note": "Archived crankset specification, 2011."
+    },
+    "chainrings": {
+      "name": "Chainrings",
+      "group": "drivetrain",
+      "spec": "FSA Vision TriMax Carbon 53/39",
+      "note": "Archived crankset specification, 2011."
+    },
+    "crank_arm_ds": {
+      "name": "Drive-side crank",
+      "group": "drivetrain",
+      "spec": "FSA Vision TriMax Carbon 53/39",
+      "note": "Archived crankset specification, 2011."
+    },
+    "crank_arm_nds": {
+      "name": "Non-drive crank",
+      "group": "drivetrain",
+      "spec": "FSA Vision TriMax Carbon 53/39",
+      "note": "Archived crankset specification, 2011."
+    },
+    "spindle": {
+      "name": "Bottom-bracket spindle",
+      "group": "drivetrain",
+      "spec": "FSA Vision TriMax Carbon 53/39",
+      "note": "Archived crankset specification, 2011."
+    },
+    "cassette": {
+      "name": "Cassette",
+      "group": "drivetrain",
+      "spec": "SRAM PG 1050 11-26",
+      "note": "Archived cassette specification, 2011."
+    },
+    "chain": {
+      "name": "Chain",
+      "group": "drivetrain",
+      "spec": "Simplified external form rebuilt from the archived specification.",
+      "note": "Shape interpreted from the archive photograph."
+    },
+    "rear_derailleur": {
+      "name": "Rear derailleur",
+      "group": "drivetrain",
+      "spec": "Simplified external form rebuilt from the archived specification.",
+      "note": "Shape interpreted from the archive photograph."
+    },
+    "front_derailleur": {
+      "name": "Front derailleur",
+      "group": "drivetrain",
+      "spec": "Simplified external form rebuilt from the archived specification.",
+      "note": "Shape interpreted from the archive photograph."
+    },
+    "brake_front": {
+      "name": "Front brake",
+      "group": "brakes",
+      "spec": "SRAM Force",
+      "note": "Archived brakes specification, 2011."
+    },
+    "brake_rear": {
+      "name": "Rear brake",
+      "group": "brakes",
+      "spec": "SRAM Force",
+      "note": "Archived brakes specification, 2011."
+    },
+    "brake_levers": {
+      "name": "Brake levers",
+      "group": "cockpit",
+      "spec": "Simplified external form rebuilt from the archived specification.",
+      "note": "Shape interpreted from the archive photograph."
+    },
+    "wheel_front": {
+      "name": "Front wheel",
+      "group": "wheels",
+      "spec": "Mavic Cosmic Elite",
+      "note": "Archived wheels specification, 2011."
+    },
+    "wheel_rear": {
+      "name": "Rear wheel",
+      "group": "wheels",
+      "spec": "Mavic Cosmic Elite",
+      "note": "Archived wheels specification, 2011."
+    },
+    "saddle": {
+      "name": "Saddle",
+      "group": "contact",
+      "spec": "Selle Italia SL Kit Carbonio",
+      "note": "Archived saddle specification, 2011."
+    },
+    "seatpost": {
+      "name": "Seatpost",
+      "group": "contact",
+      "spec": "Canyon Aero Post CF",
+      "note": "Archived seatpost specification, 2011."
+    },
+    "stem": {
+      "name": "Stem",
+      "group": "cockpit",
+      "spec": "Profile Aris stem · Profile T2 base bar / T2 Wing",
+      "note": "Archived cockpit specification, 2011."
+    },
     "base_bar": {
-      "name": "Base bar"
+      "name": "Base bar",
+      "group": "cockpit",
+      "spec": "Profile Aris stem · Profile T2 base bar / T2 Wing",
+      "note": "Archived cockpit specification, 2011."
     },
     "extensions": {
-      "name": "Clip-on extensions"
+      "name": "Clip-on extensions",
+      "group": "cockpit",
+      "spec": "Profile Aris stem · Profile T2 base bar / T2 Wing",
+      "note": "Archived cockpit specification, 2011."
     },
     "cables": {
-      "name": "Cable housings"
+      "name": "Cable housings",
+      "group": "cockpit",
+      "spec": "Simplified external form rebuilt from the archived specification.",
+      "note": "Shape interpreted from the archive photograph."
     }
   },
+  "partsReplace": true,
   "tour": [
     {
       "view": "side",

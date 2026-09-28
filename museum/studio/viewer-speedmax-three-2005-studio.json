@@ -97,16 +97,140 @@
     "rimText": "#d9d9d9"
   },
   "parts": {
+    "frame": {
+      "name": "Frame",
+      "group": "frame",
+      "spec": "New F5 Super Aero, 7005 Ultralight Aluminium",
+      "note": "Archived frame specification, 2005."
+    },
+    "fork": {
+      "name": "Fork",
+      "group": "frame",
+      "spec": "Smolik Motivation full carbon",
+      "note": "Archived fork specification, 2005."
+    },
+    "crankset": {
+      "name": "Crankset",
+      "group": "drivetrain",
+      "spec": "FSA CK-805TT Carbon Pro Team Issue 54/42",
+      "note": "Archived crankset specification, 2005."
+    },
+    "chainrings": {
+      "name": "Chainrings",
+      "group": "drivetrain",
+      "spec": "FSA CK-805TT Carbon Pro Team Issue 54/42",
+      "note": "Archived crankset specification, 2005."
+    },
+    "crank_arm_ds": {
+      "name": "Drive-side crank",
+      "group": "drivetrain",
+      "spec": "FSA CK-805TT Carbon Pro Team Issue 54/42",
+      "note": "Archived crankset specification, 2005."
+    },
+    "crank_arm_nds": {
+      "name": "Non-drive crank",
+      "group": "drivetrain",
+      "spec": "FSA CK-805TT Carbon Pro Team Issue 54/42",
+      "note": "Archived crankset specification, 2005."
+    },
+    "spindle": {
+      "name": "Bottom-bracket spindle",
+      "group": "drivetrain",
+      "spec": "FSA CK-805TT Carbon Pro Team Issue 54/42",
+      "note": "Archived crankset specification, 2005."
+    },
+    "cassette": {
+      "name": "Cassette",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace 12-23",
+      "note": "Archived cassette specification, 2005."
+    },
+    "chain": {
+      "name": "Chain",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2005."
+    },
+    "rear_derailleur": {
+      "name": "Rear derailleur",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2005."
+    },
+    "front_derailleur": {
+      "name": "Front derailleur",
+      "group": "drivetrain",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2005."
+    },
+    "brake_front": {
+      "name": "Front brake",
+      "group": "brakes",
+      "spec": "Shimano Dura-Ace",
+      "note": "Archived brakes specification, 2005."
+    },
+    "brake_rear": {
+      "name": "Rear brake",
+      "group": "brakes",
+      "spec": "Shimano Dura-Ace",
+      "note": "Archived brakes specification, 2005."
+    },
+    "brake_levers": {
+      "name": "Brake levers",
+      "group": "cockpit",
+      "spec": "Syntace SpaceControl",
+      "note": "Archived brake levers specification, 2005."
+    },
+    "wheel_front": {
+      "name": "Front wheel",
+      "group": "wheels",
+      "spec": "Citec 3000 front · Carbotec disc rear (Citec hubs)",
+      "note": "Archived wheels specification, 2005."
+    },
+    "wheel_rear": {
+      "name": "Rear wheel",
+      "group": "wheels",
+      "spec": "Citec 3000 front · Carbotec disc rear (Citec hubs)",
+      "note": "Archived wheels specification, 2005."
+    },
+    "saddle": {
+      "name": "Saddle",
+      "group": "contact",
+      "spec": "Selle San Marco Aspide",
+      "note": "Archived saddle specification, 2005."
+    },
+    "seatpost": {
+      "name": "Seatpost",
+      "group": "contact",
+      "spec": "Iridium Carbon",
+      "note": "Archived seatpost specification, 2005."
+    },
+    "stem": {
+      "name": "Stem",
+      "group": "cockpit",
+      "spec": "Syntace F99 stem · Stratos 400 bar · C2 clip-on",
+      "note": "Archived cockpit specification, 2005."
+    },
     "base_bar": {
-      "name": "Base bar"
+      "name": "Base bar",
+      "group": "cockpit",
+      "spec": "Syntace F99 stem · Stratos 400 bar · C2 clip-on",
+      "note": "Archived cockpit specification, 2005."
     },
     "extensions": {
-      "name": "Clip-on extensions"
+      "name": "Clip-on extensions",
+      "group": "cockpit",
+      "spec": "Syntace F99 stem · Stratos 400 bar · C2 clip-on",
+      "note": "Archived cockpit specification, 2005."
     },
     "cables": {
-      "name": "Cable housings"
+      "name": "Cable housings",
+      "group": "cockpit",
+      "spec": "Shimano Dura-Ace, bar-end shifters",
+      "note": "Archived drivetrain specification, 2005."
     }
   },
+  "partsReplace": true,
   "tour": [
     {
       "view": "side",
