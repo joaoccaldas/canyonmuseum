@@ -433,7 +433,6 @@
   }
 
   function update(dt, t, visitor, cam, region) {
-    buildCollection();
     const cpos = cam.position;
 
     for (const inst of installations) {
@@ -477,6 +476,7 @@
     });
 
     const inside = region === 'horror' || !!regionOf(visitor.x, visitor.z);
+    if (inside) buildCollection();
     horror.visible = inside;
     scene.environmentIntensity = inside ? 1.25 : .55;
     museum.renderer.toneMappingExposure = inside ? 1.12 : .96;
