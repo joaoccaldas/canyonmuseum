@@ -1,344 +1,376 @@
-(() => {
-  'use strict';
+import * as THREE from 'three';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
-  const museum = window.__museum;
-  if (!museum || !museum.scene || !museum.camera) return;
+const ASSET_URL = 'assets/artworld/artworld_assets.obj';
 
-  const { scene, camera, P, PIECES, pickables = [], obstacles = [] } = museum;
+const PLACE_DEFS = [
+  {
+    id: 'st-george',
+    title: 'St. George',
+    sub: 'Red rock / contour study',
+    text: 'One canyon silhouette from the aisle. Up close it separates into contour fins and a warm seam.',
+    prefix: ['STG_'],
+    position: [5.25, 0, -8.2],
+    color: '#8f311f',
+    accent: '#ff8c42',
+    split: .34,
+  },
+  {
+    id: 'las-vegas',
+    title: 'Las Vegas',
+    sub: 'Mirror / neon study',
+    text: 'A dark reflective object from far away. Walk closer and the surface breaks into offset neon planes.',
+    prefix: ['VEGAS_'],
+    position: [5.25, 0, -18.0],
+    color: '#111218',
+    accent: '#ff3d8e',
+    split: .42,
+  },
+  {
+    id: 'nice',
+    title: 'Nice',
+    sub: 'Sea glass / coastal study',
+    text: 'A quiet coastal ribbon at distance, then layered translucent geometry appears as you move around it.',
+    prefix: ['NICE_'],
+    position: [5.25, 0, -27.8],
+    color: '#8bd4dc',
+    accent: '#c8f5f2',
+    split: .16,
+  },
+  {
+    id: 'kona',
+    title: 'Kona',
+    sub: 'Obsidian / heat study',
+    text: 'An obsidian marker from the hall. Close up, black shards expose a hot volcanic core.',
+    prefix: ['KONA_'],
+    position: [5.25, 0, -37.8],
+    color: '#121419',
+    accent: '#ff592c',
+    split: .38,
+  },
+];
 
-  const find = predicate => {
-    let hit = null;
-    scene.traverse(o => { if (!hit && predicate(o)) hit = o; });
-    return hit;
+const HORROR_THEMES = [
+  { name: 'Witchcraft', paint: '#130d1a', accent: '#8e59c4', note: 'Black-violet lacquer with a quiet ritual glow.' },
+  { name: 'Stitched', paint: '#d7cdbc', accent: '#8e2635', note: 'Bone-toned shell, dark seams and polished metal.' },
+  { name: 'Pagan', paint: '#211b14', accent: '#a5823a', note: 'Dark bronze and runic gold, restrained rather than costume-like.' },
+  { name: 'Moonlit', paint: '#0a1627', accent: '#8ca5d0', note: 'Midnight carbon that changes under cold highlights.' },
+  { name: 'Carnival', paint: '#4b111d', accent: '#e2c5a4', note: 'Oxblood lacquer with pale graphic fragments.' },
+  { name: 'Ritual Forest', paint: '#0d1c15', accent: '#62805f', note: 'Black-green carbon with mossy reflections and bronze details.' },
+];
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const smooth = t => t * t * (3 - 2 * t);
+
+function physical(color, roughness=.28, metalness=.1, emissive=null) {
+  return new THREE.MeshPhysicalMaterial({
+    color,
+    roughness,
+    metalness,
+    clearcoat: .82,
+    clearcoatRoughness: .07,
+    envMapIntensity: 1.8,
+    emissive: emissive || '#000000',
+    emissiveIntensity: emissive ? .55 : 0,
+  });
+}
+
+function matte(color, roughness=.75, metalness=.02) {
+  return new THREE.MeshStandardMaterial({ color, roughness, metalness, envMapIntensity: .7 });
+}
+
+function glow(color, opacity=.9) {
+  return new THREE.MeshBasicMaterial({
+    color,
+    transparent: opacity < 1,
+    opacity,
+    depthWrite: opacity >= 1,
+    toneMapped: false,
+  });
+}
+
+function box(w, h, d, material) {
+  const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  o.castShadow = false;
+  o.receiveShadow = true;
+  return o;
+}
+
+function makeTube(a, b, r, material) {
+  const va = new THREE.Vector3(...a), vb = new THREE.Vector3(...b);
+  const d = vb.clone().sub(va), len = d.length();
+  const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 8), material);
+  o.position.copy(va).add(vb).multiplyScalar(.5);
+  o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d.normalize());
+  return o;
+}
+
+function wireBike(material) {
+  const g = new THREE.Group();
+  const wheelGeo = new THREE.TorusGeometry(.34, .018, 5, 22);
+  for (const x of [-.55, .55]) {
+    const w = new THREE.Mesh(wheelGeo, material);
+    w.rotation.y = Math.PI / 2;
+    w.position.set(x, .38, 0);
+    g.add(w);
+  }
+  const pts = {
+    bb: [-.05,.37,0], seat: [-.12,.84,0], head: [.38,.78,0],
+    rear: [-.55,.38,0], front: [.55,.38,0], cockpit: [.53,.94,0],
   };
-  const anyMesh = find(o => o.isMesh);
-  const anyGroup = find(o => o.type === 'Group');
-  const boxMesh = find(o => o.isMesh && o.geometry?.type === 'BoxGeometry');
-  const planeMesh = find(o => o.isMesh && o.geometry?.type === 'PlaneGeometry');
-  const ringMesh = find(o => o.isMesh && o.geometry?.type === 'RingGeometry');
-  const standardMesh = find(o => o.isMesh && [].concat(o.material || []).some(m => m?.isMeshStandardMaterial));
-  const basicMesh = find(o => o.isMesh && [].concat(o.material || []).some(m => m?.isMeshBasicMaterial));
-  const hemiSource = find(o => o.isHemisphereLight);
-  const dirSource = find(o => o.isDirectionalLight);
+  for (const [a,b] of [['rear','bb'],['bb','seat'],['seat','head'],['head','bb'],['head','front'],['seat','rear'],['head','cockpit']]) {
+    g.add(makeTube(pts[a], pts[b], .018, material));
+  }
+  return g;
+}
 
-  if (!anyMesh || !anyGroup || !boxMesh || !standardMesh) return;
+function repaintBike(root, theme, simplified=false) {
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    if (simplified) {
+      const p = o.userData?.part || '';
+      if (!/frame|fork|wheel_front|wheel_rear|base_bar|basebar|extensions|seatpost|saddle/.test(p)) {
+        o.visible = false;
+        return;
+      }
+    }
+    const source = [].concat(o.material || []);
+    const mats = source.map(m => {
+      const c = m.clone();
+      c.envMapIntensity = 2.3;
+      if (c.name === 'paint_frame' || /paint/i.test(c.name || '')) {
+        c.color?.set(theme.paint);
+        c.roughness = .085;
+        c.metalness = Math.max(c.metalness || 0, .18);
+        if ('clearcoat' in c) {
+          c.clearcoat = 1;
+          c.clearcoatRoughness = .045;
+        }
+      } else if (/decal|logo|graphic/i.test(c.name || '')) {
+        c.color?.set(theme.accent);
+        if (c.emissive) {
+          c.emissive.set(theme.accent);
+          c.emissiveIntensity = .12;
+        }
+      }
+      return c;
+    });
+    o.material = Array.isArray(o.material) ? mats : mats[0];
+    o.castShadow = false;
+    o.receiveShadow = false;
+  });
+}
 
-  const Group = anyGroup.constructor;
-  const Mesh = anyMesh.constructor;
-  const BoxGeometry = boxMesh.geometry.constructor;
-  const PlaneGeometry = planeMesh?.geometry?.constructor;
-  const RingGeometry = ringMesh?.geometry?.constructor;
-  const StandardMaterial = [].concat(standardMesh.material).find(m => m?.isMeshStandardMaterial).constructor;
-  const BasicMaterial = basicMesh ? [].concat(basicMesh.material).find(m => m?.isMeshBasicMaterial).constructor : null;
-  const Vec3 = camera.position.constructor;
+export async function initArtWorld(museum) {
+  const { scene, camera, P, PIECES, pickables, obstacles } = museum;
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const mobile = coarse || innerWidth < 760;
 
-  const root = new Group();
-  root.name = 'ART WORLD · distance-reactive installations';
+  const api = {
+    ready: false,
+    regionOf,
+    walkable,
+    enter,
+    update,
+    goto,
+  };
+  window.__museumArt = api;
+
+  const root = new THREE.Group();
+  root.name = 'ART WORLD';
   scene.add(root);
 
   const installations = [];
-  const interactive = [];
-  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-  const smooth = t => t * t * (3 - 2 * t);
+  const hiddenRoom = new THREE.Group();
+  hiddenRoom.name = 'SECRET COLLECTION';
+  hiddenRoom.visible = false;
+  scene.add(hiddenRoom);
 
-  let blenderReady = false;
-  let blenderRoot = null;
-  async function loadBlenderAssets() {
-    if (!museum.loader || blenderReady) return;
-    try {
-      const b64 = await (await fetch('assets/artworld/artworld_assets.glb.gz.b64')).text();
-      const raw = Uint8Array.from(atob(b64.trim()), c => c.charCodeAt(0));
-      let bytes = raw;
-      if ('DecompressionStream' in window) {
-        const stream = new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'));
-        bytes = new Uint8Array(await new Response(stream).arrayBuffer());
-      } else {
-        console.info('Blender asset pack: gzip stream unavailable; procedural fallback stays active.');
-        return;
-      }
-      const gltf = await new Promise((resolve, reject) => museum.loader.parse(bytes.buffer, '', resolve, reject));
-      blenderRoot = gltf.scene;
-      blenderRoot.name = 'BLENDER ASSET PACK · immersive art';
-      const assetByName = name => blenderRoot.getObjectByName(name);
+  const HORROR = { x0: 33, x1: 57, z0: -45, z1: -13.5, h: 6.4 };
+  let collectionBuilt = false;
+  const fullBikes = [];
+  const artLights = [];
 
-      const map = {
-        'st-george': 'ART_ST_GEORGE',
-        'vegas': 'ART_VEGAS',
-        'nice': 'ART_NICE',
-        'kona': 'ART_KONA',
-      };
-      for (const inst of installations) {
-        const source = assetByName(map[inst.cfg.id]);
-        if (!source) continue;
-        const clone = source.clone(true);
-        clone.name = 'BLENDER · ' + inst.cfg.title;
-        clone.scale.setScalar(1.22);
-        clone.position.set(0, .02, -.04);
-        clone.traverse(o => {
-          if (o.isMesh) {
-            o.castShadow = !matchMedia('(pointer: coarse)').matches;
-            o.receiveShadow = false;
-            for (const m of [].concat(o.material || [])) {
-              m.envMapIntensity = 1.8;
-              if ('clearcoat' in m) { m.clearcoat = Math.max(.8, m.clearcoat || 0); m.clearcoatRoughness = .08; }
-            }
-          }
-          o.userData.home = { x:o.position.x, y:o.position.y, z:o.position.z, ry:o.rotation.y, rz:o.rotation.z };
-        });
-        inst.fins.forEach(o => o.visible = false);
-        inst.coreBars.forEach(o => o.visible = false);
-        inst.g.add(clone);
-        inst.asset = clone;
-      }
+  function regionOf(x, z) {
+    return x > HORROR.x0+.35 && x < HORROR.x1-.35 && z > HORROR.z0+.35 && z < HORROR.z1-.35 ? 'horror' : null;
+  }
 
-      const psrc = assetByName('PORTAL_ECLIPSE');
-      if (psrc) {
-        const p = psrc.clone(true);
-        p.position.set(.08, -.05, 0);
-        p.rotation.y = Math.PI / 2;
-        p.scale.setScalar(1.28);
-        p.traverse(o => { if (o.isMesh) { o.userData.artPortal = { id:'horror-in', label:'Hidden collection' }; pickables.push(o); } });
-        secretPortal.add(p);
-        portalBack.visible = false;
-        portalSlits.forEach(o => o.visible = false);
-      }
-
-      const props = [
-        ['HORROR_ARCH', 45, 0, -42.2, 2.25, 0],
-        ['HORROR_TOTEM', 42.1, 0, -36.2, 1.05, .3],
-        ['HORROR_TOTEM', 47.9, 0, -23.0, .9, -0.5],
-        ['HORROR_CARNIVAL', 52.4, .2, -36.0, 1.15, .25],
-      ];
-      for (const [name,x,y,z,s,ry] of props) {
-        const src = assetByName(name);
-        if (!src) continue;
-        const p = src.clone(true);
-        p.position.set(x,y,z); p.scale.setScalar(s); p.rotation.y = ry;
-        p.traverse(o => { if(o.isMesh) { o.castShadow=false; for(const m of [].concat(o.material||[])) m.envMapIntensity=1.4; } });
-        horror.add(p);
-      }
-
-      blenderReady = true;
-      window.dispatchEvent(new CustomEvent('museum-blender-ready'));
-    } catch (err) {
-      window.__museumArtLastError = String(err?.stack || err);
-      console.warn('Blender asset pack unavailable; keeping procedural fallback.', window.__museumArtLastError);
+  function walkable(x, z) {
+    if (!regionOf(x,z)) return false;
+    for (const o of obstacles) {
+      if (o.c && o.c.x > HORROR.x0 && Math.hypot(x-o.c.x, z-o.c.z) < o.r) return false;
+      if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
     }
+    return true;
   }
 
-  function std(color, roughness = .42, metalness = .08, extra = {}) {
-    const m = new StandardMaterial({ color, roughness, metalness, ...extra });
-    m.envMapIntensity = 1.35;
-    return m;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('on');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.classList.remove('on'), 3600);
   }
-  function glow(color, opacity = .9) {
-    if (BasicMaterial) return new BasicMaterial({ color, transparent: opacity < 1, opacity, depthWrite: opacity >= 1 });
-    return std(color, .2, .15, { emissive: color, emissiveIntensity: .6, transparent: opacity < 1, opacity });
-  }
-  function box(w, h, d, material) {
-    const m = new Mesh(new BoxGeometry(w, h, d), material);
-    m.castShadow = true;
-    m.receiveShadow = true;
-    return m;
-  }
-  function plane(w, h, material) {
-    if (!PlaneGeometry) return box(w, h, .02, material);
-    const m = new Mesh(new PlaneGeometry(w, h), material);
-    return m;
-  }
-  function addInfoTarget(mesh, info) {
+
+  function addInfo(mesh, info) {
     mesh.userData.info = info;
     pickables.push(mesh);
-    interactive.push(mesh);
   }
 
-  const THEMES = [
-    {
-      id: 'st-george',
-      title: 'St. George',
-      sub: 'Red rock / contour study',
-      text: 'From the aisle it reads as one monolith. Up close the canyon splits into contour fins and a warm inner seam.',
-      color: '#9b3d24', core: '#f0a54a', z: -8.4, heights: [1.15, 1.5, 1.9, 2.15, 1.78, 1.42, 1.08]
-    },
-    {
-      id: 'vegas',
-      title: 'Las Vegas',
-      sub: 'Mirror / neon study',
-      text: 'A dark reflective slab from far away; step closer and the surface breaks into offset neon planes.',
-      color: '#17131d', core: '#ff3d8e', z: -18.2, heights: [1.35, 1.7, 2.05, 1.55, 2.18, 1.72, 1.28]
-    },
-    {
-      id: 'nice',
-      title: 'Nice',
-      sub: 'Sea glass / coastal study',
-      text: 'A calm coastal ribbon at distance, then translucent layers open into a changing horizon.',
-      color: '#d9e7e7', core: '#38b8c7', z: -28.2, heights: [1.05, 1.35, 1.62, 1.95, 1.7, 1.4, 1.12]
-    },
-    {
-      id: 'kona',
-      title: 'Kona',
-      sub: 'Obsidian / heat study',
-      text: 'An obsidian marker from the hall. Close up, black fins reveal a hot volcanic core and irregular depth.',
-      color: '#171719', core: '#df5d2e', z: -38.2, heights: [1.2, 1.48, 1.82, 2.2, 1.86, 1.5, 1.18]
-    }
-  ];
+  function makePlinth(pos, info, accent) {
+    const base = box(1.85,.17,.82,physical('#22242a',.18,.32));
+    base.position.set(pos[0],.085,pos[2]);
+    root.add(base);
+    const seam = box(1.58,.018,.62,glow(accent,.78));
+    seam.position.set(pos[0],.18,pos[2]);
+    root.add(seam);
+    addInfo(base, info);
+    obstacles.push({ c: new THREE.Vector3(pos[0],0,pos[2]), r: .95 });
+  }
 
-  function makeInstallation(cfg, index) {
-    const g = new Group();
-    g.name = 'ART · ' + cfg.title;
-    g.position.set(5.72, 0, cfg.z);
-    g.rotation.y = -Math.PI / 2; // face the aisle; reveal depth as the visitor approaches
+  function materialForName(name, def) {
+    if (/GLOW|NEON|CORE/i.test(name)) return physical(def.accent,.12,.08,def.accent);
+    if (def.id === 'nice') return new THREE.MeshPhysicalMaterial({
+      color: def.color, roughness:.12, metalness:.04, transmission:.08,
+      transparent:true, opacity:.88, clearcoat:1, clearcoatRoughness:.04, envMapIntensity:2,
+    });
+    return physical(def.color, def.id === 'las-vegas' ? .08 : .18, def.id === 'las-vegas' ? .42 : .15);
+  }
+
+  function mountAssetGroup(asset, def) {
+    const g = new THREE.Group();
+    g.name = 'ART ' + def.title;
+    g.position.set(...def.position);
+    g.rotation.x = Math.PI/2;
+    g.scale.setScalar(1.02);
+
+    const parts = [];
+    for (const src of asset.children) {
+      if (!def.prefix.some(p => src.name.startsWith(p))) continue;
+      const c = src.clone();
+      c.geometry = src.geometry.clone();
+      c.material = materialForName(c.name, def);
+      c.userData.home = c.position.clone();
+      c.userData.index = parts.length;
+      parts.push(c);
+      g.add(c);
+    }
     root.add(g);
 
-    const base = box(1.85, .18, .95, std('#242529', .3, .2));
-    base.position.y = .09;
-    g.add(base);
-    addInfoTarget(base, { eyebrow: 'Distance-reactive art', title: cfg.title, sub: cfg.sub, text: cfg.text });
-    obstacles.push({ c: new Vec3(g.position.x, 0, g.position.z), r: 1.05 });
+    makePlinth(def.position, {
+      eyebrow: 'Distance-reactive art',
+      title: def.title,
+      sub: def.sub,
+      text: def.text,
+    }, def.accent);
 
-    const fins = [];
-    const coreBars = [];
-    for (let i = 0; i < 7; i++) {
-      const h = cfg.heights[i];
-      const fin = box(.16, h, .54, std(cfg.color, cfg.id === 'nice' ? .28 : .2, cfg.id === 'vegas' ? .55 : .15));
-      fin.position.set((i - 3) * .17, .18 + h / 2, 0);
-      fin.userData.home = fin.position.clone();
-      fin.userData.index = i;
-      g.add(fin);
-      fins.push(fin);
+    installations.push({ g, parts, def });
+  }
 
-      if (i % 2 === 1) {
-        const c = box(.035, h * .68, .58, glow(cfg.core, .84));
-        c.position.set((i - 3) * .17 + .025, .2 + h * .34, .015);
-        c.userData.home = c.position.clone();
-        g.add(c);
-        coreBars.push(c);
+  function mountPortal(asset) {
+    const g = new THREE.Group();
+    g.name = 'HIDDEN PORTAL';
+    g.position.set(-6.76,0,-37.9);
+    g.rotation.set(Math.PI/2,Math.PI/2,0);
+    g.scale.setScalar(1.15);
+    for (const src of asset.children) {
+      if (!src.name.startsWith('PORTAL_')) continue;
+      const c = src.clone();
+      c.geometry = src.geometry.clone();
+      c.material = src.name.includes('RING') ? physical('#261833',.1,.18,'#a568d0') : physical('#121318',.16,.36);
+      g.add(c);
+    }
+    root.add(g);
+
+    const hit = box(.15,2.6,1.65,new THREE.MeshBasicMaterial({ transparent:true, opacity:.001, depthWrite:false }));
+    hit.position.set(-6.62,1.35,-37.9);
+    hit.userData.artPortal = { id:'horror-in', label:'Hidden collection' };
+    root.add(hit);
+    pickables.push(hit);
+
+    g.userData.hit = hit;
+    api.portal = g;
+  }
+
+  function clonePrefabs(asset, prefixes) {
+    const g = new THREE.Group();
+    g.rotation.x = Math.PI/2;
+    for (const src of asset.children) {
+      if (!prefixes.some(p => src.name.startsWith(p))) continue;
+      const c = src.clone();
+      c.geometry = src.geometry.clone();
+      if (/CARNIVAL/i.test(c.name)) c.material = physical('#5c1524',.12,.24,'#8a2236');
+      else if (/TOTEM/i.test(c.name)) c.material = physical('#4c331b',.2,.58);
+      else c.material = physical('#17151a',.38,.16);
+      g.add(c);
+    }
+    return g;
+  }
+
+  function buildRoomShell(asset) {
+    const floor = box(HORROR.x1-HORROR.x0,.28,HORROR.z1-HORROR.z0,matte('#111014',.34,.12));
+    floor.position.set((HORROR.x0+HORROR.x1)/2,-.14,(HORROR.z0+HORROR.z1)/2);
+    floor.userData.floor = true;
+    floor.receiveShadow = true;
+    hiddenRoom.add(floor);
+
+    const wallMat = matte('#141216',.72,.04);
+    const back = box(HORROR.x1-HORROR.x0,HORROR.h,.35,wallMat);
+    back.position.set(45,HORROR.h/2,HORROR.z0);
+    hiddenRoom.add(back);
+    for (const x of [HORROR.x0,HORROR.x1]) {
+      const wall = box(.35,HORROR.h,HORROR.z1-HORROR.z0,wallMat);
+      wall.position.set(x,HORROR.h/2,(HORROR.z0+HORROR.z1)/2);
+      hiddenRoom.add(wall);
+    }
+
+    const ribs = [];
+    for (let i=0;i<9;i++) {
+      const z=-41.5+i*3.15;
+      for (const x of [34.2,55.8]) {
+        const r=box(.045,3.7,.045,glow(i%2?'#503556':'#623333',.55));
+        r.position.set(x,2.0,z);
+        hiddenRoom.add(r); ribs.push(r);
       }
     }
-    installations.push({ g, fins, coreBars, cfg, index });
-  }
 
-  THEMES.forEach(makeInstallation);
+    const arch = clonePrefabs(asset,['ARCH_']);
+    arch.position.set(45,0,-43.9);
+    arch.scale.setScalar(2.25);
+    hiddenRoom.add(arch);
 
-  // Hidden portal: from a distance it is just another dark wall sculpture.
-  const secretPortal = new Group();
-  secretPortal.name = 'ART · hidden eclipse';
-  secretPortal.position.set(-6.78, 1.65, -38.2);
-  // Keep the portal in the wall's own plane. RingGeometry supplies its own Y rotation.
-  root.add(secretPortal);
+    const totemA = clonePrefabs(asset,['TOTEM_']);
+    totemA.position.set(35.3,0,-39.2);
+    totemA.scale.setScalar(1.6);
+    hiddenRoom.add(totemA);
 
-  const portalBack = box(.12, 2.65, 2.25, std('#111217', .22, .45));
-  secretPortal.add(portalBack);
-  if (RingGeometry) {
-    const moon = new Mesh(new RingGeometry(.48, .62, 72), glow('#d9c7ff', .82));
-    moon.rotation.y = Math.PI / 2;
-    moon.position.x = .075;
-    secretPortal.add(moon);
-    moon.userData.artPortal = { id: 'horror-in', label: 'Hidden collection' };
-    pickables.push(moon);
-  } else {
-    portalBack.userData.artPortal = { id: 'horror-in', label: 'Hidden collection' };
-    pickables.push(portalBack);
-  }
-  const portalSlits = [];
-  for (let i = 0; i < 5; i++) {
-    const s = box(.025, 1.65 - i * .13, .15, glow(i % 2 ? '#8a5f98' : '#d05b67', .7));
-    s.position.set(.082, -.42 + i * .21, (i - 2) * .25);
-    secretPortal.add(s); portalSlits.push(s);
-  }
+    const totemB = totemA.clone(true);
+    totemB.position.set(54.7,0,-22.5);
+    totemB.rotation.y = Math.PI;
+    hiddenRoom.add(totemB);
 
-  // ---------------------------------------------------------------- secret horror collection
-  const HORROR = { x0: 34, x1: 56, z0: -44, z1: -15, h: 6.2 };
-  const horror = new Group();
-  horror.name = 'SECRET ROOM · horror collection';
-  horror.visible = false;
-  scene.add(horror);
+    const carnival = clonePrefabs(asset,['CARNIVAL_']);
+    carnival.position.set(55.55,1.05,-36.4);
+    carnival.rotation.y = -Math.PI/2;
+    carnival.scale.setScalar(1.5);
+    hiddenRoom.add(carnival);
 
-  const roomFloor = box(HORROR.x1 - HORROR.x0, .28, HORROR.z1 - HORROR.z0, std('#151316', .18, .24));
-  roomFloor.position.set((HORROR.x0 + HORROR.x1) / 2, -.14, (HORROR.z0 + HORROR.z1) / 2);
-  roomFloor.receiveShadow = true; roomFloor.userData.floor = true; horror.add(roomFloor);
+    const exit = box(.12,2.6,1.9,physical('#28232b',.2,.26));
+    exit.position.set(33.27,1.3,-29.2);
+    exit.userData.artPortal = { id:'horror-out', label:'Return to museum' };
+    hiddenRoom.add(exit);
+    pickables.push(exit);
 
-  const ceiling = box(HORROR.x1 - HORROR.x0, .22, HORROR.z1 - HORROR.z0, std('#0c0b0f', .42, .06));
-  ceiling.position.set(45, HORROR.h + .1, (HORROR.z0 + HORROR.z1) / 2); horror.add(ceiling);
-  for (let i = 0; i < 7; i++) {
-    const z = -40.5 + i * 3.7;
-    const spine = box(.075, .018, 2.7, glow(i % 2 ? '#6b365f' : '#713839', .28));
-    spine.rotation.y = Math.PI / 2; spine.position.set(45, .012, z); horror.add(spine);
-  }
-
-  const wallMat = std('#161417', .6, .12);
-  const back = box(HORROR.x1 - HORROR.x0, HORROR.h, .35, wallMat); back.position.set(45, HORROR.h / 2, HORROR.z0); horror.add(back);
-  for (const x of [HORROR.x0, HORROR.x1]) {
-    const w = box(.35, HORROR.h, HORROR.z1 - HORROR.z0, wallMat); w.position.set(x, HORROR.h / 2, (HORROR.z0 + HORROR.z1) / 2); horror.add(w);
-  }
-
-  // Sparse luminous ribs make the room feel deep without filling it with props.
-  const ribs = [];
-  for (let i = 0; i < 9; i++) {
-    const z = -41.5 + i * 3.05;
-    for (const x of [35.1, 54.9]) {
-      const r = box(.08, 3.6, .08, glow(i % 2 ? '#643a64' : '#7a3d36', .55));
-      r.position.set(x, 2.1, z); horror.add(r); ribs.push(r);
+    const cold = new THREE.HemisphereLight('#73678b','#1a1014',.42);
+    hiddenRoom.add(cold);
+    for (const [x,z,c] of [[38,-38,'#7b4ea0'],[52,-33,'#8e2635'],[38,-22,'#33576e'],[52,-18,'#6c5735']]) {
+      const l = new THREE.PointLight(c,2.2,8,2.2);
+      l.position.set(x,4.2,z);
+      l.castShadow = false;
+      hiddenRoom.add(l);
+      artLights.push(l);
     }
-  }
-
-  const exit = box(.16, 2.6, 2.0, std('#29232b', .25, .25));
-  exit.position.set(34.28, 1.3, -29.5);
-  horror.add(exit);
-  exit.userData.artPortal = { id: 'horror-out', label: 'Return to museum' };
-  pickables.push(exit);
-
-  const HORROR_THEMES = [
-    { name: 'Witchcraft', paint: '#17101f', accent: '#8757bb', note: 'Black violet clearcoat with a quiet ritual glow.' },
-    { name: 'Stitched Doll', paint: '#ded5c4', accent: '#8f2734', note: 'Bone-toned shell, red seam accents and polished hardware.' },
-    { name: 'Pagan Runes', paint: '#272017', accent: '#a37b35', note: 'Dark bronze and runic gold, restrained rather than costume-like.' },
-    { name: 'Moon Ritual', paint: '#0d1828', accent: '#94a8c9', note: 'Midnight blue carbon that changes under cold highlights.' },
-    { name: 'Haunted Carnival', paint: '#501420', accent: '#dfc3a0', note: 'Oxblood with pale graphic fragments and lacquered shine.' },
-    { name: 'Ritual Forest', paint: '#102019', accent: '#557c58', note: 'Black-green carbon with mossy reflections and bronze details.' },
-    { name: 'Slasher', paint: '#151515', accent: '#b1222f', note: 'Near-black carbon cut by one severe crimson graphic line.' },
-    { name: 'Viking Night', paint: '#0b151d', accent: '#9a7b48', note: 'Cold blue-black lacquer with aged-metal runic accents.' }
-  ];
-  const fullBikes = [];
-  const ghostBikes = [];
-  let collectionBuilt = false;
-
-  function cloneBikeSafe(source) {
-    const saved = [];
-    source.traverse(o => {
-      if (o.userData && Object.keys(o.userData).length) { saved.push([o, o.userData]); o.userData = {}; }
-    });
-    let copy;
-    try { copy = source.clone(true); }
-    finally { for (const [o, data] of saved) o.userData = data; }
-    return copy;
-  }
-
-  function cloneMaterials(rootObj, theme, simplified = false) {
-    rootObj.traverse(o => {
-      if (!o.isMesh) return;
-      if (simplified) {
-        const part = o.userData?.part || '';
-        if (!/frame|fork|wheel_front|wheel_rear|base_bar|basebar|extensions|seatpost|saddle/.test(part)) { o.visible = false; return; }
-      }
-      const mats = [].concat(o.material || []);
-      const copied = mats.map(m => {
-        const c = m.clone();
-        c.envMapIntensity = 1.8;
-        if (c.name === 'paint_frame' || /paint/i.test(c.name || '')) {
-          c.color?.set(theme.paint);
-          c.roughness = .12;
-          c.metalness = Math.max(c.metalness || 0, .18);
-          if ('clearcoat' in c) { c.clearcoat = 1; c.clearcoatRoughness = .06; }
-        } else if (/decal|logo|graphic/i.test(c.name || '')) {
-          c.color?.set(theme.accent);
-          if (c.emissive) { c.emissive.set(theme.accent); c.emissiveIntensity = .1; }
-        }
-        return c;
-      });
-      o.material = Array.isArray(o.material) ? copied : copied[0];
-      o.castShadow = false;
-      o.receiveShadow = false;
-    });
   }
 
   function buildCollection() {
@@ -347,161 +379,121 @@
     if (!source?.bike) return;
     collectionBuilt = true;
 
-    const mobile = innerWidth < 760 || matchMedia('(pointer: coarse)').matches;
-    const fullCount = mobile ? 4 : 8;
-
-    for (let i = 0; i < fullCount; i++) {
-      const theme = HORROR_THEMES[i];
-      const holder = cloneBikeSafe(source.bike);
-      cloneMaterials(holder, theme, false);
-      holder.scale.setScalar(mobile ? .93 : 1.02);
-      const left = i % 2 === 0, row = Math.floor(i / 2);
-      const z = -38.5 + row * 5.8;
-      const x = left ? 39.5 : 50.5;
-      holder.position.set(x, .46, z);
-      holder.rotation.y = left ? Math.PI / 2 : -Math.PI / 2;
-      horror.add(holder);
-      fullBikes.push(holder);
-
-      const plinth = box(3.65, .34, 1.5, std('#242126', .16, .32));
-      plinth.position.set(x, .17, z);
-      horror.add(plinth);
-      const trim = box(3.42, .04, 1.26, glow(theme.accent, .84));
-      trim.position.set(x, .36, z); horror.add(trim);
-      const beacon = box(.045, 2.15, .72, glow(theme.accent, .46));
-      beacon.position.set(left ? x - 2.25 : x + 2.25, 1.35, z); horror.add(beacon);
-      const halo = box(3.9, .012, 1.9, glow(theme.accent, .13));
-      halo.position.set(x, .015, z); horror.add(halo);
-      addInfoTarget(plinth, { eyebrow: 'Secret collection', title: theme.name, sub: 'Experimental bike livery', text: theme.note });
-      obstacles.push({ c: new Vec3(x, 0, z), r: 1.58 });
-    }
-
-    // A long back-wall archive of lightweight bike silhouettes makes the room feel vast
-    // without rendering a dozen full-detail drivetrains on a phone.
-    const ghostCount = mobile ? 5 : 12;
-    for (let i = 0; i < ghostCount; i++) {
-      const theme = HORROR_THEMES[i % HORROR_THEMES.length];
-      const g = cloneBikeSafe(source.bike); cloneMaterials(g, theme, true);
-      const col = i % 5, row = Math.floor(i / 5);
-      g.scale.setScalar(.68);
-      g.position.set(39.0 + col * 3.05, 2.6 + row * 1.55, -43.0);
-      g.rotation.y = 0;
-      horror.add(g); ghostBikes.push(g);
-    }
-  }
-
-  if (dirSource) {
-    const rigs = [
-      ['#d9d0ff', 2.4, [45,9,-13], [45,1,-28]],
-      ['#ffb2b8', 1.35, [32,5,-24], [42,1,-30]],
-      ['#8fc8ff', 1.4, [58,6,-35], [48,1,-30]],
+    const fullCount = mobile ? 4 : 6;
+    const slots = [
+      [38.2,-39.0,Math.PI/2],[51.8,-36.2,-Math.PI/2],
+      [38.2,-30.8,Math.PI/2],[51.8,-27.6,-Math.PI/2],
+      [38.2,-21.4,Math.PI/2],[51.8,-18.2,-Math.PI/2],
     ];
-    for (const [color,intensity,pos,target] of rigs) {
-      const key = dirSource.clone();
-      key.color?.set(color); key.intensity = intensity; key.position.set(...pos);
-      key.castShadow = false;
-      key.target.position.set(...target);
-      horror.add(key, key.target);
+
+    for (let i=0;i<fullCount;i++) {
+      const theme = HORROR_THEMES[i];
+      const holder = source.bike.clone(true);
+      repaintBike(holder,theme,false);
+      holder.scale.setScalar(1);
+      holder.position.set(slots[i][0],.34,slots[i][1]);
+      holder.rotation.y = slots[i][2];
+      hiddenRoom.add(holder);
+      fullBikes.push({ holder, theme, i });
+
+      const plinth = box(3.6,.30,1.38,physical('#1d1b20',.14,.34));
+      plinth.position.set(slots[i][0],.15,slots[i][1]);
+      hiddenRoom.add(plinth);
+      const seam = box(3.28,.025,1.1,glow(theme.accent,.68));
+      seam.position.set(slots[i][0],.32,slots[i][1]);
+      hiddenRoom.add(seam);
+      addInfo(plinth,{
+        eyebrow:'Secret collection',
+        title:theme.name,
+        sub:'Experimental bike livery',
+        text:theme.note,
+      });
+      obstacles.push({ c:new THREE.Vector3(slots[i][0],0,slots[i][1]), r:1.58 });
     }
-  }
-  if (hemiSource) {
-    const fill = hemiSource.clone();
-    fill.intensity = .42; fill.color?.set('#7b6e96'); fill.groundColor?.set('#22161b'); horror.add(fill);
+
+    const archiveMat = new THREE.MeshBasicMaterial({ color:'#736c82', transparent:true, opacity:.34, toneMapped:false });
+    const archive = new THREE.Group();
+    archive.name = 'ARCHIVE WALL';
+    const total = mobile ? 8 : 18;
+    for (let i=0;i<total;i++) {
+      const b = wireBike(archiveMat.clone());
+      const row = Math.floor(i/6), col = i%6;
+      b.position.set(36.7+col*3.35,2.05+row*1.35,-44.72);
+      b.scale.setScalar(.72);
+      archive.add(b);
+    }
+    hiddenRoom.add(archive);
   }
 
-  function regionOf(x, z) {
-    return x > HORROR.x0 + .35 && x < HORROR.x1 - .35 && z > HORROR.z0 + .35 && z < HORROR.z1 - .35 ? 'horror' : null;
+  async function loadAssets() {
+    const asset = await new OBJLoader().loadAsync(ASSET_URL);
+    for (const def of PLACE_DEFS) mountAssetGroup(asset,def);
+    mountPortal(asset);
+    buildRoomShell(asset);
+    api.asset = asset;
+    api.ready = true;
+    window.dispatchEvent(new CustomEvent('museum-art-ready'));
   }
-  function walkable(x, z) {
-    if (!regionOf(x, z)) return false;
-    for (const o of obstacles) {
-      if (o.c && o.c.x > HORROR.x0 && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
-    }
-    return true;
-  }
-  function toast(msg) {
-    const el = document.getElementById('toast');
-    if (!el) return;
-    el.textContent = msg; el.classList.add('on');
-    clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('on'), 3600);
-  }
+
   function enter(portal) {
     if (!portal) return;
     if (portal.id === 'horror-in') {
-      P.x = 45.0; P.z = -16.7; P.yaw = 0; P.pitch = -.035; P.vx = P.vz = 0;
-      horror.visible = true;
-      document.getElementById('coach')?.setAttribute('hidden', '');
+      P.x=35.25; P.z=-29.2; P.yaw=-Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
+      hiddenRoom.visible=true;
       buildCollection();
-      toast('Secret collection unlocked · the darker the room, the brighter the bikes.');
+      toast('Secret collection unlocked. The room changes as you move through it.');
     } else if (portal.id === 'horror-out') {
-      P.x = -5.35; P.z = -38.2; P.yaw = Math.PI / 2; P.pitch = -.04; P.vx = P.vz = 0;
-      horror.visible = false;
+      P.x=-5.3; P.z=-37.9; P.yaw=Math.PI/2; P.pitch=-.03; P.vx=P.vz=0;
+      hiddenRoom.visible=false;
       toast('Back in the main gallery.');
     }
   }
 
-  function update(dt, t, visitor, cam, region) {
-    const cpos = cam.position;
+  function goto(id) {
+    if (id === 'horror') {
+      enter({id:'horror-in'});
+      P.x=45; P.z=-15.8; P.yaw=0; P.pitch=-.03;
+      return;
+    }
+    const i = installations.find(x => x.def.id === id);
+    if (!i) return;
+    P.x=2.9; P.z=i.def.position[2]+1.4; P.yaw=-Math.PI/2; P.pitch=-.05; P.vx=P.vz=0;
+  }
+
+  function update(dt,t,visitor,cam,region) {
+    buildCollection();
 
     for (const inst of installations) {
-      const d = Math.hypot(cpos.x - inst.g.position.x, cpos.z - inst.g.position.z);
-      const open = smooth(clamp((7.0 - d) / 4.4, 0, 1));
-      if (inst.asset) {
-        let j = 0;
-        inst.asset.traverse(o => {
-          if (!o.userData?.home || !o.isMesh) return;
-          const h = o.userData.home, s = j++ - 3;
-          if (/STG_LAYER|VEGAS_PRISM|KONA_SHARD/.test(o.name)) {
-            o.position.x = h.x + s * .055 * open;
-            o.position.z = h.z + Math.abs(s) * .045 * open;
-            o.rotation.y = h.ry + s * .07 * open;
-          } else if (/NICE_RIBBON/.test(o.name)) {
-            o.rotation.y = h.ry + open * .32;
-            o.scale.z = .85 + open * .35;
-          }
-        });
-      }
-      inst.fins.forEach((fin, i) => {
-        const s = i - 3;
-        fin.position.x = fin.userData.home.x + s * .075 * open;
-        fin.position.z = Math.abs(s) * .055 * open;
-        fin.rotation.y = s * .105 * open * (inst.index % 2 ? -1 : 1);
-        fin.rotation.z = Math.sin(t * .3 + i + inst.index) * .012 * open;
-      });
-      inst.coreBars.forEach((bar, i) => {
-        bar.position.z = bar.userData.home.z + .18 * open;
-        bar.scale.y = .62 + .38 * open;
-        bar.material.opacity = .28 + .62 * open;
+      const d=Math.hypot(cam.position.x-inst.g.position.x,cam.position.z-inst.g.position.z);
+      const open=smooth(clamp((6.4-d)/4.5,0,1));
+      inst.parts.forEach((p,i) => {
+        const center=(inst.parts.length-1)/2;
+        const s=i-center;
+        const targetX=s*inst.def.split*open*.18;
+        const targetZ=Math.abs(s)*inst.def.split*open*.055;
+        p.position.x += (targetX-p.position.x)*(1-Math.exp(-dt*5));
+        p.position.z += (targetZ-p.position.z)*(1-Math.exp(-dt*5));
+        p.rotation.y = s*.055*open*(inst.def.id==='las-vegas'?-1:1);
       });
     }
 
-    const pd = Math.hypot(cpos.x - secretPortal.position.x, cpos.z - secretPortal.position.z);
-    const wake = smooth(clamp((6.2 - pd) / 4.8, 0, 1));
-    portalSlits.forEach((s, i) => {
-      s.position.z = (i - 2) * (.25 + wake * .12);
-      s.rotation.x = (i - 2) * .06 * wake;
-      if ('opacity' in s.material) s.material.opacity = .2 + wake * .62;
-    });
-
-    const inside = region === 'horror' || !!regionOf(visitor.x, visitor.z);
-    if (inside) buildCollection();
-    horror.visible = inside;
-    scene.environmentIntensity = inside ? 1.38 : .55;
-    museum.renderer.toneMappingExposure = inside ? 1.18 : .96;
-    if (scene.fog) {
-      scene.fog.color.set(inside ? '#17131d' : '#e6eef0');
-      scene.fog.near = inside ? 5 : 70;
-      scene.fog.far = inside ? 38 : 420;
+    if (api.portal) {
+      const d=Math.hypot(cam.position.x-api.portal.position.x,cam.position.z-api.portal.position.z);
+      const wake=smooth(clamp((6.4-d)/4.8,0,1));
+      api.portal.scale.setScalar(1.08+wake*.12);
+      api.portal.rotation.z=Math.sin(t*.35)*.015*wake;
     }
+
+    const inside = region === 'horror' || !!regionOf(visitor.x,visitor.z);
+    hiddenRoom.visible = inside;
     if (inside) {
-      // Slight material shimmer on the hero bikes: enough to make carbon read as lacquer,
-      // not enough to become a nightclub.
-      fullBikes.forEach((b, i) => {
-        b.traverse(o => {
+      fullBikes.forEach(({holder,i}) => {
+        holder.traverse(o => {
           if (!o.isMesh) return;
           for (const m of [].concat(o.material || [])) {
             if (m.name === 'paint_frame' || /paint/i.test(m.name || '')) {
-              m.roughness = .105 + Math.sin(t * .55 + i) * .018;
+              m.roughness=.078+Math.sin(t*.48+i)*.014;
+              m.envMapIntensity=2.4+Math.sin(t*.32+i)*.22;
             }
           }
         });
@@ -509,6 +501,10 @@
     }
   }
 
-  loadBlenderAssets();
-  window.__museumArt = { regionOf, walkable, enter, update, root, horror, buildCollection, loadBlenderAssets, get blenderReady(){ return blenderReady; } };
-})();
+  loadAssets().catch(err => {
+    console.warn('art world asset load failed',err);
+    api.ready = true;
+  });
+
+  return api;
+}
