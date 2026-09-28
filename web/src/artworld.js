@@ -132,13 +132,20 @@ function assetMeshes(asset, prefixes) {
   return matches;
 }
 
-function bakedAssetMesh(src) {
-  // Blender's glTF exporter may put the Z-up -> Y-up conversion on parent empties.
-  // We intentionally reparent meshes into runtime exhibit groups, so preserve the full
-  // authored transform by baking matrixWorld into the cloned geometry first.
+const ART_AXIS_FIX = new THREE.Matrix4().makeRotationX(Math.PI/2);
+const ART_FACE_HALL = new THREE.Matrix4()
+  .makeRotationY(Math.PI/2)
+  .multiply(ART_AXIS_FIX);
+
+function bakedAssetMesh(src, authoredOrientation=ART_AXIS_FIX) {
+  // The procedural Blender generator intentionally treats its Y coordinate as vertical.
+  // Blender is Z-up, so glTF exports that intended vertical along -Z. Preserve each
+  // node's full authored transform, then bake the runtime axis/orientation correction
+  // into geometry before reparenting. After this, every exhibit is ordinary Three.js Y-up.
   const c = new THREE.Mesh(src.geometry.clone(), src.material);
   c.name = src.name;
   c.geometry.applyMatrix4(src.matrixWorld);
+  if (authoredOrientation) c.geometry.applyMatrix4(authoredOrientation);
   c.position.set(0,0,0);
   c.rotation.set(0,0,0);
   c.scale.set(1,1,1);
@@ -302,14 +309,12 @@ export async function initArtWorld(museum) {
     const g = new THREE.Group();
     g.name = 'ART ' + def.title;
     g.position.set(...def.position);
-    // GLB already carries Blender's axis conversion. Rotate only around Y so the relief faces the aisle.
-    g.rotation.y = Math.PI/2;
     g.position.y = .18;
     g.scale.setScalar(1.28);
 
     const parts = [];
     for (const src of assetMeshes(asset, def.prefix)) {
-      const c = bakedAssetMesh(src);
+      const c = bakedAssetMesh(src, ART_FACE_HALL);
       c.material = materialForName(c.name, def);
       c.userData = { index: parts.length };
       c.castShadow = !mobile;
@@ -334,12 +339,10 @@ export async function initArtWorld(museum) {
     const g = new THREE.Group();
     g.name = 'HIDDEN PORTAL';
     g.position.set(-6.76,0,-36.4);
-    // Portal geometry is authored vertical in the GLB; turn it toward the hall without tipping it sideways.
-    g.rotation.y = Math.PI/2;
     g.position.y = .08;
     g.scale.setScalar(1.42);
     for (const src of assetMeshes(asset, ['PORTAL_'])) {
-      const c = bakedAssetMesh(src);
+      const c = bakedAssetMesh(src, ART_FACE_HALL);
       c.material = src.name.includes('RING') ? physical('#261833',.08,.22,'#a568d0') : physical('#121318',.14,.42);
       c.userData = {};
       g.add(c);
@@ -360,7 +363,7 @@ export async function initArtWorld(museum) {
   function clonePrefabs(asset, prefixes) {
     const g = new THREE.Group();
     for (const src of assetMeshes(asset, prefixes)) {
-      const c = bakedAssetMesh(src);
+      const c = bakedAssetMesh(src, ART_AXIS_FIX);
       if (/CARNIVAL/i.test(c.name)) c.material = physical('#5c1524',.12,.24,'#8a2236');
       else if (/TOTEM/i.test(c.name)) c.material = physical('#4c331b',.2,.58);
       else c.material = physical('#17151a',.38,.16);
