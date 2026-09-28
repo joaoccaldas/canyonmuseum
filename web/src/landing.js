@@ -61,6 +61,7 @@ const obstacles = [
   { box: [-4.5, 4.5, -42.9, -39.9] },                               // apse plinth
 ];
 function walkable(x, z) {
+  if (window.__museumArt?.walkable?.(x, z) === true) return true;
   const inHall = x >= WALK.x0 && x <= WALK.x1 && z <= WALK.z0 && z >= WALK.z1;
   const inDoor = x < WALK.x0 + .1 && x > ROOM.x1 - .6 && z < DOOR.z1 - .45 && z > DOOR.z0 + .45;
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
@@ -800,7 +801,7 @@ let started = false, path = null, keys = new Set(), current = null, drag = null,
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
-const roomOf = (x, z) => x >= WALK.x0 - .05 ? 'hall' : z > -26.1 ? 'champ' : 'wyld';
+const roomOf = (x, z) => window.__museumArt?.regionOf?.(x, z) || (x >= WALK.x0 - .05 ? 'hall' : z > -26.1 ? 'champ' : 'wyld');
 const DOORZ = { champ: DZ, wyld: WZ };
 function route(to, face, piece) {                                   // via doorways and the open aisle, never through plinths
   const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
@@ -1052,7 +1053,7 @@ const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
   const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor].filter(Boolean), false);
-  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.info) return { info: h.object.userData.info }; if (h.object.userData.wyldBike) return { wyld: h.object.userData.wyldBike }; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
+  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.artPortal) return { artPortal: h.object.userData.artPortal }; if (h.object.userData.info) return { info: h.object.userData.info }; if (h.object.userData.wyldBike) return { wyld: h.object.userData.wyldBike }; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
   return null;
 }
 canvas.addEventListener('pointerdown', e => {
@@ -1076,7 +1077,8 @@ canvas.addEventListener('pointerup', e => {
   const hit = pick(e.clientX, e.clientY);
   if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
-  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info) { haptic(8); tourEnd(false); coachDid('tap'); }
+  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.artPortal) { haptic(8); tourEnd(false); coachDid('tap'); }
+  if (hit?.artPortal) { window.__museumArt?.enter?.(hit.artPortal); closeCard(); return; }
   if (hit?.champ) { visitChamp(hit.champ); return; }
   if (hit?.wyld) { visitWyld(hit.wyld); return; }
   if (hit?.info) { openInfo(hit.info); return; }
@@ -1236,9 +1238,10 @@ function frame(now) {
     bd.o.rotation.y = -a; const f = Math.sin(t * bd.flap + bd.phase) * .6; bd.l.rotation.z = f; bd.r2.rotation.z = -f; }
   if (window.__ocean) window.__ocean.uniforms.t.value = t;
   if (window.__foam) window.__foam.opacity = .38 + Math.sin(t * .9) * .14;
+  window.__museumArt?.update?.(dt, t, P, camera, roomOf(P.x, P.z));
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 loadAll().then(loadWyldBikes).catch(e => console.warn('wyld room', e));
-window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart };
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pickables, obstacles };
