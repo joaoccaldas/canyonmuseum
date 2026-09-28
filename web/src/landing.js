@@ -7,6 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { applyWyld } from './skins/wyld.js';
+import { initArtWorld } from './artworld.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const PIECES = window.__PIECES || [];
@@ -1245,3 +1246,4 @@ requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 loadAll().then(loadWyldBikes).catch(e => console.warn('wyld room', e));
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pickables, obstacles, loader };
+initArtWorld(window.__museum).catch(e => console.warn('art world', e));
