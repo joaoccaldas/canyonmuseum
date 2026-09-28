@@ -14,13 +14,13 @@ test('art world runtime parses as standalone browser script', () => {
 });
 
 test('distance-reactive place studies and hidden collection stay wired', () => {
-  for (const token of ['St. George', 'Las Vegas', 'Nice', 'Kona', 'horror-in', 'horror-out', 'regionOf', 'walkable', 'update']) {
+  for (const token of ['St. George', 'Las Vegas', 'Nice', 'Kona', 'horror-in', 'horror-out', 'regionOf', 'walkable', 'update', 'loadBlenderAssets']) {
     assert.ok(src.includes(token), token);
   }
 });
 
 test('hidden collection uses sparse full-detail bikes plus lightweight archive silhouettes', () => {
-  assert.match(src, /fullCount\\s*=\\s*mobile\\s*\\?\\s*4\\s*:\\s*8/);
-  assert.match(src, /ghostCount\\s*=\\s*mobile\\s*\\?\\s*5\\s*:\\s*12/);
+  assert.ok(src.includes('const fullCount = mobile ? 4 : 8;'));
+  assert.ok(src.includes('const ghostCount = mobile ? 5 : 12;'));
   assert.match(src, /simplified/);
 });
