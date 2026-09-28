@@ -46,7 +46,7 @@
   async function loadBlenderAssets() {
     if (!museum.loader || blenderReady) return;
     try {
-      const b64 = (await fetch('assets/artworld/artworld_assets.glb.gz.b64')).then(r => r.text());
+      const b64 = await (await fetch('assets/artworld/artworld_assets.glb.gz.b64')).text();
       const raw = Uint8Array.from(atob(b64.trim()), c => c.charCodeAt(0));
       let bytes = raw;
       if ('DecompressionStream' in window) {
