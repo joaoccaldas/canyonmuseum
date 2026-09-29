@@ -40,6 +40,8 @@ nav{display:flex;gap:6px;align-items:center}
 nav a,nav button{font-size:12px;font-weight:600;padding:10px 16px;border-radius:999px;background:rgba(251,249,245,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);transition:.2s}
 nav a:hover,nav button:hover{background:var(--paper);border-color:rgba(18,24,29,.25)}
 #soundBtn[aria-pressed=true]{color:var(--reef)}
+#passportBtn{display:inline-flex;align-items:center;gap:7px}
+#passportCount{display:inline-grid;place-items:center;min-width:34px;height:22px;padding:0 7px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:10px;font-variant-numeric:tabular-nums}
 
 /* intro */
 #intro{position:fixed;inset:0;z-index:10;display:flex;align-items:center;padding:0 max(28px,7vw);
@@ -231,6 +233,7 @@ body.walking .credit{display:none}
   <a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
   <nav>
     <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
+    <button id="passportBtn" aria-label="Museum Passport progress">Passport <span id="passportCount">0/0</span></button>
     <a href="Canyon_Collection.html#compare">Compare</a>
     <a class="wide" href="Canyon_Collection.html#archive">Archive</a>
   </nav>
