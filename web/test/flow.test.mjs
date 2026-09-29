@@ -34,3 +34,12 @@ test('mobile render scale drops only while moving and restores when stationary',
   assert.match(src, /const targetDpr = flowing \? flowDpr : qualityDpr/);
   assert.match(src, /renderer\.setPixelRatio\(activeDpr\)/);
 });
+
+
+test('nearby bike affordance makes world interaction immediate', () => {
+  assert.match(src, /let nearbyPiece = null/);
+  assert.match(src, /nearbyName/);
+  assert.match(src, /showNearby = !!nearest && moving < \.82/);
+  assert.match(tpl, /id="nearby"/);
+  assert.match(tpl, /id="nearbyName"/);
+});
