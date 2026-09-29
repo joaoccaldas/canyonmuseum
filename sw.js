@@ -15,6 +15,11 @@ const MANIFEST = {"core":["index.html","manifest.webmanifest","app/icons/icon.sv
 const CORE = `speedmax-core-${VERSION}`;
 const ASSETS = 'speedmax-assets';                                    // shared across versions; entries carry their hash
 const scopeUrl = p => new URL(p, self.registration.scope).href;
+const OFFLINE = '<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline · Speedmax Museum</title>'
+  + '<body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#f4efe7;color:#12181d;font:15px/1.6 system-ui,sans-serif;text-align:center;padding:24px">'
+  + '<div><p style="letter-spacing:.24em;font-size:11px;text-transform:uppercase;font-weight:700">Speedmax Museum</p>'
+  + '<h1 style="font:400 38px Georgia,serif;margin:8px 0">The museum can\'t be reached</h1>'
+  + '<p>You are offline. Reconnect and try again.</p></div>';
 
 async function sha256(buf) {
   const d = new Uint8Array(await crypto.subtle.digest('SHA-256', buf));
@@ -57,7 +62,7 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== location.origin || !url.href.startsWith(self.registration.scope)) return;   // fonts, Wikimedia: straight to the network
+  if (url.origin !== self.location.origin || !url.href.startsWith(self.registration.scope)) return;   // fonts, Wikimedia: straight to the network
   let path = url.pathname.slice(new URL(self.registration.scope).pathname.length);
   if (req.mode === 'navigate' && (path === '' || path.endsWith('/'))) path += 'index.html';
   const expected = MANIFEST.files[path];
@@ -74,9 +79,17 @@ self.addEventListener('fetch', event => {
       await assets.put(scopeUrl(path), res.clone());
       return res;
     } catch (e) {
-      // the network copy is newer than this worker (an update is on its way) or failed: pass it through unverified
-      // rather than breaking the page, but never store it
-      return fetch(req);
+      // A deployment can race this worker, so a newer network copy may legitimately fail this
+      // release's hash. It may be displayed, but never cached under the old hash.
+      try {
+        const live = await fetch(req);
+        if (live) return live;
+      } catch (_) {}
+      // Never let respondWith reject or resolve undefined. Navigations get an honest offline page;
+      // assets get a concrete 504 response. This prevents the browser's "Failed to convert value
+      // to Response" / FetchEvent network-error cascade when the server or network disappears.
+      if (req.mode === 'navigate') return new Response(OFFLINE, { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      return new Response('', { status: 504, statusText: 'Offline' });
     }
   })());
 });
