@@ -8,6 +8,7 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { applyWyld } from './skins/wyld.js';
 import { initArtWorld } from './artworld.js';
+import { initInstallExperience } from './pwa.mjs';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const PIECES = window.__PIECES || [];
@@ -1046,6 +1047,7 @@ function closeCard(keepCurrent) {
 }
 $('cardClose').onclick = () => { tourEnd(false); closeCard(); };
 let toastT; function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200); }
+initInstallExperience({ button: $('installBtn'), toast });
 
 // ------------------------------------------------------------------ exploded view: parts with their stories
 const LABEL_ORDER = ['frame', 'fork', 'wheel_front', 'wheel_rear', 'aeroshield', 'extensions', 'basebar', 'base_bar', 'stem', 'riser',
