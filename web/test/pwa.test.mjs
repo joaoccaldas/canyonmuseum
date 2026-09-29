@@ -25,18 +25,39 @@ test('landing page wires manifest and install experience', () => {
   assert.match(pwa, /beforeinstallprompt/);
   assert.match(pwa, /Add to Home Screen/);
   assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'(, \{ updateViaCache: 'none' \})?\)/);   // updateViaCache: installed apps always fetch a fresh sw.js
+  assert.match(pwa, /127\.0\.0\.1.*localhost.*\[::1\]/s);
+  assert.match(pwa, /getRegistrations\(\)/);
+  assert.match(pwa, /unregister\(\)/);
 });
 
-test('service worker is conservative and does not pre-cache large bike GLBs', () => {
-  assert.match(sw, /network-first|Navigation stays network-first/);
-  assert.ok(!/\.glb['"]/u.test(sw.split('const SHELL =')[1]?.split(';')[0] || ''));
-  assert.match(sw, /event\.request\.destination/);
+test('sealed service worker verifies release files and keeps GLBs out of the core shell', () => {
+  const app = JSON.parse(fs.readFileSync(path.join(root, 'app/app-manifest.json'), 'utf8'));
+  assert.ok(app.version && app.files && app.core?.length);
+  assert.ok(app.core.every(p => !/\.glb$/i.test(p)));
+  assert.match(sw, /fetchVerified/);
+  assert.match(sw, /integrity mismatch/);
+  assert.match(sw, /speedmax-core-/);
 });
 
-test('installed apps pick up new versions and new icons', () => {
-  assert.match(pwa, /visibilitychange/);                              // re-check for a new museum when the app is reopened
-  assert.match(sw, /stale-while-revalidate/);                         // assets refresh in the background
+test('installed apps pick up verified new versions and every public icon exists', () => {
+  assert.match(pwa, /visibilitychange/);
+  assert.match(sw, /skip-waiting/);
+  assert.match(sw, /type: 'version'/);
   const manifest = JSON.parse(fs.readFileSync(path.join(here, '../../manifest.webmanifest'), 'utf8'));
   for (const i of manifest.icons) assert.ok(fs.existsSync(path.join(here, '../..', i.src)), i.src);
-  assert.ok(manifest.icons.some(i => i.purpose === 'maskable' && /-v\d+-/.test(i.src)));   // versioned names bust launcher caches
+  assert.ok(manifest.icons.some(i => i.purpose === 'maskable' && /-v\d+-/.test(i.src)));
+  for (const template of ['web/landing.template.html', 'web/studio.template.html', 'web/experience.template.html']) {
+    const html = fs.readFileSync(path.join(root, template), 'utf8');
+    for (const m of html.matchAll(/<(?:link)[^>]+href="([^"]+)"/g)) {
+      const href = m[1];
+      if (/^(?:https?:|data:|#)/.test(href) || !/\.(?:svg|png)$/i.test(href)) continue;
+      assert.ok(fs.existsSync(path.join(root, href.replace(/^\.\//, ''))), `${template}: ${href}`);
+    }
+  }
+});
+
+test('Three.js runtime does not use the removed PCFSoftShadowMap constant', () => {
+  const files = fs.readdirSync(path.join(root, 'web/src'), { recursive: true }).filter(f => /\.m?js$/.test(f));
+  const src = files.map(f => fs.readFileSync(path.join(root, 'web/src', f), 'utf8')).join('\n');
+  assert.doesNotMatch(src, /PCFSoftShadowMap/);
 });
