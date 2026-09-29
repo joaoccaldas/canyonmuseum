@@ -53,7 +53,7 @@ test('the hidden-find promise is exactly nine real, unique, rarity-labelled obje
 test('room design stays data-driven instead of naming rooms in the engine', () => {
   const src = fs.readFileSync(path.join(root, 'web/src/engine/wing.js'), 'utf8');
   for (const id of ['carbon','air','future','heat','night','archive','voyaging','royal-kona','volcanoes','ocean','coffee','island-today','race-week','visit-care']) {
-    assert.doesNotMatch(src, new RegExp(`['"\\]${id}['"\\]`), `engine hard-codes ${id}`);
+    assert.ok(!src.includes(`'${id}'`) && !src.includes(`"${id}"`), `engine hard-codes ${id}`);
   }
   assert.match(src, /r\.design \|\| \{\}/);
 });
