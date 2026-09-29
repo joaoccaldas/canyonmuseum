@@ -8,6 +8,7 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { applyWyld } from './skins/wyld.js';
 import { initArtWorld } from './artworld.js';
+import { initInstallExperience } from './pwa.mjs';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const PIECES = window.__PIECES || [];
@@ -161,8 +162,8 @@ const M = {
   mullion: new THREE.MeshStandardMaterial({ color: '#2b2e33', roughness: .4, metalness: .6 }),
   glass: new THREE.MeshStandardMaterial({ color: '#d9eff0', roughness: .05, metalness: 0, transparent: true, opacity: .07, envMapIntensity: 1.2, depthWrite: false }),
   lectern: new THREE.MeshStandardMaterial({ color: '#faf8f4', roughness: .6 }),
-  line: new THREE.MeshBasicMaterial({ color: '#e9b84a', transparent: true, opacity: .55, fog: false }),
-  edge: new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .7, fog: false }),
+  line: new THREE.MeshBasicMaterial({ color: '#e9b84a', transparent: true, opacity: .55, fog: false, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
+  edge: new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .7, fog: false, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
   ring: new THREE.MeshBasicMaterial({ color: '#35c2bf', transparent: true, opacity: 0, fog: false, depthWrite: false }),
 };
 const hall = new THREE.Group(); scene.add(hall);
@@ -172,9 +173,9 @@ floor.position.set(0, -.2, CZ); floor.receiveShadow = true; floor.userData.floor
 // the Queen K: a faded centre line and edge lines down the aisle
 {
   const dashes = new THREE.InstancedMesh(new THREE.PlaneGeometry(.1, 1.3), M.line, 40); let n = 0;
-  for (let z = 3.5; z > -37; z -= 3.1) { dashes.setMatrixAt(n++, new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(0, .004, z)); }
+  for (let z = 3.5; z > -37; z -= 3.1) { dashes.setMatrixAt(n++, new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(0, .014, z)); }
   dashes.count = n; hall.add(dashes);
-  for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .004, -16.5); hall.add(e); }
+  for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .014, -16.5); e.renderOrder = 2; hall.add(e); }
 }
 // plaster wall (lava side) with a shadow-gap skirting
 for (const [a, b] of [[HALL.z0, DOOR.z1], [DOOR.z0, WDOOR.z1], [WDOOR.z0, HALL.z1]]) {
@@ -362,7 +363,7 @@ const champs = [];
   for (const [w, x, z, ry] of [[RD, ROOM.x0 + .02, RCZ, Math.PI / 2], [RW, RCX, ROOM.z0 - .02, 0], [RW, RCX, ROOM.z1 + .02, Math.PI]]) {
     const strip = new THREE.Mesh(new THREE.PlaneGeometry(w, .07), cove); strip.position.set(x, ROOM.h - .25, z); strip.rotation.y = ry; room.add(strip);
   }
-  room.add(placed(lightPool(RW * .9, RD * .9, WYLD.lilac, .18), RCX, .004, RCZ));
+  room.add(placed(lightPool(RW * .9, RD * .9, WYLD.lilac, .18), RCX, .014, RCZ));
   const inside = tapestry(5.2, 1.9, 4.1, .5); inside.position.set(ROOM.x1 - .02, 3.4, (DOOR.z0 + DOOR.z1) / 2 + 4.6); inside.rotation.y = -Math.PI / 2; room.add(inside);
   const inside2 = tapestry(5.2, 1.9, 1.7, 2.2); inside2.position.set(ROOM.x1 - .02, 3.4, (DOOR.z0 + DOOR.z1) / 2 - 4.6); inside2.rotation.y = -Math.PI / 2; room.add(inside2);
   box(.3, ROOM.h, (ROOM.z0 - DOOR.z1), ROOM.x1 + .15, ROOM.h / 2, (ROOM.z0 + DOOR.z1) / 2).visible = false;   // east face is the hall wall
@@ -535,7 +536,7 @@ async function loadWyldBikes() {
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
     const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = b.rotY; holder.position.y = b.top; b.group.add(holder); b.bike = holder;
-    const cs = contactShadow(2.1, .55); cs.position.y = b.top + .004; cs.rotation.z = b.rotY; b.group.add(cs);
+    const cs = contactShadow(2.1, .55); cs.position.y = b.top + .012; cs.rotation.z = b.rotY; b.group.add(cs);
     holder.updateMatrixWorld(true);
     bike.traverse(o => {
       if (!o.isMesh) return;
@@ -708,7 +709,7 @@ for (const p of PIECES) {
     const card = textCard(p); card.position.set(0, .98, 0); card.rotation.x = -Math.PI / 2 + .55; card.translateZ(.017); lect.add(card);
     card.userData.piece = p; pickables.push(card);
     const fy = floorYear(p); fy.rotation.x = -Math.PI / 2; fy.rotation.z = Math.atan2(p.normal.x, p.normal.z) + Math.PI;
-    fy.position.copy(p.normal.clone().multiplyScalar(2.3)); fy.position.y = .006; g.add(fy);
+    fy.position.copy(p.normal.clone().multiplyScalar(2.3)); fy.position.y = .014; fy.renderOrder = 2; g.add(fy);
     if (!p.glb) {                                                    // a lost work: an empty plinth, a halo of light
       const halo = new THREE.Mesh(new THREE.TorusGeometry(.62, .012, 8, 64), new THREE.MeshBasicMaterial({ color: '#35c2bf', transparent: true, opacity: .55 }));
       halo.rotation.x = -Math.PI / 2; halo.position.y = h + .01; g.add(halo);
@@ -721,7 +722,7 @@ heritage.forEach((p, i) => {
   if (p.pos.x < 0) { const tp = tapestry(2.6, 3.3, i * 1.37 + .4, .35 + i * .5); tp.position.set(HALL.x0 + .02, 2.75, p.pos.z); tp.rotation.y = Math.PI / 2; hall.add(tp); }
   const pool = lightPool(3.4, 2.2, i % 2 ? WYLD.aqua : WYLD.pink, p.glb ? .38 : .22); pool.rotation.z = p.rotY - Math.PI / 2; pool.position.x = p.pos.x; pool.position.z = p.pos.z; hall.add(pool);
 });
-{ const ap = lightPool(10, 4, WYLD.lilac, .45); ap.position.set(0, .004, -41.4); hall.add(ap);
+{ const ap = lightPool(10, 4, WYLD.lilac, .45); ap.position.set(0, .014, -41.4); ap.renderOrder = 1; hall.add(ap);
   const t2 = tapestry(7.5, 1.4, 3.3, 1.2); t2.position.set(0, 4.35, -45.9); hall.add(t2); }
 { // apse plinth for the MY2027 flagships + hanging sign
   const ap = new THREE.Mesh(new THREE.BoxGeometry(8.2, .32, 2.2), M.basaltPolished);
@@ -734,7 +735,7 @@ heritage.forEach((p, i) => {
   sign.position.set(0, 3.7, -43.2); hall.add(sign);
   for (const p of flagships) {
     const fy = floorYear({ years: p.name.replace('Speedmax ', '') });
-    fy.rotation.x = -Math.PI / 2; fy.scale.setScalar(.7); fy.position.set(p.pos.x - p.pos.x, .006, 2.05); p.group.add(fy);
+    fy.rotation.x = -Math.PI / 2; fy.scale.setScalar(.7); fy.position.set(p.pos.x - p.pos.x, .014, 2.05); fy.renderOrder = 2; p.group.add(fy);
   }
 }
 
@@ -791,7 +792,7 @@ async function loadAll() {
     try { await loadBike(p); } catch (e) { console.warn('bike failed', p.key, e); }
     loaded++;
     $('loadstate').innerHTML = loaded < modelled.length ? `Unpacking the collection · ${loaded} / ${modelled.length}<i><b style="width:${loaded / modelled.length * 100}%"></b></i>` : `${modelled.length} bikes on display · ${PIECES.length - modelled.length} lost generations remembered`;
-    if (loaded === 1) { const b = $('enterBtn'); b.disabled = false; b.innerHTML = 'Enter the museum <span aria-hidden="true">→</span>'; }
+    if (loaded === 1) { const b = $('enterBtn'); b.disabled = false; b.innerHTML = passport.visits > 0 ? 'Continue the museum <span aria-hidden="true">→</span>' : 'Enter the museum <span aria-hidden="true">→</span>'; passportProgress(); }
   }
 }
 
@@ -800,6 +801,46 @@ const start = new THREE.Vector3(0, 0, 3.4);
 const P = { x: 0, z: 3.4, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
 let started = false, path = null, keys = new Set(), current = null, drag = null, bob = 0;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
+
+// ------------------------------------------------------------------ local-first Museum Passport
+const PASSPORT_KEY = 'speedmax.passport.v1';
+function readPassport() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PASSPORT_KEY) || 'null');
+    if (raw?.v === 1 && Array.isArray(raw.discoveries)) return raw;
+  } catch (_) { }
+  return { v: 1, discoveries: [], visits: 0, pose: null };
+}
+const passport = readPassport();
+function writePassport() {
+  try { localStorage.setItem(PASSPORT_KEY, JSON.stringify(passport)); } catch (_) { }
+}
+function passportProgress() {
+  const total = modelled.length;
+  const seen = passport.discoveries.filter(k => modelled.some(p => p.key === k)).length;
+  const count = $('passportCount'); if (count) count.textContent = `${seen}/${total}`;
+  return { seen, total };
+}
+function discover(p) {
+  if (!p?.key || !p.glb || passport.discoveries.includes(p.key)) return false;
+  passport.discoveries.push(p.key); writePassport();
+  const { seen, total } = passportProgress();
+  if (started) toast(`Museum Passport · discovered ${p.name} · ${seen}/${total}`);
+  return true;
+}
+function savePose() {
+  if (!started) return;
+  const region = roomOf(P.x, P.z);
+  if (region === 'horror') return;
+  passport.pose = { x: P.x, z: P.z, yaw: P.yaw, pitch: P.pitch, region };
+  writePassport();
+}
+addEventListener('pagehide', savePose);
+$('passportBtn')?.addEventListener('click', () => {
+  const { seen, total } = passportProgress();
+  toast(`Museum Passport · ${seen} of ${total} bikes discovered${seen === total && total ? ' · collection complete' : ''}`);
+});
+passportProgress();
 
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const roomOf = (x, z) => window.__museumArt?.regionOf?.(x, z) || (x >= WALK.x0 - .05 ? 'hall' : z > -26.1 ? 'champ' : 'wyld');
@@ -822,6 +863,7 @@ function route(to, face, piece) {                                   // via doorw
 function visit(p) {
   if (current && current !== p && current.exT > 0) setExploded(current, false);
   partSel = null; closeCard(true);
+  discover(p);
   route(p.view, p.pos.clone().setY(p.top + .75), p);
   current = p; railActive(p);
 }
@@ -952,8 +994,19 @@ function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
   const coaching = coarse && (() => { try { return localStorage.getItem('speedmax.coach.v1') !== '1'; } catch (_) { return true; } })();
-  if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
-  path = [{ x: 0, z: .6 }]; canvas.focus({ preventScroll: true }); haptic(10); coach();
+  const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld'].includes(passport.pose.region)
+    && walkable(passport.pose.x, passport.pose.z);
+  passport.visits = (passport.visits || 0) + 1;
+  if (returning) {
+    P.x = passport.pose.x; P.z = passport.pose.z; P.yaw = passport.pose.yaw || 0; P.pitch = passport.pose.pitch ?? -.04;
+    path = null;
+    const { seen, total } = passportProgress();
+    if (!coaching) toast(`Welcome back · Museum Passport ${seen}/${total}`);
+  } else {
+    if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
+    path = [{ x: 0, z: .6 }];
+  }
+  writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach();
 }
 $('enterBtn').onclick = enter;
 
@@ -994,6 +1047,7 @@ function closeCard(keepCurrent) {
 }
 $('cardClose').onclick = () => { tourEnd(false); closeCard(); };
 let toastT; function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200); }
+initInstallExperience({ button: $('installBtn'), toast });
 
 // ------------------------------------------------------------------ exploded view: parts with their stories
 const LABEL_ORDER = ['frame', 'fork', 'wheel_front', 'wheel_rear', 'aeroshield', 'extensions', 'basebar', 'base_bar', 'stem', 'riser',

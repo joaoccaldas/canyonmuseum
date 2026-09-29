@@ -1,12 +1,20 @@
 {
   "name": "web",
   "version": "1.0.0",
-  "description": "",
+  "description": "Canyon Museum interactive 3D web runtime",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test/*.test.mjs",
+    "test:unit": "node --test test/*.test.mjs",
+    "build:landing": "node build_landing.mjs",
+    "test:visual": "node artworld-visual-smoke.mjs"
   },
-  "keywords": [],
+  "keywords": [
+    "threejs",
+    "blender",
+    "triathlon",
+    "museum"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",

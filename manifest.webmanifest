@@ -1,0 +1,22 @@
+{
+  "name": "Canyon Speedmax Museum",
+  "short_name": "Canyon Museum",
+  "description": "An immersive 3D Speedmax museum on the Kona coast.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#f4efe7",
+  "theme_color": "#f4efe7",
+  "icons": [
+    {
+      "src": "assets/pwa/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "education", "entertainment"]
+}
