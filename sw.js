@@ -1,5 +1,5 @@
-const CACHE = 'canyon-museum-shell-v2';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './assets/pwa/icon-v2.svg', './assets/pwa/icon-192.png', './assets/pwa/icon-512.png'];
+const CACHE = 'canyon-museum-shell-v4';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './assets/pwa/icon-v3.svg', './assets/pwa/icon-v3-192.png', './assets/pwa/icon-v3-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -32,14 +32,14 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static same-origin assets are cached after first use. Large GLBs are not precached.
-  event.respondWith(
-    caches.match(event.request).then(hit => hit || fetch(event.request).then(response => {
-      if (response.ok && ['script','style','image','font'].includes(event.request.destination)) {
-        const copy = response.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, copy));
-      }
+  // Static same-origin assets: serve from cache instantly, refresh in the background (stale-while-revalidate),
+  // so an installed app never gets stuck on old scripts, styles or images. Large GLBs are not precached.
+  if (!['script', 'style', 'image', 'font'].includes(event.request.destination)) return;
+  event.respondWith(caches.open(CACHE).then(cache => cache.match(event.request).then(hit => {
+    const fresh = fetch(event.request).then(response => {
+      if (response.ok) cache.put(event.request, response.clone());
       return response;
-    }))
-  );
+    }).catch(() => hit);
+    return hit || fresh;
+  })));
 });

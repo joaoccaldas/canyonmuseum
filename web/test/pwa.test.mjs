@@ -15,7 +15,7 @@ test('mobile app manifest is installable and standalone', () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, './');
   assert.equal(manifest.scope, './');
-  assert.ok(manifest.icons.some(icon => /icon-v2\.svg$/.test(icon.src)));
+  assert.ok(manifest.icons.some(icon => /icon-v3\.svg$/.test(icon.src)));
 });
 
 test('landing page wires manifest and install experience', () => {
@@ -24,11 +24,19 @@ test('landing page wires manifest and install experience', () => {
   assert.match(tpl, /id="installBtn"/);
   assert.match(pwa, /beforeinstallprompt/);
   assert.match(pwa, /Add to Home Screen/);
-  assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'\)/);
+  assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'(, \{ updateViaCache: 'none' \})?\)/);   // updateViaCache: installed apps always fetch a fresh sw.js
 });
 
 test('service worker is conservative and does not pre-cache large bike GLBs', () => {
   assert.match(sw, /network-first|Navigation stays network-first/);
   assert.ok(!/\.glb['"]/u.test(sw.split('const SHELL =')[1]?.split(';')[0] || ''));
   assert.match(sw, /event\.request\.destination/);
+});
+
+test('installed apps pick up new versions and new icons', () => {
+  assert.match(pwa, /visibilitychange/);                              // re-check for a new museum when the app is reopened
+  assert.match(sw, /stale-while-revalidate/);                         // assets refresh in the background
+  const manifest = JSON.parse(fs.readFileSync(path.join(here, '../../manifest.webmanifest'), 'utf8'));
+  for (const i of manifest.icons) assert.ok(fs.existsSync(path.join(here, '../..', i.src)), i.src);
+  assert.ok(manifest.icons.some(i => i.purpose === 'maskable' && /-v\d+-/.test(i.src)));   // versioned names bust launcher caches
 });

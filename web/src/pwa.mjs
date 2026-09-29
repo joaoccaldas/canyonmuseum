@@ -39,6 +39,11 @@ export function initInstallExperience({ button, toast }) {
   });
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(err => console.warn('service worker', err)));
+    addEventListener('load', () => navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
+      // installed apps can stay open for days: look for a new museum whenever the app comes back to the foreground
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+      const hadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) toast?.('Museum updated — reopen to see what is new'); });
+    }).catch(err => console.warn('service worker', err)));
   }
 }

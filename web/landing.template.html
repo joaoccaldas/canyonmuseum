@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Canyon Museum">
-<link rel="apple-touch-icon" href="./assets/pwa/apple-touch-icon.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2312181d'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23e8471c' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="./assets/pwa/apple-touch-icon-v3.png">
+<link rel="icon" href="./assets/pwa/icon-v3.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -246,6 +246,55 @@ body.walking .credit{display:none}
 }
 @media (pointer:coarse){.keys{display:none}.touch-only{display:block}}
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
+
+/* ---- Scalable phone UI: rem-based so it follows the phone's own text-size setting; nothing under 12px, every control >= 44px ---- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media (pointer:coarse),(max-width:1024px){#card .close{width:44px;height:44px}}
+@media (max-width:760px),(pointer:coarse){
+  html{font-size:clamp(15px,3.9vw,18px)}
+  .logo b{font-size:.86rem}.logo small{font-size:.72rem;letter-spacing:.14em}
+  .logo{max-width:none;padding:9px 12px}
+  nav a,nav button{font-size:.86rem;min-height:44px;padding:0 14px;display:inline-flex;align-items:center}
+  #passportCount{font-size:.72rem;height:1.45rem;min-width:2rem}
+  .eyebrow{font-size:.75rem;letter-spacing:.22em}
+  .lede{font-size:1rem;line-height:1.6}.touch-only.lede{font-size:.9rem!important}
+  #loadstate{font-size:.78rem}
+  .btn{height:3.4rem;font-size:.95rem}
+  .chip{min-height:3.6rem;padding:6px 14px 6px 6px}.chip .n{width:2.6rem;height:2.6rem;font-size:.9rem}
+  .chip small{font-size:.72rem}.chip b{font-size:.92rem}
+  .c-years{font-size:.78rem}.c-mat{font-size:.8rem}
+  #card h2{font-size:2.1rem}
+  .c-note{font-size:1rem!important;line-height:1.6}
+  .c-stats b{font-size:1.25rem}.c-stats small{font-size:.72rem}
+  .c-actions .btn{height:3.2rem;font-size:.95rem}
+  .c-parts small{font-size:.72rem}.c-parts button{font-size:.86rem;min-height:44px;padding:6px 12px 6px 6px}.c-parts i{width:1.6rem;height:1.6rem;font-size:.75rem}
+  .c-photo figcaption,.c-view,.c-unc,.c-src{font-size:.82rem}
+  #card{bottom:calc(100px + var(--safe-b));max-height:min(58dvh,calc(100dvh - 200px - var(--safe-b)));overscroll-behavior:contain}
+  #card .close{width:44px;height:44px}
+  #nearby{min-height:44px}
+  body.card-open #joy{opacity:0;pointer-events:none;transition:opacity .2s}
+  #nearby small{font-size:.7rem}#nearby b{font-size:.92rem;max-width:62vw}
+  #toast{font-size:.9rem}
+  #tourPill{font-size:.9rem}#tourPill button{min-height:44px;font-size:.86rem;padding:0 14px}
+  #coach b{font-size:1.05rem}#coach small{font-size:.82rem}#coachOk{min-height:44px;font-size:.9rem;padding:0 18px}
+  #tag{font-size:.86rem}.plabel{font-size:.86rem}
+}
+/* phones on their side: give the 3D view the room, keep controls reachable */
+@media (max-height:500px) and (orientation:landscape){
+  html{font-size:15px}
+  header{padding-top:max(6px,env(safe-area-inset-top))}
+  .logo small{display:none}.logo{padding:8px 12px}
+  nav a,nav button{min-height:40px}
+  #rail{padding-bottom:max(4px,var(--safe-b))}
+  .chip{min-height:2.9rem}.chip small{display:none}.chip .n{width:2.2rem;height:2.2rem}
+  #card{left:auto;right:max(10px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));bottom:auto;width:min(380px,48vw);max-height:calc(100dvh - 16px);
+    transform:translateX(calc(100% + 40px))}
+  #card.on{transform:none}
+  #card h2{font-size:1.7rem}
+  #joy{bottom:calc(70px + var(--safe-b))}
+  h1{font-size:clamp(34px,7vh,48px)!important;margin:8px 0}
+  #intro .lede:not(.touch-only){display:none}
+}
 </style>
 </head>
 <body>
@@ -303,9 +352,9 @@ body.walking .credit{display:none}
     <path d="M60 60 m-49 0 a49 49 0 0 1 42 -48.5" fill="none" stroke="#138a8f" stroke-width="6" stroke-linecap="round"/>
     <path d="M60 60 m8 -48.4 a49 49 0 0 1 38 57" fill="none" stroke="#f3b64f" stroke-width="6" stroke-linecap="round"/>
     <path d="M60 60 m45 20 a49 49 0 0 1 -92 -13" fill="none" stroke="#e8471c" stroke-width="6" stroke-linecap="round"/>
-    <text font-size="8.5" font-weight="700" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc1" startOffset="30%">SWIM</textPath></text>
-    <text font-size="8.5" font-weight="700" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc2" startOffset="35%">BIKE</textPath></text>
-    <text font-size="8.5" font-weight="700" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc3" startOffset="50%" text-anchor="middle" dy="8">RUN</textPath></text>
+    <text font-size="10" font-weight="800" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc1" startOffset="30%">SWIM</textPath></text>
+    <text font-size="10" font-weight="800" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc2" startOffset="35%">BIKE</textPath></text>
+    <text font-size="10" font-weight="800" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc3" startOffset="50%" text-anchor="middle" dy="8">RUN</textPath></text>
   </svg>
   <div class="joy-knob"><i></i></div>
 </div>
