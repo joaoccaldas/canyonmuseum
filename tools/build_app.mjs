@@ -19,7 +19,7 @@ const walk = d => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).
 const core = ['index.html', 'manifest.webmanifest', 'app/icons/icon.svg', 'app/icons/favicon-32.png', 'app/icons/icon-192.png', 'app/icons/icon-512.png', 'app/icons/maskable-512.png', 'app/icons/apple-touch-icon.png'];
 const lazy = [
   ...fs.readdirSync(root).filter(f => f.endsWith('.html') && f !== 'index.html'),
-  ...walk(path.join(root, 'assets')).map(rel).filter(f => /\.(glb|jpe?g|png|webp|hdr|json)$/i.test(f) && !f.startsWith('assets/kona-years/src/')),
+  ...walk(path.join(root, 'assets')).map(rel).filter(f => /\.(glb|jpe?g|png|webp|hdr|json|js|css)$/i.test(f) && !f.startsWith('assets/kona-years/src/')),
 ];
 const files = {};
 for (const f of [...core, ...lazy]) {
