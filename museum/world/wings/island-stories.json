@@ -1,0 +1,261 @@
+{
+ "id": "island-stories",
+ "order": 4,
+ "name": "Island Stories",
+ "sub": "Hawaiʻi before, around and beyond race week",
+ "floor": "upper",
+ "y": 6.6,
+ "height": 4.4,
+ "corridor": {
+  "x0": 10.8,
+  "x1": 16.4,
+  "z0": 99.2,
+  "z1": 129.2,
+  "style": "gallery",
+  "map_color": "#c8b89d"
+ },
+ "sides": {
+  "east": {
+   "x0": 16.4,
+   "x1": 25
+  },
+  "west": {
+   "x0": 2.2,
+   "x1": 10.8
+  }
+ },
+ "doors": {
+  "south": {
+   "x0": 11.8,
+   "x1": 15.4,
+   "depth": 0
+  }
+ },
+ "features": {},
+ "rooms": [
+  {
+   "id": "voyaging",
+   "name": "Voyaging & Kānaka Maoli",
+   "sub": "A living culture, not a backdrop",
+   "side": "east",
+   "z0": 99.8,
+   "z1": 106.7,
+   "tint": "#4c9c9c",
+   "wall": "#173d3e",
+   "ink": "#eef8f6",
+   "design": {
+    "wall": "#173d3e",
+    "wall_roughness": 0.86,
+    "floor": "#d8c9ab",
+    "floor_roughness": 0.72,
+    "trim": "#9b845d",
+    "frame": "#493a2e",
+    "plinth": "#efe7d8",
+    "accent": "#6fc2bd",
+    "light": "#fff0d8",
+    "light_intensity": 7.2,
+    "ink": "#eef8f6"
+   }
+  },
+  {
+   "id": "royal-kona",
+   "name": "Royal Kona",
+   "sub": "Kamakahonu, Kailua and Kamehameha I",
+   "side": "east",
+   "z0": 107.1,
+   "z1": 114,
+   "tint": "#c59d43",
+   "wall": "#5b281f",
+   "ink": "#fff2df",
+   "design": {
+    "wall": "#5b281f",
+    "wall_roughness": 0.8,
+    "floor": "#d6b986",
+    "floor_roughness": 0.66,
+    "trim": "#7f6337",
+    "trim_metalness": 0.3,
+    "frame": "#b8954d",
+    "frame_metalness": 0.35,
+    "plinth": "#ede0c6",
+    "accent": "#d8b25b",
+    "light": "#ffe0b0",
+    "light_intensity": 7.4,
+    "ink": "#fff2df"
+   }
+  },
+  {
+   "id": "volcanoes",
+   "name": "Land of Volcanoes",
+   "sub": "Kīlauea, Maunaloa, Maunakea, Hualālai, Kohala",
+   "side": "east",
+   "z0": 114.4,
+   "z1": 121.3,
+   "tint": "#e66f3f",
+   "wall": "#251916",
+   "ink": "#f8eee7",
+   "design": {
+    "wall": "#251916",
+    "wall_roughness": 0.9,
+    "floor": "#171515",
+    "floor_roughness": 0.82,
+    "trim": "#6b3827",
+    "frame": "#2e2521",
+    "plinth": "#121212",
+    "accent": "#e66f3f",
+    "light": "#ffd0a8",
+    "light_intensity": 6.5,
+    "ink": "#f8eee7"
+   }
+  },
+  {
+   "id": "ocean",
+   "name": "Ocean & Fishponds",
+   "sub": "Coast, reef, honu and traditional systems",
+   "side": "east",
+   "z0": 121.7,
+   "z1": 128.6,
+   "tint": "#55a9b3",
+   "wall": "#123c46",
+   "ink": "#edf9fb",
+   "design": {
+    "wall": "#123c46",
+    "wall_roughness": 0.7,
+    "floor": "#d8e3df",
+    "floor_roughness": 0.52,
+    "trim": "#597f83",
+    "frame": "#264c52",
+    "plinth": "#eaf1ee",
+    "accent": "#68bac4",
+    "light": "#dff7ff",
+    "light_intensity": 7.8,
+    "ink": "#edf9fb"
+   }
+  },
+  {
+   "id": "coffee",
+   "name": "Coffee & Agriculture",
+   "sub": "Kona uplands, farms and volcanic soil",
+   "side": "west",
+   "z0": 99.8,
+   "z1": 106.7,
+   "tint": "#8b6b42",
+   "wall": "#4a3528",
+   "ink": "#fbf1e4",
+   "design": {
+    "wall": "#4a3528",
+    "wall_roughness": 0.9,
+    "floor": "#b7956e",
+    "floor_roughness": 0.76,
+    "trim": "#6e543b",
+    "frame": "#37281f",
+    "plinth": "#e7d2b4",
+    "accent": "#b48a54",
+    "light": "#ffe6c3",
+    "light_intensity": 7.3,
+    "ink": "#fbf1e4"
+   }
+  },
+  {
+   "id": "island-today",
+   "name": "Hawaiʻi Island Today",
+   "sub": "People, communities and a changing island",
+   "side": "west",
+   "z0": 107.1,
+   "z1": 114,
+   "tint": "#6f8795",
+   "wall": "#e4e5e0",
+   "ink": "#1c2529",
+   "design": {
+    "wall": "#e4e5e0",
+    "wall_roughness": 0.93,
+    "floor": "#d0cdc5",
+    "floor_roughness": 0.7,
+    "trim": "#68747a",
+    "frame": "#454e53",
+    "plinth": "#f2f0ea",
+    "accent": "#718b98",
+    "light": "#fff7e9",
+    "light_intensity": 8.1,
+    "ink": "#1c2529"
+   },
+   "plates": [
+    {
+     "wall": "south",
+     "lines": [
+      [
+       "210,043",
+       "HAWAIʻI COUNTY · 2025 ESTIMATE"
+      ],
+      [
+       "+4.7%",
+       "SINCE 2020 ESTIMATES BASE"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "race-week",
+   "name": "Race Week",
+   "sub": "Kailua Pier, Queen K and the world arriving",
+   "side": "west",
+   "z0": 114.4,
+   "z1": 121.3,
+   "tint": "#e37b42",
+   "wall": "#f0e8dc",
+   "ink": "#1c211f",
+   "design": {
+    "wall": "#f0e8dc",
+    "wall_roughness": 0.88,
+    "floor": "#d9c8ae",
+    "floor_roughness": 0.66,
+    "trim": "#8b6a4d",
+    "frame": "#5b4939",
+    "plinth": "#eee5d8",
+    "accent": "#e37b42",
+    "light": "#fff0d8",
+    "light_intensity": 8,
+    "ink": "#1c211f"
+   },
+   "plates": [
+    {
+     "wall": "north",
+     "lines": [
+      [
+       "10·10·26",
+       "IRONMAN WORLD CHAMPIONSHIP · KAILUA-KONA"
+      ],
+      [
+       "KAILUA PIER",
+       "START · FINISH · RACE-WEEK ANCHOR"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "visit-care",
+   "name": "Visit with Care",
+   "sub": "Learn first. Follow access. Leave places whole.",
+   "side": "west",
+   "z0": 121.7,
+   "z1": 128.6,
+   "tint": "#799078",
+   "wall": "#26352c",
+   "ink": "#f0f5ed",
+   "design": {
+    "wall": "#26352c",
+    "wall_roughness": 0.92,
+    "floor": "#c9c5b2",
+    "floor_roughness": 0.78,
+    "trim": "#6c725c",
+    "frame": "#3b4438",
+    "plinth": "#e5e3d6",
+    "accent": "#8ea28b",
+    "light": "#fff0d5",
+    "light_intensity": 6.8,
+    "ink": "#f0f5ed"
+   }
+  }
+ ]
+}
