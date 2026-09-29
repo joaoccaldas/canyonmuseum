@@ -5,6 +5,7 @@ on:
     branches:
       - feature/immersive-artworld-secret-room-20260928
       - codex/takeover-world-protocol-20260929
+      - codex/flow-polish-20260929
   workflow_dispatch:
 
 permissions:

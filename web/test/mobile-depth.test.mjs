@@ -23,7 +23,7 @@ test('decorative floor overlays do not write depth', () => {
 });
 
 test('no coplanar floors or walls: the shaking fix stays fixed', () => {
-  assert.match(src, /PerspectiveCamera\(portraitFov\(\), 1, \.12, 700\)/);           // depth precision
+  assert.match(src, /PerspectiveCamera\(museumFov\(\), 1, \.12, 700\)/);           // depth precision
   assert.ok(src.includes('rfloor.position.set(RCX, -.098, RCZ)'));                   // champions floor proud of the hall slab
   assert.ok(src.includes('wfloor.position.set(CX - 1.2, -.098, CZ2)'));              // WYLD floor proud of the hall slab
   assert.ok(src.includes('if (WROOM.h > HALL.h + .01) wall('));                      // no negative-height wall on the hall's west face

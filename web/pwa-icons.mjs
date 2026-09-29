@@ -1,8 +1,8 @@
-// Renders the PWA PNG icons (Android launchers, iOS home screen) from assets/pwa/icon.svg — the single source of the mark.
+// Renders the PWA PNG icons (Android launchers, iOS home screen) from assets/pwa/icon-v2.svg — the single source of the mark.
 // usage: node pwa-icons.mjs
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs';
-const svg = fs.readFileSync(new URL('../assets/pwa/icon.svg', import.meta.url), 'utf8');
+const svg = fs.readFileSync(new URL('../assets/pwa/icon-v2.svg', import.meta.url), 'utf8');
 const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new' });
 const p = await b.newPage();
 for (const [name, size, pad] of [['icon-192.png', 192, 0], ['icon-512.png', 512, 0], ['icon-maskable-512.png', 512, .1], ['apple-touch-icon.png', 180, 0]]) {

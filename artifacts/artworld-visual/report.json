@@ -1,0 +1,165 @@
+{
+  "baseUrl": "http://127.0.0.1:8747/index.html",
+  "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "generatedAt": "2026-09-29T12:26:48.214Z",
+  "contexts": [
+    {
+      "name": "desktop",
+      "width": 1512,
+      "height": 982,
+      "isMobile": false,
+      "hasTouch": false,
+      "metadata": {
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+        "artChildren": 14,
+        "assetChildren": 8,
+        "bikeCount": 6,
+        "artLoadError": null,
+        "invalidArtGeometry": 0
+      },
+      "sceneState": {
+        "hiddenRoomExists": true,
+        "hiddenRoomChildren": 53,
+        "archiveBikes": 18,
+        "artReady": true
+      },
+      "shots": [
+        {
+          "scene": "main-entrance",
+          "file": "desktop__main-entrance.png",
+          "bytes": 650354
+        },
+        {
+          "scene": "st-george-far",
+          "file": "desktop__st-george-far.png",
+          "bytes": 544632
+        },
+        {
+          "scene": "st-george-near",
+          "file": "desktop__st-george-near.png",
+          "bytes": 518693
+        },
+        {
+          "scene": "vegas-far",
+          "file": "desktop__vegas-far.png",
+          "bytes": 589745
+        },
+        {
+          "scene": "vegas-near",
+          "file": "desktop__vegas-near.png",
+          "bytes": 589071
+        },
+        {
+          "scene": "nice-near",
+          "file": "desktop__nice-near.png",
+          "bytes": 694176
+        },
+        {
+          "scene": "kona-near",
+          "file": "desktop__kona-near.png",
+          "bytes": 741983
+        },
+        {
+          "scene": "secret-portal",
+          "file": "desktop__secret-portal.png",
+          "bytes": 710231
+        },
+        {
+          "scene": "horror-room-wide",
+          "file": "desktop__horror-room-wide.png",
+          "bytes": 211629
+        },
+        {
+          "scene": "horror-bikes-close",
+          "file": "desktop__horror-bikes-close.png",
+          "bytes": 189253
+        }
+      ],
+      "pageErrors": [],
+      "consoleErrors": [],
+      "consoleWarnings": [
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+        "[.WebGL-0x10c000cde00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x10c000cde00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x10c000cde00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x10c000cde00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ]
+    },
+    {
+      "name": "samsung",
+      "width": 412,
+      "height": 915,
+      "isMobile": true,
+      "hasTouch": true,
+      "metadata": {
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+        "artChildren": 14,
+        "assetChildren": 8,
+        "bikeCount": 6,
+        "artLoadError": null,
+        "invalidArtGeometry": 0
+      },
+      "sceneState": {
+        "hiddenRoomExists": true,
+        "hiddenRoomChildren": 47,
+        "archiveBikes": 8,
+        "artReady": true
+      },
+      "shots": [
+        {
+          "scene": "main-entrance",
+          "file": "samsung__main-entrance.png",
+          "bytes": 192582
+        },
+        {
+          "scene": "st-george-far",
+          "file": "samsung__st-george-far.png",
+          "bytes": 191534
+        },
+        {
+          "scene": "st-george-near",
+          "file": "samsung__st-george-near.png",
+          "bytes": 132112
+        },
+        {
+          "scene": "vegas-far",
+          "file": "samsung__vegas-far.png",
+          "bytes": 154842
+        },
+        {
+          "scene": "vegas-near",
+          "file": "samsung__vegas-near.png",
+          "bytes": 147531
+        },
+        {
+          "scene": "nice-near",
+          "file": "samsung__nice-near.png",
+          "bytes": 226133
+        },
+        {
+          "scene": "kona-near",
+          "file": "samsung__kona-near.png",
+          "bytes": 238582
+        },
+        {
+          "scene": "secret-portal",
+          "file": "samsung__secret-portal.png",
+          "bytes": 261896
+        },
+        {
+          "scene": "horror-room-wide",
+          "file": "samsung__horror-room-wide.png",
+          "bytes": 50270
+        },
+        {
+          "scene": "horror-bikes-close",
+          "file": "samsung__horror-bikes-close.png",
+          "bytes": 49260
+        }
+      ],
+      "pageErrors": [],
+      "consoleErrors": [],
+      "consoleWarnings": []
+    }
+  ]
+}

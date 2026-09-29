@@ -91,7 +91,10 @@ try {
     : `<li style="opacity:.6;padding:16px 18px">${esc(p.name)} · ${esc(p.years)} — not modelled</li>`).join('');
   throw e;
 }
-renderer.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.5 : 2));
+const qualityDpr = Math.min(devicePixelRatio, lite ? 1.45 : 2);
+const flowDpr = Math.min(devicePixelRatio, lite ? 1.12 : 1.65);
+let activeDpr = qualityDpr;
+renderer.setPixelRatio(activeDpr);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.AgXToneMapping;
 renderer.toneMappingExposure = .96;
@@ -100,8 +103,13 @@ renderer.shadowMap.type = lite ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog('#e6eef0', 70, 420);
-const portraitFov = () => innerHeight > innerWidth ? 74 : 56;          // phones: a wider view, not a letterbox
-const camera = new THREE.PerspectiveCamera(portraitFov(), 1, .12, 700)   // near .12: 2.4x more depth precision (no shimmering); far covers the 600 m sky;
+const museumFov = () => {
+  const a = innerWidth / Math.max(1, innerHeight);
+  if (a < .78) return 59;      // portrait phones: closer, bike-first composition
+  if (a < 1.15) return 54;     // tablets / near-square
+  return 48;                   // desktop: gallery lens, not security-camera wide
+};
+const camera = new THREE.PerspectiveCamera(museumFov(), 1, .12, 700);   // near .12: depth precision without shimmering; far covers the 600 m sky
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 scene.environmentIntensity = .55;
@@ -878,7 +886,9 @@ async function loadAll() {
 const start = new THREE.Vector3(0, 0, 3.4);
 const P = { x: 0, z: 3.4, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
 let started = false, path = null, keys = new Set(), current = null, drag = null, bob = 0;
+let nearbyPiece = null;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
+$('nearby')?.addEventListener('click', () => { if (nearbyPiece) { haptic(8); visit(nearbyPiece); } });
 
 // ------------------------------------------------------------------ local-first Museum Passport
 const PASSPORT_KEY = 'speedmax.passport.v1';
@@ -1199,7 +1209,7 @@ canvas.addEventListener('pointerdown', e => {
 canvas.addEventListener('pointermove', e => {
   if (drag && e.pointerId === drag.id) {
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
-    const k = coarse ? .0055 : .0038;
+    const k = coarse ? .0068 : .0044;
     P.yaw = drag.yaw + dx * k; P.pitch = clamp(drag.pitch + dy * k * .8, -.9, .7);
     if (drag.moved > 6) { if (tour.on) tourEnd(false); path = null; if (drag.moved > 60) coachDid('look'); }
   } else if (started && !coarse) hover = { x: e.clientX, y: e.clientY };
@@ -1275,7 +1285,7 @@ $('soundBtn').onclick = () => {
 function resize() {
   const w = innerWidth, h = innerHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h;
-  camera.fov = portraitFov(); camera.updateProjectionMatrix();
+  camera.fov = museumFov(); camera.updateProjectionMatrix();
 }
 addEventListener('resize', resize); resize();
 let last = performance.now(), shift = 0;
@@ -1291,7 +1301,7 @@ function frame(now) {
   if (keys.has('arrowleft') || keys.has('q')) P.yaw += dt * 1.7;
   if (keys.has('arrowright') || keys.has('e')) P.yaw -= dt * 1.7;
   if (joy.on) { ix += joy.x; iz += -joy.y; }                          // triathlon joystick (touch)
-  const sp = (keys.has('shift') ? 4.4 : 2.4) * (joy.on ? Math.min(1, Math.hypot(joy.x, joy.y)) * 1.15 : 1);
+  const sp = (keys.has('shift') ? 5.8 : 3.35) * (joy.on ? Math.min(1, Math.hypot(joy.x, joy.y)) * 1.08 : 1);
   let wx = 0, wz = 0;
   if (Math.hypot(ix, iz) > .08) {
     const s = Math.sin(P.yaw), c = Math.cos(P.yaw), l = Math.max(1e-3, Math.hypot(ix, iz));
@@ -1301,24 +1311,34 @@ function frame(now) {
     const g = path[0], dx = g.x - P.x, dz = g.z - P.z, d = Math.hypot(dx, dz);
     if (d < .22) { path.shift(); }
     else {
-      const v = Math.min(3.2, d * 2.2 + .7); wx = dx / d * v; wz = dz / d * v;
-      if (!path.face || path.length > 1) { const want = Math.atan2(-dx, -dz); P.yaw += (((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI) * (1 - Math.exp(-dt * 3)); }
+      const v = Math.min(4.8, d * 3.0 + 1.0); wx = dx / d * v; wz = dz / d * v;
+      if (!path.face || path.length > 1) { const want = Math.atan2(-dx, -dz); P.yaw += (((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI) * (1 - Math.exp(-dt * 5.2)); }
     }
   }
   if (path && path.face && path.length <= 1) {                        // arrive and turn to the piece
     const fx = path.face.x - P.x, fz = path.face.z - P.z;
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const wantPitch = Math.atan2(path.face.y - EYE, Math.hypot(fx, fz));
-    P.yaw += dyaw * (1 - Math.exp(-dt * 3.5)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 3));
+    P.yaw += dyaw * (1 - Math.exp(-dt * 5.6)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 4.8));
     if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld; path = null; if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); }
   } else if (path && !path.length) path = null;
-  const k = 1 - Math.exp(-dt * 9); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
+  const k = 1 - Math.exp(-dt * 15); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
   if (walkable(nx, nz)) { P.x = nx; P.z = nz; }
   else if (walkable(nx, P.z)) { P.x = nx; P.vz *= .5; }
   else if (walkable(P.x, nz)) { P.z = nz; P.vx *= .5; }
   else { P.vx = P.vz = 0; if (path) path.shift(); }
   const moving = Math.hypot(P.vx, P.vz); bob += dt * moving * 3.1;
+  const activeKeys = keys.has('w') || keys.has('a') || keys.has('s') || keys.has('d') || keys.has('arrowup') || keys.has('arrowdown');
+  const flowing = started && !tour.on && !$('card').classList.contains('on')
+    && (moving > .72 || joy.on || activeKeys || (!!path?.length && moving > .32));
+  document.body.classList.toggle('flowing', flowing);
+  const targetDpr = flowing ? flowDpr : qualityDpr;
+  if (Math.abs(activeDpr - targetDpr) > .01) {
+    activeDpr = targetDpr;
+    renderer.setPixelRatio(activeDpr);
+    renderer.setSize(innerWidth, innerHeight, false);
+  }
   // before entering, the camera breathes at the doorway
   const idle = started ? 0 : 1;
   const yaw = P.yaw + idle * Math.sin(t * .13) * .1, pitch = P.pitch + idle * Math.sin(t * .1) * .015;
@@ -1335,9 +1355,24 @@ function frame(now) {
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
     if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
+  let nearest = null, nearestD = Infinity;
+  if (started && roomOf(P.x, P.z) === 'hall' && !current) {
+    for (const p of PIECES) {
+      const d = Math.hypot(P.x - p.pos.x, P.z - p.pos.z);
+      if (d < nearestD) { nearestD = d; nearest = p; }
+    }
+    if (nearestD > 4.2) nearest = null;
+  }
+  nearbyPiece = nearest;
+  const nearBtn = $('nearby');
+  if (nearBtn) {
+    const showNearby = !!nearest && moving < .82 && !$('card').classList.contains('on') && !tour.on;
+    nearBtn.hidden = !showNearby;
+    if (showNearby) $('nearbyName').textContent = nearest.name.replace(/^Speed[Mm]ax /, '');
+  }
   for (const p of PIECES) {
-    const want = p === current ? .85 : p === hot ? .6 : 0;
-    p.ring.material.opacity += (want - p.ring.material.opacity) * (1 - Math.exp(-dt * 6));
+    const want = p === current ? .85 : p === hot ? .6 : p === nearest ? .24 : 0;
+    p.ring.material.opacity += (want - p.ring.material.opacity) * (1 - Math.exp(-dt * 7.5));
     if (p.bike && p.bikeIn < 1) { p.bikeIn = Math.min(1, p.bikeIn + dt * 1.4); const e = 1 - Math.pow(1 - p.bikeIn, 3); p.bike.scale.setScalar(Math.max(.001, e)); }
   }
   for (const p of PIECES) {
