@@ -1,5 +1,5 @@
-const CACHE = 'canyon-museum-shell-v1';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './assets/pwa/icon.svg'];
+const CACHE = 'canyon-museum-shell-v2';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './assets/pwa/icon.svg', './assets/pwa/icon-192.png', './assets/pwa/icon-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));

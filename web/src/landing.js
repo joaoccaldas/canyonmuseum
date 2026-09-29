@@ -14,6 +14,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 
 const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
+const spinners = [];                                                 // slowly turning sculptures and hung bikes
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
 const WROOMDATA = window.__WYLDROOM || null;
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
@@ -100,7 +101,7 @@ renderer.shadowMap.type = lite ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog('#e6eef0', 70, 420);
 const portraitFov = () => innerHeight > innerWidth ? 74 : 56;          // phones: a wider view, not a letterbox
-const camera = new THREE.PerspectiveCamera(portraitFov(), 1, .05, 900);
+const camera = new THREE.PerspectiveCamera(portraitFov(), 1, .12, 700)   // near .12: 2.4x more depth precision (no shimmering); far covers the 600 m sky;
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 scene.environmentIntensity = .55;
@@ -112,7 +113,7 @@ function wallWash(w, h, strength = .5) {                              // a pictu
   washTex ||= (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 512; const g = c.getContext('2d');
     const r = g.createRadialGradient(128, 0, 10, 128, 60, 470); r.addColorStop(0, 'rgba(255,238,210,1)'); r.addColorStop(.45, 'rgba(255,232,200,.45)'); r.addColorStop(1, 'rgba(255,232,200,0)');
     g.fillStyle = r; g.fillRect(0, 0, 256, 512); return new THREE.CanvasTexture(c); })();
-  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: washTex, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: washTex, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 }));
 }
 let contactTex = null;
 function contactShadow(len, wid) {                                   // soft dark footprint where the tyres meet the plinth
@@ -307,14 +308,16 @@ glassRun('x', HALL.x0, HALL.x1, HALL.z1);
 // ------------------------------------------------------------------ WYLD: hand-dyed tapestries and light pools
 const hexRGB = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
 const RAMP = [WYLD.pink, WYLD.pink, WYLD.blush, WYLD.lilac, WYLD.mint, WYLD.aqua, WYLD.lilac, WYLD.blush, WYLD.pink].map(hexRGB);
-function dyeTex(seed, angle, soften = .18) {
+// the hall and the champions room are Kona, not WYLD: kapa earth, lava, ochre and sand at golden hour
+const KAPA = ['#7a2e17', '#7a2e17', '#b4541f', '#d98c3a', '#ecc98a', '#f3e4c6', '#c9a26a', '#9a4a22', '#7a2e17'].map(hexRGB);
+function dyeTex(seed, angle, soften = .18, ramp = RAMP) {
   const W = lite ? 256 : 512, H = W * 2;
   const tex = canvasTex(W, H, (g) => {
     const img = g.createImageData(W, H), d = img.data, ca = Math.cos(angle), sa = Math.sin(angle);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const u = x / W, v = y / H;
       let t = (u * ca + v * 2 * sa) * 1.35 + .13 * Math.sin(v * 8.5 + seed) + .07 * Math.sin(u * 15 + v * 6 + seed * 2.1) + seed * .17;
-      t = ((t % 1) + 1) % 1 * 8; const i = Math.floor(t), f = t - i, s = f * f * (3 - 2 * f), a = RAMP[i], b = RAMP[i + 1];
+      t = ((t % 1) + 1) % 1 * 8; const i = Math.floor(t), f = t - i, s = f * f * (3 - 2 * f), a = ramp[i], b = ramp[i + 1];
       const fold = .9 + .1 * Math.sin(u * 42 + Math.sin(v * 3) * 2);             // soft fabric folds
       const k = (y * W + x) * 4;
       for (let c = 0; c < 3; c++) d[k + c] = ((a[c] + (b[c] - a[c]) * s) * (1 - soften) + 243 * soften) * fold;
@@ -331,12 +334,12 @@ const glowTex = canvasTex(256, 256, (g, w, h) => {
 });
 const placed = (o, x, y, z) => { o.position.set(x, y, z); return o; };
 function lightPool(w, d, color, strength = .5) {
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: glowTex, color, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: glowTex, color, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 }));
   m.rotation.x = -Math.PI / 2; m.position.y = .004; return m;
 }
-function tapestry(w, h, seed, angle) {
+function tapestry(w, h, seed, angle, ramp = KAPA) {
   const g = new THREE.Group();
-  const cloth = new THREE.Mesh(new THREE.PlaneGeometry(w, h, 24, 1), new THREE.MeshStandardMaterial({ map: dyeTex(seed, angle), roughness: .92, side: THREE.DoubleSide }));
+  const cloth = new THREE.Mesh(new THREE.PlaneGeometry(w, h, 24, 1), new THREE.MeshStandardMaterial({ map: dyeTex(seed, angle, .18, ramp), roughness: .92, side: THREE.DoubleSide }));
   const pos = cloth.geometry.attributes.position;                                  // gentle drape
   for (let i = 0; i < pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i) / w * Math.PI * 7) * .025);
   cloth.geometry.computeVertexNormals(); cloth.receiveShadow = true; g.add(cloth);
@@ -353,14 +356,15 @@ const champs = [];
   const room = new THREE.Group(); scene.add(room);
   const rf = basaltTex.clone(); rf.repeat.set(6, 8); rf.needsUpdate = true;
   const rfloor = new THREE.Mesh(new THREE.BoxGeometry(RW, .2, RD), new THREE.MeshStandardMaterial({ map: rf, color: '#7a6b52', roughness: .22, metalness: .15, envMapIntensity: .9 }));
-  rfloor.position.set(RCX, -.1, RCZ); rfloor.receiveShadow = true; rfloor.userData.floor = true; room.add(rfloor); window.__roomFloor = rfloor;
+  rfloor.position.set(RCX, -.098, RCZ);   // 2 mm proud of the hall slab it overlaps: no z-fight in the doorway
+  rfloor.receiveShadow = true; rfloor.userData.floor = true; room.add(rfloor); window.__roomFloor = rfloor;
   const ceil = new THREE.Mesh(new THREE.BoxGeometry(RW, .2, RD), ink); ceil.position.set(RCX, ROOM.h + .1, RCZ); room.add(ceil);
   const box = (w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), ink); m.position.set(x, y, z); room.add(m); return m; };
   box(.3, ROOM.h, RD, ROOM.x0 - .15, ROOM.h / 2, RCZ);                                    // west
   box(RW, ROOM.h, .3, RCX, ROOM.h / 2, ROOM.z0 + .15);                                    // north
   box(RW, ROOM.h, .3, RCX, ROOM.h / 2, ROOM.z1 - .15);                                    // south
   // WYLD cove light: a dyed ribbon of light running round the ceiling edge
-  const cove = new THREE.MeshBasicMaterial({ map: dyeTex(2.3, .1, 0), toneMapped: false, fog: false });
+  const cove = new THREE.MeshBasicMaterial({ map: dyeTex(2.3, .1, 0, KAPA), toneMapped: false, fog: false });
   for (const [w, x, z, ry] of [[RD, ROOM.x0 + .02, RCZ, Math.PI / 2], [RW, RCX, ROOM.z0 - .02, 0], [RW, RCX, ROOM.z1 + .02, Math.PI]]) {
     const strip = new THREE.Mesh(new THREE.PlaneGeometry(w, .07), cove); strip.position.set(x, ROOM.h - .25, z); strip.rotation.y = ry; room.add(strip);
   }
@@ -379,8 +383,8 @@ const champs = [];
     const g = new THREE.Group(), ar = photo.w / photo.h;
     let w = maxW, h = w / ar; if (h > maxH) { h = maxH; w = h * ar; }
     const fr = new THREE.Mesh(new THREE.BoxGeometry(w + .22, h + .22, .05), frameM); g.add(fr);
-    const mat = new THREE.Mesh(new THREE.PlaneGeometry(w + .16, h + .16), matWhite); mat.position.z = .026; g.add(mat);
-    const pic = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: '#d8d2c8' })); pic.position.z = .028; g.add(pic);
+    const mat = new THREE.Mesh(new THREE.PlaneGeometry(w + .16, h + .16), matWhite); mat.position.z = .03; g.add(mat);
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: '#d8d2c8' })); pic.position.z = .036; g.add(pic);
     tl.load(photo.src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; pic.material.map = t; pic.material.color.set('#ffffff'); pic.material.needsUpdate = true; }, undefined, () => {});
     const plate = lettering(Math.max(1.4, w * .9), .2, gg => {
       const W = Math.max(1.4, w * .9);
@@ -402,13 +406,13 @@ const champs = [];
     const slab = new THREE.Mesh(new THREE.BoxGeometry(.9, 1.05, .34), steleM); slab.position.y = .525; slab.castShadow = !lite; st.add(slab);
     const face2 = lettering(.8, .9, g => {
       g.fillStyle = '#f3ede4'; g.font = `400 .3px ${SERIF}`; g.fillText(String(t.year), .04, .3);
-      g.fillStyle = WYLD.aqua; g.font = `700 .045px ${FONT}`; g.fillText(t.athlete.toUpperCase(), .05, .43);
+      g.fillStyle = '#e0a458'; g.font = `700 .045px ${FONT}`; g.fillText(t.athlete.toUpperCase(), .05, .43);
       g.fillStyle = '#f3ede4'; g.font = `500 .1px ${FONT}`; g.fillText(t.time, .05, .58);
       g.fillStyle = '#a9a39a'; g.font = `600 .036px ${FONT}`; g.fillText(t.bike.toUpperCase(), .05, .68);
-      g.fillStyle = WYLD.pink; g.fillRect(.05, .76, .16, .012);
+      g.fillStyle = '#d0672e'; g.fillRect(.05, .76, .16, .012);
     }, 512);
     face2.position.set(0, .6, .172); st.add(face2);
-    room.add(placed(lightPool(1.9, 1.9, i % 2 ? WYLD.aqua : WYLD.pink, .32), x, .006, z + nrm.z * 1.35));
+    room.add(placed(lightPool(1.9, 1.9, i % 2 ? '#ffd9a0' : '#f7b267', .32), x, .006, z + nrm.z * 1.35));
     const c = { ...t, kind: 'champion', index: i, pos: new THREE.Vector3(x, 0, z + nrm.z * 1.35), normal: nrm, photoY: 2.5 };
     c.view = c.pos.clone().addScaledVector(nrm, 2.6 + (coarse && innerHeight > innerWidth ? .8 : 0));
     c.face = new THREE.Vector3(x, coarse && innerHeight > innerWidth ? 2.2 : 1.5, z);   // phones: keep the photo clear of the card
@@ -424,7 +428,7 @@ const champs = [];
   // title over the doorway, hall side
   const sign = lettering(3.6, .9, g => {
     g.fillStyle = '#12181d'; g.font = `700 .15px ${FONT}`; g.letterSpacing = '.05px'; g.fillText('KONA CHAMPIONS', 0, .3);
-    g.fillStyle = WYLD.pink; g.font = `italic 400 .3px ${SERIF}`; g.letterSpacing = '0px'; g.fillText('Six titles on a Speedmax', 0, .72);
+    g.fillStyle = '#b4541f'; g.font = `italic 400 .3px ${SERIF}`; g.letterSpacing = '0px'; g.fillText('Six titles on a Speedmax', 0, .72);
   }, 1024);
   sign.position.set(HALL.x0 + .02, DOOR.h + .75, (DOOR.z0 + DOOR.z1) / 2 + .2); sign.rotation.y = Math.PI / 2; hall.add(sign);
 }
@@ -434,29 +438,32 @@ const wyldBikes = [];
 if (WROOMDATA) {
   const W = WROOMDATA, RW = WROOM.x1 - WROOM.x0, RD = WROOM.z0 - WROOM.z1, CX = (WROOM.x0 + WROOM.x1) / 2, CZ2 = (WROOM.z0 + WROOM.z1) / 2;
   const room = new THREE.Group(); scene.add(room);
-  // white terrazzo flecked with the dye colours
+  // a white gallery: pearl marble, a glossy floor, and the dye appears only as light and on the bikes
   const terr = canvasTex(1024, 1024, (g, w, h) => {
-    g.fillStyle = '#f7f3f1'; g.fillRect(0, 0, w, h);
-    const chips = [WYLD.pink, WYLD.blush, WYLD.lilac, WYLD.mint, WYLD.aqua, '#d9d2cc', '#bfb6ad'];
-    for (let i = 0; i < 2600; i++) { g.fillStyle = chips[i % chips.length]; g.globalAlpha = .35 + rnd() * .5; g.beginPath();
-      const x = rnd() * w, y = rnd() * h, r = 1.2 + rnd() * 4.5; g.moveTo(x + r, y); for (let k = 1; k < 6; k++) { const a = k / 6 * 6.28 + rnd(); g.lineTo(x + Math.cos(a) * r * (.6 + rnd() * .6), y + Math.sin(a) * r * (.6 + rnd() * .6)); } g.fill(); }
-    g.globalAlpha = 1;
-  }, [RW / 3, RD / 3]);
-  const wfloor = new THREE.Mesh(new THREE.BoxGeometry(RW + 2.4, .2, RD), new THREE.MeshStandardMaterial({ map: terr, roughness: .22, metalness: 0, envMapIntensity: 1 }));
-  wfloor.position.set(CX - 1.2, -.1, CZ2); wfloor.receiveShadow = true; wfloor.userData.floor = true; room.add(wfloor); window.__wyldFloor = wfloor;
-  const white = new THREE.MeshStandardMaterial({ color: '#fbf8f7', roughness: .9, envMapIntensity: .4 });
+    g.fillStyle = '#f7f5f4'; g.fillRect(0, 0, w, h);
+    g.lineCap = 'round';
+    for (let i = 0; i < 26; i++) {                                // faint grey veins, drawn as wandering hairlines
+      let x = rnd() * w, y = rnd() * h, a = rnd() * 6.28; g.strokeStyle = `rgba(120,118,122,${.05 + rnd() * .09})`; g.lineWidth = .6 + rnd() * 1.6;
+      g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 40; k++) { a += (rnd() - .5) * .5; x += Math.cos(a) * 9; y += Math.sin(a) * 9; g.lineTo(x, y); } g.stroke();
+    }
+  }, [RW / 5, RD / 5]);
+  const wfloor = new THREE.Mesh(new THREE.BoxGeometry(RW + 2.4, .2, RD), new THREE.MeshStandardMaterial({ map: terr, roughness: .09, metalness: 0, envMapIntensity: 1.25 }));
+  wfloor.position.set(CX - 1.2, -.098, CZ2); wfloor.receiveShadow = true; wfloor.userData.floor = true; room.add(wfloor); window.__wyldFloor = wfloor;   // 2 mm proud of the hall slab
+  const white = new THREE.MeshStandardMaterial({ color: '#fbf9f9', roughness: .9, envMapIntensity: .4 });
   const wall = (w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), white); m.position.set(x, y, z); m.receiveShadow = true; room.add(m); return m; };
   wall(RW, WROOM.h, .3, CX, WROOM.h / 2, WROOM.z0 + .15);                                  // north
   wall(RW, WROOM.h, .3, CX, WROOM.h / 2, WROOM.z1 - .15);                                  // south
-  wall(.3, WROOM.h - HALL.h, RD, WROOM.x1 + .15, HALL.h + (WROOM.h - HALL.h) / 2, CZ2);     // above the hall wall
-  // dyed murals on the long walls
-  for (const [z, ry, seed] of [[WROOM.z0 - .01, Math.PI, 5.2], [WROOM.z1 + .01, 0, 2.9]]) {
-    const mural = new THREE.Mesh(new THREE.PlaneGeometry(RW - 4.2, 3.4), new THREE.MeshStandardMaterial({ map: dyeTex(seed, .55, .08), roughness: .85 }));
-    mural.position.set(CX + 1.2, 2.55, z); mural.rotation.y = ry; room.add(mural);
-  }
-  // open slatted roof, like the hall: sun stripes across the terrazzo
-  { const n = Math.floor(RD / .7), slats = new THREE.InstancedMesh(new THREE.BoxGeometry(RW + .3, .08, .22), M.slat, n);
-    for (let i = 0; i < n; i++) slats.setMatrixAt(i, new THREE.Matrix4().setPosition(CX, WROOM.h, WROOM.z0 - .35 - i * .7)); slats.castShadow = true; room.add(slats); }
+  if (WROOM.h > HALL.h + .01) wall(.3, WROOM.h - HALL.h, RD, WROOM.x1 + .15, HALL.h + (WROOM.h - HALL.h) / 2, CZ2);   // only if the loft is taller than the hall
+  // a closed, softly glossy ceiling — bikes hang from it upside down — with one long skylight
+  const ceilM = new THREE.MeshStandardMaterial({ color: '#fbf9fa', roughness: .22, envMapIntensity: .9 });
+  const ceil = new THREE.Mesh(new THREE.BoxGeometry(RW, .14, RD), ceilM); ceil.position.set(CX, WROOM.h + .07, CZ2); room.add(ceil);
+  const sky = new THREE.Mesh(new THREE.PlaneGeometry(RW - 5, 1.1), new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false, fog: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 }));
+  sky.rotation.x = Math.PI / 2; sky.position.set(CX + 1, WROOM.h - .002, CZ2); room.add(sky);
+  // the only colour on the walls: hairlines of dyed light, at the ceiling and at the skirting — the floor seems to float
+  { const dyeLine = new THREE.MeshBasicMaterial({ map: dyeTex(2.9, .05, 0), toneMapped: false, fog: false });
+    for (const [z, ry] of [[WROOM.z0 - .005, Math.PI], [WROOM.z1 + .005, 0]]) for (const [y, hh] of [[WROOM.h - .34, .028], [.07, .02]]) {
+      const ln = new THREE.Mesh(new THREE.PlaneGeometry(RW - .4, hh), dyeLine); ln.position.set(CX, y, z); ln.rotation.y = ry; room.add(ln);
+    } }
   // the window wall: slim white mullions, a balcony and a glass balustrade
   const mullW = new THREE.MeshStandardMaterial({ color: '#f4efee', roughness: .35, metalness: .2 });
   for (let i = 0; i <= 6; i++) { const m = new THREE.Mesh(new THREE.BoxGeometry(.12, WROOM.h, .08), mullW); m.position.set(WROOM.x0, WROOM.h / 2, WROOM.z0 - i * RD / 6); room.add(m); }
@@ -484,9 +491,9 @@ if (WROOMDATA) {
   screen.position.set(CX + 2, vy, CZ2); screen.renderOrder = -1; room.add(screen);
   const tl2 = new THREE.TextureLoader(); tl2.setCrossOrigin('anonymous');
   tl2.load(lite ? V.srcSmall : V.src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; screen.material.uniforms.map.value = t; screen.material.uniforms.ready.value = 1; });
-  // light: a soft white fill with pink and aqua washes
+  // light: clean white, no coloured washes — the bikes carry the colour
   const fill = new THREE.PointLight('#ffffff', lite ? 30 : 22, 26, 1.2); fill.position.set(CX, WROOM.h - .6, CZ2); room.add(fill);
-  if (!lite) for (const [c, z] of [[WYLD.pink, WROOM.z0 - 2], [WYLD.aqua, WROOM.z1 + 2]]) { const pl = new THREE.PointLight(c, 9, 12, 1.5); pl.position.set(CX + 2, 1.2, z); room.add(pl); }
+  if (!lite) for (const z of [WROOM.z0 - 4, WROOM.z1 + 4]) { const pl = new THREE.PointLight('#fff6f2', 8, 13, 1.4); pl.position.set(CX + 1, 3.4, z); room.add(pl); }
   // the WYLD wordmark over the doorway (inside) and the sign in the hall
   const mark = lettering(4.4, 1.2, g => {
     const gr = g.createLinearGradient(0, 0, 4.4, 0); gr.addColorStop(0, WYLD.pink); gr.addColorStop(.5, '#b98be0'); gr.addColorStop(1, WYLD.aqua);
@@ -502,68 +509,47 @@ if (WROOMDATA) {
   // a white bench to sit and look out
   const bench = new THREE.Mesh(new THREE.BoxGeometry(.7, .44, 3.2), new THREE.MeshStandardMaterial({ color: '#fbf7f6', roughness: .5 })); bench.position.set(WROOM.x0 + 3.4, .22, CZ2); bench.castShadow = !lite; room.add(bench);
   obstacles.push({ box: [WROOM.x0 + 2.9, WROOM.x0 + 3.9, CZ2 - 1.9, CZ2 + 1.9] });
-  // champagne runway: a polished gold-inlaid axis from the door to the window — the room's catwalk
-  {
-    const run = new THREE.Mesh(new THREE.BoxGeometry(2.6, .03, RD - 3.6), new THREE.MeshStandardMaterial({ map: terr, color: '#f3e6d8', roughness: .16, metalness: .08, envMapIntensity: 1.15 }));
-    run.position.set(CX + 2.4, .028, CZ2); room.add(run);
-    const inlay = new THREE.Mesh(new THREE.BoxGeometry(.06, .012, RD - 3.6), new THREE.MeshStandardMaterial({ color: '#c8a86b', metalness: .9, roughness: .22 }));
-    inlay.position.set(CX + 2.4, .05, CZ2); room.add(inlay);   // a gold seam down the middle
-    for (const dx of [-1.2, 1.2]) { const rail = new THREE.Mesh(new THREE.BoxGeometry(.035, .012, RD - 3.6), new THREE.MeshStandardMaterial({ color: '#d8b575', metalness: .85, roughness: .28 })); rail.position.set(CX + 2.4 + dx, .05, CZ2); room.add(rail); }
-    room.add(placed(lightPool(3.2, RD - 4, '#fff3df', .2), CX + 2.4, .056, CZ2));
-  }
-  // brass pendants over the runway
-  {
-    const brass = new THREE.MeshStandardMaterial({ color: '#c9a961', metalness: .95, roughness: .22 });
-    const cordM = new THREE.MeshStandardMaterial({ color: '#3a3630', roughness: .8 });
-    for (let i = 0; i < 4; i++) {
-      const z = CZ2 + 6.2 - i * 4.1;
-      const cord = new THREE.Mesh(new THREE.CylinderGeometry(.006, .006, WROOM.h - 3.1, 6), cordM); cord.position.set(CX + 2.4, WROOM.h - (WROOM.h - 3.1) / 2, z); room.add(cord);
-      const shade = new THREE.Mesh(new THREE.SphereGeometry(.16, 24, 12, 0, Math.PI * 2, 0, 1.25), brass); shade.position.set(CX + 2.4, 3.1, z); shade.material.side = THREE.DoubleSide; room.add(shade);
-      const lamp = new THREE.Mesh(new THREE.SphereGeometry(.05, 16, 8), new THREE.MeshBasicMaterial({ color: '#ffe9c4', toneMapped: false })); lamp.position.set(CX + 2.4, 3.02, z); room.add(lamp);
-      const pool = lightPool(1.6, 1.6, '#ffd9a0', .3); pool.position.set(CX + 2.4, .05, z); room.add(pool);
-      if (!lite) { const pl = new THREE.PointLight('#ffd9a0', 6, 9, 1.4); pl.position.set(CX + 2.4, 3, z); room.add(pl); }
-    }
-  }
-  // the four dyes as a gala: a runway stage, two wall mounts and one flying above — each more beautiful than the other
-  const pearl = new THREE.MeshStandardMaterial({ color: '#fdf9fa', roughness: .28, metalness: .05, envMapIntensity: 1 });
-  const goldTrim = new THREE.MeshStandardMaterial({ color: '#c9a961', metalness: .95, roughness: .25 });
-  // station layout: [id, kind] — heights vary deliberately: stage .62, wall 2.05, ceiling 3.1
+  // the four dyes, suspended: one levitating, one hanging upside down from the ceiling, one flat on the wall, one standing on its tail
+  const obsidian = new THREE.MeshStandardMaterial({ color: '#0b0b0e', roughness: .06, metalness: .3, envMapIntensity: 1.3 });
+  const chrome = new THREE.MeshStandardMaterial({ color: '#e8eaee', metalness: 1, roughness: .12 });
   const STATIONS = [
-    { kind: 'stage', x: CX + 2.4, z: CZ2 + 5.8, rotY: .3 },        // Dye on the runway stage, front of house
-    { kind: 'wall', x: WROOM.x1 - 3.4, z: WROOM.z0 - 1.15, rotY: -Math.PI / 2 + .22 },   // Tide framed on the north wall
-    { kind: 'wall', x: WROOM.x1 - 3.4, z: WROOM.z1 + 1.15, rotY: Math.PI / 2 - .22 },    // Sheer framed on the south wall
-    { kind: 'fly', x: CX + 2.4, z: CZ2 - 4.6, rotY: .9 },         // Night aloft over the runway
+    { kind: 'float', x: CX + 1.6, z: CZ2 - .6, rotY: .55, top: 1.05 },                   // Dye hovers over a black mirror
+    { kind: 'wall', x: CX - 2.2, z: WROOM.z0 - .42, rotY: Math.PI, top: 1.25 },          // Tide flat on the north wall
+    { kind: 'vertical', x: CX + 2.6, z: WROOM.z1 + .42, rotY: 0, top: .32 },             // Sheer stands on its rear wheel against the south wall
+    { kind: 'ceiling', x: CX - 3.6, z: CZ2 + 2.6, rotY: 2.1, top: WROOM.h - .015 },     // Night hangs, wheels up, from the ceiling
   ];
   W.variants.forEach((v, i) => {
     const st = STATIONS[i], x = st.x, z = st.z, rotY = st.rotY;
     const g = new THREE.Group(); g.position.set(x, 0, z); room.add(g);
-    const b = { ...v, index: i, kind: 'wyld', pos: new THREE.Vector3(x, 0, z), rotY, group: g, station: st.kind, top: st.kind === 'stage' ? .62 : 0 };
-    if (st.kind === 'stage') {                                   // a pearl plinth on a gold-trimmed stage
-      const dais = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.78, .26, 72), new THREE.MeshStandardMaterial({ map: terr, roughness: .3 })); dais.position.y = .13; dais.castShadow = dais.receiveShadow = !lite; g.add(dais);
-      const step = new THREE.Mesh(new THREE.TorusGeometry(1.71, .014, 10, 96), goldTrim); step.rotation.x = Math.PI / 2; step.position.y = .262; g.add(step);
-      const pl = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.2, .36, 72), pearl); pl.position.y = .44; pl.castShadow = pl.receiveShadow = !lite; g.add(pl);
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(1.16, .018, 8, 96), new THREE.MeshBasicMaterial({ color: i % 2 ? WYLD.aqua : WYLD.pink, toneMapped: false })); ring.rotation.x = Math.PI / 2; ring.position.y = .62; g.add(ring);
-      g.add(placed(lightPool(4, 4, i % 2 ? WYLD.aqua : WYLD.pink, .42), 0, .004, 0));
-      b.top = .62;
-    } else if (st.kind === 'wall') {                             // a museum wall mount: brass shelf below, gold halo behind, bike floating at eye height
-      const shelf = new THREE.Mesh(new THREE.BoxGeometry(.5, .05, 1.9), goldTrim); shelf.position.set(0, 1.85, 0); g.add(shelf);
-      const plate = new THREE.Mesh(new THREE.BoxGeometry(.3, 1.3, 1.7), new THREE.MeshStandardMaterial({ map: terr, roughness: .35, color: '#efe6da' })); plate.position.set(-.08, 2.62, 0); g.add(plate);
-      const halo = new THREE.Mesh(new THREE.TorusGeometry(1.05, .014, 8, 96), new THREE.MeshBasicMaterial({ color: i % 2 ? WYLD.pink : WYLD.aqua, toneMapped: false })); halo.rotation.y = Math.PI / 2; halo.position.set(-.02, 2.62, 0); g.add(halo);
-      g.add(placed(lightPool(3.4, 2.6, i % 2 ? WYLD.blush : WYLD.mint, .34), 0, .004, 0));
-      b.top = 2.05;                                             // bike floats on its mount, tyres at 2.05 m
-    } else {                                                     // flying: two steel cables from the slatted roof, bike turning slowly
-      const cable = new THREE.MeshStandardMaterial({ color: '#8d8d92', metalness: .9, roughness: .35 });
-      for (const dx of [-.55, .55]) { const c = new THREE.Mesh(new THREE.CylinderGeometry(.004, .004, WROOM.h - 3.15, 6), cable); c.position.set(dx, WROOM.h - (WROOM.h - 3.15) / 2, 0); g.add(c); }
-      b.top = 3.12;
+    const b = { ...v, index: i, kind: 'wyld', pos: new THREE.Vector3(x, 0, z), rotY, group: g, station: st.kind, top: st.top };
+    if (st.kind === 'float') {                                   // no plinth: a disc of black glass and a soft shadow far below the tyres
+      const pad = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, .02, 96), obsidian); pad.position.y = .01; pad.receiveShadow = true; g.add(pad);
+      g.add(placed(lightPool(3.6, 3.6, '#ffffff', .12), 0, .024, 0));
+      const cs = contactShadow(2.2, .7); cs.position.y = .024; cs.rotation.z = rotY; cs.material.opacity = .45; g.add(cs);
+    } else if (st.kind === 'wall' || st.kind === 'vertical') {   // two chrome pins out of the plaster, nothing else
+      const pins = st.kind === 'wall' ? [[-.42, st.top + .78], [.42, st.top + .78]] : [[0, st.top + 1.62]];
+      for (const [dx, y] of pins) { const pin = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .42, 12), chrome); pin.rotation.x = Math.PI / 2; pin.position.set(dx, y, -.21 * Math.cos(rotY)); g.add(pin); }
+      g.add(placed(lightPool(2.6, 1.4, '#ffffff', .1), 0, .004, .5 * Math.cos(rotY)));
     }
     b.normal = new THREE.Vector3(Math.sin(rotY), 0, Math.cos(rotY));
-    b.view = b.pos.clone().addScaledVector(b.normal, st.kind === 'wall' ? 3.1 : 2.9 + (coarse && innerHeight > innerWidth ? 1 : 0));
+    const dist = st.kind === 'ceiling' ? 3.6 : st.kind === 'vertical' ? 3.3 : 3.0;
+    b.view = b.pos.clone().addScaledVector(b.normal, dist + (coarse && innerHeight > innerWidth ? 1 : 0));
     b.view.x = clamp(b.view.x, WROOM.x0 + 1.2, WROOM.x1 - .8); b.view.z = clamp(b.view.z, WROOM.z1 + 1, WROOM.z0 - 1);
-    b.face = b.pos.clone().setY(Math.max(1.2, b.top + (st.kind === 'wall' ? .45 : .75)));
-    g.children.forEach(o => { if (o.isMesh) { o.userData.wyldBike = b; pickables.push(o); } });   // pick the mount, the shelf, the stage
-    obstacles.push({ c: b.pos, r: st.kind === 'stage' ? 1.9 : 1.1 });
+    b.face = b.pos.clone().setY({ float: 1.55, wall: st.top + .55, vertical: 1.2, ceiling: WROOM.h - .75 }[st.kind]);
+    g.children.forEach(o => { if (o.isMesh) { o.userData.wyldBike = b; pickables.push(o); } });
+    if (st.kind === 'float') obstacles.push({ c: b.pos, r: 1.35 });
+    else if (st.kind !== 'ceiling') obstacles.push({ c: b.pos, r: .75 });           // walk right under the hanging bike
     wyldBikes.push(b);
   });
+  // a dyed disc wheel, two metres across, turning slowly in the air by the door — the WYLD room's calling card
+  { const g = new THREE.Group(); g.position.set(CX - 1.2, 3.55, CZ2 + 6.4); g.rotation.y = 0; room.add(g);
+    const face = new THREE.MeshPhysicalMaterial({ map: dyeTex(3.7, .8, 0), roughness: .3, clearcoat: 1, clearcoatRoughness: .08 });
+    const disc = new THREE.Group(); g.add(disc);
+    for (const sgn of [1, -1]) { const c = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 14, 0, Math.PI * 2, 0, .42), face); c.scale.y = .12; c.rotation.x = sgn * Math.PI / 2; disc.add(c); }
+    const tyre = new THREE.Mesh(new THREE.TorusGeometry(.945, .04, 12, 96), new THREE.MeshStandardMaterial({ color: '#141416', roughness: .8 })); disc.add(tyre);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, .22, 24), chrome); hub.rotation.x = Math.PI / 2; disc.add(hub);
+    spinners.push({ o: disc, axis: 'z', speed: .22 });
+  }
   // caption for the view, on the sill
   const vc = lettering(4.4, .34, g => {
     g.fillStyle = '#12181d'; g.font = `600 .07px ${FONT}`; g.fillText(V.caption.slice(0, 64), 0, .12);
@@ -571,13 +557,34 @@ if (WROOMDATA) {
   }, 1024);
   vc.position.set(WROOM.x0 + .35, .62, CZ2 + 4.4); vc.rotation.set(-Math.PI / 2 + .5, Math.PI / 2, 0, 'YXZ'); room.add(vc);
 }
+// seat a bike in its holder: turned wheels-up, on its tail, or level — then re-seated so its tyres touch the mount
+function seatBike(bike, how) {
+  const inner = new THREE.Group(); inner.add(bike);
+  if (how === 'ceiling') inner.rotation.x = Math.PI;              // wheels up, saddle down
+  if (how === 'vertical') inner.rotation.z = Math.PI / 2;         // front wheel to the sky
+  inner.updateMatrixWorld(true);
+  const bb = new THREE.Box3().setFromObject(inner);
+  inner.position.set(-(bb.min.x + bb.max.x) / 2, how === 'ceiling' ? -bb.max.y : -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+  return inner;
+}
+// the WYLD disc: a lathed shell dyed with the jersey's full ramp, nothing else — no carbon, no logos
+function wyldDisc(bike) {
+  const wheelR = bike.getObjectByName('wheel_rear') || [...bike.children].find(c => c.userData?.part === 'wheel_rear');
+  if (!wheelR) return;
+  wheelR.traverse(o => { if (/spoke|valve|hub_rear|disc_option|zipp/i.test(o.name || '')) o.visible = false; });
+  const prof = []; for (let k = 0; k <= 12; k++) { const r = .012 + (.3105 - .012) * k / 12, q = r / .3125; prof.push(new THREE.Vector2(r, .0148 + .0105 * (1 - q * q))); }
+  for (let k = 12; k >= 0; k--) { const r = .012 + (.3105 - .012) * k / 12, q = r / .3125; prof.push(new THREE.Vector2(r, -(.0148 + .0105 * (1 - q * q)))); }
+  const shell = new THREE.Mesh(new THREE.LatheGeometry(prof, 128), new THREE.MeshPhysicalMaterial({ map: dyeTex(1.3, .9, 0), roughness: .26, clearcoat: 1, clearcoatRoughness: .07, envMapIntensity: 1.1 }));
+  shell.rotation.x = Math.PI / 2; shell.name = 'wyld_disc'; wheelR.add(shell);
+}
 async function loadWyldBikes() {
   if (!wyldBikes.length) return;
   const gltf = await loader.loadAsync(WROOMDATA.bike.glb);
+  const R = WROOMDATA ? WROOM : null;
   for (const b of wyldBikes) {
     const bike = gltf.scene.clone(true);
     bike.traverse(o => { if (o.isMesh) o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); });
-    // per-dye gala setup: each exhibit is built differently, like four riders on the start line
+    // per-dye setup: each exhibit is built differently, like four riders on the start line
     const setup = { dye: { bottles: 'both' }, tide: { disc: true }, sheer: {}, night: { bottles: 'front' } }[b.id] || {};
     dressBike(bike, { key: 'cfr', finish: null });
     bike.traverse(o => {
@@ -585,23 +592,14 @@ async function loadWyldBikes() {
       if (o.userData?.part === 'aeroshield') o.visible = b.id !== 'night';   // Night rides bare: no shield, pure profile
     });
     bike.traverse(o => { o.castShadow = false; });
-    if (setup.disc) {                                            // Tide wears the disc: a lathed carbon shell on the rear wheel
-      const wheelR = bike.getObjectByName('wheel_rear') || [...bike.children].find(c => c.userData?.part === 'wheel_rear');
-      if (wheelR) {
-        wheelR.traverse(o => { if (/^(spokes|valve)_rear/.test(o.name || '') || /spoke/.test(o.name || '')) o.visible = false; });
-        const shell = new THREE.Mesh(
-          new THREE.LatheGeometry([[.012, .019], [.09, .0155], [.23, .0152], [.311, .012], [.311, -.012], [.23, -.0152], [.09, -.0155], [.012, -.019]].map(p => new THREE.Vector2(p[0], p[1])), 96),
-          new THREE.MeshPhysicalMaterial({ color: '#101014', roughness: .3, clearcoat: .9, clearcoatRoughness: .1, envMapIntensity: 1.15 }));
-        shell.rotation.x = Math.PI / 2; wheelR.add(shell);
-      }
-    }
+    if (setup.disc) wyldDisc(bike);
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
-    const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = b.rotY;
-    holder.position.y = b.top;                                    // stage: plinth top; wall: shelf height; fly: cable height
+    const holder = new THREE.Group(); holder.add(seatBike(bike, b.station)); holder.rotation.y = b.rotY;
+    holder.position.y = b.top;                                    // float: hover height; wall: tyre line; vertical: tail; ceiling: the ceiling itself
     b.group.add(holder); b.bike = holder;
-    if (b.station === 'fly') spinners.push({ o: holder, axis: 'y', speed: .12 });   // Night turns slowly above the runway
-    if (b.station === 'stage') { const cs = contactShadow(2.1, .55); cs.position.y = b.top + .012; cs.rotation.z = b.rotY; b.group.add(cs); }
+    if (b.station === 'ceiling') spinners.push({ o: holder, axis: 'y', speed: .07 });   // Night turns, very slowly, upside down
+    if (b.station === 'float') b.hover = holder;                  // breathes up and down a few millimetres
     holder.updateMatrixWorld(true);
     bike.traverse(o => {
       if (!o.isMesh) return;
@@ -612,11 +610,28 @@ async function loadWyldBikes() {
       }
     });
   }
+  // the confusing part: mirror twins and strays. Same materials as the exhibits, not pickable, desktop gets the full set.
+  const W2 = wyldBikes, twin = (src, how, x, y, z, ry, roll = 0) => {
+    const orig = src.bike.children[0].children[0], saved = [];
+    orig.traverse(o => { saved.push([o, o.userData]); o.userData = {}; });   // userData holds circular refs (the station): clone without it
+    let bk; try { bk = orig.clone(true); } finally { for (const [o, u] of saved) o.userData = u; }
+    bk.position.copy(src.bike.children[0].children[0].position);
+    const h = new THREE.Group(); h.add(seatBike(bk, how)); h.position.set(x, y, z); h.rotation.set(0, ry, roll, 'YXZ'); scene.add(h);
+    return h;
+  };
+  const dye = W2.find(b => b.station === 'float'); if (!dye) return;
+  twin(dye, 'ceiling', dye.pos.x, R.h - .015, dye.pos.z, dye.rotY);                 // Dye's reflection, hanging exactly overhead
+  if (lite) return;
+  const CXw = (R.x0 + R.x1) / 2, CZw = (R.z0 + R.z1) / 2;
+  twin(W2[1] || dye, 'wall', CXw - 5.4, 2.55, R.z1 + .42, 0, .12);                  // a stray on the south wall, tipped a few degrees
+  twin(W2[2] || dye, 'vertical', CXw - 6.6, .32, R.z0 - .42, Math.PI);              // a second tail-stand by the window
+  spinners.push({ o: twin(W2[3] || dye, 'float', CXw - 4.4, 1.9, CZw - 4.6, -.6, .38), axis: 'y', speed: .05 });   // one, banked, drifting in mid-air
+  obstacles.push({ c: new THREE.Vector3(CXw - 4.4, 0, CZw - 4.6), r: 1.1 });          // at head height: walk round it, not through it
 }
 
 // ------------------------------------------------------------------ decor: palms, race paintings, sculptures, memorabilia
 const infos = [];                                                   // decor with a story: picked like pieces
-const spinners = [];
+// (spinners declared at the top: the WYLD room registers its disc before the decor section)
 {
   // potted palms — a tall, slender indoor palm in a basalt pot
   const potM = new THREE.MeshStandardMaterial({ map: basaltTex, color: '#9a938c', roughness: .6 });
@@ -649,7 +664,7 @@ const spinners = [];
   }
   [[6.1, 2.6], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, 3.6], [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
     .forEach(([x, z], i) => pottedPalm(x, z, 2.2 + (i % 3) * .25, i + 1));
-  if (WROOMDATA) [[WROOM.x0 + 3.2, WROOM.z0 - .8], [WROOM.x0 + 3.2, WROOM.z1 + .8], [WROOM.x1 - 1.1, WROOM.z1 + .8]].forEach(([x, z], i) => pottedPalm(x, z, 2.6, i + 7));
+  if (false && WROOMDATA) [[WROOM.x0 + 3.2, WROOM.z0 - .8], [WROOM.x0 + 3.2, WROOM.z1 + .8], [WROOM.x1 - 1.1, WROOM.z1 + .8]].forEach(([x, z], i) => pottedPalm(x, z, 2.6, i + 7));   // the WYLD gallery stays botanically empty: clean white, bikes only
   [[ROOM.x0 + .9, ROOM.z0 - .9], [ROOM.x0 + .9, ROOM.z1 + .9]].forEach(([x, z], i) => pottedPalm(x, z, 2.4, i + 11));
 
   // race paintings on the plaster wall: swim, run, finish (Wikimedia Commons, CC BY)
@@ -662,12 +677,12 @@ const spinners = [];
     const ar = ph.w / ph.h; let w = mw, h = w / ar; if (h > mh) { h = mh; w = h * ar; }
     const g = new THREE.Group(); g.position.set(HALL.x0 + .03, 2.55, z); g.rotation.y = Math.PI / 2; hall.add(g);
     const fr = new THREE.Mesh(new THREE.BoxGeometry(w + .16, h + .16, .06), gold); g.add(fr);
-    const pic = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: '#d9d2c6' })); pic.position.z = .032; g.add(pic);
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: '#d9d2c6' })); pic.position.z = .036; g.add(pic);
     tl3.load(ph.src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; pic.material.map = t; pic.material.color.set('#ffffff'); pic.material.needsUpdate = true; });
     const plate = lettering(1.9, .22, gg => { gg.fillStyle = '#12181d'; gg.font = `700 .06px ${FONT}`; gg.fillText(title.toUpperCase(), 0, .08);
       gg.fillStyle = '#6d7479'; gg.font = `500 .04px ${FONT}`; gg.fillText(`${ph.caption.slice(0, 48)} · © ${ph.author} · ${ph.license}`, 0, .17); }, 1024);
     plate.position.set(-w / 2 + .95, -h / 2 - .28, .03); g.add(plate);
-    const wsh = wallWash(w + 1.6, 4.4, .3); wsh.position.set(0, 2.2 - 2.55 + .15, .036); g.add(wsh);
+    const wsh = wallWash(w + 1.6, 4.4, .3); wsh.position.set(0, 2.2 - 2.55 + .15, .045); g.add(wsh);
     const info = { kind: 'info', eyebrow: 'Kona · the race', title, sub: ph.caption, text: title.startsWith('Swim') ? 'A deep-water start in Kailua Bay beside the pier — 2.4 miles out and back before the bikes.' : title.startsWith('Run') ? 'The marathon heads south along Ali‘i Drive before turning onto the Queen K and out to the Energy Lab.' : 'The last metres on Ali‘i Drive, a block from the pier where the day began.', photo: ph, pos: new THREE.Vector3(HALL.x0 + 2.6, 0, z) };
     pic.userData.info = info; pickables.push(pic); infos.push(info);
   }
@@ -688,28 +703,18 @@ const spinners = [];
     const info = { kind: 'info', eyebrow: 'Sculpture', title: 'Fifty teeth', sub: 'Polished steel · 2 m', text: 'A 50-tooth chainring blown up to two metres — the big ring every Speedmax in this hall has pushed along the Queen K.', pos: new THREE.Vector3(3.9, 0, .9) };
     ring.userData.info = info; base.userData.info = info; pickables.push(ring, base); infos.push(info); obstacles.push({ c: g.position, r: .95 });
   }
-  // sculpture: a WYLD-dyed disc wheel turning slowly above the aisle
-  { const g = new THREE.Group(); g.position.set(0, 3.45, -21); g.rotation.y = .9; hall.add(g);
-    const face = new THREE.MeshStandardMaterial({ map: dyeTex(3.7, .8, 0), roughness: .35, metalness: .1 });
-    const disc = new THREE.Group(); g.add(disc);
-    for (const sgn of [1, -1]) { const c = new THREE.Mesh(new THREE.SphereGeometry(.7, 48, 12, 0, Math.PI * 2, 0, .42), face); c.scale.y = .12; c.rotation.x = sgn * Math.PI / 2; disc.add(c); }
-    const tyre = new THREE.Mesh(new THREE.TorusGeometry(.66, .028, 10, 72), new THREE.MeshStandardMaterial({ color: '#141416', roughness: .8 })); disc.add(tyre);
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, .16, 20), new THREE.MeshStandardMaterial({ color: '#c9ced3', metalness: .9, roughness: .25 })); hub.rotation.x = Math.PI / 2; disc.add(hub);
-    for (const dx of [-.5, .5]) { const w = new THREE.Mesh(new THREE.CylinderGeometry(.004, .004, 1.9, 4), M.mullion); w.position.set(dx, .95, 0); g.add(w); }
-    spinners.push({ o: disc, axis: 'z', speed: .25 });
-  }
   // vitrine of memorabilia: race bib, finisher medal, bidon
   { const g = new THREE.Group(); g.position.set(3.95, 0, -34.2); g.rotation.y = -Math.PI / 2 + .25; hall.add(g);
     const base = new THREE.Mesh(new THREE.BoxGeometry(1.5, .92, .75), new THREE.MeshStandardMaterial({ color: '#faf7f3', roughness: .5 })); base.position.y = .46; base.castShadow = !lite; g.add(base);
     const glass = new THREE.Mesh(new THREE.BoxGeometry(1.46, .62, .71), new THREE.MeshStandardMaterial({ color: '#e8f6f6', transparent: true, opacity: .12, roughness: .05, depthWrite: false })); glass.position.y = 1.23; g.add(glass);
-    const bib = lettering(.42, .3, gg => { gg.fillStyle = '#ffffff'; gg.fillRect(0, 0, .42, .3); gg.fillStyle = WYLD.pink; gg.fillRect(0, 0, .42, .05);
+    const bib = lettering(.42, .3, gg => { gg.fillStyle = '#ffffff'; gg.fillRect(0, 0, .42, .3); gg.fillStyle = '#d0672e'; gg.fillRect(0, 0, .42, .05);
       gg.fillStyle = '#12181d'; gg.font = `700 .022px ${FONT}`; gg.fillText('WORLD CHAMPIONSHIP · KAILUA-KONA', .02, .035);
       gg.font = `800 .15px ${FONT}`; gg.textAlign = 'center'; gg.fillText('1', .21, .2); gg.font = `600 .02px ${FONT}`; gg.fillText('PRO · SWIM · BIKE · RUN', .21, .27); }, 512);
     bib.material.transparent = false; bib.position.set(-.35, 1.14, -.1); bib.rotation.x = -.35; g.add(bib);
     const medal = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, .012, 40), new THREE.MeshStandardMaterial({ color: '#d9b35a', metalness: 1, roughness: .25 })); medal.rotation.x = Math.PI / 2; medal.position.set(.12, 1.1, 0); g.add(medal);
-    const ribbon = new THREE.Mesh(new THREE.PlaneGeometry(.06, .3), new THREE.MeshStandardMaterial({ map: dyeTex(.4, 1.57, 0), side: THREE.DoubleSide })); ribbon.position.set(.12, 1.28, -.01); g.add(ribbon);
+    const ribbon = new THREE.Mesh(new THREE.PlaneGeometry(.06, .3), new THREE.MeshStandardMaterial({ map: dyeTex(.4, 1.57, 0, KAPA), side: THREE.DoubleSide })); ribbon.position.set(.12, 1.28, -.01); g.add(ribbon);
     const bottle = new THREE.Mesh(new THREE.CylinderGeometry(.037, .037, .21, 24), new THREE.MeshStandardMaterial({ color: '#f2f4f5', roughness: .4 })); bottle.position.set(.46, 1.03, 0); g.add(bottle);
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(.02, .03, .04, 16), new THREE.MeshStandardMaterial({ color: WYLD.aqua, roughness: .4 })); cap.position.set(.46, 1.155, 0); g.add(cap);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(.02, .03, .04, 16), new THREE.MeshStandardMaterial({ color: '#c9a961', metalness: .8, roughness: .4 })); cap.position.set(.46, 1.155, 0); g.add(cap);
     const info = { kind: 'info', eyebrow: 'Memorabilia', title: 'Race-day kit', sub: 'Bib · finisher medal · bidon', text: 'What comes home from Kona: a number, a medal on a dyed ribbon and a scuffed bottle. Replicas made for the museum — no real race items are shown.', pos: new THREE.Vector3(3.95, 0, -34.2) };
     for (const o of [base, glass, bib, medal, bottle]) { o.userData.info = info; pickables.push(o); }
     infos.push(info); obstacles.push({ c: g.position, r: 1 });
@@ -791,7 +796,7 @@ for (const p of PIECES) {
   ring.rotation.x = -Math.PI / 2; ring.position.y = p.top + .012; g.add(ring); p.ring = ring;
 }
 heritage.forEach((p, i) => {
-  if (p.pos.x < 0) { const tp = tapestry(2.6, 3.3, i * 1.37 + .4, .35 + i * .5); tp.position.set(HALL.x0 + .02, 2.75, p.pos.z); tp.rotation.y = Math.PI / 2; hall.add(tp); }
+  if (p.pos.x < 0) { const tp = tapestry(2.6, 3.3, i * 1.37 + .4, .35 + i * .5); tp.position.set(HALL.x0 + .05, 2.75, p.pos.z); tp.rotation.y = Math.PI / 2; hall.add(tp); }
   const pool = lightPool(3.4, 2.2, i % 2 ? '#ffd9a0' : '#f7b267', p.glb ? .38 : .22); pool.rotation.z = p.rotY - Math.PI / 2; pool.position.x = p.pos.x; pool.position.z = p.pos.z; hall.add(pool);
 });
 { const ap = lightPool(10, 4, '#ffe4b8', .45); ap.position.set(0, .014, -41.4); ap.renderOrder = 1; hall.add(ap);
@@ -1363,6 +1368,7 @@ function frame(now) {
   }
   tourTick(dt);
   if (!reduce) for (const s2 of spinners) s2.o.rotation[s2.axis] += dt * s2.speed;
+  if (!reduce) for (const wb of wyldBikes) if (wb.hover) wb.hover.position.y = wb.top + Math.sin(t * .8 + wb.index) * .014;   // Dye breathes on its cushion of air
   if (!reduce) for (const w of sway) { const a = Math.sin(t * .9 + w.phase) * w.amp + Math.sin(t * 2.3 + w.phase * 2) * w.amp * .3; w.o.rotation.z = a; w.o.rotation.x = a * .5; }
   if (!reduce) for (const bd of birds) { const a = t * bd.speed + bd.phase; bd.o.position.set(bd.c.x + Math.cos(a) * bd.r, bd.c.y + Math.sin(a * 1.7) * .8, bd.c.z + Math.sin(a) * bd.r);
     bd.o.rotation.y = -a; const f = Math.sin(t * bd.flap + bd.phase) * .6; bd.l.rotation.z = f; bd.r2.rotation.z = -f; }
