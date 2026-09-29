@@ -194,18 +194,26 @@ export function buildWings(ctx, { wings, bikes: BIKES = [], extraRefs = [], pain
       const roomBikes = wingBikes.filter(b => b.room === r.id);
       const L = layoutRoom(w, r, roomBikes.length, r.paintings || [], (r.sculptures || []).length);
       const { q, face, back, cz } = L, rcx = (q.x0 + q.x1) / 2;
-      const fl = box(q.x1 - q.x0, .1, q.z1 - q.z0, rcx, Y - .05, cz, new THREE.MeshStandardMaterial({ map: oak, roughness: .5 }));
+      const d = r.design || {};
+      const floorMat = d.floor
+        ? new THREE.MeshStandardMaterial({ color: d.floor, roughness: d.floor_roughness ?? .58, metalness: d.floor_metalness ?? 0 })
+        : new THREE.MeshStandardMaterial({ map: oak, roughness: .5 });
+      const fl = box(q.x1 - q.x0, .1, q.z1 - q.z0, rcx, Y - .05, cz, floorMat);
       fl.userData.floor = true; floors.push(fl); pickables.push(fl);
-      const feature = new THREE.Mesh(new THREE.PlaneGeometry(q.z1 - q.z0 - .36, H - .02), new THREE.MeshStandardMaterial({ color: r.wall, roughness: .88 }));
+      const feature = new THREE.Mesh(new THREE.PlaneGeometry(q.z1 - q.z0 - .36, H - .02), new THREE.MeshStandardMaterial({
+        color: d.wall || r.wall, roughness: d.wall_roughness ?? .88, metalness: d.wall_metalness ?? 0
+      }));
       feature.rotation.y = face > 0 ? Math.PI / 2 : -Math.PI / 2; at(feature, back + face * .105, Y + H / 2, cz);
-      for (const zz of [q.z0 + .2, q.z1 - .2]) box(q.x1 - q.x0, .12, .03, rcx, Y + .06, zz, skirtMat);
-      box(.03, .12, q.z1 - q.z0, back + face * .115, Y + .06, cz, skirtMat);
+      const trimMat = new THREE.MeshStandardMaterial({ color: d.trim || '#2a2622', roughness: d.trim_roughness ?? .6, metalness: d.trim_metalness ?? 0 });
+      for (const zz of [q.z0 + .2, q.z1 - .2]) box(q.x1 - q.x0, .12, .03, rcx, Y + .06, zz, trimMat);
+      box(.03, .12, q.z1 - q.z0, back + face * .115, Y + .06, cz, trimMat);
       const sign = lettering(4.4, .9, g => {
-        g.fillStyle = r.ink; g.font = `700 .2px ${FONT}`; g.fillText(r.name.toUpperCase(), 0, .32);
-        g.fillStyle = r.tint; g.font = `italic 400 .24px ${SERIF}`; g.fillText(r.sub, 0, .72);
+        g.fillStyle = d.ink || r.ink; g.font = `700 .2px ${FONT}`; g.fillText(r.name.toUpperCase(), 0, .32);
+        g.fillStyle = d.accent || r.tint; g.font = `italic 400 .24px ${SERIF}`; g.fillText(r.sub, 0, .72);
       }, 1024);
       sign.rotation.y = face > 0 ? Math.PI / 2 : -Math.PI / 2; at(sign, back + face * .13, Y + 3.05, cz);
-      const lamp = new THREE.PointLight('#fff1dc', lite ? 5 : 9, 11, 1.4); lamp.position.set(rcx, Y + 3.6, cz); group.add(lamp);
+      const lamp = new THREE.PointLight(d.light || '#fff1dc', lite ? (d.light_lite ?? 4.5) : (d.light_intensity ?? 8), d.light_distance ?? 11, d.light_decay ?? 1.4);
+      lamp.position.set(rcx, Y + 3.6, cz); group.add(lamp);
       const room = { ...r, wing: w.id, wingName: w.name, rect: q, back, face, center: new THREE.Vector3(rcx, Y, cz),
         view: new THREE.Vector3(r.side === 'east' ? q.x0 + 1.0 : q.x1 - 1.0, Y, cz), look: new THREE.Vector3(rcx + face * -1.5, Y + 1.4, cz), bikes: [], art: [] };
       fl.userData.wingRoom = room; allRooms.push(room);
@@ -221,8 +229,8 @@ export function buildWings(ctx, { wings, bikes: BIKES = [], extraRefs = [], pain
       // bikes on plinths, with their reference photograph on the back wall
       roomBikes.forEach((b, k) => {
         const { x, z, zoff } = L.bikes[k];
-        const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.06, .16, 40), plinthMat); plinth.position.set(x, Y + .08, z); group.add(plinth);
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.03, .012, 6, 64), new THREE.MeshBasicMaterial({ color: r.tint })); ring.rotation.x = Math.PI / 2; ring.position.set(x, Y + .165, z); group.add(ring);
+        const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.06, .16, 40), d.plinth ? new THREE.MeshStandardMaterial({ color: d.plinth, roughness: .5, metalness: .18 }) : plinthMat); plinth.position.set(x, Y + .08, z); group.add(plinth);
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.03, .012, 6, 64), new THREE.MeshBasicMaterial({ color: d.accent || r.tint })); ring.rotation.x = Math.PI / 2; ring.position.set(x, Y + .165, z); group.add(ring);
         obstacles.push({ c: new THREE.Vector3(x, 0, z), r: 1.12 });
         const cone = new THREE.Mesh(new THREE.CylinderGeometry(.18, 1.15, H - .2, 32, 1, true), new THREE.MeshBasicMaterial({ color: '#fff4e0', transparent: true, opacity: .055, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending }));
         cone.position.set(x, Y + (H - .2) / 2 + .1, z); group.add(cone);
@@ -242,7 +250,7 @@ export function buildWings(ctx, { wings, bikes: BIKES = [], extraRefs = [], pain
         const p = paintingById[s.id]; if (!p) { console.warn('painting not in catalogue', s.id); continue; }
         const aspect = p.height / p.width, wpx = aspect > 1 ? 1.45 / aspect * 1.25 : 1.75, hpx = wpx * aspect;
         const g = new THREE.Group(); g.position.set(s.x, Y + 1.9, s.z); g.rotation.y = s.ry; group.add(g);
-        const fr = new THREE.Mesh(new THREE.BoxGeometry(wpx + .14, hpx + .14, .05), frameMat); g.add(fr);
+        const fr = new THREE.Mesh(new THREE.BoxGeometry(wpx + .14, hpx + .14, .05), d.frame ? new THREE.MeshStandardMaterial({ color: d.frame, roughness: d.frame_roughness ?? .42, metalness: d.frame_metalness ?? .12 }) : frameMat); g.add(fr);
         const mat = new THREE.MeshBasicMaterial({ color: '#d8d0c4' });
         const pic = new THREE.Mesh(new THREE.PlaneGeometry(wpx, hpx), mat); pic.position.z = .03; g.add(pic);
         texLoader.load(`assets/art/paintings/${p.file}`, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; mat.map = t; mat.color.set('#ffffff'); mat.needsUpdate = true; });
