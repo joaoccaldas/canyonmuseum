@@ -1,113 +1,255 @@
 {
-  "id": "materials-motion",
-  "order": 3,
-  "name": "Materials & Motion",
-  "sub": "Carbon, air, heat, night and the next machine",
-  "floor": "upper",
-  "y": 6.6,
-  "height": 4.4,
-  "corridor": { "x0": 10.8, "x1": 16.4, "z0": 75.2, "z1": 99.2, "style": "gallery", "map_color": "#cfc7bc" },
-  "sides": { "east": { "x0": 16.4, "x1": 25.0 }, "west": { "x0": 2.2, "x1": 10.8 } },
-  "doors": { "south": { "x0": 11.8, "x1": 15.4, "depth": 0 } },
-  "features": {},
-  "rooms": [
+ "id": "materials-motion",
+ "order": 3,
+ "name": "Materials & Motion",
+ "sub": "Carbon, air, heat, night and the next machine",
+ "floor": "upper",
+ "y": 6.6,
+ "height": 4.4,
+ "corridor": {
+  "x0": 10.8,
+  "x1": 16.4,
+  "z0": 75.2,
+  "z1": 99.2,
+  "style": "gallery",
+  "map_color": "#cfc7bc"
+ },
+ "sides": {
+  "east": {
+   "x0": 16.4,
+   "x1": 25
+  },
+  "west": {
+   "x0": 2.2,
+   "x1": 10.8
+  }
+ },
+ "doors": {
+  "south": {
+   "x0": 11.8,
+   "x1": 15.4,
+   "depth": 0
+  },
+  "north": {
+   "x0": 11.8,
+   "x1": 15.4
+  }
+ },
+ "features": {},
+ "rooms": [
+  {
+   "id": "carbon",
+   "name": "Carbon",
+   "sub": "Fibre becomes structure",
+   "side": "east",
+   "z0": 75.8,
+   "z1": 83.2,
+   "tint": "#c9a13b",
+   "wall": "#171719",
+   "ink": "#f5efe6",
+   "paintings": [
+    "twill",
+    "builders-bench"
+   ],
+   "sculptures": [
+    "basalt-airfoil"
+   ],
+   "design": {
+    "wall": "#151518",
+    "wall_roughness": 0.34,
+    "floor": "#d8d2c8",
+    "floor_roughness": 0.62,
+    "trim": "#8b7445",
+    "trim_metalness": 0.45,
+    "frame": "#b9984e",
+    "frame_metalness": 0.55,
+    "plinth": "#1b1b1d",
+    "accent": "#d2ad52",
+    "light": "#fff0cf",
+    "light_intensity": 7.5,
+    "ink": "#f6f0e6"
+   }
+  },
+  {
+   "id": "air",
+   "name": "Air",
+   "sub": "What the eye cannot see",
+   "side": "east",
+   "z0": 83.6,
+   "z1": 91,
+   "tint": "#8bbbc4",
+   "wall": "#e7eceb",
+   "ink": "#172126",
+   "paintings": [
+    "streamlines",
+    "moving-air"
+   ],
+   "sculptures": [
+    "the-tuck"
+   ],
+   "design": {
+    "wall": "#e7eceb",
+    "wall_roughness": 0.8,
+    "floor": "#eef1ef",
+    "floor_roughness": 0.5,
+    "trim": "#a7b6b7",
+    "frame": "#273236",
+    "plinth": "#f5f6f4",
+    "accent": "#6fa9b5",
+    "light": "#f5fbff",
+    "light_intensity": 8.5,
+    "ink": "#172126"
+   }
+  },
+  {
+   "id": "future",
+   "name": "Next",
+   "sub": "The machine that does not exist yet",
+   "side": "east",
+   "z0": 91.4,
+   "z1": 98.8,
+   "tint": "#b8d9ff",
+   "wall": "#0d1320",
+   "ink": "#f5f8ff",
+   "paintings": [
+    "mirage"
+   ],
+   "design": {
+    "wall": "#0d1320",
+    "wall_roughness": 0.22,
+    "wall_metalness": 0.12,
+    "floor": "#161c26",
+    "floor_roughness": 0.32,
+    "trim": "#596d88",
+    "trim_metalness": 0.55,
+    "frame": "#9ab9da",
+    "frame_metalness": 0.62,
+    "plinth": "#111720",
+    "accent": "#b8d9ff",
+    "light": "#cfe4ff",
+    "light_intensity": 6.8,
+    "ink": "#f5f8ff"
+   },
+   "plates": [
     {
-      "id": "carbon",
-      "name": "Carbon",
-      "sub": "Fibre becomes structure",
-      "side": "east", "z0": 75.8, "z1": 83.2,
-      "tint": "#c9a13b", "wall": "#171719", "ink": "#f5efe6",
-      "paintings": ["twill", "builders-bench"],
-      "sculptures": ["basalt-airfoil"],
-      "design": {
-        "wall": "#151518", "wall_roughness": 0.34,
-        "floor": "#d8d2c8", "floor_roughness": 0.62,
-        "trim": "#8b7445", "trim_metalness": 0.45,
-        "frame": "#b9984e", "frame_metalness": 0.55,
-        "plinth": "#1b1b1d", "accent": "#d2ad52",
-        "light": "#fff0cf", "light_intensity": 7.5, "ink": "#f6f0e6"
-      }
-    },
-    {
-      "id": "air",
-      "name": "Air",
-      "sub": "What the eye cannot see",
-      "side": "east", "z0": 83.6, "z1": 91.0,
-      "tint": "#8bbbc4", "wall": "#e7eceb", "ink": "#172126",
-      "paintings": ["streamlines", "moving-air"],
-      "sculptures": ["the-tuck"],
-      "design": {
-        "wall": "#e7eceb", "wall_roughness": 0.8,
-        "floor": "#eef1ef", "floor_roughness": 0.5,
-        "trim": "#a7b6b7", "frame": "#273236",
-        "plinth": "#f5f6f4", "accent": "#6fa9b5",
-        "light": "#f5fbff", "light_intensity": 8.5, "ink": "#172126"
-      }
-    },
-    {
-      "id": "future",
-      "name": "Next",
-      "sub": "The machine that does not exist yet",
-      "side": "east", "z0": 91.4, "z1": 98.8,
-      "tint": "#b8d9ff", "wall": "#0d1320", "ink": "#f5f8ff",
-      "paintings": ["mirage"],
-      "design": {
-        "wall": "#0d1320", "wall_roughness": 0.22, "wall_metalness": 0.12,
-        "floor": "#161c26", "floor_roughness": 0.32,
-        "trim": "#596d88", "trim_metalness": 0.55,
-        "frame": "#9ab9da", "frame_metalness": 0.62,
-        "plinth": "#111720", "accent": "#b8d9ff",
-        "light": "#cfe4ff", "light_intensity": 6.8, "ink": "#f5f8ff"
-      },
-      "plates": [{ "wall": "north", "lines": [["NEXT", "NOT A PRODUCT · A QUESTION"], ["2030?", "LESS DRAG · LESS MASS · MORE SYSTEM"]] }]
-    },
-    {
-      "id": "heat",
-      "name": "Heat",
-      "sub": "Lava, glare and mirage",
-      "side": "west", "z0": 75.8, "z1": 83.2,
-      "tint": "#ef7041", "wall": "#3a1b13", "ink": "#fff0e6",
-      "paintings": ["queen-k-first-light", "lava-meets-sea", "mirage"],
-      "design": {
-        "wall": "#3a1b13", "wall_roughness": 0.86,
-        "floor": "#211b19", "floor_roughness": 0.78,
-        "trim": "#793a26", "frame": "#2b1b16",
-        "plinth": "#181515", "accent": "#ef7041",
-        "light": "#ffd1a8", "light_intensity": 7.2, "ink": "#fff0e6"
-      }
-    },
-    {
-      "id": "night",
-      "name": "Night",
-      "sub": "Speed after the sun goes",
-      "side": "west", "z0": 83.6, "z1": 91.0,
-      "tint": "#8ea8ff", "wall": "#0b0e16", "ink": "#f4f5ff",
-      "paintings": ["night-boards", "midnight-seawall"],
-      "sculptures": ["sea-glass-wave"],
-      "design": {
-        "wall": "#0b0e16", "wall_roughness": 0.42,
-        "floor": "#11131a", "floor_roughness": 0.46,
-        "trim": "#273350", "trim_metalness": 0.42,
-        "frame": "#6578a8", "frame_metalness": 0.5,
-        "plinth": "#0d1017", "accent": "#8ea8ff",
-        "light": "#dbe4ff", "light_intensity": 5.5, "ink": "#f4f5ff"
-      }
-    },
-    {
-      "id": "archive",
-      "name": "Archive",
-      "sub": "Objects, evidence and memory",
-      "side": "west", "z0": 91.4, "z1": 98.8,
-      "tint": "#8a7867", "wall": "#e7dfd3", "ink": "#211b17",
-      "paintings": ["kohala-turn", "crosswind"],
-      "design": {
-        "wall": "#e7dfd3", "wall_roughness": 0.94,
-        "floor": "#cbbda8", "floor_roughness": 0.74,
-        "trim": "#6d6256", "frame": "#3c332b",
-        "plinth": "#ede7dd", "accent": "#8a7867",
-        "light": "#fff3df", "light_intensity": 7.8, "ink": "#211b17"
-      },
-      "plates": [{ "wall": "south", "lines": [["EVIDENCE", "PHOTO · MODEL · SOURCE · UNCERTAINTY"], ["MEMORY", "WHAT WE KEEP CHANGES WHAT WE KNOW"]] }]
+     "wall": "north",
+     "lines": [
+      [
+       "NEXT",
+       "NOT A PRODUCT · A QUESTION"
+      ],
+      [
+       "2030?",
+       "LESS DRAG · LESS MASS · MORE SYSTEM"
+      ]
+     ]
     }
-  ]
+   ]
+  },
+  {
+   "id": "heat",
+   "name": "Heat",
+   "sub": "Lava, glare and mirage",
+   "side": "west",
+   "z0": 75.8,
+   "z1": 83.2,
+   "tint": "#ef7041",
+   "wall": "#3a1b13",
+   "ink": "#fff0e6",
+   "paintings": [
+    "queen-k-first-light",
+    "lava-meets-sea",
+    "mirage"
+   ],
+   "design": {
+    "wall": "#3a1b13",
+    "wall_roughness": 0.86,
+    "floor": "#211b19",
+    "floor_roughness": 0.78,
+    "trim": "#793a26",
+    "frame": "#2b1b16",
+    "plinth": "#181515",
+    "accent": "#ef7041",
+    "light": "#ffd1a8",
+    "light_intensity": 7.2,
+    "ink": "#fff0e6"
+   }
+  },
+  {
+   "id": "night",
+   "name": "Night",
+   "sub": "Speed after the sun goes",
+   "side": "west",
+   "z0": 83.6,
+   "z1": 91,
+   "tint": "#8ea8ff",
+   "wall": "#0b0e16",
+   "ink": "#f4f5ff",
+   "paintings": [
+    "night-boards",
+    "midnight-seawall"
+   ],
+   "sculptures": [
+    "sea-glass-wave"
+   ],
+   "design": {
+    "wall": "#0b0e16",
+    "wall_roughness": 0.42,
+    "floor": "#11131a",
+    "floor_roughness": 0.46,
+    "trim": "#273350",
+    "trim_metalness": 0.42,
+    "frame": "#6578a8",
+    "frame_metalness": 0.5,
+    "plinth": "#0d1017",
+    "accent": "#8ea8ff",
+    "light": "#dbe4ff",
+    "light_intensity": 5.5,
+    "ink": "#f4f5ff"
+   }
+  },
+  {
+   "id": "archive",
+   "name": "Archive",
+   "sub": "Objects, evidence and memory",
+   "side": "west",
+   "z0": 91.4,
+   "z1": 98.8,
+   "tint": "#8a7867",
+   "wall": "#e7dfd3",
+   "ink": "#211b17",
+   "paintings": [
+    "kohala-turn",
+    "crosswind"
+   ],
+   "design": {
+    "wall": "#e7dfd3",
+    "wall_roughness": 0.94,
+    "floor": "#cbbda8",
+    "floor_roughness": 0.74,
+    "trim": "#6d6256",
+    "frame": "#3c332b",
+    "plinth": "#ede7dd",
+    "accent": "#8a7867",
+    "light": "#fff3df",
+    "light_intensity": 7.8,
+    "ink": "#211b17"
+   },
+   "plates": [
+    {
+     "wall": "south",
+     "lines": [
+      [
+       "EVIDENCE",
+       "PHOTO · MODEL · SOURCE · UNCERTAINTY"
+      ],
+      [
+       "MEMORY",
+       "WHAT WE KEEP CHANGES WHAT WE KNOW"
+      ]
+     ]
+    }
+   ]
+  }
+ ]
 }
