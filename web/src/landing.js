@@ -103,9 +103,9 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.Fog('#e6eef0', 70, 420);
 const museumFov = () => {
   const a = innerWidth / Math.max(1, innerHeight);
-  if (a < .78) return 62;      // portrait phones: preserve object presence
-  if (a < 1.15) return 56;     // tablets / near-square
-  return 50;                   // desktop: gallery lens, not security-camera wide
+  if (a < .78) return 59;      // portrait phones: closer, bike-first composition
+  if (a < 1.15) return 54;     // tablets / near-square
+  return 48;                   // desktop: gallery lens, not security-camera wide
 };
 const camera = new THREE.PerspectiveCamera(museumFov(), 1, .06, 900);
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -1249,7 +1249,9 @@ function frame(now) {
   else if (walkable(P.x, nz)) { P.z = nz; P.vx *= .5; }
   else { P.vx = P.vz = 0; if (path) path.shift(); }
   const moving = Math.hypot(P.vx, P.vz); bob += dt * moving * 3.1;
-  const flowing = started && !tour.on && !$('card').classList.contains('on') && (moving > .16 || !!path);
+  const activeKeys = keys.has('w') || keys.has('a') || keys.has('s') || keys.has('d') || keys.has('arrowup') || keys.has('arrowdown');
+  const flowing = started && !tour.on && !$('card').classList.contains('on')
+    && (moving > .72 || joy.on || activeKeys || (!!path?.length && moving > .32));
   document.body.classList.toggle('flowing', flowing);
   const targetDpr = flowing ? flowDpr : qualityDpr;
   if (Math.abs(activeDpr - targetDpr) > .01) {
