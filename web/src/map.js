@@ -25,7 +25,7 @@ export function initMap({ areas, pose, go, button }) {
     const pad = 3, minX = Math.min(...xs) - pad, maxX = Math.max(...xs) + pad, minZ = Math.min(...zs) - pad, maxZ = Math.max(...zs) + pad;
     svg.setAttribute('viewBox', `${minX} ${-maxZ} ${maxX - minX} ${maxZ - minZ}`);            // north (+z) up
     svg.innerHTML = '';
-    const unit = (maxX - minX) / 60;
+    const unit = Math.max(maxX - minX, maxZ - minZ) / 60;
     for (const a of on.sort((p, q) => (p.layer || 0) - (q.layer || 0))) {
       const g = document.createElementNS(NS, 'g'); g.setAttribute('class', `map-area ${a.kind || ''}`); g.dataset.id = a.id;
       const r = document.createElementNS(NS, 'rect');
@@ -33,10 +33,11 @@ export function initMap({ areas, pose, go, button }) {
       r.setAttribute('rx', unit * .6); r.setAttribute('fill', a.color || '#e9e2d6'); g.appendChild(r);
       if (a.label !== false) {
         const t = document.createElementNS(NS, 'text'); const cx = (a.x0 + a.x1) / 2, cz = (a.z0 + a.z1) / 2;
-        const w = Math.abs(a.x1 - a.x0), h = Math.abs(a.z1 - a.z0), size = Math.min(unit * 2.1, w / Math.max(4, a.name.length * .62), h * .35);
+        const w = Math.abs(a.x1 - a.x0), h = Math.abs(a.z1 - a.z0), tall = h > w * 1.6;
+        const long = tall ? h : w, short = tall ? w : h, size = Math.min(unit * 1.6, long * .9 / Math.max(4, a.name.length * .6), short * .5);
         t.setAttribute('x', cx); t.setAttribute('y', -cz); t.setAttribute('font-size', size); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'middle');
         t.setAttribute('fill', a.ink || '#12181d');
-        if (h > w * 1.6 && w < unit * 9) t.setAttribute('transform', `rotate(-90 ${cx} ${-cz})`);
+        if (tall) t.setAttribute('transform', `rotate(-90 ${cx} ${-cz})`);
         t.textContent = a.name; g.appendChild(t);
       }
       if (a.go !== false) { g.style.cursor = 'pointer'; g.addEventListener('click', () => pick(a)); }
@@ -50,15 +51,16 @@ export function initMap({ areas, pose, go, button }) {
     list.innerHTML = on.filter(a => a.go !== false).map(a => `<li><button data-id="${a.id}"><i style="background:${a.color || '#e9e2d6'}"></i><span><b>${a.name}</b>${a.sub ? `<small>${a.sub}</small>` : ''}</span></button></li>`).join('');
     list.querySelectorAll('button').forEach(b => b.addEventListener('click', () => pick(areas.find(a => a.id === b.dataset.id))));
   }
+  const inside = (a, p) => a.floor === p.floor && a.go !== false && p.x >= Math.min(a.x0, a.x1) && p.x <= Math.max(a.x0, a.x1) && p.z >= Math.min(a.z0, a.z1) && p.z <= Math.max(a.z0, a.z1);
+  function here(p = pose()) { return areas.find(a => inside(a, p) && (a.layer || 0) > 0) || areas.find(a => inside(a, p)) || null; }
   function tick() {
     raf = requestAnimationFrame(tick);
     const p = pose(), me = svg.querySelector('.map-me');
     if (!me) return;
     me.style.display = p.floor === floor ? '' : 'none';
     me.setAttribute('transform', `translate(${p.x} ${-p.z}) rotate(${180 + p.yaw * 180 / Math.PI})`);
-    const here = areas.find(a => a.floor === p.floor && a.go !== false && p.x >= Math.min(a.x0, a.x1) && p.x <= Math.max(a.x0, a.x1) && p.z >= Math.min(a.z0, a.z1) && p.z <= Math.max(a.z0, a.z1) && (a.layer || 0) > 0)
-      || areas.find(a => a.floor === p.floor && a.go !== false && p.x >= Math.min(a.x0, a.x1) && p.x <= Math.max(a.x0, a.x1) && p.z >= Math.min(a.z0, a.z1) && p.z <= Math.max(a.z0, a.z1));
-    svg.querySelectorAll('.map-area').forEach(g => g.classList.toggle('here', g.dataset.id === here?.id));
+    const h = here(p);
+    svg.querySelectorAll('.map-area').forEach(g => g.classList.toggle('here', g.dataset.id === h?.id));
   }
   function pick(a) { close(); go(a.id); }
   function open() {
@@ -75,5 +77,5 @@ export function initMap({ areas, pose, go, button }) {
     else if ((e.key === 'm' || e.key === 'M') && !e.metaKey && !e.ctrlKey) root.hidden ? open() : close();
   });
   button?.addEventListener('click', open);
-  return { open, close, get isOpen() { return !root.hidden; } };
+  return { open, close, here, get isOpen() { return !root.hidden; } };
 }

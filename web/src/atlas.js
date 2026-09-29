@@ -11,12 +11,12 @@ export const ATLAS = { x0: 10.8, x1: 16.4, z0: 27.2, z1: 51.2 };           // th
 export const ADOOR = { x0: 11.8, x1: 15.4 };                                 // cut in the nave's north wall
 const EAST = { x0: 16.4, x1: 25.0 }, WEST = { x0: 2.2, x1: 10.8 };
 export const AROOMS = [
-  { id: 'hour', name: 'The Hour', sub: 'One rider, sixty minutes', side: 'east', z0: 27.8, z1: 35.2, tint: '#e8471c' },
-  { id: 'mono', name: 'Monocoque', sub: 'One piece, no tubes', side: 'east', z0: 35.6, z1: 43.0, tint: '#12181d' },
-  { id: 'tri', name: 'Long course', sub: 'Triathlon machines', side: 'east', z0: 43.4, z1: 50.8, tint: '#138a8f' },
-  { id: 'types', name: 'Types', sub: 'No maker named', side: 'west', z0: 27.8, z1: 35.2, tint: '#b4541f' },
-  { id: 'paint', name: 'Paint shop', sub: 'Every livery in the wing', side: 'west', z0: 35.6, z1: 43.0, tint: '#ff3d8e' },
-  { id: 'refs', name: 'References', sub: 'The photographs behind the models', side: 'west', z0: 43.4, z1: 50.8, tint: '#5f6a72' },
+  { id: 'hour', name: 'The Hour', sub: 'One rider, sixty minutes', side: 'east', z0: 27.8, z1: 35.2, tint: '#e8471c', wall: '#8a3316', ink: '#fbf1e6' },
+  { id: 'mono', name: 'Monocoque', sub: 'One piece, no tubes', side: 'east', z0: 35.6, z1: 43.0, tint: '#c9a13b', wall: '#1c1d20', ink: '#f4efe7' },
+  { id: 'tri', name: 'Long course', sub: 'Triathlon machines', side: 'east', z0: 43.4, z1: 50.8, tint: '#5fd8d3', wall: '#0f5458', ink: '#e8f6f4' },
+  { id: 'types', name: 'Types', sub: 'No maker named', side: 'west', z0: 27.8, z1: 35.2, tint: '#e0a458', wall: '#5a3a1e', ink: '#f6eadb' },
+  { id: 'paint', name: 'Paint shop', sub: 'Every livery in the wing', side: 'west', z0: 35.6, z1: 43.0, tint: '#ff3d8e', wall: '#f4efe7', ink: '#12181d' },
+  { id: 'refs', name: 'References', sub: 'The photographs behind the models', side: 'west', z0: 43.4, z1: 50.8, tint: '#8e979d', wall: '#2c353c', ink: '#eef1f2' },
 ];
 const span = r => (r.side === 'east' ? EAST : WEST);
 const roomRect = r => ({ x0: span(r).x0, x1: span(r).x1, z0: r.z0, z1: r.z1 });
@@ -92,7 +92,7 @@ export function applySkin(inst, skin) {
 }
 
 export function buildAtlas(ctx) {
-  const { scene, lettering, FONT, SERIF, lite, pickables, obstacles } = ctx;
+  const { scene, lettering, FONT, SERIF, lite, pickables, obstacles, contactShadow } = ctx;
   const DATA = window.__ATLAS || { bikes: [] };
   const group = new THREE.Group(); group.name = 'atlas'; scene.add(group);
   const at = (m, x, y, z) => { m.position.set(x, y, z); group.add(m); return m; };
@@ -109,7 +109,15 @@ export function buildAtlas(ctx) {
   door.userData.floor = true; floors.push(door);
   box(EAST.x1 - WEST.x0, .12, ATLAS.z1 - ATLAS.z0, (WEST.x0 + EAST.x1) / 2, Y + H + .06, (ATLAS.z0 + ATLAS.z1) / 2, plaster);   // ceiling
   const sky = new THREE.MeshBasicMaterial({ color: '#fff8ea' });
-  for (let z = ATLAS.z0 + 2; z < ATLAS.z1 - 1; z += 4) box(2.4, .02, 2.6, (ATLAS.x0 + ATLAS.x1) / 2, Y + H - .01, z, sky);
+  const shaftMat = new THREE.MeshBasicMaterial({ color: '#fff1d6', transparent: true, opacity: .07, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending });
+  const poolMat = new THREE.MeshBasicMaterial({ color: '#ffe8c4', transparent: true, opacity: .16, depthWrite: false, blending: THREE.AdditiveBlending });
+  const shafts = [];
+  for (let z = ATLAS.z0 + 2; z < ATLAS.z1 - 1; z += 4) {
+    box(2.4, .02, 2.6, (ATLAS.x0 + ATLAS.x1) / 2, Y + H - .01, z, sky);
+    const sh = new THREE.Mesh(new THREE.BoxGeometry(2.3, H, 2.5), shaftMat); sh.geometry.translate(0, -H / 2, 0);
+    sh.position.set((ATLAS.x0 + ATLAS.x1) / 2 + .35, Y + H, z + .5); sh.rotation.z = -.14; sh.rotation.x = .12; group.add(sh); shafts.push(sh);
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.8), poolMat); pl.rotation.x = -Math.PI / 2; at(pl, (ATLAS.x0 + ATLAS.x1) / 2 + .9, Y + .014, z + 1);
+  }
   box(EAST.x1 - WEST.x0, H, .2, (WEST.x0 + EAST.x1) / 2, Y + H / 2, ATLAS.z1, plaster);                                        // north end wall
   box(.2, H, ATLAS.z1 - ATLAS.z0, EAST.x1, Y + H / 2, (ATLAS.z0 + ATLAS.z1) / 2, plaster);
   box(.2, H, ATLAS.z1 - ATLAS.z0, WEST.x0, Y + H / 2, (ATLAS.z0 + ATLAS.z1) / 2, plaster);
@@ -143,11 +151,16 @@ export function buildAtlas(ctx) {
     const q = roomRect(r), cx = (q.x0 + q.x1) / 2, cz = (q.z0 + q.z1) / 2, back = r.side === 'east' ? q.x1 : q.x0, face = r.side === 'east' ? -1 : 1;
     const fl = box(q.x1 - q.x0, .1, q.z1 - q.z0, cx, Y - .05, cz, new THREE.MeshStandardMaterial({ map: oak, roughness: .5 }));
     fl.userData.floor = true; floors.push(fl); pickables.push(fl);
+    const feature = new THREE.Mesh(new THREE.PlaneGeometry(q.z1 - q.z0 - .36, H - .02), new THREE.MeshStandardMaterial({ color: r.wall, roughness: .88 }));
+    feature.rotation.y = face > 0 ? Math.PI / 2 : -Math.PI / 2; at(feature, back + face * .105, Y + H / 2, cz);
+    const skirt = new THREE.MeshStandardMaterial({ color: '#2a2622', roughness: .6 });
+    for (const zz of [q.z0 + .2, q.z1 - .2]) box(q.x1 - q.x0, .12, .03, cx, Y + .06, zz, skirt);
+    box(.03, .12, q.z1 - q.z0, back + face * .115, Y + .06, cz, skirt);
     const sign = lettering(4.4, .9, g => {
-      g.fillStyle = r.tint; g.font = `700 .2px ${FONT}`; g.fillText(r.name.toUpperCase(), 0, .32);
-      g.fillStyle = '#5f6a72'; g.font = `italic 400 .24px ${SERIF}`; g.fillText(r.sub, 0, .72);
+      g.fillStyle = r.ink; g.font = `700 .2px ${FONT}`; g.fillText(r.name.toUpperCase(), 0, .32);
+      g.fillStyle = r.tint; g.font = `italic 400 .24px ${SERIF}`; g.fillText(r.sub, 0, .72);
     }, 1024);
-    sign.rotation.y = face > 0 ? Math.PI / 2 : -Math.PI / 2; at(sign, back + face * .12, Y + 3.45, cz);
+    sign.rotation.y = face > 0 ? Math.PI / 2 : -Math.PI / 2; at(sign, back + face * .13, Y + 3.05, cz);
     const lamp = new THREE.PointLight('#fff1dc', lite ? 5 : 9, 11, 1.4); lamp.position.set(cx, Y + 3.6, cz); group.add(lamp);
     const pool = new THREE.Mesh(new THREE.CircleGeometry(2.6, 40), new THREE.MeshBasicMaterial({ color: '#fff3dc', transparent: true, opacity: .12, depthWrite: false }));
     pool.rotation.x = -Math.PI / 2; at(pool, cx, Y + .012, cz);
@@ -163,7 +176,7 @@ export function buildAtlas(ctx) {
       g.fillStyle = '#12181d'; g.font = `300 .44px ${FONT}`; g.fillText('49.431', 0, .5); g.font = `600 .1px ${FONT}`; g.fillStyle = '#e8471c'; g.fillText('KM · MERCKX · MEXICO CITY · 1972', 0, .66);
       g.fillStyle = '#12181d'; g.font = `300 .44px ${FONT}`; g.fillText('51.596', 0, 1.14); g.font = `600 .1px ${FONT}`; g.fillStyle = '#e8471c'; g.fillText('KM · OBREE · HAMAR · 1993', 0, 1.3);
     }, 1024);
-    plate.rotation.y = -Math.PI / 2; at(plate, hr.back - .12, Y + 1.75, hr.center.z); }
+    at(plate, hr.center.x, Y + 1.9, ATLAS.z0 + .23); }                           // on the room's south wall, facing in
 
   // plinths + stands for the named rooms; the paint shop has one big turntable
   const texLoader = new THREE.TextureLoader();
@@ -200,6 +213,10 @@ export function buildAtlas(ctx) {
       const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.06, .16, 40), plinthMat); plinth.position.set(x, Y + .08, z); group.add(plinth);
       const ring = new THREE.Mesh(new THREE.TorusGeometry(1.03, .012, 6, 64), new THREE.MeshBasicMaterial({ color: room.tint })); ring.rotation.x = Math.PI / 2; ring.position.set(x, Y + .165, z); group.add(ring);
       obstacles.push({ c: new THREE.Vector3(x, 0, z), r: 1.12 });
+      const cone = new THREE.Mesh(new THREE.CylinderGeometry(.18, 1.15, H - .2, 32, 1, true), new THREE.MeshBasicMaterial({ color: '#fff4e0', transparent: true, opacity: .055, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending }));
+      cone.position.set(x, Y + (H - .2) / 2 + .1, z); group.add(cone);
+      const glow = new THREE.Mesh(new THREE.CircleGeometry(.98, 40), new THREE.MeshBasicMaterial({ color: '#fff3dc', transparent: true, opacity: .22, depthWrite: false, blending: THREE.AdditiveBlending }));
+      glow.rotation.x = -Math.PI / 2; glow.position.set(x, Y + .168, z); group.add(glow);
       const turn = new THREE.Group(); turn.position.set(x, Y + .16, z); group.add(turn);
       const standZ = THREE.MathUtils.clamp(z - Math.sign(zoff || 1) * 2.55, q.z0 + .6, q.z1 - .6);
       const inst = { data: b, room, pos: new THREE.Vector3(x, Y, z), turn, view: new THREE.Vector3(x, Y, standZ), face: new THREE.Vector3(x, Y + .75, z), phase: k * 1.7, bike: null, mats: {}, skinIndex: 0 };
@@ -220,12 +237,12 @@ export function buildAtlas(ctx) {
     all.forEach((e, k) => {
       const col = k % cols, row = (k / cols) | 0;
       const m = new THREE.Mesh(new THREE.BoxGeometry(.05, .34, .34), new THREE.MeshStandardMaterial({ color: e.s.frame, roughness: .3, metalness: .1 }));
-      m.position.set(paint.back + .06, Y + 2.6 - row * .46, paint.center.z - 2.0 + col * .5); group.add(m);
+      m.position.set(paint.back + .14, Y + 2.35 - row * .46, paint.center.z - 2.0 + col * .5); group.add(m);
       const acc = new THREE.Mesh(new THREE.BoxGeometry(.052, .1, .34), new THREE.MeshBasicMaterial({ color: e.s.accent || e.s.frame })); acc.position.copy(m.position).add(new THREE.Vector3(0, -.12, 0)); group.add(acc);
       m.userData.atlasSwatch = e; acc.userData.atlasSwatch = e; pickables.push(m, acc); swatches.push(m);
     });
     const tip = lettering(4.4, .3, g => { g.fillStyle = '#5f6a72'; g.font = `italic 400 .12px ${SERIF}`; g.fillText('Touch a swatch to paint the bike on the table', 0, .18); }, 1024);
-    tip.rotation.y = Math.PI / 2; at(tip, paint.back + .1, Y + 3.0, paint.center.z);
+    tip.rotation.y = Math.PI / 2; at(tip, paint.back + .13, Y + .95, paint.center.z);
   }
   // references room: every photograph the wing was built from, credited
   const refsRoom = roomOfId.refs;
@@ -252,6 +269,7 @@ export function buildAtlas(ctx) {
       try {
         const proto = await get(inst.data.key);
         inst.mats = {}; const h = dress(inst, proto); inst.turn.add(h); inst.bike = h;
+        if (contactShadow) { const cs = contactShadow(1.9, .5); cs.rotation.z = Math.PI / 2; cs.position.y = .006; inst.turn.add(cs); }
         applySkin(inst, inst.data.skins[0]);
         h.traverse(o => { if (o.isMesh) { o.userData.atlas = inst; pickables.push(o); } });
       } catch (e) { console.warn('atlas bike', inst.data.key, e); }

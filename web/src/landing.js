@@ -900,7 +900,7 @@ const sanctuary = buildSanctuary({ scene, lettering, lightPool, FONT, SERIF, lit
 sanctuary.sign.position.set(0, SDOOR.h + .7, HALL.z0 - .04); sanctuary.sign.rotation.y = Math.PI; hall.add(sanctuary.sign);
 const galleries = buildGalleries({ scene, lettering, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x1 });
 galleries.sign.rotation.y = -Math.PI / 2; hall.add(galleries.sign);
-const atlas = buildAtlas({ scene, lettering, FONT, SERIF, lite, pickables, obstacles });
+const atlas = buildAtlas({ scene, lettering, FONT, SERIF, lite, pickables, obstacles, contactShadow });
 
 // ------------------------------------------------------------------ bikes (streamed, nearest first)
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -1508,6 +1508,17 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     else if (id.startsWith('atlas-')) visitAtlasRoom(atlas.rooms.find(r => 'atlas-' + r.id === id));
   };
   window.__map = initMap({ areas, go, button: $('mapBtn'), pose: () => ({ x: P.x, z: P.z, yaw: P.yaw, floor: P.y > 3.3 ? 'upper' : 'ground' }) });
+  // "you are here": the room's name under the logo; tap it for the map. A first visit to the wing gets one line of help.
+  const where = $('where'); let lastWhere = null, wingHinted = (() => { try { return localStorage.getItem('speedmax.atlas.hint') === '1'; } catch (_) { return false; } })();
+  where?.addEventListener('click', () => window.__map.open());
+  setInterval(() => {
+    if (!started || !where) return;
+    const a = window.__map.here();
+    const id = a?.id || null; if (id === lastWhere) return; lastWhere = id;
+    where.hidden = !a;
+    if (a) { where.querySelector('b').textContent = a.name; where.querySelector('small').textContent = a.floor === 'upper' ? 'Upper floor' : 'Ground floor'; where.querySelector('i').style.background = a.color; where.classList.remove('pop'); void where.offsetWidth; where.classList.add('pop'); }
+    if (id?.startsWith('atlas') && !wingHinted) { wingHinted = true; try { localStorage.setItem('speedmax.atlas.hint', '1'); } catch (_) { } toast('Against the Clock · tap a bike for its story and liveries · M opens the map'); }
+  }, 350);
 }
 $('railInner').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8);

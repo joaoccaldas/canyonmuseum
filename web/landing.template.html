@@ -360,6 +360,16 @@ html.phone-fit .credit{display:none}
   h1{font-size:clamp(34px,7vh,48px)!important;margin:8px 0}
   #intro .lede:not(.touch-only){display:none}
 }
+/* where you are */
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.where{display:flex;align-items:center;gap:9px;padding:6px 14px 6px 8px;border-radius:999px;background:rgba(251,249,245,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);text-align:left;transition:.2s}
+.where:hover{border-color:rgba(18,24,29,.3)}
+.where i{width:14px;height:14px;border-radius:5px;box-shadow:inset 0 0 0 1px rgba(18,24,29,.15)}
+.where span{display:flex;flex-direction:column;line-height:1.15}.where small{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);font-weight:600}.where b{font-size:12.5px;font-weight:700}
+.where.pop{animation:wherePop .5s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes wherePop{0%{transform:translateY(-4px) scale(.96);opacity:.4}100%{transform:none;opacity:1}}
+body:not(.walking) .where{display:none}
+@media (prefers-reduced-motion:reduce){.where.pop{animation:none}}
 /* atlas card */
 .c-facts{list-style:none;margin:16px 0 0;padding:14px 0 0;border-top:1px solid var(--line);display:grid;gap:8px;font-size:12.5px;line-height:1.5;color:var(--muted)}
 .c-facts li{display:grid;grid-template-columns:22px 1fr;gap:8px}
@@ -401,7 +411,8 @@ body.map-open #joy{opacity:0;pointer-events:none}
 <canvas id="hall" aria-label="A walkable museum hall with every Canyon Speedmax generation on display" tabindex="0"></canvas>
 
 <header>
-  <a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
+  <div class="brand"><a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
+  <button id="where" class="where" hidden aria-label="Where you are: open the map"><i></i><span><small></small><b></b></span></button></div>
   <nav>
     <button id="installBtn" hidden title="Install the museum on this device"><span class="long">Get the </span>app</button>
     <button id="mapBtn" aria-label="Museum map" title="Map (M)">Map</button>
@@ -426,6 +437,7 @@ body.map-open #joy{opacity:0;pointer-events:none}
       <div><span><kbd>Drag</kbd></span>Look around</div>
       <div><span><kbd>Click</kbd></span>Visit a bike</div>
       <div><span><kbd>1</kbd>–<kbd>9</kbd></span>Jump to a piece</div>
+      <div><span><kbd>M</kbd></span>Map</div>
     </div>
     <p class="touch-only lede" style="margin-top:18px;font-size:12.5px">Walk with the swim·bike·run stick · drag to look · tap a bike. A few things were left on the floor.</p>
     <div id="loadstate" aria-live="polite"></div>
