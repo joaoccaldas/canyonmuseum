@@ -708,7 +708,7 @@ for (const p of PIECES) {
     const card = textCard(p); card.position.set(0, .98, 0); card.rotation.x = -Math.PI / 2 + .55; card.translateZ(.017); lect.add(card);
     card.userData.piece = p; pickables.push(card);
     const fy = floorYear(p); fy.rotation.x = -Math.PI / 2; fy.rotation.z = Math.atan2(p.normal.x, p.normal.z) + Math.PI;
-    fy.position.copy(p.normal.clone().multiplyScalar(2.3)); fy.position.y = .006; g.add(fy);
+    fy.position.copy(p.normal.clone().multiplyScalar(2.3)); fy.position.y = .014; fy.renderOrder = 2; g.add(fy);
     if (!p.glb) {                                                    // a lost work: an empty plinth, a halo of light
       const halo = new THREE.Mesh(new THREE.TorusGeometry(.62, .012, 8, 64), new THREE.MeshBasicMaterial({ color: '#35c2bf', transparent: true, opacity: .55 }));
       halo.rotation.x = -Math.PI / 2; halo.position.y = h + .01; g.add(halo);
@@ -721,7 +721,7 @@ heritage.forEach((p, i) => {
   if (p.pos.x < 0) { const tp = tapestry(2.6, 3.3, i * 1.37 + .4, .35 + i * .5); tp.position.set(HALL.x0 + .02, 2.75, p.pos.z); tp.rotation.y = Math.PI / 2; hall.add(tp); }
   const pool = lightPool(3.4, 2.2, i % 2 ? WYLD.aqua : WYLD.pink, p.glb ? .38 : .22); pool.rotation.z = p.rotY - Math.PI / 2; pool.position.x = p.pos.x; pool.position.z = p.pos.z; hall.add(pool);
 });
-{ const ap = lightPool(10, 4, WYLD.lilac, .45); ap.position.set(0, .004, -41.4); hall.add(ap);
+{ const ap = lightPool(10, 4, WYLD.lilac, .45); ap.position.set(0, .014, -41.4); ap.renderOrder = 1; hall.add(ap);
   const t2 = tapestry(7.5, 1.4, 3.3, 1.2); t2.position.set(0, 4.35, -45.9); hall.add(t2); }
 { // apse plinth for the MY2027 flagships + hanging sign
   const ap = new THREE.Mesh(new THREE.BoxGeometry(8.2, .32, 2.2), M.basaltPolished);
@@ -734,7 +734,7 @@ heritage.forEach((p, i) => {
   sign.position.set(0, 3.7, -43.2); hall.add(sign);
   for (const p of flagships) {
     const fy = floorYear({ years: p.name.replace('Speedmax ', '') });
-    fy.rotation.x = -Math.PI / 2; fy.scale.setScalar(.7); fy.position.set(p.pos.x - p.pos.x, .006, 2.05); p.group.add(fy);
+    fy.rotation.x = -Math.PI / 2; fy.scale.setScalar(.7); fy.position.set(p.pos.x - p.pos.x, .014, 2.05); fy.renderOrder = 2; p.group.add(fy);
   }
 }
 
