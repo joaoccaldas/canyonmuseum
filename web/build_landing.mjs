@@ -15,6 +15,11 @@ const studio = key => {
 };
 
 // Documented finishes for the hall (same colours as tools/render_paintings.mjs).
+// wings and art are data: museum/world/wings/index.json lists the wing files in order; museum/art holds the catalogues
+const readJson = f => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
+const WINGS = readJson('museum/world/wings/index.json').wings.map(f => readJson(`museum/world/wings/${f}`));
+const ART = { paintings: readJson('museum/art/paintings.json').paintings,
+  sculptures: fs.existsSync(path.join(root, 'museum/art/sculptures.json')) ? readJson('museum/art/sculptures.json').sculptures : [] };
 const SKINS = JSON.parse(fs.readFileSync(path.join(root, 'museum/skins/museum.json'), 'utf8'));
 const FINISH = Object.fromEntries(SKINS.skins.filter(s => s.id.startsWith('hall-')).map(s => [s.id.slice(5), s.frame]));
 const GLB = {
@@ -110,6 +115,8 @@ const html = fs.readFileSync(path.join(here, 'landing.template.html'), 'utf8')
   .replace('__KONA__', () => fs.readFileSync(path.join(root, 'museum/kona_champions.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__WYLDROOM__', () => fs.readFileSync(path.join(root, 'museum/wyld_room.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__SKINS__', () => JSON.stringify(SKINS).replaceAll('<', '\\u003c'))
+  .replace('__WINGS__', () => JSON.stringify(WINGS).replaceAll('<', '\\u003c'))
+  .replace('__ART__', () => JSON.stringify(ART).replaceAll('<', '\\u003c'))
   .replace('__ATLAS__', () => fs.readFileSync(path.join(root, 'museum/atlas/bikes.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__KONAYEARS__', () => JSON.stringify(JSON.parse(fs.readFileSync(path.join(root, 'museum/kona_years.json'), 'utf8'))).replaceAll('<', '\\u003c'))
   .replace('__APP__', () => app);

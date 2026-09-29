@@ -356,7 +356,13 @@ def build(b, skin):
             sweep(f'extension_{"l" if s < 0 else "r"}', ext, .022, .022, M['carbon'], kind='round', n=10)
             box(f'armpad_{"l" if s < 0 else "r"}', stem_end + Vector((-.02, y, .085)), (.12, .075, .018), M['saddle'])
         box('pad_riser', stem_end + Vector((-.02, 0, .05)), (.05, .2, .04), M['carbon'])
-    elif bars == 'drop':
+    elif bars in ('drop', 'drop_clip'):
+        if bars == 'drop_clip':                                       # clip-on extensions over the drops (short: the draft-legal rule / 1989 style)
+            reach = g.get('clip_reach', .3)
+            for s in (-1, 1):
+                y = s * g.get('ext_width', .08)
+                sweep(f'clip_{"l" if s < 0 else "r"}', [stem_end + Vector((-.04, y, .04)), stem_end + Vector((reach * .6, y, .05)), stem_end + Vector((reach, y, .06))], .022, .022, M['alu'], kind='round', n=10)
+                box(f'clip_pad_{"l" if s < 0 else "r"}', stem_end + Vector((-.02, y, .065)), (.1, .07, .016), M['saddle'])
         for s in (-1, 1):
             y = s * bw
             pts = [stem_end + Vector((0, s * .02, 0)), stem_end + Vector((0, y * .8, 0)), stem_end + Vector((.07, y, -.01)), stem_end + Vector((.1, y, -.08)), stem_end + Vector((.05, y, -.14)), stem_end + Vector((-.06, y, -.14))]

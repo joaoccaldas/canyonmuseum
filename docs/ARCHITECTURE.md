@@ -10,7 +10,7 @@ data + a small engine**. Each phase ships on its own and keeps the site working;
 |---|---|---|
 | 0 | Baseline + gate: unit tests green, bike asset contract, CI on every push, the Pages deploy runs the same gate | **Done** |
 | 1 | One bike asset contract, one livery system (`web/src/engine/skins.js`), all livery paths moved onto it | **Done** |
-| 2 | Data registry (`museum/world/`), `Exhibit` class, room-type plugins; port Against the Clock first, then the theme rooms | Next |
+| 2 | Data registry (`museum/world/`), exhibits, one card system | **Wings done:** `engine/wing.js` builds every wing from `museum/world/wings/*.json` (Against the Clock ported, Kona Light new); `engine/card.js` renders bike, painting, sculpture, photograph and room cards from data. Theme rooms, hall, Sanctuary, WYLD, Champions, pier still hand-built (Phase 5) |
 | 3 | Walkable grid generated from room outlines + A* routes (replaces hand-written routes and stuck timers) | Planned |
 | 4 | Room-graph visibility (bikes and motion culled, walls never), shared geometry for repeated bikes, far LOD | Planned — urgent: the hall entrance draws ~6.5 M triangles / 1,665 draws, mostly the Sanctuary's eight full CFR copies |
 | 5 | Port the hall, Sanctuary, WYLD, Champions, Lava Night and the pier; retire the hand-written code | Planned |
@@ -18,7 +18,7 @@ data + a small engine**. Each phase ships on its own and keeps the site working;
 
 ## The gate (Phase 0)
 
-- `web/test/*.test.mjs` — `cd web && npm test` (45 tests).
+- `web/test/*.test.mjs` — `cd web && npm test` (52 tests, incl. wing data completeness and walkability).
 - `node tools/validate-bikes.mjs` — every bike GLB against the asset contract.
 - `.github/workflows/checks.yml` — tests, contract, and a rebuild that must match the committed pages, on every push and pull request.
 - `.github/workflows/pages.yml` — runs tests and the contract before it stages the site; a red gate publishes nothing.
@@ -74,3 +74,18 @@ A skin is data:
 - **A new Against the Clock bike:** add it to `museum/atlas/bikes.json`, run `python3 blender/atlas_build.py <key>`,
   then `node tools/validate-bikes.mjs` and rebuild the page.
 - **A new room:** still code (Phase 2 makes it data).
+
+## Modules (web/src)
+
+| Module | Role |
+|---|---|
+| `engine/skins.js` | bike asset contract (paint slots) and the one livery system |
+| `engine/wing.js` | builds wings from data: walls, floors, rooms, exhibits, walkable space, loading, per-frame update |
+| `engine/card.js` | card models → the #card panel; adapters for bikes, paintings, sculptures, photographs, rooms |
+| `engine/profile.js` | on-device profile, quality presets, storage interface (for optional sync) |
+| `engine/share.js` | capture the view with a caption and share it (or save it) |
+| `ui/settings.js` | profile and settings sheet, header profile chip |
+| `map.js` | the two-floor map, generated from the same rectangles as the walls |
+| `landing.js` | still hosts the hand-built rooms, the walk loop and routing (being split in Phases 3–5) |
+
+See also `docs/CONTENT.md` (adding content, original sources) and `docs/APP.md` (profile, quality, sharing, accounts).

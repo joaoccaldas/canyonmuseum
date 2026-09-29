@@ -66,7 +66,7 @@ test('decals can glow (Lava Night) and stop glowing', () => {
 });
 
 test('no page code paints paint_frame directly any more', () => {
-  for (const f of ['landing.js', 'atlas.js', 'halloween.js']) {
+  for (const f of ['landing.js', 'engine/wing.js', 'halloween.js']) {
     const src = fs.readFileSync(path.join(root, 'web/src', f), 'utf8');
     assert.doesNotMatch(src, /name === 'paint_frame'\)?\s*\{?\s*m\.color\.set/, f);
     assert.doesNotMatch(src, /applyWyld\(/, f);
