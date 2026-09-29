@@ -3,6 +3,7 @@
 // flagships in an apse facing the ocean. Walk (WASD / tap the floor), look (drag),
 // visit a bike (click / tap / 1–9), then step into its full 3D studio.
 import * as THREE from 'three';
+import { FONT, SERIF } from './engine/type.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -181,7 +182,7 @@ function lettering(w, h, draw, px = 1024) {
   const tex = canvasTex(px, Math.round(px * h / w), (g, cw, ch) => { g.scale(cw / w, ch / h); draw(g); }, null, true);
   return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
 }
-const FONT = "'Manrope',system-ui,sans-serif", SERIF = "'Instrument Serif',Georgia,serif";
+
 
 // ------------------------------------------------------------------ the hall
 const M = {
@@ -1484,16 +1485,14 @@ for (const w of [...atlas.wings].reverse()) $('railInner').insertAdjacentHTML('a
 for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
 // ------------------------------------------------------------------ museum map (map.js): every area, live position, tap to walk
 {
+  const WORDS = Object.fromEntries((window.__ROOMS?.areas || []).map(a => [a.id, a]));
+  const AREA_COLOR = { hall: '#eadfca', sanctuary: '#d7c7e6', hween: '#f0a86c', kona: '#e2b27c', wyld: '#ffc4dd', pier: '#cfe4e2', stair: '#dcd6cb', nave: '#ece6da' };
   const R = (id, name, sub, rect, floor, color, extra = {}) => ({ id, name, sub, x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1, floor, color, ...extra });
   const areas = [
-    R('hall', 'Main hall', `${PIECES.length} Speedmax generations`, HALL, 'ground', '#eadfca'),
-    R('sanctuary', 'Sanctuary', '8 films, 8 bikes', SROOM, 'ground', '#d7c7e6'),
-    R('hween', 'Lava Night', 'Halloween room', HROOM, 'ground', '#f0a86c'),
-    R('kona', 'Kona Champions', '2 champions’ machines', ROOM, 'ground', '#e2b27c'),
-    R('wyld', 'WYLD Room', `${wyldBikes.length || 4} dyes`, WROOM, 'ground', '#ffc4dd'),
-    ...(pier ? [R('pier', 'Kona by Year', 'The pier, 2014–2025', { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, 'ground', '#cfe4e2')] : []),
-    R('stair', 'Stair', 'Up to the galleries', { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, 'upper', '#dcd6cb', { layer: 0 }),
-    R('nave', 'Galleries', 'Four themed floors', { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 }, 'upper', '#ece6da', { layer: 0 }),
+    ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), 'stair', 'nave'].map(id => {       // names from museum/world/rooms.json
+      const w = WORDS[id], rect = { hall: HALL, sanctuary: SROOM, hween: HROOM, kona: ROOM, wyld: WROOM, pier: pier && { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, stair: { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, nave: { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 } }[id];
+      return R(id, w?.short || id, w?.sub || '', rect, w?.floor || 'ground', AREA_COLOR[id], id === 'stair' || id === 'nave' ? { layer: 0 } : {});
+    }),
     ...galleries.bays.map(b => R('bay-' + b.id, b.title, b.sub, { x0: 8.4, x1: 14.8, z0: b.z - 1.8, z1: b.z + 1.8 }, 'upper', b.floor, { layer: 1, ink: /^#(1|0)/.test(b.floor) ? '#fbf9f5' : '#12181d', kind: 'bay' })),
     ...galleries.rooms.map(r => R('room-' + r.id, r.name, r.sub, { x0: 16.5, x1: 25.1, z0: r.z1, z1: r.z0 }, 'upper', r.vein, { layer: 1, ink: '#12181d' })),
     ...atlas.wings.map(w => R('wing-' + w.id, w.name, w.sub, w.corridor, w.floor, w.corridor.map_color || '#c89b62', { layer: 0 })),

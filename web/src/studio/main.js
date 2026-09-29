@@ -171,8 +171,10 @@ function drawPanel() {
   } else if (tab === 'info' && current) {
     const p = current.product;
     renderCard({ ...bikeCard({ name: p.name, year: p.year, era: p.era || p.years, maker: p.brand, kind: p.origin === 'type-study' || p.origin === 'studio-design' ? 'type' : 'named', text: p.text || '', geometry: {}, skins: p.skins || [], facts: (p.facts || []).map(f => [f.cls, f.text]), ref: p.ref, arch: p.family }, { method: p.atlasKey ? window.__ATLAS_METHOD : null }), stats: [],
-      actions: [p.deepStudio ? { label: 'Engineering studio', primary: true, href: p.deepStudio } : null, p.museum ? { label: 'See it in the museum', href: './' } : null].filter(Boolean) });
+      actions: [p.where?.[0] ? { label: `See it: ${p.where[0].name}`, primary: true, href: `./?room=${encodeURIComponent(p.where[0].id)}` } : null, p.deepStudio ? { label: 'Engineering studio', href: p.deepStudio } : null].filter(Boolean) });
     $('card').hidden = false;
+    if (p.where?.length) P.append(h('p', { class: 'src' }, 'In the museum: ', p.where.map((w, i) => [i ? ' · ' : '', h('a', { href: `./?room=${encodeURIComponent(w.id)}` }, w.name)])));
+    else P.append(h('p', { class: 'src' }, 'Only in the studio.'));
     P.append(h('p', { class: 'src' }, 'Sources: ', (p.sources || []).map((s, i) => [i ? ' · ' : '', s.url ? h('a', { href: s.url, target: '_blank', rel: 'noopener' }, s.label) : `${s.label} (${s.file})`])));
   }
 }

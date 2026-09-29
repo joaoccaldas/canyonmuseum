@@ -14,6 +14,7 @@ const wyld = JSON.parse(read('museum/wyld_room.json'));
 const html = read('web/studio.template.html')
   .replace('__PRODUCTS__', () => inline(read('museum/catalog/products.json')))
   .replace('__SKINS__', () => inline(read('museum/skins/museum.json')))
+  .replace('__ROOMS__', () => inline(read('museum/world/rooms.json')))
   .replace('__FILMS__', () => inline(read('museum/themes/films.json')))
   .replace('__WYLDROOM__', () => inline(JSON.stringify({ variants: wyld.variants })))
   .replace('__EVENTS__', () => inline(JSON.stringify(events)))

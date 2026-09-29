@@ -25,7 +25,7 @@ test('every catalogued skin is valid and ids are unique', () => {
 });
 
 test('film skins carry a five-colour dye', () => {
-  const s = skinFromFilm({ id: 'hex', name: 'Witching Hour', stops: ['#0c0714', '#3a1f6b', '#7b4fd6', '#b6ff5a', '#1a0f2a'], angle: 55, scale: 1.5, flow: 1.3 });
+  const s = skinFromFilm({ id: 'hex', name: 'Witching Hour', darkness: .45, stops: ['#0c0714', '#3a1f6b', '#7b4fd6', '#b6ff5a', '#1a0f2a'], angle: 55, scale: 1.5, flow: 1.3 });
   assert.deepEqual(skinProblems(s), []); assert.equal(s.dye.darkness, .45);
 });
 

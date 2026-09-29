@@ -47,3 +47,14 @@ test('filters and events', () => {
   assert.ok(productsFor(CAT.products, { q: 'lotus' }).every(p => /lotus/i.test(p.name + p.brand)));
   assert.ok(Object.values(SCENES).every(s => s.sky.length === 2 && s.label));
 });
+
+test('rooms registry: every named product exists, every area has a name, every bike is somewhere or studio-only', () => {
+  const rooms = J('museum/world/rooms.json');
+  const ids = new Set(CAT.products.map(p => p.id));
+  for (const a of rooms.areas) {
+    assert.ok(a.name && a.sub && rooms.floors.some(f => f.id === a.floor), a.id);
+    for (const p of a.exhibits?.products || []) assert.ok(ids.has(p), `${a.id}: ${p}`);
+  }
+  for (const p of CAT.products) assert.equal(p.museum, p.where.length > 0, p.id);
+  assert.ok(CAT.products.filter(p => p.origin === 'museum-edition' && p.edition === 'film').length === J('museum/themes/films.json').films.length, 'every film bike is in the studio');
+});

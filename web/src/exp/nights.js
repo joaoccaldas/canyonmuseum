@@ -7,9 +7,10 @@
 //           streamlines flowing over a translucent ghost Speedmax
 // Each theme returns: livery, lights, environment, props, 3 hidden objects, hotspots, audio.
 import * as THREE from 'three';
+import { FONT, SERIF } from '../engine/type.js';
 import { canvasTex, seeded, lite, reduce } from './engine.js';
 
-const FONT = "'Manrope',system-ui,sans-serif", SERIF = "'Instrument Serif',Georgia,serif";
+
 const mat = (o) => new THREE.MeshStandardMaterial(o);
 const at = (o, x, y, z) => { o.position.set(x, y, z); return o; };
 

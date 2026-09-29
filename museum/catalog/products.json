@@ -1,7 +1,8 @@
 {
  "schema_version": 1,
  "generated_by": "tools/build_catalog.mjs",
- "count": 29,
+ "count": 52,
+ "in_museum": 44,
  "studio_only": 8,
  "brands": [
   "Canyon",
@@ -42,7 +43,8 @@
      "id": "hall-cfr",
      "name": "Showroom",
      "kind": "archive",
-     "frame": "#eceaf0"
+     "frame": "#eceaf0",
+     "group": "hall"
     }
    ],
    "sources": [
@@ -53,6 +55,16 @@
     {
      "label": "Viewer profile",
      "file": "museum/viewer-cfr.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "hall",
+     "name": "The Queen K Hall"
+    },
+    {
+     "id": "pier",
+     "name": "Kona by Year"
     }
    ]
   },
@@ -83,7 +95,8 @@
      "id": "hall-slx",
      "name": "Showroom",
      "kind": "archive",
-     "frame": "#cdc8dd"
+     "frame": "#cdc8dd",
+     "group": "hall"
     }
    ],
    "sources": [
@@ -94,6 +107,12 @@
     {
      "label": "Viewer profile",
      "file": "museum/viewer-slx.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "hall",
+     "name": "The Queen K Hall"
     }
    ]
   },
@@ -126,7 +145,8 @@
      "id": "hall-speedmax-three-2005",
      "name": "Documented finish",
      "kind": "archive",
-     "frame": "#14161a"
+     "frame": "#14161a",
+     "group": "hall"
     }
    ],
    "sources": [
@@ -137,6 +157,12 @@
     {
      "label": "Evidence manifest",
      "file": "museum/bikes/canyon-speedmax-three-my2005.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "hall",
+     "name": "The Queen K Hall"
     }
    ]
   },
@@ -169,7 +195,8 @@
      "id": "hall-speedmax-2007",
      "name": "Documented finish",
      "kind": "archive",
-     "frame": "#8a1f1f"
+     "frame": "#8a1f1f",
+     "group": "hall"
     }
    ],
    "sources": [
@@ -180,6 +207,12 @@
     {
      "label": "Evidence manifest",
      "file": "museum/bikes/canyon-speedmax-3-0-my2007.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "hall",
+     "name": "The Queen K Hall"
     }
    ]
   },
@@ -212,7 +245,8 @@
      "id": "hall-speedmax-al-2011",
      "name": "Documented finish",
      "kind": "archive",
-     "frame": "#d8d8dc"
+     "frame": "#d8d8dc",
+     "group": "hall"
     }
    ],
    "sources": [
@@ -223,6 +257,12 @@
     {
      "label": "Evidence manifest",
      "file": "museum/bikes/canyon-speedmax-al-9-my2011.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "hall",
+     "name": "The Queen K Hall"
     }
    ]
   },
@@ -255,7 +295,8 @@
      "id": "hall-speedmax-cf-2011",
      "name": "Documented finish",
      "kind": "archive",
-     "frame": "#101014"
+     "frame": "#101014",
+     "group": "hall"
     }
    ],
    "sources": [
@@ -266,6 +307,12 @@
     {
      "label": "Evidence manifest",
      "file": "museum/bikes/canyon-speedmax-cf-9-pro-my2011.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "hall",
+     "name": "The Queen K Hall"
     }
    ]
   },
@@ -296,6 +343,12 @@
      "label": "Build record",
      "file": "assets/kona-years/bikes/cfslx-2015/build-meta.json"
     }
+   ],
+   "where": [
+    {
+     "id": "kona",
+     "name": "Kona Champions"
+    }
    ]
   },
   {
@@ -324,6 +377,12 @@
     {
      "label": "Build record",
      "file": "assets/kona-years/bikes/cfr-2019/build-meta.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "kona",
+     "name": "Kona Champions"
     }
    ]
   },
@@ -406,6 +465,12 @@
      "label": "Photo: David Edgar (CC BY-SA 3.0)",
      "url": "https://commons.wikimedia.org/wiki/File:EddyMerckxHourRecordBike.jpg"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-hour",
+     "name": "The Hour · Against the Clock"
+    }
    ]
   },
   {
@@ -484,6 +549,12 @@
      "label": "Photo: Ed Webster (CC BY 2.0)",
      "url": "https://commons.wikimedia.org/wiki/File:Graeme_Obree_display_at_the_Riverside_Museum.jpg"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-hour",
+     "name": "The Hour · Against the Clock"
+    }
    ]
   },
   {
@@ -561,6 +632,12 @@
      "label": "Photo: Paul Hudson (CC BY 2.0)",
      "url": "https://commons.wikimedia.org/wiki/File:Lotus_108_(24281585325).jpg"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-mono",
+     "name": "Monocoque · Against the Clock"
+    }
    ]
   },
   {
@@ -629,6 +706,12 @@
     {
      "label": "Photo: Nfreeman2 (Public domain)",
      "url": "https://commons.wikimedia.org/wiki/File:Zipp_frames.jpg"
+    }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-mono",
+     "name": "Monocoque · Against the Clock"
     }
    ]
   },
@@ -699,6 +782,12 @@
     {
      "label": "Photo: Ximeg (CC BY-SA 3.0)",
      "url": "https://commons.wikimedia.org/wiki/File:Stevens_triathlon_bicycle.JPG"
+    }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-tri",
+     "name": "Long course · Against the Clock"
     }
    ]
   },
@@ -771,6 +860,12 @@
      "label": "Photo: GS (de.wikipedia) (CC BY-SA 3.0)",
      "url": "https://commons.wikimedia.org/wiki/File:Triathlonrad.jpg"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-tri",
+     "name": "Long course · Against the Clock"
+    }
    ]
   },
   {
@@ -832,6 +927,12 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-types",
+     "name": "Types · Against the Clock"
+    }
    ]
   },
   {
@@ -886,6 +987,12 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-types",
+     "name": "Types · Against the Clock"
+    }
    ]
   },
   {
@@ -939,6 +1046,12 @@
     {
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "atlas-against-the-clock-types",
+     "name": "Types · Against the Clock"
     }
    ]
   },
@@ -1001,6 +1114,12 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-kona-light-clipon",
+     "name": "Clip-ons · Kona Light"
+    }
    ]
   },
   {
@@ -1059,6 +1178,12 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-kona-light-clipon",
+     "name": "Clip-ons · Kona Light"
+    }
    ]
   },
   {
@@ -1112,6 +1237,12 @@
     {
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "atlas-kona-light-velodrome",
+     "name": "Velodrome · Kona Light"
     }
    ]
   },
@@ -1174,6 +1305,12 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
+   ],
+   "where": [
+    {
+     "id": "atlas-kona-light-velodrome",
+     "name": "Velodrome · Kona Light"
+    }
    ]
   },
   {
@@ -1225,7 +1362,8 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
-   ]
+   ],
+   "where": []
   },
   {
    "id": "atlas-studio-small-650c",
@@ -1276,7 +1414,8 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
-   ]
+   ],
+   "where": []
   },
   {
    "id": "atlas-studio-xl-tri",
@@ -1327,7 +1466,8 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
-   ]
+   ],
+   "where": []
   },
   {
    "id": "atlas-studio-alloy-entry",
@@ -1381,7 +1521,8 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
-   ]
+   ],
+   "where": []
   },
   {
    "id": "atlas-studio-sprint-track",
@@ -1438,7 +1579,8 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
-   ]
+   ],
+   "where": []
   },
   {
    "id": "atlas-studio-beam-2020s",
@@ -1492,7 +1634,8 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
-   ]
+   ],
+   "where": []
   },
   {
    "id": "atlas-studio-wing-road",
@@ -1546,7 +1689,8 @@
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
     }
-   ]
+   ],
+   "where": []
   },
   {
    "id": "atlas-studio-gravel-aero",
@@ -1599,6 +1743,1155 @@
     {
      "label": "Bike record",
      "file": "museum/atlas/bikes.json"
+    }
+   ],
+   "where": []
+  },
+  {
+   "id": "edition-film-aero-glam",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Alien Glam",
+   "sub": "Aero Glam · The Alien",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "They came for the watts. They stayed for the looks.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Aero Glam · The Alien livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-aero-glam",
+     "name": "Alien Glam",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#050805",
+       "#1fbf3f",
+       "#8be04e",
+       "#d9ff3f",
+       "#7b4fd6"
+      ],
+      "angle": 40,
+      "scale": 1.8,
+      "flow": 1.1,
+      "darkness": 0.45
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-film-couture",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Blush Couture",
+   "sub": "Couture · The Supermodel",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Blonde. Bored. Twelve seconds faster than you.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Couture · The Supermodel livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-couture",
+     "name": "Blush Couture",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#f2a7c3",
+       "#fff1f6",
+       "#e3b76a",
+       "#ff8fbf",
+       "#f6dcae"
+      ],
+      "angle": 70,
+      "scale": 1.2,
+      "flow": 0.7,
+      "darkness": 0
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-film-tiffany-tide",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Tiffany Tide",
+   "sub": "Offshore · The Surfer",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "One wave. One bike. No brakes.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Offshore · The Surfer livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-tiffany-tide",
+     "name": "Tiffany Tide",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#2f4fd6",
+       "#6ec6ff",
+       "#f4fbfb",
+       "#8fe7dc",
+       "#55d8d3"
+      ],
+      "angle": -24,
+      "scale": 1.3,
+      "flow": 1.2,
+      "darkness": 0
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-film-hex",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Witching Hour",
+   "sub": "Hex · The Witch",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Double, double, carbon trouble.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Hex · The Witch livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-hex",
+     "name": "Witching Hour",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#0c0714",
+       "#3a1f6b",
+       "#7b4fd6",
+       "#b6ff5a",
+       "#1a0f2a"
+      ],
+      "angle": 55,
+      "scale": 1.5,
+      "flow": 1.3,
+      "darkness": 0.45
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-film-stay-weird",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Stay Weird",
+   "sub": "Stay Weird · The Weirdo",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Rules are for other bikes.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Stay Weird · The Weirdo livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-stay-weird",
+     "name": "Stay Weird",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#a98bef",
+       "#f6df86",
+       "#1e1826",
+       "#a98bef",
+       "#f6df86"
+      ],
+      "angle": 0,
+      "scale": 2.4,
+      "flow": 0.15,
+      "darkness": 0
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-film-lake-house",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Lake Fog",
+   "sub": "The Lake House · The Final Girl",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Whatever you do, don’t ride down to the dock.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the The Lake House · The Final Girl livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-lake-house",
+     "name": "Lake Fog",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#03090c",
+       "#0f3a44",
+       "#5b8c8f",
+       "#dfeae6",
+       "#14242a"
+      ],
+      "angle": -15,
+      "scale": 1.4,
+      "flow": 1.6,
+      "darkness": 0.45
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-film-sunny-side",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "WYLD Dye",
+   "sub": "Sunny Side · The Babysitter",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "She’s lovely. She’s Swedish. She’s already inside.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Sunny Side · The Babysitter livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-sunny-side",
+     "name": "WYLD Dye",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#ff3d8e",
+       "#ff8fbf",
+       "#e9cde8",
+       "#8fe7dc",
+       "#5fd8d3"
+      ],
+      "angle": 32,
+      "scale": 1.5,
+      "flow": 1,
+      "darkness": 0
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-film-sanctuary",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Stained Glass",
+   "sub": "Sanctuary · The Doll",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "film",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "She has been waiting in the front pew.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Sanctuary · The Doll livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "film-sanctuary",
+     "name": "Stained Glass",
+     "kind": "dye",
+     "dye": {
+      "stops": [
+       "#b3122e",
+       "#1d4fd6",
+       "#f2c14e",
+       "#2f9e5a",
+       "#6f4cd9"
+      ],
+      "angle": 18,
+      "scale": 2.1,
+      "flow": 0.4,
+      "darkness": 0
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/themes/films.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary"
+    }
+   ]
+  },
+  {
+   "id": "edition-wyld-dye",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "WYLD Dye",
+   "sub": "Hand-dyed pink × aqua",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "wyld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "The original: fuchsia running through blush and lilac into a cool aqua, laid down in soft diagonal waves like the jersey it was sampled from.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Hand-dyed pink × aqua livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "wyld-dye",
+     "name": "WYLD Dye",
+     "kind": "dye",
+     "decalDark": "#141416",
+     "finish": {
+      "roughness": 0.3,
+      "metalness": 0.15,
+      "clearcoat": 1
+     },
+     "dye": {
+      "darkness": 0,
+      "sheer": 0,
+      "angle": 32,
+      "scale": 1.5,
+      "flow": 1
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/wyld_room.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "wyld",
+     "name": "The WYLD Room"
+    }
+   ]
+  },
+  {
+   "id": "edition-wyld-tide",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "WYLD Tide",
+   "sub": "Tighter bands, rolling in",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "wyld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "The same dyes stood upright and pulled tight, so the colour breaks over the frame like sets rolling into Kailua Bay.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Tighter bands, rolling in livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "wyld-tide",
+     "name": "WYLD Tide",
+     "kind": "dye",
+     "decalDark": "#ffffff",
+     "finish": {
+      "roughness": 0.3,
+      "metalness": 0.15,
+      "clearcoat": 1
+     },
+     "dye": {
+      "darkness": 0,
+      "sheer": 0,
+      "angle": 96,
+      "scale": 2.7,
+      "flow": 1.5
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/wyld_room.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "wyld",
+     "name": "The WYLD Room"
+    }
+   ]
+  },
+  {
+   "id": "edition-wyld-sheer",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "WYLD Sheer",
+   "sub": "Candy tint over bare carbon",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "wyld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "A translucent clear coat: the dye tints the carbon instead of covering it, so the weave glows through pink and aqua.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Candy tint over bare carbon livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "wyld-sheer",
+     "name": "WYLD Sheer",
+     "kind": "dye",
+     "decalDark": "#ff3d8e",
+     "finish": {
+      "roughness": 0.18,
+      "metalness": 0.15,
+      "clearcoat": 1
+     },
+     "dye": {
+      "darkness": 0,
+      "sheer": 0.75,
+      "angle": 20,
+      "scale": 1.2,
+      "flow": 0.8
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/wyld_room.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "wyld",
+     "name": "The WYLD Room"
+    }
+   ]
+  },
+  {
+   "id": "edition-wyld-night",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "WYLD Night",
+   "sub": "Same hues, after dark",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "wyld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "The dye at dusk on the Queen K: every hue kept, the value dropped, with aqua lettering that catches the last light.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Same hues, after dark livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "wyld-night",
+     "name": "WYLD Night",
+     "kind": "dye",
+     "decalDark": "#8fe7dc",
+     "finish": {
+      "roughness": 0.3,
+      "metalness": 0.15,
+      "clearcoat": 1
+     },
+     "dye": {
+      "darkness": 0.62,
+      "sheer": 0,
+      "angle": 140,
+      "scale": 1.9,
+      "flow": 1.2
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/wyld_room.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "wyld",
+     "name": "The WYLD Room"
+    }
+   ]
+  },
+  {
+   "id": "edition-galleries-bio",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Bio room CFR",
+   "sub": "Bio",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "galleries",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Bio livery, as shown in the Bio room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "theme-bio",
+     "name": "Bio",
+     "kind": "theme",
+     "frame": "#1f6b3a",
+     "glow": {
+      "color": "#1f6b3a",
+      "intensity": 0.28
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "room-bio",
+     "name": "Bio"
+    }
+   ]
+  },
+  {
+   "id": "edition-galleries-horror",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Horror room CFR",
+   "sub": "Horror",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "galleries",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Horror livery, as shown in the Horror room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "theme-horror",
+     "name": "Horror",
+     "kind": "theme",
+     "frame": "#1a0a0e",
+     "glow": {
+      "color": "#1a0a0e",
+      "intensity": 0.28
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "room-horror",
+     "name": "Horror"
+    }
+   ]
+  },
+  {
+   "id": "edition-galleries-alien",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Alien room CFR",
+   "sub": "Alien",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "galleries",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Alien livery, as shown in the Alien room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "theme-alien",
+     "name": "Alien",
+     "kind": "theme",
+     "frame": "#0c3d3a",
+     "glow": {
+      "color": "#0c3d3a",
+      "intensity": 0.28
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "room-alien",
+     "name": "Alien"
+    }
+   ]
+  },
+  {
+   "id": "edition-galleries-zombie",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Zombie room CFR",
+   "sub": "Zombie",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "galleries",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Zombie livery, as shown in the Zombie room. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "theme-zombie",
+     "name": "Zombie",
+     "kind": "theme",
+     "frame": "#5a5834",
+     "glow": {
+      "color": "#5a5834",
+      "intensity": 0.28
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "room-zombie",
+     "name": "Zombie"
+    }
+   ]
+  },
+  {
+   "id": "edition-lava-night-lava-night",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Lava Night",
+   "sub": "Lava Night",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "lava-night",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Lava Night livery, as shown in Lava Night. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "lava-night",
+     "name": "Lava Night",
+     "kind": "theme",
+     "frame": "#141116",
+     "finish": {
+      "roughness": 0.32,
+      "metalness": 0.25,
+      "clearcoat": 1
+     },
+     "decals": {
+      "color": "#ff7a1a",
+      "glow": "#ff4d00",
+      "intensity": 1.6
+     }
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "hween",
+     "name": "Lava Night"
+    }
+   ]
+  },
+  {
+   "id": "edition-artworld-witchcraft",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Witchcraft",
+   "sub": "Witchcraft",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "artworld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Black-violet lacquer with a quiet ritual glow.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Witchcraft livery, as shown in the Secret Collection. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "art-witchcraft",
+     "name": "Witchcraft",
+     "kind": "theme",
+     "frame": "#130d1a",
+     "accent": "#8e59c4",
+     "note": "Black-violet lacquer with a quiet ritual glow."
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "secret",
+     "name": "The Secret Collection"
+    }
+   ]
+  },
+  {
+   "id": "edition-artworld-stitched",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Stitched",
+   "sub": "Stitched",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "artworld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Bone-toned shell, dark seams and polished metal.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Stitched livery, as shown in the Secret Collection. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "art-stitched",
+     "name": "Stitched",
+     "kind": "theme",
+     "frame": "#d7cdbc",
+     "accent": "#8e2635",
+     "note": "Bone-toned shell, dark seams and polished metal."
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "secret",
+     "name": "The Secret Collection"
+    }
+   ]
+  },
+  {
+   "id": "edition-artworld-pagan",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Pagan",
+   "sub": "Pagan",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "artworld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Dark bronze and runic gold, restrained rather than costume-like.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Pagan livery, as shown in the Secret Collection. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "art-pagan",
+     "name": "Pagan",
+     "kind": "theme",
+     "frame": "#211b14",
+     "accent": "#a5823a",
+     "note": "Dark bronze and runic gold, restrained rather than costume-like."
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "secret",
+     "name": "The Secret Collection"
+    }
+   ]
+  },
+  {
+   "id": "edition-artworld-moonlit",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Moonlit",
+   "sub": "Moonlit",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "artworld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Midnight carbon that changes under cold highlights.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Moonlit livery, as shown in the Secret Collection. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "art-moonlit",
+     "name": "Moonlit",
+     "kind": "theme",
+     "frame": "#0a1627",
+     "accent": "#8ca5d0",
+     "note": "Midnight carbon that changes under cold highlights."
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "secret",
+     "name": "The Secret Collection"
+    }
+   ]
+  },
+  {
+   "id": "edition-artworld-carnival",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Carnival",
+   "sub": "Carnival",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "artworld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Oxblood lacquer with pale graphic fragments.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Carnival livery, as shown in the Secret Collection. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "art-carnival",
+     "name": "Carnival",
+     "kind": "theme",
+     "frame": "#4b111d",
+     "accent": "#e2c5a4",
+     "note": "Oxblood lacquer with pale graphic fragments."
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "secret",
+     "name": "The Secret Collection"
+    }
+   ]
+  },
+  {
+   "id": "edition-artworld-ritual-forest",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Ritual Forest",
+   "sub": "Ritual Forest",
+   "year": 2027,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "museum-edition",
+   "edition": "artworld",
+   "base": "canyon-cfr-2027",
+   "glb": "assets/museum/speedmax_web.glb",
+   "museum": true,
+   "text": "Black-green carbon with mossy reflections and bronze details.",
+   "facts": [
+    {
+     "cls": "I",
+     "text": "A Speedmax CFR in the Ritual Forest livery, as shown in the Secret Collection. The frame is the CFR model; only the paint is the edition's."
+    }
+   ],
+   "skins": [
+    {
+     "id": "art-ritual-forest",
+     "name": "Ritual Forest",
+     "kind": "theme",
+     "frame": "#0d1c15",
+     "accent": "#62805f",
+     "note": "Black-green carbon with mossy reflections and bronze details."
+    }
+   ],
+   "sources": [
+    {
+     "label": "Livery",
+     "file": "museum/skins/museum.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "secret",
+     "name": "The Secret Collection"
     }
    ]
   }

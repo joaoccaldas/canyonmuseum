@@ -51,14 +51,8 @@ const PLACE_DEFS = [
   },
 ];
 
-const HORROR_THEMES = [
-  { name: 'Witchcraft', paint: '#130d1a', accent: '#8e59c4', note: 'Black-violet lacquer with a quiet ritual glow.' },
-  { name: 'Stitched', paint: '#d7cdbc', accent: '#8e2635', note: 'Bone-toned shell, dark seams and polished metal.' },
-  { name: 'Pagan', paint: '#211b14', accent: '#a5823a', note: 'Dark bronze and runic gold, restrained rather than costume-like.' },
-  { name: 'Moonlit', paint: '#0a1627', accent: '#8ca5d0', note: 'Midnight carbon that changes under cold highlights.' },
-  { name: 'Carnival', paint: '#4b111d', accent: '#e2c5a4', note: 'Oxblood lacquer with pale graphic fragments.' },
-  { name: 'Ritual Forest', paint: '#0d1c15', accent: '#62805f', note: 'Black-green carbon with mossy reflections and bronze details.' },
-];
+// the secret collection's liveries live in museum/skins/museum.json (group: artworld)
+const HORROR_THEMES = (window.__SKINS?.skins || []).filter(s => s.group === 'artworld').map(s => ({ name: s.name, paint: s.frame, accent: s.accent, note: s.note }));
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const smooth = t => t * t * (3 - 2 * t);
@@ -455,7 +449,7 @@ export async function initArtWorld(museum) {
       [39.1,-21.8,Math.PI/2],[50.9,-19.0,-Math.PI/2],
     ];
 
-    for (let i=0;i<fullCount;i++) {
+    for (let i=0;i<Math.min(fullCount, HORROR_THEMES.length);i++) {
       const theme = HORROR_THEMES[i];
       const holder = cloneBikeForCollection(source.bike);
       repaintBike(holder,theme,false);

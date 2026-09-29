@@ -4,9 +4,10 @@
 // of Italian parts, and the brothers who started it. The lane ends at a glass building with the
 // current Speedmax in front. Drag up/down (or scroll) to walk; tap a chapter to read it.
 import * as THREE from 'three';
+import { FONT, SERIF } from '../engine/type.js';
 import { canvasTex, seeded, lite } from './engine.js';
 
-const FONT = "'Manrope',system-ui,sans-serif", SERIF = "'Instrument Serif',Georgia,serif";
+
 const mat = o => new THREE.MeshStandardMaterial(o);
 const at = (o, x, y, z) => { o.position.set(x, y, z); return o; };
 function label(w, h, draw, px = 1024, opaque = false) {

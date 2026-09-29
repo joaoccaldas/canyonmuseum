@@ -64,8 +64,39 @@ for (const b of J('museum/atlas/bikes.json').bikes) {
     sources: [{ label: 'Bike record', file: 'museum/atlas/bikes.json' }, b.ref ? { label: `Photo: ${b.ref.artist} (${b.ref.license})`, url: b.ref.page } : null].filter(Boolean),
   });
 }
+// museum editions: bikes shown in a room as a Speedmax CFR in that room's livery. Each is a product,
+// so every bike in the building can be opened, repainted and shared in the studio.
+const CFR = { glb: GLB.cfr, base: 'canyon-cfr-2027' };
+const edition = (group, id, name, sub, skin, text, where) => products.push({
+  id: `edition-${group}-${id}`, brand: 'Canyon', family: 'Speedmax', name, sub, year: 2027, type: 'bike', category: 'triathlon',
+  origin: 'museum-edition', edition: group, base: CFR.base, glb: CFR.glb, museum: true, text,
+  facts: [{ cls: 'I', text: `A Speedmax CFR in the ${sub} livery, as shown in ${where}. The frame is the CFR model; only the paint is the edition's.` }],
+  skins: [skin], sources: [{ label: 'Livery', file: group === 'film' ? 'museum/themes/films.json' : group === 'wyld' ? 'museum/wyld_room.json' : 'museum/skins/museum.json' }],
+});
+for (const f of J('museum/themes/films.json').films)
+  edition('film', f.id, f.name, `${f.film} · ${f.persona}`, { id: `film-${f.id}`, name: f.name, kind: 'dye', dye: { stops: f.stops, angle: f.angle, scale: f.scale, flow: f.flow, darkness: f.darkness || 0 } }, f.tagline, 'the Sanctuary');
+for (const v of J('museum/wyld_room.json').variants)
+  edition('wyld', v.id, v.name, v.sub, { id: `wyld-${v.id}`, name: v.name, kind: 'dye', decalDark: v.decal, finish: { roughness: v.wyld?.sheer > .5 ? .18 : .3, metalness: .15, clearcoat: 1 }, dye: v.wyld }, v.text, 'the WYLD Room');
+for (const sk of skins.filter(x => ['galleries', 'lava-night', 'artworld'].includes(x.group)))
+  edition(sk.group, sk.id.replace(/^(theme|art)-/, ''), sk.group === 'galleries' ? `${sk.name} room CFR` : sk.name, sk.name, { ...sk, group: undefined }, sk.note || '', sk.group === 'galleries' ? `the ${sk.name} room` : sk.group === 'lava-night' ? 'Lava Night' : 'the Secret Collection');
+
+// where each product can be seen: the rooms registry and the wings
+const ROOMS = J('museum/world/rooms.json').areas;
+const WINGS = J('museum/world/wings/index.json').wings.map(f => J(`museum/world/wings/${f}`));
+for (const p of products) {
+  const where = [];
+  for (const r of ROOMS) {
+    const ex = r.exhibits || {};
+    if (ex.products?.includes(p.id)) where.push(r.id);
+    if (p.edition && ex.editions === p.edition && (!ex.edition || p.skins[0]?.id === ex.edition)) where.push(r.id);
+  }
+  if (p.atlasKey) { const b = J('museum/atlas/bikes.json').bikes.find(x => x.key === p.atlasKey); for (const w of WINGS) if (w.rooms.some(r => r.id === b.room)) where.push(`atlas-${w.id}-${b.room}`); }
+  const nameOf = id => ROOMS.find(r => r.id === id)?.name || WINGS.flatMap(w => w.rooms.map(r => [`atlas-${w.id}-${r.id}`, `${r.name} · ${w.name}`])).find(([k]) => k === id)?.[1] || id;
+  p.where = [...new Set(where)].map(id => ({ id, name: nameOf(id) }));
+  p.museum = p.where.length > 0;
+}
 for (const p of products) if (!exists(p.glb)) throw new Error(`missing model for ${p.id}: ${p.glb}`);
-const out = { schema_version: 1, generated_by: 'tools/build_catalog.mjs', count: products.length,
+const out = { schema_version: 1, generated_by: 'tools/build_catalog.mjs', count: products.length, in_museum: products.filter(p => p.museum).length,
   studio_only: products.filter(p => !p.museum).length, brands: [...new Set(products.map(p => p.brand))], products };
 fs.writeFileSync(path.join(root, 'museum/catalog/products.json'), JSON.stringify(out, null, 1));
 console.log(`products.json · ${products.length} products (${out.studio_only} studio-only) · brands: ${out.brands.join(', ')}`);

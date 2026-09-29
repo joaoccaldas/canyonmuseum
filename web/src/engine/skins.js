@@ -119,6 +119,5 @@ export function skinFromWyld(v) {
   return { id: `wyld-${v.id}`, name: v.name, kind: 'dye', decalDark: v.decal, finish: { roughness: v.wyld?.sheer > .5 ? .18 : .3, metalness: .15, clearcoat: 1 }, dye: v.wyld };
 }
 export function skinFromFilm(f) {
-  const dark = ['aero-glam', 'lake-house', 'hex'].includes(f.id) ? .45 : 0;
-  return { id: `film-${f.id}`, name: f.name, kind: 'dye', dye: { stops: f.stops, angle: f.angle, scale: f.scale, flow: f.flow, darkness: dark } };
+  return { id: `film-${f.id}`, name: f.name, kind: 'dye', dye: { stops: f.stops, angle: f.angle, scale: f.scale, flow: f.flow, darkness: f.darkness || 0 } };
 }

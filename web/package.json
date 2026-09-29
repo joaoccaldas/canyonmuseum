@@ -13,7 +13,8 @@
     "audit:phones": "node phone-layout-audit.mjs",
     "audit:zfight": "node zfight-audit.mjs",
     "validate:bikes": "cd .. && node tools/validate-bikes.mjs",
-    "check": "npm test && npm run validate:bikes"
+    "check": "npm test && npm run validate:bikes",
+    "build": "cd .. && node tools/build_pages.mjs"
   },
   "keywords": [
     "threejs",
