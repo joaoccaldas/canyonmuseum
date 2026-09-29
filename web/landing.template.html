@@ -81,6 +81,7 @@ body.walking #rail{transform:none}
 .chip.on .n{background:#2a3138}
 .chip.kona .n{background:linear-gradient(135deg,var(--wyld),var(--wyld-lilac) 50%,var(--wyld-aqua));color:#fff}
 .chip.pier .n{background:#12181d}
+.chip.hween .n{background:radial-gradient(circle at 50% 60%,#ff7a1a,#3a1206 70%);font-size:20px}
 .chip.wyld .n{background:linear-gradient(135deg,#ff3d8e,#ff8fbf 30%,#e9cde8 50%,#8fe7dc 70%,#5fd8d3);color:#fff}
 .chip.ghost .n{background:transparent;border:1px dashed rgba(18,24,29,.25);color:var(--faint)}
 .chip span{display:flex;flex-direction:column;gap:2px}
@@ -217,6 +218,8 @@ body.walking .credit{display:none}
   .logo b{font-size:14px}.logo small{font-size:10px}
   nav a,nav button{padding:11px 16px;font-size:13px}
   nav .wide{display:none}
+  nav .long{display:none}
+  #installBtn{text-transform:capitalize}
   #intro{align-items:flex-end;padding:0 22px calc(28px + var(--safe-b));
     background:linear-gradient(0deg,rgba(244,239,231,.97) 0%,rgba(244,239,231,.9) 48%,rgba(244,239,231,.1) 78%,transparent 100%)}
   h1{font-size:clamp(44px,13vw,64px);margin:16px 0}
@@ -248,7 +251,7 @@ body.walking .credit{display:none}
 <header>
   <a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
   <nav>
-    <button id="installBtn" hidden title="Install the museum on this device">Get the app</button>
+    <button id="installBtn" hidden title="Install the museum on this device"><span class="long">Get the </span>app</button>
     <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
     <a href="Canyon_Collection.html#compare">Compare</a>
     <a class="wide" href="Canyon_Collection.html#archive">Archive</a>

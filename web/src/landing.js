@@ -8,6 +8,7 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { buildPier, pierWalkable, PIER, ordinal } from './pier.js';
 import { initAppShell } from './app-shell.js';
+import { buildHalloween, hweenWalkable, HDOOR } from './halloween.js';
 import { applyWyld } from './skins/wyld.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
@@ -69,7 +70,7 @@ function walkable(x, z) {
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
   const inDoor2 = x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
   const inWyld = x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
-  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z))) return false;
+  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK)) return false;
   for (const o of obstacles) {
     if (o.c && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
     if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
@@ -178,13 +179,14 @@ floor.position.set(0, -.2, CZ); floor.receiveShadow = true; floor.userData.floor
   for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .004, -16.5); hall.add(e); }
 }
 // plaster wall (lava side) with a shadow-gap skirting
-for (const [a, b] of [[HALL.z0, DOOR.z1], [DOOR.z0, WDOOR.z1], [WDOOR.z0, HALL.z1]]) {
+for (const [a, b] of [[HALL.z0, HDOOR.z1], [HDOOR.z0, DOOR.z1], [DOOR.z0, WDOOR.z1], [WDOOR.z0, HALL.z1]]) {   // doorways: Lava Night, Kona Champions, WYLD
   const seg = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h, a - b), M.plaster);
   seg.position.set(HALL.x0 - .15, HALL.h / 2, (a + b) / 2); seg.receiveShadow = seg.castShadow = true; hall.add(seg);
 }
 { const lintel = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h - DOOR.h, DOOR.z1 - DOOR.z0), M.plaster);
   lintel.position.set(HALL.x0 - .15, DOOR.h + (HALL.h - DOOR.h) / 2, (DOOR.z0 + DOOR.z1) / 2); hall.add(lintel);
-  const l2 = lintel.clone(); l2.position.z = (WDOOR.z0 + WDOOR.z1) / 2; hall.add(l2); }
+  const l2 = lintel.clone(); l2.position.z = (WDOOR.z0 + WDOOR.z1) / 2; hall.add(l2);
+  const l3 = lintel.clone(); l3.position.z = (HDOOR.z0 + HDOOR.z1) / 2; hall.add(l3); }
 const backWall = new THREE.Mesh(new THREE.BoxGeometry(L, HALL.h, .3), M.plaster);
 backWall.position.set(0, HALL.h / 2, HALL.z0 + .15); backWall.receiveShadow = true; hall.add(backWall);
 // glass wall to the ocean, and the apse's glass end wall
@@ -583,7 +585,7 @@ const spinners = [];
     sway.push({ o: crown, phase: seed * 1.7, amp: .012, pivot: true });
     scene.add(g); obstacles.push({ c: new THREE.Vector3(x, 0, z), r: .55 }); return g;
   }
-  [[6.1, 2.6], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, 3.6], KY ? [-6.1, -37.4] : [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
+  [[6.1, 2.6], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, -3.9], KY ? [-6.1, -37.4] : [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
     .forEach(([x, z], i) => pottedPalm(x, z, 2.2 + (i % 3) * .25, i + 1));
   if (WROOMDATA) [[WROOM.x0 + 3.2, WROOM.z0 - .8], [WROOM.x0 + 3.2, WROOM.z1 + .8], [WROOM.x1 - 1.1, WROOM.z1 + .8]].forEach(([x, z], i) => pottedPalm(x, z, 2.6, i + 7));
   [[ROOM.x0 + .9, ROOM.z0 - .9], [ROOM.x0 + .9, ROOM.z1 + .9]].forEach(([x, z], i) => pottedPalm(x, z, 2.4, i + 11));
@@ -742,6 +744,9 @@ heritage.forEach((p, i) => {
 
 // ------------------------------------------------------------------ the Kona Pier: Kona by Year
 const pier = KY ? buildPier({ scene, data: KY, lettering, canvasTex, M, WYLD, FONT, SERIF, lite, coarse, pickables, obstacles }) : null;
+// ------------------------------------------------------------------ Lava Night: the Halloween room by the entrance
+const hween = buildHalloween({ scene, canvasTex, lettering, lightPool, basaltTex, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x0 });
+hall.add(hween.sign);
 
 // ------------------------------------------------------------------ bikes (streamed, nearest first)
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -799,6 +804,12 @@ async function loadPierBike() {                                       // the cur
   dressBike(gltf.scene, { key: 'cfr', finish: null }); gltf.scene.traverse(o => { o.castShadow = false; });
   pier.setBike(gltf.scene);
 }
+async function loadHweenBike() {
+  const cfr = PIECES.find(p => p.key === 'cfr'); if (!cfr?.glb || hween.piece.bike) return;
+  const gltf = await loader.loadAsync(cfr.glb);
+  hween.setBike(gltf.scene, b => dressBike(b, { key: 'cfr', finish: null }));
+  hween.piece.bike.traverse(o => { if (o.isMesh) { o.userData.hween = hween.piece; delete o.userData.piece; } });
+}
 async function loadAll() {
   const order = [...modelled].sort((a, b) => a.pos.distanceTo(start) - b.pos.distanceTo(start));
   for (const p of order) {
@@ -816,8 +827,8 @@ let started = false, path = null, keys = new Set(), current = null, drag = null,
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
-const roomOf = (x, z) => KY && z < -46.3 ? 'pier' : x >= WALK.x0 - .05 ? 'hall' : z > -26.1 ? 'champ' : 'wyld';
-const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5 };
+const roomOf = (x, z) => KY && z < -46.3 ? 'pier' : x >= WALK.x0 - .05 ? 'hall' : z > -8.6 ? 'hween' : z > -26.1 ? 'champ' : 'wyld';
+const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5, hween: (HDOOR.z0 + HDOOR.z1) / 2 };
 const PIER_IN = [{ x: 1.2, z: -38.6 }, { x: 5.6, z: -38.6 }, { x: 5.4, z: -44.6 }, { x: 5.4, z: -48.4 }];   // round the apse plinth, through the glass door
 function route(to, face, piece) {                                   // via doorways and the open aisle, never through plinths
   const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
@@ -955,12 +966,32 @@ function openFinale() {
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 
+// ------------------------------------------------------------------ Lava Night
+function visitHween() {
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null; loadHweenBike();
+  route(hween.piece.view, hween.piece.face, null); path.hween = true;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'hween'));
+}
+function openHween() {
+  current = null; champ = null;
+  const cfr = PIECES.find(p => p.key === 'cfr');
+  $('cYears').textContent = 'Lava Night · Halloween'; $('cName').textContent = 'Speedmax CFR, after dark';
+  $('cMat').textContent = 'Midnight black · ember lettering · a museum livery';
+  $('cNote').textContent = 'Once a year the lava field under the museum wakes up. The lanterns are carved, the bats are out, and the MY2027 Speedmax CFR wears black and ember. The paint is ours, made for the night — not a Canyon colourway. The skeleton is still waiting for its finish line.';
+  $('cStats').hidden = !cfr?.stats; if (cfr?.stats) $('cStats').innerHTML = cfr.stats.map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
+  $('cMedia').innerHTML = '';
+  $('cActions').innerHTML = (cfr?.viewer ? `<a class="btn primary" href="${esc(cfr.viewer)}"><span class="long">Enter </span>3D studio <span aria-hidden="true">→</span></a>` : '') + `<button class="btn ghost" id="cHweenOut">Back<span class="long"> to the hall</span></button>`;
+  $('cHweenOut').onclick = () => { closeCard(); route({ x: -1, z: 2.5 }, null, null); };
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+
 // ------------------------------------------------------------------ guided tour: hands-free walk through the highlights
 const tour = { on: false, i: -1, t: 0, paused: false, stops: [] };
 const DWELL = 9;                                                     // seconds at each stop
 function tourStops() {
   const H = PIECES.filter(p => p.glb && !p.flagship), F = PIECES.filter(p => p.flagship);
-  const stops = [...H.map(p => ({ kind: 'piece', p })),
+  const stops = [{ kind: 'hween' }, ...H.map(p => ({ kind: 'piece', p })),
     ...[0, 2, 4, 5].map(i => champs[i]).filter(Boolean).map(c => ({ kind: 'champ', c })),
     ...[0, 3].map(i => wyldBikes[i]).filter(Boolean).map(v => ({ kind: 'wyld', v })),
     ...F.map(p => ({ kind: 'piece', p })),
@@ -970,7 +1001,7 @@ function tourStops() {
 function tourGo(i) {
   tour.i = i; tour.t = 0; const st = tour.stops[i];
   if (!st) return tourEnd(true);
-  if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else if (st.kind === 'pier') visitPier(st.y); else visitWyld(st.v);
+  if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else if (st.kind === 'pier') visitPier(st.y); else if (st.kind === 'hween') visitHween(); else visitWyld(st.v);
   $('tourStep').textContent = `${i + 1} / ${tour.stops.length}`;
   $('tourBar').style.setProperty('--p', 0);
 }
@@ -1035,7 +1066,8 @@ $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? ''
 if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
-$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8); if (b.dataset.room === 'pier') visitPier(pier.stations[0]); else if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
+$('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
+$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8); if (b.dataset.room === 'hween') visitHween(); else if (b.dataset.room === 'pier') visitPier(pier.stations[0]); else if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
 function railActive(p) {
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', +c.dataset.i === p?.index));
   document.querySelector(`.chip[data-i="${p?.index}"]`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
@@ -1128,9 +1160,9 @@ function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.user
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
-  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
+  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, hween.group.visible ? hween.floor : null, ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
   for (const h of hits) { if (!h.object.visible) continue; const u = h.object.userData;
-    if (u.year) return { year: u.year }; if (u.era) return { era: u.era }; if (u.finale) return { finale: u.finale };
+    if (u.hween) return { hween: true }; if (u.year) return { year: u.year }; if (u.era) return { era: u.era }; if (u.finale) return { finale: u.finale };
     if (h.object.userData.info) return { info: h.object.userData.info }; if (h.object.userData.wyldBike) return { wyld: h.object.userData.wyldBike }; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
   return null;
 }
@@ -1155,7 +1187,8 @@ canvas.addEventListener('pointerup', e => {
   const hit = pick(e.clientX, e.clientY);
   if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
-  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.year || hit?.era || hit?.finale) { haptic(8); tourEnd(false); coachDid('tap'); }
+  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.year || hit?.era || hit?.finale || hit?.hween) { haptic(8); tourEnd(false); coachDid('tap'); }
+  if (hit?.hween) { visitHween(); return; }
   if (hit?.year || hit?.finale) { visitPier(hit.year || hit.finale); return; }
   if (hit?.era) { openEra(hit.era); return; }
   if (hit?.champ) { visitChamp(hit.champ); return; }
@@ -1179,6 +1212,7 @@ addEventListener('keydown', e => {
   if (k === 'k' && champs.length) visitChamp(champs[0]);
   if (k === 'y' && wyldBikes.length) visitWyld(wyldBikes[0]);
   if (k === 'p' && pier) visitPier(pier.stations[0]);
+  if (k === 'h') visitHween();
   if (k === 'enter' && current?.viewer) location.href = current.viewer;
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
@@ -1255,7 +1289,7 @@ function frame(now) {
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const wantPitch = Math.atan2(path.face.y - EYE, Math.hypot(fx, fz));
     P.yaw += dyaw * (1 - Math.exp(-dt * 3.5)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 3));
-    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier; path = null; if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
+    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween; path = null; if (hw) openHween(); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 9); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
@@ -1276,7 +1310,7 @@ function frame(now) {
   else if (camera.view?.enabled) camera.clearViewOffset();
   // hover (desktop): halo + name tag
   let hot = null;
-  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
+  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.hween ? { year: 'Lava Night', athlete: 'Speedmax CFR, after dark', time: 'Halloween' } : null) || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
     if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
@@ -1310,6 +1344,8 @@ function frame(now) {
     const reg = roomOf(P.x, P.z);
     for (const p of PIECES) if (p.bike) p.bike.visible = reg === 'hall' || Math.abs(p.pos.z - DOORZ[reg]) < 7;
     for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg === 'hall' && P.z < -20 && P.x < 3);
+    hween.group.visible = reg === 'hween' || (reg === 'hall' && P.z > -16);
+    if (hween.group.visible) hween.update(t, reduce);
     if (pier) {
       pier.group.visible = reg === 'pier' || (reg === 'hall' && P.z < -22);
       // out on the pier the two walled rooms can't be seen and the hall's shadows don't move: skip both
@@ -1332,5 +1368,5 @@ function frame(now) {
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 initAppShell();
-loadAll().then(loadWyldBikes).catch(e => console.warn('wyld room', e));
-window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, halt: () => { path = null; P.vx = P.vz = 0; } };
+loadAll().then(loadWyldBikes).then(loadHweenBike).catch(e => console.warn('rooms', e));
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, halt: () => { path = null; P.vx = P.vz = 0; } };
