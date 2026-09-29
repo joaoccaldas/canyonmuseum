@@ -25,6 +25,9 @@ test('landing page wires manifest and install experience', () => {
   assert.match(pwa, /beforeinstallprompt/);
   assert.match(pwa, /Add to Home Screen/);
   assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'(, \{ updateViaCache: 'none' \})?\)/);   // updateViaCache: installed apps always fetch a fresh sw.js
+  assert.match(pwa, /127\.0\.0\.1.*localhost.*\[::1\]/s);          // local dev never hides a stopped server behind cached HTML
+  assert.match(pwa, /getRegistrations\(\)/);
+  assert.match(pwa, /unregister\(\)/);
 });
 
 test('service worker is conservative and does not pre-cache large bike GLBs', () => {
@@ -39,4 +42,12 @@ test('installed apps pick up new versions and new icons', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(here, '../../manifest.webmanifest'), 'utf8'));
   for (const i of manifest.icons) assert.ok(fs.existsSync(path.join(here, '../..', i.src)), i.src);
   assert.ok(manifest.icons.some(i => i.purpose === 'maskable' && /-v\d+-/.test(i.src)));   // versioned names bust launcher caches
+});
+
+
+test('Three.js runtime does not use removed soft shadow map constant', () => {
+  const src = fs.readdirSync(path.join(root, 'web/src'), { recursive: true })
+    .filter(f => /\.m?js$/.test(f))
+    .map(f => fs.readFileSync(path.join(root, 'web/src', f), 'utf8')).join('\n');
+  assert.doesNotMatch(src, /PCFSoftShadowMap/);
 });
