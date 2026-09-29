@@ -1,5 +1,5 @@
 {
- "version": "a150ddd7a417",
+ "version": "aec1a3a4ab58",
  "core": [
   "index.html",
   "manifest.webmanifest",
@@ -10,7 +10,7 @@
   "assets/pwa/apple-touch-icon-v3.png"
  ],
  "files": {
-  "index.html": "wnsoPTgVQHDYhXm1i3gfn8bjIfw5rHkT9X23MillLQo=",
+  "index.html": "vCFRLT2OTwBI3yf8U1afpxP34xoruHjj9v+wNIY2T6c=",
   "manifest.webmanifest": "PahVaqvQpzQCohyq/Xisk9M+MPIkdt5LgJRpeCOlSro=",
   "assets/pwa/icon-v3.svg": "kX7Wf3uv1TGV8QngLT59Ot0XX50qljLbo7CNgFQm1ws=",
   "assets/pwa/icon-v3-192.png": "r7xyhMJsNe726HzraMgmSrjCQ6jgM6gTEQIlOAMlqIY=",
