@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { coarse as coarseDetect, small } from './detect.js';
 
 const ASSET_URL = 'assets/artworld/artworld_assets.glb';
 
@@ -230,8 +231,8 @@ function repaintBike(root, theme, simplified=false) {
 
 export async function initArtWorld(museum) {
   const { scene, camera, P, PIECES, pickables, obstacles } = museum;
-  const coarse = matchMedia('(pointer: coarse)').matches;
-  const mobile = coarse || innerWidth < 760;
+  const coarse = coarseDetect;
+  const mobile = coarse || small;
 
   const api = {
     ready: false,

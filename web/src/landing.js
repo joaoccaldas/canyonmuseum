@@ -11,6 +11,7 @@ import { initArtWorld } from './artworld.js';
 import { initInstallExperience } from './pwa.mjs';
 import { microNoise } from './tex.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { coarse as dc, small as ds } from './detect.js';
 
 const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
@@ -20,9 +21,11 @@ const WROOMDATA = window.__WYLDROOM || null;
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const coarse = matchMedia('(pointer: coarse)').matches;
+// Phone detection must survive a browser's "Desktop view", where pointer and
+// viewport width both lie; detect.js adds the physical-screen signal.
+const coarse = dc;
 if (coarse) document.body.classList.add('touch');
+const small = dssList.add('touch');
 const small = innerWidth < 760;
 const lite = coarse || small;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -16,11 +16,13 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import * as TX from './tex.js';
 import { BIKE, PROFILE, GEOMETRY, PARTS, GROUPS, PRESETS, SWATCHES, DECALS, VIEWS } from './data.js';
+import { coarse, desktopViewPhone } from './detect.js';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-const coarse = matchMedia('(pointer: coarse)').matches || innerWidth < 760;
+// coarse comes from detect.js: pointer:coarse, narrow viewport, or a phone in
+// "Desktop view" reporting a ~980 px layout on a small physical screen.
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const B2T = (v) => new THREE.Vector3(v[0], v[2], -v[1]);           // Blender (Z-up) -> three (Y-up)
 const R_WHEEL = .3395, R_RING = .0127/(2*Math.sin(Math.PI/(BIKE.chainring||50))), R_COG = .0127/(2*Math.sin(Math.PI/(BIKE.cog||14)));

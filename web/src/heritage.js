@@ -151,7 +151,11 @@ function fly(pos, tgt, instant) {
 }
 function view(name, instant) {
   const [p, t] = VIEWS[name];
-  const k = innerWidth < 820 ? (innerWidth < 480 ? 1.9 : 1.45) : 1;
+  // In a phone's "Desktop view" the layout is ~980 px wide but the physical
+  // screen is small — pull the camera back like a phone so the bike fits.
+  const physicalPhone = Math.min(screen.width || 1e5, screen.height || 1e5) <= 500;
+  const phoneish = physicalPhone || innerWidth < 820;
+  const k = phoneish ? ((physicalPhone || innerWidth < 480) ? 1.9 : 1.45) : 1;
   fly(new THREE.Vector3(p[0], p[1], p[2]).multiplyScalar(k).add(centre), new THREE.Vector3(t[0], t[1], t[2]).add(centre), instant);
   $$('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === name));
 }

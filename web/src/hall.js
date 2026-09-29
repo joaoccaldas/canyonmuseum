@@ -5,10 +5,10 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { coarse } from './detect.js';
 
 const BIKES = window.__HALL || [];
 const $ = s => document.querySelector(s);
-const coarse = matchMedia('(pointer: coarse)').matches || innerWidth < 820;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PLINTH_GAP = 3.4;                    // metres between bike centres
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

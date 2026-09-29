@@ -216,6 +216,35 @@ footer{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(10px
 @media (min-width:761px){.hr .pill.active{background:#e8f4f2;color:#0b1016}.hr .pill.active svg{color:#0f8c78}}
 .drawer [hidden]{display:none!important}
 #setupNote{margin:0 0 10px}
+
+/* ---- phone in "Desktop view" (wide layout viewport on a small screen): the
+   media queries above never fire because innerWidth is ~980 px, so mirror the
+   essential phone layout under .is-phone (set by detect.js). Canvas untouched. */
+html.is-phone header{padding-top:max(12px,env(safe-area-inset-top));padding-left:12px;padding-right:12px;flex-wrap:wrap}
+html.is-phone .brand{flex:1 0 100%;flex-direction:row;align-items:center;justify-content:space-between}
+html.is-phone .brand b{font-size:11px;letter-spacing:.24em}html.is-phone .brand small{font-size:9px}
+html.is-phone .hr{width:100%;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;background:#0b1016f2;border-radius:16px}
+html.is-phone .hr .pill{flex-shrink:0;padding:0 10px;height:36px;font-size:11px}
+html.is-phone .hr .pill span{display:none}html.is-phone .hr .pill svg{width:14px;height:14px}
+html.is-phone .hr .pill.active,html.is-phone body[data-ui=light] .hr .pill.active{color:#f1f6f7!important}
+html.is-phone .intro{top:78px;left:18px;right:18px}html.is-phone .intro p{display:none}
+html.is-phone .stats{gap:16px;margin-top:10px}html.is-phone .stats b{font-size:18px}
+html.is-phone .drawer{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-height:54dvh;border-radius:24px 24px 18px 18px;transform:translateY(calc(100% + 30px));padding:18px 18px 22px}
+html.is-phone .drawer.open{transform:none}
+html.is-phone .drawer::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:rgba(127,127,127,.35);margin:-6px auto 12px}
+html.is-phone .drawer .eyebrow{font-size:10px}html.is-phone .drawer h2{font-size:21px;margin:6px 0 2px}html.is-phone .drawer .lead{display:none}
+html.is-phone .drawer h3{font-size:11px;margin:18px 0 10px}html.is-phone .drawer .x{top:12px;right:12px;width:40px;height:40px;font-size:18px}
+html.is-phone .presets{display:flex;overflow-x:auto;gap:10px;scroll-snap-type:x mandatory;margin:0 -18px;padding:2px 18px 6px;scrollbar-width:none}
+html.is-phone .presets::-webkit-scrollbar{display:none}
+html.is-phone .presets button{flex:0 0 58%;scroll-snap-align:start;padding:13px;min-height:64px}
+html.is-phone .presets strong{font-size:14.5px}html.is-phone .presets span{font-size:12px}
+html.is-phone #card{left:10px;right:10px;width:auto;bottom:calc(max(16px,env(safe-area-inset-bottom)) + 150px)}
+html.is-phone #hint{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 150px)}
+html.is-phone footer{display:none}
+html.is-phone #tour{left:12px;bottom:145px;width:calc(100% - 24px);padding:16px}
+html.is-phone #tour h3{font-size:18px;margin:8px 0}html.is-phone #tour p{font-size:11px;margin:6px 0}
+html.is-phone #lab{max-height:44vh;top:auto}html.is-phone #lab-hud{left:15px;top:98px;gap:5px}html.is-phone #lab-hud>b{font-size:14px}
+html.is-phone body.in-lab .dock{display:none}html.is-phone .lab-metrics b{font-size:27px}
 @media (max-width:760px){
   .hr .pill,.hr #tourStart,.hr #labOpen{font-size:11px!important}
   .hr .pill.active,body[data-ui=light] .hr .pill.active{color:#f1f6f7!important}
