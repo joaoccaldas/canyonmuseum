@@ -39,11 +39,20 @@ export function initInstallExperience({ button, toast }) {
   });
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    addEventListener('load', () => navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
-      // installed apps can stay open for days: look for a new museum whenever the app comes back to the foreground
-      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
-      const hadController = !!navigator.serviceWorker.controller;
-      navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) toast?.('Museum updated — reopen to see what is new'); });
-    }).catch(err => console.warn('service worker', err)));
+    const localDev = ['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname);
+    addEventListener('load', async () => {
+      if (localDev) {
+        // Local development must fail honestly when the server stops. A cached localhost app
+        // hides connection failures and makes stale bundles look current.
+        const regs = await navigator.serviceWorker.getRegistrations().catch(() => []);
+        await Promise.all(regs.map(reg => reg.unregister().catch(() => false)));
+        return;
+      }
+      navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+        const hadController = !!navigator.serviceWorker.controller;
+        navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) toast?.('Museum updated — reopen to see what is new'); });
+      }).catch(err => console.warn('service worker', err));
+    });
   }
 }
