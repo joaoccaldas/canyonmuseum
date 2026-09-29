@@ -3,8 +3,20 @@ name: Rebuild Kona discovery outputs
 on:
   push:
     branches: [feat/launch-kona-discovery-20260930]
-    paths:
-      - 'museum/kona/island-guide.json'
+    paths-ignore:
+      - 'sw.js'
+      - 'app/app-manifest.json'
+      - 'llms.txt'
+      - 'llms-full.txt'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - 'docs/ROOMS.md'
+      - 'index.html'
+      - 'Studio.html'
+      - 'Experiences.html'
+      - 'Canyon_Collection.html'
+      - 'Speedmax_*_Museum.html'
+      - 'web/dist/**'
 
 permissions:
   contents: write
