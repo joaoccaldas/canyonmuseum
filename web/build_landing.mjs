@@ -111,6 +111,7 @@ const html = fs.readFileSync(path.join(here, 'landing.template.html'), 'utf8')
   .replace('__PIECES__', () => JSON.stringify(pieces).replaceAll('<', '\\u003c'))
   .replace('__KONA__', () => fs.readFileSync(path.join(root, 'museum/kona_champions.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__WYLDROOM__', () => fs.readFileSync(path.join(root, 'museum/wyld_room.json'), 'utf8').replaceAll('<', '\\u003c'))
+  .replace('__ATLAS__', () => fs.readFileSync(path.join(root, 'museum/atlas/bikes.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__KONAYEARS__', () => JSON.stringify(JSON.parse(fs.readFileSync(path.join(root, 'museum/kona_years.json'), 'utf8'))).replaceAll('<', '\\u003c'))
   .replace('__APP__', () => app);
 const out = process.env.OUT_HTML || path.join(root, 'index.html');

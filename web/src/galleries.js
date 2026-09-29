@@ -80,7 +80,10 @@ export function buildGalleries(ctx) {
   const deck = new THREE.Mesh(new THREE.BoxGeometry(NAVE.x1 - NAVE.x0, .16, NAVE.z0 - NAVE.z1), naveFloor);
   deck.userData.floor = true;
   at(deck, (NAVE.x0 + NAVE.x1) / 2, Y - .08, (NAVE.z0 + NAVE.z1) / 2);
-  wall(NAVE.x1 - NAVE.x0, 4.4, .18, (NAVE.x0 + NAVE.x1) / 2, Y + 2.2, NAVE.z0);
+  // north wall, with the doorway into Against the Clock (x 11.8–15.4, see atlas.js)
+  wall(11.8 - NAVE.x0, 4.4, .18, (NAVE.x0 + 11.8) / 2, Y + 2.2, NAVE.z0);
+  wall(NAVE.x1 - 15.4, 4.4, .18, (15.4 + NAVE.x1) / 2, Y + 2.2, NAVE.z0);
+  wall(15.4 - 11.8, 1.0, .18, 13.6, Y + 3.9, NAVE.z0);
   wall(.18, 4.4, NAVE.z0 - NAVE.z1, NAVE.x0, Y + 2.2, (NAVE.z0 + NAVE.z1) / 2, glass);
 
   const floors = [deck];

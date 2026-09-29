@@ -8,10 +8,12 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { buildPier, pierWalkable, PIER, ordinal } from './pier.js';
 import { initAppShell } from './app-shell.js';
-import { buildHalloween, hweenWalkable, HDOOR } from './halloween.js';
+import { buildHalloween, hweenWalkable, HDOOR, HROOM } from './halloween.js';
 import { buildSanctuary, sanctuaryWalkable, SDOOR, SROOM } from './sanctuary.js';
 import { buildGalleries, galleryWalkable, galleryFloorY, EDOOR, UPPER } from './galleries.js';
 import { createRoomSound } from './roomSound.js';
+import { buildAtlas, atlasWalkable, atlasFloorY, inAtlas, AROOMS, ATLAS } from './atlas.js';
+import { initMap } from './map.js';
 import { applyWyld } from './skins/wyld.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
@@ -82,7 +84,7 @@ function walkable(x, z) {
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
   const inDoor2 = x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
   const inWyld = x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
-  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z)) return false;
+  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z) && !atlasWalkable(x, z)) return false;
   for (const o of obstacles) {
     if (o.c && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
     if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
@@ -898,6 +900,7 @@ const sanctuary = buildSanctuary({ scene, lettering, lightPool, FONT, SERIF, lit
 sanctuary.sign.position.set(0, SDOOR.h + .7, HALL.z0 - .04); sanctuary.sign.rotation.y = Math.PI; hall.add(sanctuary.sign);
 const galleries = buildGalleries({ scene, lettering, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x1 });
 galleries.sign.rotation.y = -Math.PI / 2; hall.add(galleries.sign);
+const atlas = buildAtlas({ scene, lettering, FONT, SERIF, lite, pickables, obstacles });
 
 // ------------------------------------------------------------------ bikes (streamed, nearest first)
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -1109,6 +1112,7 @@ passportProgress();
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const roomOf = (x, z) => {
   const art = window.__museumArt?.regionOf?.(x, z); if (art) return art;
+  if (inAtlas(x, z)) return 'gallery';                              // Against the Clock is part of the upper floor
   if (x > 7.15 && z > .6 && z < 28 && x < 26) return galleryFloorY(x, z) > 2.2 ? 'gallery' : 'stair';
   if (z > HALL.z0 - .15 && x > SROOM.x0 && x < SROOM.x1) return 'sanctuary';
   if (KY && z < -46.3) return 'pier';
@@ -1327,6 +1331,56 @@ function openGallery(spot) {
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 
+// ------------------------------------------------------------------ Against the Clock (atlas.js)
+function visitAtlas(inst) {
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null;
+  route(inst.view, inst.face, null); path.atlas = inst;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'atlas'));
+}
+function visitAtlasRoom(room) {
+  closeCard(); champ = null;
+  if (room.id === 'paint') { visitAtlas(atlas.show); return; }
+  const first = room.bikes[0];
+  if (first) { visitAtlas(first); return; }
+  route(room.view, room.look, null);
+}
+const EVIDENCE = { P: 'Published fact', F: 'Read from the photograph', I: 'Inferred for the model' };
+function openAtlas(inst) {
+  current = null; champ = null;
+  const b = inst.data; if (!b) return;
+  const list = atlas.bikes.map(x => x.data), i = list.indexOf(b), next = atlas.bikes[(i + 1) % atlas.bikes.length];
+  $('cYears').textContent = `${b.year || b.era || ''}${b.year || b.era ? ' · ' : ''}${b.maker}`;
+  $('cName').textContent = b.name;
+  $('cMat').textContent = inst.showcase ? 'Paint shop · the turntable' : b.kind === 'type' ? 'Type study · no maker modelled' : 'Rebuilt from an open-licensed photograph';
+  $('cNote').textContent = b.text;
+  $('cStats').hidden = true;
+  const skins = b.skins.map((sk, k) => `<button data-skin="${k}" aria-pressed="${inst.skin === sk}"><i style="background:linear-gradient(135deg,${esc(sk.frame)} 60%,${esc(sk.accent || sk.frame)} 60%)"></i>${esc(sk.name)}<small>${sk.kind === 'photo' ? 'photo' : 'studio'}</small></button>`).join('');
+  $('cMedia').innerHTML = `<div class="c-skins" role="group" aria-label="Liveries">${skins}</div>`
+    + `<ul class="c-facts">${b.facts.map(([k, f]) => `<li><b class="${k}" title="${EVIDENCE[k]}">${k}</b><span>${esc(f)}</span></li>`).join('')}</ul>`
+    + (b.ref ? `<figure class="c-photo"><img src="assets/atlas/ref/${esc(b.ref.file)}" alt="${esc(b.name)}: reference photograph"><figcaption><a href="${esc(b.ref.page)}" target="_blank" rel="noopener">${esc(b.ref.artist)} · ${esc(b.ref.license)} · Wikimedia Commons ↗</a></figcaption></figure>` : '')
+    + `<details class="c-unc"><summary>How this model was made</summary><p style="font-size:12px;line-height:1.6;color:var(--muted);margin-top:8px">${esc(window.__ATLAS.method)}</p></details>`;
+  $('cMedia').querySelectorAll('.c-skins button').forEach(btn => btn.onclick = () => {
+    const sk = b.skins[+btn.dataset.skin];
+    if (inst.showcase) { atlas.setShow(atlas.bikes.findIndex(x => x.data === b), +btn.dataset.skin); atlas.show.hold = 30; } else atlas.applySkin(inst, sk);
+    $('cMedia').querySelectorAll('.c-skins button').forEach(x => x.setAttribute('aria-pressed', x === btn));
+    haptic(6);
+  });
+  $('cActions').innerHTML = `<button class="btn primary" id="cAtlasNext">Next<span class="long">: ${esc(next.data.name)}</span> <span aria-hidden="true">→</span></button><button class="btn ghost" id="cAtlasPaint">Paint shop</button>`;
+  $('cAtlasNext').onclick = () => visitAtlas(next);
+  $('cAtlasPaint').onclick = () => { if (!inst.showcase) { atlas.setShow(i, 0); atlas.show.hold = 30; } visitAtlas(atlas.show); };
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+function openRef(ref) {
+  current = null; champ = null;
+  $('cYears').textContent = 'Reference photograph'; $('cName').textContent = ref.caption; $('cMat').textContent = `${ref.artist} · ${ref.license}`;
+  $('cNote').textContent = 'Every Against the Clock model was scaled from a photograph like this, with the wheel as the ruler. Photographs are shown under their open licences.';
+  $('cStats').hidden = true;
+  $('cMedia').innerHTML = `<figure class="c-photo"><img src="assets/atlas/ref/${esc(ref.file)}" alt="${esc(ref.caption)}"><figcaption><a href="${esc(ref.page)}" target="_blank" rel="noopener">${esc(ref.title)} · Wikimedia Commons ↗</a></figcaption></figure>`;
+  $('cActions').innerHTML = '';
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+
 // ------------------------------------------------------------------ guided tour: hands-free walk through the highlights
 const tour = { on: false, i: -1, t: 0, paused: false, stops: [] };
 const DWELL = 9;                                                     // seconds at each stop
@@ -1420,9 +1474,44 @@ if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="c
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
+$('railInner').insertAdjacentHTML('afterbegin', `<button class="chip atlas" data-room="atlas" aria-label="Against the Clock, time-trial bikes beyond Canyon"><span class="n" aria-hidden="true">⏱</span><span><small>UPPER FLOOR · ${atlas.bikes.length} BIKES</small><b>Against the Clock</b></span></button>`);
 for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
+// ------------------------------------------------------------------ museum map (map.js): every area, live position, tap to walk
+{
+  const R = (id, name, sub, rect, floor, color, extra = {}) => ({ id, name, sub, x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1, floor, color, ...extra });
+  const areas = [
+    R('hall', 'Main hall', `${PIECES.length} Speedmax generations`, HALL, 'ground', '#eadfca'),
+    R('sanctuary', 'Sanctuary', '8 films, 8 bikes', SROOM, 'ground', '#d7c7e6'),
+    R('hween', 'Lava Night', 'Halloween room', HROOM, 'ground', '#f0a86c'),
+    R('kona', 'Kona Champions', '2 champions’ machines', ROOM, 'ground', '#e2b27c'),
+    R('wyld', 'WYLD Room', `${wyldBikes.length || 4} dyes`, WROOM, 'ground', '#ffc4dd'),
+    ...(pier ? [R('pier', 'Kona by Year', 'The pier, 2014–2025', { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, 'ground', '#cfe4e2')] : []),
+    R('stair', 'Stair', 'Up to the galleries', { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, 'upper', '#dcd6cb', { layer: 0 }),
+    R('nave', 'Galleries', 'Four themed floors', { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 }, 'upper', '#ece6da', { layer: 0 }),
+    ...galleries.bays.map(b => R('bay-' + b.id, b.title, b.sub, { x0: 8.4, x1: 14.8, z0: b.z - 1.8, z1: b.z + 1.8 }, 'upper', b.floor, { layer: 1, ink: /^#(1|0)/.test(b.floor) ? '#fbf9f5' : '#12181d', kind: 'bay' })),
+    ...galleries.rooms.map(r => R('room-' + r.id, r.name, r.sub, { x0: 16.5, x1: 25.1, z0: r.z1, z1: r.z0 }, 'upper', r.vein, { layer: 1, ink: '#12181d' })),
+    R('atlas', 'Against the Clock', 'The velodrome straight', { x0: ATLAS.x0, x1: ATLAS.x1, z0: ATLAS.z0, z1: ATLAS.z1 }, 'upper', '#c89b62', { layer: 0 }),
+    ...atlas.rooms.map(r => R('atlas-' + r.id, r.name, r.id === 'paint' ? 'Every livery' : r.id === 'refs' ? 'The photographs' : `${r.bikes.length} bikes · ${r.sub}`, r.rect, 'upper', r.tint, { layer: 1, ink: '#fbf9f5' })),
+  ];
+  const chip = room => document.querySelector(`.chip.${room}`)?.click();
+  const go = id => {
+    if (!started) enter();
+    tourEnd(false); closeCard();
+    const up = new THREE.Vector3();
+    if (id === 'hall') route({ x: 0, z: -12 }, up.set(0, 1.4, -30), null);
+    else if (['sanctuary', 'hween', 'pier', 'kona', 'wyld'].includes(id)) chip(id);
+    else if (id === 'stair') route({ x: 9.85, z: 2.2 }, up.set(9.85, 4, 6), null);
+    else if (id === 'nave') route({ x: NAVE_LANE, z: 8 }, up.set(NAVE_LANE, UPPER + 1.6, 26), null);
+    else if (id === 'atlas') route({ x: NAVE_LANE, z: 29 }, up.set(NAVE_LANE, UPPER + 2.4, 51), null);
+    else if (id.startsWith('bay-')) visitGallery(galleries.bays.find(b => 'bay-' + b.id === id));
+    else if (id.startsWith('room-')) visitGallery(galleries.rooms.find(r => 'room-' + r.id === id));
+    else if (id.startsWith('atlas-')) visitAtlasRoom(atlas.rooms.find(r => 'atlas-' + r.id === id));
+  };
+  window.__map = initMap({ areas, go, button: $('mapBtn'), pose: () => ({ x: P.x, z: P.z, yaw: P.yaw, floor: P.y > 3.3 ? 'upper' : 'ground' }) });
+}
 $('railInner').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8);
+  if (b.dataset.room === 'atlas') { visitAtlasRoom(atlas.rooms[0]); return; }
   const theme = galleries.rooms.find(r => r.id === b.dataset.room);
   if (theme) visitGallery(theme);
   else if (b.dataset.room === 'sanctuary') visitSanctuary(sanctuary.altar);
@@ -1525,9 +1614,10 @@ function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.user
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
-  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, hween.group.visible ? hween.floor : null, ...galleries.floors, ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
+  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, hween.group.visible ? hween.floor : null, ...galleries.floors, ...(atlas.group.visible ? atlas.floors : []), ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
   for (const h of hits) { if (!h.object.visible) continue; const u = h.object.userData;
     if (u.artPortal) return { artPortal: u.artPortal }; if (u.hween) return { hween: true }; if (u.year) return { year: u.year }; if (u.era) return { era: u.era }; if (u.finale) return { finale: u.finale };
+    if (u.atlas) return { atlas: u.atlas }; if (u.atlasSwatch) return { swatch: u.atlasSwatch }; if (u.atlasRef) return { ref: u.atlasRef }; if (u.atlasRoom && !u.floor) return { atlasRoom: u.atlasRoom };
     if (u.sanctuary) return { sanctuary: u.sanctuary }; if (u.gallery) return { gallery: u.gallery }; if (u.kona) return { kona: u.kona }; if (u.find) return { find: u.find };
     if (u.info) return { info: u.info }; if (u.wyldBike) return { wyld: u.wyldBike }; if (u.piece) return { piece: u.piece, obj: h.object }; if (u.champ) return { champ: u.champ }; if (u.floor) return { point: h.point }; }
   return null;
@@ -1555,6 +1645,9 @@ canvas.addEventListener('pointerup', e => {
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
   if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.artPortal || hit?.year || hit?.era || hit?.finale || hit?.hween || hit?.sanctuary || hit?.gallery || hit?.kona || hit?.find) { haptic(8); tourEnd(false); coachDid('tap'); }
   if (hit?.artPortal) { window.__museumArt?.enter?.(hit.artPortal); closeCard(); return; }
+  if (hit?.atlas) { haptic(8); tourEnd(false); hit.atlas.showcase ? openAtlas(hit.atlas) : visitAtlas(hit.atlas); return; }
+  if (hit?.swatch) { haptic(8); atlas.paintWith(hit.swatch); openAtlas(atlas.show); return; }
+  if (hit?.ref) { haptic(8); openRef(hit.ref); return; }
   if (hit?.sanctuary) { visitSanctuary(hit.sanctuary); return; }
   if (hit?.gallery) { visitGallery(hit.gallery); return; }
   if (hit?.hween) { visitHween(); return; }
@@ -1669,7 +1762,7 @@ function frame(now) {
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const wantPitch = Math.atan2(path.face.y - (P.y + EYE), Math.hypot(fx, fz));
     P.yaw += dyaw * (1 - Math.exp(-dt * 5.6)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 4.8));
-    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween, sa = path.sanctuary, gy = path.gallery, kn = path.kona; path = null; if (hw) openHween(); if (sa) openSanctuary(sa); if (gy) openGallery(gy); if (kn) openKona(kn); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
+    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween, sa = path.sanctuary, gy = path.gallery, kn = path.kona, ax = path.atlas; path = null; if (ax) openAtlas(ax); if (hw) openHween(); if (sa) openSanctuary(sa); if (gy) openGallery(gy); if (kn) openKona(kn); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 15); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
@@ -1695,7 +1788,7 @@ function frame(now) {
   }
   // before entering, the camera breathes at the doorway
   const idle = started ? 0 : 1;
-  const wantY = galleryFloorY(P.x, P.z);
+  const wantY = atlasFloorY(P.x, P.z) ?? galleryFloorY(P.x, P.z);
   P.y += (wantY - P.y) * (1 - Math.exp(-dt * 8));
   const yaw = P.yaw + idle * Math.sin(t * .13) * .1, pitch = P.pitch + idle * Math.sin(t * .1) * .015;
   camera.position.set(P.x, P.y + EYE + (reduce ? 0 : Math.sin(bob) * .045 * Math.min(1, moving)), P.z);
@@ -1707,7 +1800,7 @@ function frame(now) {
   else if (camera.view?.enabled) camera.clearViewOffset();
   // hover (desktop): halo + name tag
   let hot = null;
-  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.hween ? { year: 'Lava Night', athlete: 'Speedmax CFR, after dark', time: 'Halloween' } : null) || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.sanctuary ? { year: h.sanctuary.film, athlete: h.sanctuary.name, time: h.sanctuary.persona } : h?.gallery ? { year: 'Upper floor', athlete: h.gallery.title || h.gallery.name, time: h.gallery.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
+  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = (h?.atlas ? { year: h.atlas.data?.year || h.atlas.data?.era || 'Type', athlete: h.atlas.data?.name, time: 'Against the Clock' } : h?.swatch ? { year: 'Paint', athlete: h.swatch.s.name, time: h.swatch.b.name } : h?.ref ? { year: 'Photograph', athlete: h.ref.artist, time: h.ref.license } : null) || h?.champ || (h?.hween ? { year: 'Lava Night', athlete: 'Speedmax CFR, after dark', time: 'Halloween' } : null) || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.sanctuary ? { year: h.sanctuary.film, athlete: h.sanctuary.name, time: h.sanctuary.persona } : h?.gallery ? { year: 'Upper floor', athlete: h.gallery.title || h.gallery.name, time: h.gallery.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
     if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
@@ -1768,6 +1861,7 @@ function frame(now) {
     hween.group.visible = reg === 'hween' || (!upstairs && P.z > -32);
     sanctuary.group.visible = reg !== 'gallery';
     const themeRoom = galleries.update(t, P, reduce, scene, renderer, reg);
+    atlas.update(t, dt, P, upstairs && P.z > 17, reduce);
     if (audio) {                                                      // the sea fades upstairs; each room brings its own bed
       roomSound.set(themeRoom?.id || null);
       const sea = audioOn ? (upstairs ? .05 : .2) : 0;
@@ -1799,7 +1893,8 @@ function frame(now) {
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 initAppShell();
-loadAll().then(loadWyldBikes).then(loadHweenBike).then(loadSanctuaryBikes).then(loadKonaMachines).then(loadThemeBikes).catch(e => console.warn('rooms', e));
+loadAll().then(loadWyldBikes).then(loadHweenBike).then(loadSanctuaryBikes).then(loadKonaMachines).then(loadThemeBikes).then(() => atlas.load(loader)).catch(e => console.warn('rooms', e));
 window.__gallery = galleries;
+window.__atlas = atlas;
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
 initArtWorld(window.__museum).catch(e => console.warn('art world', e));

@@ -115,6 +115,7 @@ body.walking #rail{transform:none}
 .chip.horror .n{background:radial-gradient(circle at 50% 40%,#ff2a3c,#14080c 70%);color:#fff}
 .chip.alien .n{background:radial-gradient(circle at 50% 45%,#3dffe0,#070b12 68%);color:#04221c}
 .chip.zombie .n{background:radial-gradient(circle at 50% 55%,#d2e06a,#16180c 72%);color:#1a1c08}
+.chip.atlas .n{background:conic-gradient(#fbf9f5 0 83%,#c8161d 0 84%,#fbf9f5 0);box-shadow:inset 0 0 0 2px #12181d;color:#12181d}
 .chip.ghost .n{background:transparent;border:1px dashed rgba(18,24,29,.25);color:var(--faint)}
 .chip span{display:flex;flex-direction:column;gap:2px}
 .chip small{font-size:10px;letter-spacing:.12em;color:var(--faint);font-weight:600}
@@ -359,6 +360,41 @@ html.phone-fit .credit{display:none}
   h1{font-size:clamp(34px,7vh,48px)!important;margin:8px 0}
   #intro .lede:not(.touch-only){display:none}
 }
+/* atlas card */
+.c-facts{list-style:none;margin:16px 0 0;padding:14px 0 0;border-top:1px solid var(--line);display:grid;gap:8px;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.c-facts li{display:grid;grid-template-columns:22px 1fr;gap:8px}
+.c-facts b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;font-size:10px;background:var(--sand);color:var(--ink)}
+.c-facts b.P{background:#d5ecea}.c-facts b.F{background:#f6e6c8}.c-facts b.I{background:#ece6f6}
+.c-skins{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.c-skins button{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line);font-size:11.5px;font-weight:600;background:var(--paper)}
+.c-skins button[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.c-skins i{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(18,24,29,.12)}
+.c-skins small{font-weight:500;color:var(--faint)}
+/* map */
+#map{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(18,24,29,.36);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom))}
+.map-card{width:min(980px,100%);max-height:100%;overflow:auto;background:var(--paper);border-radius:22px;padding:20px 22px 16px;box-shadow:0 24px 80px rgba(18,24,29,.28)}
+.map-head{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap}
+.map-head small{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.map-head h3{font-family:var(--serif);font-weight:400;font-size:34px;line-height:1}
+.map-tabs{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--sand)}
+.map-tabs button{padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.map-tabs button[aria-selected=true]{background:var(--ink);color:var(--paper)}
+.map-close{width:40px;height:40px;border-radius:50%;font-size:22px;background:var(--sand)}
+.map-plan{margin:14px 0 6px;border-radius:16px;background:#f1ebe1;overflow:hidden}
+.map-plan svg{display:block;width:100%;height:min(52vh,520px)}
+.map-area rect{stroke:#fbf9f5;stroke-width:.25;transition:filter .2s,opacity .2s}
+.map-area:hover rect{filter:brightness(1.08) saturate(1.1)}
+.map-area.here rect{stroke:#12181d;stroke-width:.45}
+.map-area text{font-family:var(--sans);font-weight:700;pointer-events:none;letter-spacing:.02em}
+.map-me circle{fill:rgba(19,138,143,.22)}.map-me path{fill:#138a8f;stroke:#fbf9f5;stroke-width:.2}
+.map-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin:10px 0 0}
+.map-list button{width:100%;display:flex;gap:10px;align-items:center;text-align:left;padding:8px 10px;border-radius:12px;border:1px solid var(--line)}
+.map-list button:hover{border-color:var(--ink)}
+.map-list i{flex:0 0 auto;width:14px;height:14px;border-radius:4px}
+.map-list b{display:block;font-size:12.5px}.map-list small{display:block;font-size:10.5px;color:var(--faint)}
+.map-foot{margin-top:10px;font-size:11px;color:var(--faint)}
+.map-foot kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font:600 10px var(--sans);color:var(--ink)}
+body.map-open #joy{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -368,6 +404,7 @@ html.phone-fit .credit{display:none}
   <a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
   <nav>
     <button id="installBtn" hidden title="Install the museum on this device"><span class="long">Get the </span>app</button>
+    <button id="mapBtn" aria-label="Museum map" title="Map (M)">Map</button>
     <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
     <button id="passportBtn" aria-label="Museum Passport progress">Passport <span id="passportCount">0/0</span></button>
     <a href="Canyon_Collection.html#compare">Compare</a>
@@ -448,7 +485,7 @@ html.phone-fit .credit{display:none}
 
 <p class="credit">Independent study from public references. Not affiliated with or endorsed by Canyon Bicycles. 3D models are visual reconstructions.</p>
 
-<script>window.__PIECES=__PIECES__;window.__KONA=__KONA__;window.__WYLDROOM=__WYLDROOM__;window.__KONAYEARS=__KONAYEARS__;</script>
+<script>window.__PIECES=__PIECES__;window.__KONA=__KONA__;window.__WYLDROOM=__WYLDROOM__;window.__KONAYEARS=__KONAYEARS__;window.__ATLAS=__ATLAS__;</script>
 <script>__APP__</script>
 </body>
 </html>
