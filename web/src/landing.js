@@ -3,6 +3,7 @@
 // flagships in an apse facing the ocean. Walk (WASD / tap the floor), look (drag),
 // visit a bike (click / tap / 1–9), then step into its full 3D studio.
 import * as THREE from 'three';
+import { FONT, SERIF } from './engine/type.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -12,9 +13,13 @@ import { buildHalloween, hweenWalkable, HDOOR, HROOM } from './halloween.js';
 import { buildSanctuary, sanctuaryWalkable, SDOOR, SROOM } from './sanctuary.js';
 import { buildGalleries, galleryWalkable, galleryFloorY, EDOOR, UPPER } from './galleries.js';
 import { createRoomSound } from './roomSound.js';
-import { buildAtlas, atlasWalkable, atlasFloorY, inAtlas, AROOMS, ATLAS } from './atlas.js';
+import { buildWings } from './engine/wing.js';
+import { renderCard, bikeCard, paintingCard, sculptureCard, photoCard, roomCard } from './engine/card.js';
 import { initMap } from './map.js';
-import { applyWyld } from './skins/wyld.js';
+import { createProfile, renderSettings, QUALITY, AVATARS } from './engine/profile.js';
+import { captureView, shareImage } from './engine/share.js';
+import { initSettings } from './ui/settings.js';
+import { slotsOf, applySkin, skinFromWyld, skinFromFilm } from './engine/skins.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
 import { initInstallExperience } from './pwa.mjs';
@@ -37,8 +42,11 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const coarse = dc;
 if (coarse) document.body.classList.add('touch');
 const small = ds;
-const lite = coarse || small;
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// the visitor's profile decides render quality before anything is built (engine/profile.js)
+const profile = createProfile();
+const RS = renderSettings(profile.get().quality, { lite: coarse || small, dpr: devicePixelRatio });
+const lite = RS.lite;
+const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const B2T = v => new THREE.Vector3(v[0], v[2], -v[1]);            // Blender (Z-up) -> three (Y-up)
 
 // ------------------------------------------------------------------ layout (metres; the hall runs toward -z)
@@ -84,7 +92,7 @@ function walkable(x, z) {
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
   const inDoor2 = x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
   const inWyld = x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
-  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z) && !atlasWalkable(x, z)) return false;
+  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z) && !atlas.walkable(x, z)) return false;
   for (const o of obstacles) {
     if (o.c && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
     if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
@@ -104,15 +112,15 @@ try {
     : `<li style="opacity:.6;padding:16px 18px">${esc(p.name)} · ${esc(p.years)} — not modelled</li>`).join('');
   throw e;
 }
-const qualityDpr = Math.min(devicePixelRatio, lite ? 1.45 : 2);
-const flowDpr = Math.min(devicePixelRatio, lite ? 1.12 : 1.65);
+let qualityDpr = RS.dpr;
+let flowDpr = RS.flowDpr;
 let activeDpr = qualityDpr;
 renderer.setPixelRatio(activeDpr);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.AgXToneMapping;
 renderer.toneMappingExposure = .96;
-renderer.shadowMap.enabled = true;                                   // the slatted-roof stripes are the museum's signature
-renderer.shadowMap.type = lite ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = RS.shadows;                              // the slatted-roof stripes are the museum's signature (off on Low)
+renderer.shadowMap.type = THREE.PCFShadowMap;
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog('#e6eef0', 70, 420);
@@ -174,7 +182,7 @@ function lettering(w, h, draw, px = 1024) {
   const tex = canvasTex(px, Math.round(px * h / w), (g, cw, ch) => { g.scale(cw / w, ch / h); draw(g); }, null, true);
   return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
 }
-const FONT = "'Manrope',system-ui,sans-serif", SERIF = "'Instrument Serif',Georgia,serif";
+
 
 // ------------------------------------------------------------------ the hall
 const M = {
@@ -680,11 +688,10 @@ async function loadWyldBikes() {
       if (!o.isMesh) return;
       pickables.push(o); o.userData.wyldBike = b; delete o.userData.piece;
       for (const m of [].concat(o.material)) {
-        if (m.name === 'paint_frame') { m.roughness = b.wyld.sheer > .5 ? .18 : .3; if ('clearcoat' in m) m.clearcoat = 1; b.ctl = applyWyld(m, bike, b.wyld); }
-        if (m.name === 'decal_dark') m.color.set(b.decal);
       }
     });
   }
+  for (const b of wyldBikes) if (b.bike) { const paint = slotsOf(b.bike); applySkin(paint, skinFromWyld(b)); b.ctl = paint.dye; }
   // the confusing part: mirror twins and strays. Same materials as the exhibits, not pickable, desktop gets the full set.
   const W2 = wyldBikes, twin = (src, how, x, y, z, ry, roll = 0) => {
     const orig = src.bike.children[0].children[0], saved = [];
@@ -900,7 +907,9 @@ const sanctuary = buildSanctuary({ scene, lettering, lightPool, FONT, SERIF, lit
 sanctuary.sign.position.set(0, SDOOR.h + .7, HALL.z0 - .04); sanctuary.sign.rotation.y = Math.PI; hall.add(sanctuary.sign);
 const galleries = buildGalleries({ scene, lettering, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x1 });
 galleries.sign.rotation.y = -Math.PI / 2; hall.add(galleries.sign);
-const atlas = buildAtlas({ scene, lettering, FONT, SERIF, lite, pickables, obstacles, contactShadow });
+// wings built from data: museum/world/wings/*.json + the bike, painting and sculpture catalogues
+const atlas = buildWings({ scene, lettering, FONT, SERIF, lite, pickables, obstacles, contactShadow },
+  { wings: window.__WINGS || [], bikes: window.__ATLAS?.bikes || [], extraRefs: window.__ATLAS?.extra_refs || [], paintings: window.__ART?.paintings || [], sculptures: window.__ART?.sculptures || [] });
 
 // ------------------------------------------------------------------ bikes (streamed, nearest first)
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -927,12 +936,12 @@ function dressBike(root, p) {
     o.castShadow = !lite; o.receiveShadow = !lite;
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     mats.forEach(m => {
-      if (m.name === 'paint_frame' && p.finish) { m.color.set(p.finish); m.roughness = .26; m.metalness = .15; if ('clearcoat' in m) m.clearcoat = 1; }
       if (m.name === 'paint_frame' && !m.userData.noised) { microNoise(m); m.userData.noised = true; }   // real paint has orange peel
       m.envMapIntensity = 1;
       o.userData.piece = p;
     });
   });
+  if (p.finish) applySkin(slotsOf(root), { id: `hall-${p.key}`, name: 'Documented finish', frame: p.finish });
 }
 async function loadBike(p) {
   const gltf = await loader.loadAsync(p.glb);
@@ -969,7 +978,7 @@ async function loadSanctuaryBikes() {
     const bike = gltf.scene.clone(true);
     bike.traverse(o => { if (o.isMesh) { o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); o.castShadow = false; } });
     dressBike(bike, { key: 'cfr', finish: null });
-    bike.traverse(o => { for (const m of [].concat(o.material || [])) if (m.name === 'paint_frame') applyWyld(m, bike, { stops: film.stops, angle: film.angle, scale: film.scale, flow: film.flow, darkness: film.id === 'aero-glam' || film.id === 'lake-house' || film.id === 'hex' ? .45 : 0 }); });
+    applySkin(slotsOf(bike), skinFromFilm(film));
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
     const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = film.rotY; holder.position.y = film.top;
@@ -977,7 +986,7 @@ async function loadSanctuaryBikes() {
     holder.traverse(o => { if (o.isMesh) { o.userData.sanctuary = film; pickables.push(o); } });
   }
 }
-const THEME_FINISH = { bio: '#1f6b3a', horror: '#1a0a0e', alien: '#0c3d3a', zombie: '#5a5834' };
+const SKIN = id => (window.__SKINS?.skins || []).find(s => s.id === id);
 async function loadThemeBikes() {
   const src = PIECES.find(p => p.key === 'cfr')?.glb;
   if (!src) return;
@@ -990,7 +999,8 @@ async function loadThemeBikes() {
       o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
       o.castShadow = !lite;
     });
-    dressBike(bike, { key: 'cfr', finish: THEME_FINISH[room.id] });
+    dressBike(bike, { key: 'cfr', finish: null });
+    applySkin(slotsOf(bike), SKIN(`theme-${room.id}`));
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
     const holder = new THREE.Group();
@@ -1003,9 +1013,6 @@ async function loadThemeBikes() {
       if (!o.isMesh) return;
       delete o.userData.piece;
       o.userData.gallery = room;
-      for (const m of [].concat(o.material || [])) {
-        if (m?.name === 'paint_frame') { m.emissive = new THREE.Color(THEME_FINISH[room.id]); m.emissiveIntensity = .28; }
-      }
       pickables.push(o);
     });
   }
@@ -1112,7 +1119,7 @@ passportProgress();
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const roomOf = (x, z) => {
   const art = window.__museumArt?.regionOf?.(x, z); if (art) return art;
-  if (inAtlas(x, z)) return 'gallery';                              // Against the Clock is part of the upper floor
+  if (atlas.inside(x, z)) return 'gallery';                         // the data-built wings are part of the upper floor
   if (x > 7.15 && z > .6 && z < 28 && x < 26) return galleryFloorY(x, z) > 2.2 ? 'gallery' : 'stair';
   if (z > HALL.z0 - .15 && x > SROOM.x0 && x < SROOM.x1) return 'sanctuary';
   if (KY && z < -46.3) return 'pier';
@@ -1122,9 +1129,26 @@ const roomOf = (x, z) => {
 const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5, hween: (HDOOR.z0 + HDOOR.z1) / 2 };
 const PIER_IN = [{ x: 1.2, z: -38.6 }, { x: 5.6, z: -38.6 }, { x: 5.4, z: -44.6 }, { x: 5.4, z: -48.4 }];   // round the apse plinth, through the glass door
 const NAVE_LANE = 13.6;                                             // upstairs walking lane: east of the bay plinths (x 11.15), west of the room openings
+const fader = document.getElementById('fade');
+function teleport(end) {
+  const land = () => {
+    P.x = end.x; P.z = end.z; P.vx = P.vz = 0;
+    P.y = atlas.floorY(P.x, P.z) ?? galleryFloorY(P.x, P.z);
+    if (path?.face) { const fx = path.face.x - P.x, fz = path.face.z - P.z; P.yaw = Math.atan2(-fx, -fz); }
+    if (path) path.splice(0, path.length - 1);                       // arrive: the card opens as soon as we face the piece
+  };
+  if (reduce || !fader) { land(); return; }
+  fader.classList.add('on');
+  setTimeout(() => { land(); requestAnimationFrame(() => requestAnimationFrame(() => fader.classList.remove('on'))); }, 190);
+}
 function route(to, face, piece) {                                   // aisle first, then the doorway — never a diagonal through the plinths
   const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
-  const done = () => { path = pts; path.stuck = 0; path.face = face; path.piece = piece || null; };
+  const done = () => {
+    path = pts; path.stuck = 0; path.face = face; path.piece = piece || null;
+    // between rooms (or far away) we teleport: a short fade, then you stand at the last waypoint facing the piece
+    const end = pts[pts.length - 1], far = end && (roomOf(end.x, end.z) !== a || Math.hypot(end.x - P.x, end.z - P.z) > 9);
+    if (far && profile.get().travel !== 'walk') teleport(end);
+  };
   const aisleX = x => clamp(x, -1.2, 1.2);
   const viaAisle = (from, z) => {
     pts.push({ x: aisleX(from.x), z: from.z });
@@ -1317,69 +1341,46 @@ function visitGallery(spot) {
 }
 function openGallery(spot) {
   current = null; champ = null;
-  const list = [...galleries.bays, ...galleries.rooms];
-  $('cYears').textContent = spot.sub || 'Upper floor';
-  $('cName').textContent = spot.title || spot.name;
-  $('cMat').textContent = galleries.rooms.some(r => r.id === spot.id) ? 'Themed room' : 'Themed floor';
-  $('cNote').textContent = spot.text;
-  $('cStats').hidden = true;
-  $('cMedia').innerHTML = `<div class="c-dyes"><span style="background:${spot.floor}"></span><span style="background:${spot.vein}"></span></div>`;
-  const next = list[(list.indexOf(spot) + 1) % list.length];
-  $('cActions').innerHTML = `<button class="btn primary" id="cNextBay">Next<span class="long">: ${esc(next.title || next.name)}</span> <span aria-hidden="true">→</span></button><button class="btn ghost" id="cGalleryDown">Down to the hall</button>`;
-  $('cNextBay').onclick = () => visitGallery(next);
-  $('cGalleryDown').onclick = () => { closeCard(); route({ x: 0, z: 2.2 }, null, null); };
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  const list = [...galleries.bays, ...galleries.rooms], next = list[(list.indexOf(spot) + 1) % list.length];
+  renderCard(roomCard({ ...spot, kindLabel: galleries.rooms.includes(spot) ? 'Themed room' : 'Themed floor' },
+    { next: next.title || next.name, onNext: () => visitGallery(next), onDown: () => { closeCard(); route({ x: 0, z: 2.2 }, null, null); } }));
 }
 
-// ------------------------------------------------------------------ Against the Clock (atlas.js)
-function visitAtlas(inst) {
+// ------------------------------------------------------------------ wings (engine/wing.js) and their cards (engine/card.js)
+function visitAtlas(inst) {                                           // a bike (or the paint-shop turntable)
   if (current && current.exT > 0) setExploded(current, false);
   closeCard(); champ = null;
   route(inst.view, inst.face, null); path.atlas = inst;
-  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'atlas'));
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === `wing-${inst.room?.wing}`));
 }
+function visitArt(item) { closeCard(); champ = null; route(item.view, item.face, null); path.art = item; }
 function visitAtlasRoom(room) {
   closeCard(); champ = null;
-  if (room.id === 'paint') { visitAtlas(atlas.show); return; }
-  const first = room.bikes[0];
-  if (first) { visitAtlas(first); return; }
+  if (room.feature === 'paintshop' && atlas.show) { visitAtlas(atlas.show); return; }
+  if (room.bikes[0]) { visitAtlas(room.bikes[0]); return; }
+  if (room.art[0]) { visitArt(room.art[0]); return; }
   route(room.view, room.look, null);
 }
-const EVIDENCE = { P: 'Published fact', F: 'Read from the photograph', I: 'Inferred for the model' };
 function openAtlas(inst) {
   current = null; champ = null;
   const b = inst.data; if (!b) return;
-  const list = atlas.bikes.map(x => x.data), i = list.indexOf(b), next = atlas.bikes[(i + 1) % atlas.bikes.length];
-  $('cYears').textContent = `${b.year || b.era || ''}${b.year || b.era ? ' · ' : ''}${b.maker}`;
-  $('cName').textContent = b.name;
-  $('cMat').textContent = inst.showcase ? 'Paint shop · the turntable' : b.kind === 'type' ? 'Type study · no maker modelled' : 'Rebuilt from an open-licensed photograph';
-  $('cNote').textContent = b.text;
-  $('cStats').hidden = true;
-  const skins = b.skins.map((sk, k) => `<button data-skin="${k}" aria-pressed="${inst.skin === sk}"><i style="background:linear-gradient(135deg,${esc(sk.frame)} 60%,${esc(sk.accent || sk.frame)} 60%)"></i>${esc(sk.name)}<small>${sk.kind === 'photo' ? 'photo' : 'studio'}</small></button>`).join('');
-  $('cMedia').innerHTML = `<div class="c-skins" role="group" aria-label="Liveries">${skins}</div>`
-    + `<ul class="c-facts">${b.facts.map(([k, f]) => `<li><b class="${k}" title="${EVIDENCE[k]}">${k}</b><span>${esc(f)}</span></li>`).join('')}</ul>`
-    + (b.ref ? `<figure class="c-photo"><img src="assets/atlas/ref/${esc(b.ref.file)}" alt="${esc(b.name)}: reference photograph"><figcaption><a href="${esc(b.ref.page)}" target="_blank" rel="noopener">${esc(b.ref.artist)} · ${esc(b.ref.license)} · Wikimedia Commons ↗</a></figcaption></figure>` : '')
-    + `<details class="c-unc"><summary>How this model was made</summary><p style="font-size:12px;line-height:1.6;color:var(--muted);margin-top:8px">${esc(window.__ATLAS.method)}</p></details>`;
-  $('cMedia').querySelectorAll('.c-skins button').forEach(btn => btn.onclick = () => {
-    const sk = b.skins[+btn.dataset.skin];
-    if (inst.showcase) { atlas.setShow(atlas.bikes.findIndex(x => x.data === b), +btn.dataset.skin); atlas.show.hold = 30; } else atlas.applySkin(inst, sk);
-    $('cMedia').querySelectorAll('.c-skins button').forEach(x => x.setAttribute('aria-pressed', x === btn));
-    haptic(6);
+  const i = atlas.bikes.findIndex(x => x.data === b), next = atlas.bikes[(i + 1) % atlas.bikes.length];
+  const card = bikeCard(b, {
+    skin: inst.skin, method: window.__ATLAS?.method,
+    onSkin: sk => { haptic(6); if (inst.showcase) { atlas.setShow(window.__ATLAS.bikes.indexOf(b), b.skins.indexOf(sk)); atlas.show.hold = 30; } else atlas.applySkin(inst, sk); },
+    next: next?.data.name, onNext: () => visitAtlas(next),
+    onPaint: atlas.show ? () => { if (!inst.showcase) { atlas.setShow(window.__ATLAS.bikes.indexOf(b), 0); atlas.show.hold = 30; } visitAtlas(atlas.show); } : null,
   });
-  $('cActions').innerHTML = `<button class="btn primary" id="cAtlasNext">Next<span class="long">: ${esc(next.data.name)}</span> <span aria-hidden="true">→</span></button><button class="btn ghost" id="cAtlasPaint">Paint shop</button>`;
-  $('cAtlasNext').onclick = () => visitAtlas(next);
-  $('cAtlasPaint').onclick = () => { if (!inst.showcase) { atlas.setShow(i, 0); atlas.show.hold = 30; } visitAtlas(atlas.show); };
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  card.actions.push({ label: 'Open in the studio', href: `Studio.html?p=atlas-${b.key}` });
+  renderCard(card);
 }
-function openRef(ref) {
+function openArt(item) {
   current = null; champ = null;
-  $('cYears').textContent = 'Reference photograph'; $('cName').textContent = ref.caption; $('cMat').textContent = `${ref.artist} · ${ref.license}`;
-  $('cNote').textContent = 'Every Against the Clock model was scaled from a photograph like this, with the wheel as the ruler. Photographs are shown under their open licences.';
-  $('cStats').hidden = true;
-  $('cMedia').innerHTML = `<figure class="c-photo"><img src="assets/atlas/ref/${esc(ref.file)}" alt="${esc(ref.caption)}"><figcaption><a href="${esc(ref.page)}" target="_blank" rel="noopener">${esc(ref.title)} · Wikimedia Commons ↗</a></figcaption></figure>`;
-  $('cActions').innerHTML = '';
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  const list = [...atlas.paintings, ...atlas.sculptures], next = list[(list.indexOf(item) + 1) % list.length];
+  const opts = { room: item.room?.name, next: next?.data.title, onNext: () => visitArt(next) };
+  renderCard(item.kind === 'sculpture' ? { ...sculptureCard(item.data, opts), actions: [{ label: `Next: ${next.data.title}`, primary: true, onClick: () => visitArt(next) }] } : paintingCard(item.data, opts));
 }
+function openRef(ref) { current = null; champ = null; renderCard(photoCard(ref)); }
 
 // ------------------------------------------------------------------ guided tour: hands-free walk through the highlights
 const tour = { on: false, i: -1, t: 0, paused: false, stops: [] };
@@ -1462,7 +1463,13 @@ function enter() {
     path = [{ x: 0, z: .6 }];
   }
   writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach();
+  if (profile.get().sound && $('soundBtn').getAttribute('aria-pressed') !== 'true') $('soundBtn').click();
   if (!returning && pier && new URLSearchParams(location.search).get('room') === 'pier') setTimeout(() => visitPier(pier.stations[0]), 400);
+  { // app shortcuts and shared links: ?room=<map area id> walks there, ?map=1 opens the map
+    const q = new URLSearchParams(location.search), room = q.get('room');
+    if (room && room !== 'pier' && /^[a-z0-9-]{2,40}$/.test(room)) setTimeout(() => window.__museumGo?.(room), 450);
+    if (q.get('map')) setTimeout(() => window.__map?.open(), 450);
+  }
 }
 $('enterBtn').onclick = enter;
 
@@ -1474,24 +1481,22 @@ if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="c
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
-$('railInner').insertAdjacentHTML('afterbegin', `<button class="chip atlas" data-room="atlas" aria-label="Against the Clock, time-trial bikes beyond Canyon"><span class="n" aria-hidden="true">⏱</span><span><small>UPPER FLOOR · ${atlas.bikes.length} BIKES</small><b>Against the Clock</b></span></button>`);
+for (const w of [...atlas.wings].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip atlas" data-room="wing-${esc(w.id)}" aria-label="${esc(w.name)}: ${esc(w.sub)}"><span class="n" aria-hidden="true">${w.features?.clock ? '⏱' : '✦'}</span><span><small>UPPER FLOOR · ${atlas.rooms.filter(r => r.wing === w.id).reduce((n, r) => n + r.bikes.length + r.art.length, 0)} WORKS</small><b>${esc(w.name)}</b></span></button>`);
 for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
 // ------------------------------------------------------------------ museum map (map.js): every area, live position, tap to walk
 {
+  const WORDS = Object.fromEntries((window.__ROOMS?.areas || []).map(a => [a.id, a]));
+  const AREA_COLOR = { hall: '#eadfca', sanctuary: '#d7c7e6', hween: '#f0a86c', kona: '#e2b27c', wyld: '#ffc4dd', pier: '#cfe4e2', stair: '#dcd6cb', nave: '#ece6da' };
   const R = (id, name, sub, rect, floor, color, extra = {}) => ({ id, name, sub, x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1, floor, color, ...extra });
   const areas = [
-    R('hall', 'Main hall', `${PIECES.length} Speedmax generations`, HALL, 'ground', '#eadfca'),
-    R('sanctuary', 'Sanctuary', '8 films, 8 bikes', SROOM, 'ground', '#d7c7e6'),
-    R('hween', 'Lava Night', 'Halloween room', HROOM, 'ground', '#f0a86c'),
-    R('kona', 'Kona Champions', '2 champions’ machines', ROOM, 'ground', '#e2b27c'),
-    R('wyld', 'WYLD Room', `${wyldBikes.length || 4} dyes`, WROOM, 'ground', '#ffc4dd'),
-    ...(pier ? [R('pier', 'Kona by Year', 'The pier, 2014–2025', { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, 'ground', '#cfe4e2')] : []),
-    R('stair', 'Stair', 'Up to the galleries', { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, 'upper', '#dcd6cb', { layer: 0 }),
-    R('nave', 'Galleries', 'Four themed floors', { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 }, 'upper', '#ece6da', { layer: 0 }),
+    ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), 'stair', 'nave'].map(id => {       // names from museum/world/rooms.json
+      const w = WORDS[id], rect = { hall: HALL, sanctuary: SROOM, hween: HROOM, kona: ROOM, wyld: WROOM, pier: pier && { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, stair: { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, nave: { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 } }[id];
+      return R(id, w?.short || id, w?.sub || '', rect, w?.floor || 'ground', AREA_COLOR[id], id === 'stair' || id === 'nave' ? { layer: 0 } : {});
+    }),
     ...galleries.bays.map(b => R('bay-' + b.id, b.title, b.sub, { x0: 8.4, x1: 14.8, z0: b.z - 1.8, z1: b.z + 1.8 }, 'upper', b.floor, { layer: 1, ink: /^#(1|0)/.test(b.floor) ? '#fbf9f5' : '#12181d', kind: 'bay' })),
     ...galleries.rooms.map(r => R('room-' + r.id, r.name, r.sub, { x0: 16.5, x1: 25.1, z0: r.z1, z1: r.z0 }, 'upper', r.vein, { layer: 1, ink: '#12181d' })),
-    R('atlas', 'Against the Clock', 'The velodrome straight', { x0: ATLAS.x0, x1: ATLAS.x1, z0: ATLAS.z0, z1: ATLAS.z1 }, 'upper', '#c89b62', { layer: 0 }),
-    ...atlas.rooms.map(r => R('atlas-' + r.id, r.name, r.id === 'paint' ? 'Every livery' : r.id === 'refs' ? 'The photographs' : `${r.bikes.length} bikes · ${r.sub}`, r.rect, 'upper', r.tint, { layer: 1, ink: '#fbf9f5' })),
+    ...atlas.wings.map(w => R('wing-' + w.id, w.name, w.sub, w.corridor, w.floor, w.corridor.map_color || '#c89b62', { layer: 0 })),
+    ...atlas.rooms.map(r => R('atlas-' + r.wing + '-' + r.id, r.name, r.feature === 'paintshop' ? 'Every livery' : r.feature === 'references' ? 'The photographs' : [r.bikes.length ? `${r.bikes.length} bike${r.bikes.length > 1 ? 's' : ''}` : '', r.art.length ? `${r.art.length} work${r.art.length > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ') || r.sub, r.rect, 'upper', r.tint, { layer: 1, ink: '#fbf9f5' })),
   ];
   const chip = room => document.querySelector(`.chip.${room}`)?.click();
   const go = id => {
@@ -1502,11 +1507,13 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     else if (['sanctuary', 'hween', 'pier', 'kona', 'wyld'].includes(id)) chip(id);
     else if (id === 'stair') route({ x: 9.85, z: 2.2 }, up.set(9.85, 4, 6), null);
     else if (id === 'nave') route({ x: NAVE_LANE, z: 8 }, up.set(NAVE_LANE, UPPER + 1.6, 26), null);
-    else if (id === 'atlas') route({ x: NAVE_LANE, z: 29 }, up.set(NAVE_LANE, UPPER + 2.4, 51), null);
+    else if (id === 'atlas') go('wing-' + atlas.wings[0]?.id);
+    else if (id.startsWith('wing-')) { const w = atlas.wings.find(v => 'wing-' + v.id === id); if (w) route({ x: NAVE_LANE, z: w.corridor.z0 + 1.8 }, up.set(NAVE_LANE, w.y + 2.2, w.corridor.z1), null); }
     else if (id.startsWith('bay-')) visitGallery(galleries.bays.find(b => 'bay-' + b.id === id));
     else if (id.startsWith('room-')) visitGallery(galleries.rooms.find(r => 'room-' + r.id === id));
-    else if (id.startsWith('atlas-')) visitAtlasRoom(atlas.rooms.find(r => 'atlas-' + r.id === id));
+    else if (id.startsWith('atlas-')) visitAtlasRoom(atlas.rooms.find(r => 'atlas-' + r.wing + '-' + r.id === id));
   };
+  window.__museumGo = go;
   window.__map = initMap({ areas, go, button: $('mapBtn'), pose: () => ({ x: P.x, z: P.z, yaw: P.yaw, floor: P.y > 3.3 ? 'upper' : 'ground' }) });
   // "you are here": the room's name under the logo; tap it for the map. A first visit to the wing gets one line of help.
   const where = $('where'); let lastWhere = null, wingHinted = (() => { try { return localStorage.getItem('speedmax.atlas.hint') === '1'; } catch (_) { return false; } })();
@@ -1517,12 +1524,12 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     const id = a?.id || null; if (id === lastWhere) return; lastWhere = id;
     where.hidden = !a;
     if (a) { where.querySelector('b').textContent = a.name; where.querySelector('small').textContent = a.floor === 'upper' ? 'Upper floor' : 'Ground floor'; where.querySelector('i').style.background = a.color; where.classList.remove('pop'); void where.offsetWidth; where.classList.add('pop'); }
-    if (id?.startsWith('atlas') && !wingHinted) { wingHinted = true; try { localStorage.setItem('speedmax.atlas.hint', '1'); } catch (_) { } toast('Against the Clock · tap a bike for its story and liveries · M opens the map'); }
+    if ((id?.startsWith('atlas') || id?.startsWith('wing')) && !wingHinted) { wingHinted = true; try { localStorage.setItem('speedmax.atlas.hint', '1'); } catch (_) { } toast('Tap any bike or artwork for its story · bikes have liveries · M opens the map'); }
   }, 350);
 }
 $('railInner').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8);
-  if (b.dataset.room === 'atlas') { visitAtlasRoom(atlas.rooms[0]); return; }
+  if (b.dataset.room?.startsWith('wing-')) { visitAtlasRoom(atlas.rooms.find(r => `wing-${r.wing}` === b.dataset.room)); return; }
   const theme = galleries.rooms.find(r => r.id === b.dataset.room);
   if (theme) visitGallery(theme);
   else if (b.dataset.room === 'sanctuary') visitSanctuary(sanctuary.altar);
@@ -1554,6 +1561,7 @@ function openCard(p) {
     + `<button class="btn ghost" id="cNext" aria-label="Next piece: ${esc(next.years)}">Next<span class="long">: ${esc(next.years)}</span> <span aria-hidden="true">→</span></button>`
     + (p.source && !p.viewer ? `<a class="c-src" href="${esc(p.source)}" target="_blank" rel="noopener">Archive source ↗</a>` : '');
   $('cNext').onclick = () => visit(next);
+  if (p.glb && p.key) $('cActions').insertAdjacentHTML('beforeend', `<a class="btn ghost" href="Studio.html?p=canyon-${p.key === 'cfr' || p.key === 'slx' ? p.key + '-2027' : esc(p.key)}">Paint it<span class="long"> in the studio</span></a>`);
   if ($('cExplode')) $('cExplode').onclick = () => setExploded(p, !(p.exT > 0));
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
@@ -1628,7 +1636,7 @@ function pick(x, y) {
   const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, hween.group.visible ? hween.floor : null, ...galleries.floors, ...atlas.floors, ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
   for (const h of hits) { if (!h.object.visible) continue; const u = h.object.userData;
     if (u.artPortal) return { artPortal: u.artPortal }; if (u.hween) return { hween: true }; if (u.year) return { year: u.year }; if (u.era) return { era: u.era }; if (u.finale) return { finale: u.finale };
-    if (u.atlas) return { atlas: u.atlas }; if (u.atlasSwatch) return { swatch: u.atlasSwatch }; if (u.atlasRef) return { ref: u.atlasRef }; if (u.atlasRoom && !u.floor) return { atlasRoom: u.atlasRoom };
+    if (u.wingBike) return { atlas: u.wingBike }; if (u.wingSwatch) return { swatch: u.wingSwatch }; if (u.wingRef) return { ref: u.wingRef }; if (u.wingArt) return { art: u.wingArt };
     if (u.sanctuary) return { sanctuary: u.sanctuary }; if (u.gallery) return { gallery: u.gallery }; if (u.kona) return { kona: u.kona }; if (u.find) return { find: u.find };
     if (u.info) return { info: u.info }; if (u.wyldBike) return { wyld: u.wyldBike }; if (u.piece) return { piece: u.piece, obj: h.object }; if (u.champ) return { champ: u.champ }; if (u.floor) return { point: h.point }; }
   return null;
@@ -1659,6 +1667,7 @@ canvas.addEventListener('pointerup', e => {
   if (hit?.atlas) { haptic(8); tourEnd(false); hit.atlas.showcase ? openAtlas(hit.atlas) : visitAtlas(hit.atlas); return; }
   if (hit?.swatch) { haptic(8); atlas.paintWith(hit.swatch); openAtlas(atlas.show); return; }
   if (hit?.ref) { haptic(8); openRef(hit.ref); return; }
+  if (hit?.art) { haptic(8); tourEnd(false); visitArt(hit.art); return; }
   if (hit?.sanctuary) { visitSanctuary(hit.sanctuary); return; }
   if (hit?.gallery) { visitGallery(hit.gallery); return; }
   if (hit?.hween) { visitHween(); return; }
@@ -1773,7 +1782,7 @@ function frame(now) {
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const wantPitch = Math.atan2(path.face.y - (P.y + EYE), Math.hypot(fx, fz));
     P.yaw += dyaw * (1 - Math.exp(-dt * 5.6)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 4.8));
-    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween, sa = path.sanctuary, gy = path.gallery, kn = path.kona, ax = path.atlas; path = null; if (ax) openAtlas(ax); if (hw) openHween(); if (sa) openSanctuary(sa); if (gy) openGallery(gy); if (kn) openKona(kn); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
+    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween, sa = path.sanctuary, gy = path.gallery, kn = path.kona, ax = path.atlas, ar = path.art; path = null; if (ax) openAtlas(ax); if (ar) openArt(ar); if (hw) openHween(); if (sa) openSanctuary(sa); if (gy) openGallery(gy); if (kn) openKona(kn); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 15); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
@@ -1799,7 +1808,7 @@ function frame(now) {
   }
   // before entering, the camera breathes at the doorway
   const idle = started ? 0 : 1;
-  const wantY = atlasFloorY(P.x, P.z) ?? galleryFloorY(P.x, P.z);
+  const wantY = atlas.floorY(P.x, P.z) ?? galleryFloorY(P.x, P.z);
   P.y += (wantY - P.y) * (1 - Math.exp(-dt * 8));
   const yaw = P.yaw + idle * Math.sin(t * .13) * .1, pitch = P.pitch + idle * Math.sin(t * .1) * .015;
   camera.position.set(P.x, P.y + EYE + (reduce ? 0 : Math.sin(bob) * .045 * Math.min(1, moving)), P.z);
@@ -1811,7 +1820,7 @@ function frame(now) {
   else if (camera.view?.enabled) camera.clearViewOffset();
   // hover (desktop): halo + name tag
   let hot = null;
-  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = (h?.atlas ? { year: h.atlas.data?.year || h.atlas.data?.era || 'Type', athlete: h.atlas.data?.name, time: 'Against the Clock' } : h?.swatch ? { year: 'Paint', athlete: h.swatch.s.name, time: h.swatch.b.name } : h?.ref ? { year: 'Photograph', athlete: h.ref.artist, time: h.ref.license } : null) || h?.champ || (h?.hween ? { year: 'Lava Night', athlete: 'Speedmax CFR, after dark', time: 'Halloween' } : null) || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.sanctuary ? { year: h.sanctuary.film, athlete: h.sanctuary.name, time: h.sanctuary.persona } : h?.gallery ? { year: 'Upper floor', athlete: h.gallery.title || h.gallery.name, time: h.gallery.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
+  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = (h?.art ? { year: h.art.kind === 'sculpture' ? 'Sculpture' : 'Painting', athlete: h.art.data.title, time: h.art.room?.name } : h?.atlas ? { year: h.atlas.data?.year || h.atlas.data?.era || 'Type', athlete: h.atlas.data?.name, time: h.atlas.room?.wingName || 'Paint shop' } : h?.swatch ? { year: 'Paint', athlete: h.swatch.s.name, time: h.swatch.b.name } : h?.ref ? { year: 'Photograph', athlete: h.ref.artist, time: h.ref.license } : null) || h?.champ || (h?.hween ? { year: 'Lava Night', athlete: 'Speedmax CFR, after dark', time: 'Halloween' } : null) || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.sanctuary ? { year: h.sanctuary.film, athlete: h.sanctuary.name, time: h.sanctuary.persona } : h?.gallery ? { year: 'Upper floor', athlete: h.gallery.title || h.gallery.name, time: h.gallery.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
     if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
@@ -1905,8 +1914,45 @@ function frame(now) {
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 initAppShell();
-loadAll().then(loadWyldBikes).then(loadHweenBike).then(loadSanctuaryBikes).then(loadKonaMachines).then(loadThemeBikes).then(() => atlas.load(loader)).catch(e => console.warn('rooms', e));
+// progressive loading: the hall first (loadAll), then each room in the background, with a quiet status chip
+{
+  const steps = [['the WYLD Room', loadWyldBikes], ['Lava Night', loadHweenBike], ['the Sanctuary', loadSanctuaryBikes], ['the Champions room', loadKonaMachines], ['the upper floor', loadThemeBikes], ['the wings', () => atlas.load(loader)]];
+  const chip = $('bgload'), say = t => { if (chip) { chip.hidden = false; chip.querySelector('span').textContent = t; } };
+  let chain = loadAll();
+  let offline = false;
+  const failed = e => { if (!offline && /fetch|network|load/i.test(String(e?.message || e))) { offline = true; say(navigator.onLine === false ? 'You are offline · rooms will open when you reconnect' : 'Cannot reach the museum files · check the server or your connection'); chip?.classList.add('warn'); } };
+  addEventListener('online', () => { if (offline) location.reload(); });
+  steps.forEach(([label, fn], i) => { chain = chain.then(() => { if (!offline) say(`Opening ${label} · ${i + 1} of ${steps.length}`); return fn(); }).catch(e => { console.warn('rooms', label, e); failed(e); }); });
+  chain.then(() => { if (offline) return; say('Every room is open'); setTimeout(() => { if (chip) chip.hidden = true; }, 2400); });
+}
 window.__gallery = galleries;
+// ------------------------------------------------------------------ profile, settings and sharing
+const settingsUI = initSettings({
+  profile, QUALITY, AVATARS, activeQuality: () => profile.get().quality,
+  onQuality: id => {                                                  // DPR and shadows now; geometry detail on the next load
+    const n = renderSettings(id, { lite: coarse || small, dpr: devicePixelRatio });
+    qualityDpr = n.dpr; flowDpr = n.flowDpr; activeDpr = -1;
+    if (renderer.shadowMap.enabled !== n.shadows) { renderer.shadowMap.enabled = n.shadows; scene.traverse(o => { for (const m of [].concat(o.material || [])) m.needsUpdate = true; }); }
+    return n.lite !== lite;
+  },
+  onSound: on => { if (($('soundBtn').getAttribute('aria-pressed') === 'true') !== on) $('soundBtn').click(); },
+  onMotion: () => true,
+  sync: { available: false },
+});
+{ const p = profile.get(), ip = $('introProfile');
+  if (ip) { ip.querySelector('i').style.background = p.avatar; ip.querySelector('span').textContent = p.name ? `Welcome back, ${p.name} · settings` : 'Create a profile · choose your quality'; } }
+async function shareView(title) {
+  const here = window.__map?.here();
+  const blob = await captureView(renderer, scene, camera, { title, place: here?.name });
+  if (!blob) { toast('Could not capture this view'); return; }
+  const url = location.origin + location.pathname + (here ? `?room=${encodeURIComponent(here.id)}` : '');
+  const slug = String(title || here?.name || 'museum').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const r = await shareImage(blob, { title: title || 'Speedmax Museum', text: `${title ? title + ' · ' : ''}Speedmax Museum, Kona`, url, filename: `speedmax-${slug}.jpg` });
+  toast({ shared: 'Shared', link: 'Link shared', saved: 'Image saved to your device', cancelled: 'Not shared' }[r]);
+}
+$('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
+$('cardShare')?.addEventListener('click', () => shareView($('cName').textContent));
+window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas };
 window.__atlas = atlas;
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
 initArtWorld(window.__museum).catch(e => console.warn('art world', e));

@@ -9,19 +9,23 @@ export const EDOOR = { z0: 1.55, z1: 4.55, h: 3.4 };
 const TOWER = { x0: 7.35, x1: 12.3, z0: 6.55, z1: 0.75 };
 const STAIR = { x0: 8.55, x1: 11.15, z0: 1.25, z1: 5.45 };
 const NAVE = { x0: 7.5, x1: 16.5, z0: 27.2, z1: 5.55 };
-const ROOMS = [
-  { id: 'bio', name: 'Bio', sub: 'The growth', text: 'A Speedmax taken by the room. Vines have the frame, pods sit on the floor, and the walls are the same green as the growth.', floor: '#10281a', vein: '#3dba55', fog: '#123024', exposure: .92, z0: 10.6, z1: 6.15 },
-  { id: 'horror', name: 'Horror', sub: 'The passage', text: 'One bulb over a Speedmax at the end of the passage. The corridor is narrower than the room. If the eyes blink, you were looking.', floor: '#10080c', vein: '#ff2a3c', fog: '#1a0a10', exposure: .78, z0: 15.6, z1: 11.0 },
-  { id: 'alien', name: 'Alien', sub: 'The bay', text: 'Four rings over a Speedmax, and a scan that does not care what it passes through. Cold light, no weather.', floor: '#070b12', vein: '#3dffe0', fog: '#0c2430', exposure: .95, z0: 20.6, z1: 16.0 },
-  { id: 'zombie', name: 'Zombie', sub: 'The yard', text: 'They keep to the walls. A Speedmax is still on the block in the middle of the yard. The air is the colour of a bruise that has started to heal.', floor: '#16180c', vein: '#d2e06a', fog: '#2a2c18', exposure: .98, z0: 26.4, z1: 21.0 },
+const ROOMS_LOOK = [
+  { id: 'bio', floor: '#10281a', vein: '#3dba55', fog: '#123024', exposure: .92, z0: 10.6, z1: 6.15 },
+  { id: 'horror', floor: '#10080c', vein: '#ff2a3c', fog: '#1a0a10', exposure: .78, z0: 15.6, z1: 11.0 },
+  { id: 'alien', floor: '#070b12', vein: '#3dffe0', fog: '#0c2430', exposure: .95, z0: 20.6, z1: 16.0 },
+  { id: 'zombie', floor: '#16180c', vein: '#d2e06a', fog: '#2a2c18', exposure: .98, z0: 26.4, z1: 21.0 },
 ];
-const BAYS = [
-  { id: 'st-george', title: 'St. George', sub: 'Red rock', text: 'One canyon silhouette from the aisle. Up here the floor is the rock itself: terracotta, with a warm seam.', floor: '#8a3b28', vein: '#e7b089', z: 9.0 },
-  { id: 'las-vegas', title: 'Las Vegas', sub: 'Neon', text: 'A dark floor that keeps the light. The sculpture in the hall is the same study, seen from the Queen K.', floor: '#14151c', vein: '#ff3d8e', z: 13.6 },
-  { id: 'nice', title: 'Nice', sub: 'Sea glass', text: 'Pale glass underfoot, the colour of the bay on a still morning.', floor: '#d7f3f2', vein: '#7ec8c4', z: 18.2 },
-  { id: 'kona', title: 'Kona', sub: 'Obsidian', text: 'Basalt, and a line of heat. The same coast as the hall, one storey closer to the weather.', floor: '#1a1c20', vein: '#ff592c', z: 22.8 },
+const BAYS_LOOK = [
+  { id: 'st-george', floor: '#8a3b28', vein: '#e7b089', z: 9.0 },
+  { id: 'las-vegas', floor: '#14151c', vein: '#ff3d8e', z: 13.6 },
+  { id: 'nice', floor: '#d7f3f2', vein: '#7ec8c4', z: 18.2 },
+  { id: 'kona', floor: '#1a1c20', vein: '#ff592c', z: 22.8 },
 ];
 
+// names, subtitles and wall text live in museum/world/rooms.json (window.__ROOMS); geometry and palette stay here until Phase 5
+const WORDS = Object.fromEntries((window.__ROOMS?.areas || []).map(a => [a.id, a]));
+const ROOMS = ROOMS_LOOK.map(r => ({ ...r, name: WORDS[`room-${r.id}`]?.name || r.id, sub: WORDS[`room-${r.id}`]?.sub || '', text: WORDS[`room-${r.id}`]?.text || '' }));
+const BAYS = BAYS_LOOK.map(b => ({ ...b, title: WORDS[`bay-${b.id}`]?.name || b.id, sub: WORDS[`bay-${b.id}`]?.sub || '', text: WORDS[`bay-${b.id}`]?.text || '' }));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const inTower = (x, z) => x > TOWER.x0 + .35 && x < TOWER.x1 - .35 && z > TOWER.z1 + .25 && z < TOWER.z0 - .3;
 const inNave = (x, z) => x > NAVE.x0 + .4 && x < NAVE.x1 - .4 && z > NAVE.z1 + .3 && z < NAVE.z0 - .4;

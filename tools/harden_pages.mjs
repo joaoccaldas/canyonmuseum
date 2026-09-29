@@ -30,6 +30,12 @@ const PAGES = [
   { file: 'Canyon_Collection.html', type: 'CollectionPage', image: 'assets/share/collection.jpg',
     title: 'Canyon Triathlon Collection · every Speedmax generation, compared',
     description: 'Every Canyon Speedmax generation on record, 1999–2027: interactive 3D exhibits, side-by-side specifications, an aero calculator and a sourced archive of the bikes that were never modelled.' },
+  { file: 'Studio.html', type: 'WebApplication', image: 'assets/share/museum.jpg',
+    title: 'Studio · Speedmax Museum — build, paint and share a time-trial bike',
+    description: 'Every bike in the Speedmax Museum and more, in 3D: paint it, give it a film theme, set the scene, dream it in motion and share it. Canyon generations, named machines and studio designs.', keepTitle: true },
+  { file: 'Experiences.html', type: 'WebPage', image: 'assets/share/museum.jpg',
+    title: 'Speedmax Nights & History Lane · Canyon Speedmax Museum',
+    description: 'Three night experiences around one Canyon Speedmax (Lava Night, Camp 13 and the Ghost Tunnel) and History Lane, the story from Koblenz in 1985 to Kona. An independent study.', keepTitle: true },
 ];
 for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.test(f))) {
   const html = fs.readFileSync(path.join(root, f), 'utf8');
@@ -38,6 +44,8 @@ for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.t
   PAGES.push({ file: f, type: 'WebPage', image: 'assets/share/museum.jpg', title: t, description: d, keepTitle: true });
 }
 
+const SYSTEM_CSS = fs.readFileSync(path.join(root, 'web/styles/system.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '');
+const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
 
@@ -71,6 +79,10 @@ for (const p of PAGES) {
   else html = html.replace(/<\/title>/, `</title>\n<meta name="description" content="${esc(p.description)}">`);
   html = html.replace(/<meta charset="utf-8">/i, m => `${m}\n${block(p)}`);
   if (!html.includes('<!--harden:start-->')) throw new Error('no <meta charset> in ' + p.file);
+  // one design system on every page (web/styles/system.css), last in <head> so it wins over page defaults
+  html = html.replace(/<!--design-system:start-->[\s\S]*?<!--design-system:end-->\n?/, '');
+  const fonts = /fonts\.googleapis\.com\/css2\?family=Instrument\+Serif[^"]*Manrope/.test(html) ? '' : `<link rel="stylesheet" href="${FONTS}">`;
+  html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}<style id="design-system">${SYSTEM_CSS}</style><!--design-system:end-->\n</head>`);
   fs.writeFileSync(f, html);
 }
 

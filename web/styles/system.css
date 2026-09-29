@@ -1,0 +1,29 @@
+/* Speedmax Museum design system — injected into every page by tools/harden_pages.mjs.
+   Typography and shared text components only: colours stay with each page (the engineering studios
+   are dark by design). Canvas lettering uses the same families (web/src/engine/type.js). */
+:root{
+  --sans:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --fs-eyebrow:11px; --ls-eyebrow:.22em;
+  --fs-caption:11px; --fs-small:12.5px; --fs-body:clamp(13.5px,.35vw + 12px,15.5px);
+  --fs-title:clamp(28px,1.6vw + 18px,46px); --fs-display:clamp(40px,4.5vw + 16px,108px);
+  --lh-body:1.62; --radius-s:10px; --radius-m:14px; --radius-l:22px;
+}
+html{font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body{font-family:var(--sans)}
+button,input,select,textarea{font-family:inherit}
+code,kbd,pre,samp{font-family:var(--mono)}
+/* the shared card: museum, wings, studio */
+#card{font-family:var(--sans)}
+#card .c-years{font:700 var(--fs-eyebrow)/1.3 var(--sans);letter-spacing:var(--ls-eyebrow);text-transform:uppercase}
+#card h2{font-family:var(--serif);font-weight:400;font-size:var(--fs-title);line-height:1;letter-spacing:-.01em;text-wrap:balance}
+#card .c-mat{font:600 var(--fs-caption)/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase}
+#card .c-note{font-size:var(--fs-body);line-height:var(--lh-body);text-wrap:pretty}
+.card-facts,.card-note{font-size:var(--fs-small);line-height:1.55}
+.card-media figcaption{font-size:var(--fs-caption)}
+/* one eyebrow / title / body everywhere */
+.t-eyebrow{font:700 var(--fs-eyebrow)/1.3 var(--sans);letter-spacing:var(--ls-eyebrow);text-transform:uppercase}
+.t-title{font-family:var(--serif);font-weight:400;font-size:var(--fs-title);line-height:1}
+.t-body{font-size:var(--fs-body);line-height:var(--lh-body)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}

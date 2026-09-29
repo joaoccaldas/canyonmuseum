@@ -9,6 +9,7 @@
 // whenever the visitor can't see into it.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { slotsOf, applySkin } from './engine/skins.js';
 
 export const HROOM = { x0: -18.3, x1: -7.3, z0: 4.8, z1: -8.4, h: 4.4 };
 export const HDOOR = { z0: 1.0, z1: 4.0, h: 3.4 };
@@ -218,12 +219,10 @@ export function buildHalloween(ctx) {
       bike.traverse(o => {
         if (!o.isMesh) return;
         o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
-        for (const m of [].concat(o.material)) {
-          if (m.name === 'paint_frame') { m.color.set('#141116'); m.roughness = .32; m.metalness = .25; if ('clearcoat' in m) m.clearcoat = 1; }
-          if (/decal/.test(m.name)) { m.color.set(ORANGE); if (m.emissive) { m.emissive.set(EMBER); m.emissiveIntensity = 1.6; } }
-        }
         o.userData.hween = piece; o.castShadow = !lite; delete o.userData.piece; pickables.push(o);
       });
+      applySkin(slotsOf(bike), (window.__SKINS?.skins || []).find(s => s.id === 'lava-night')
+        || { id: 'lava-night', name: 'Lava Night', frame: '#141116', finish: { roughness: .32, metalness: .25, clearcoat: 1 }, decals: { color: ORANGE, glow: EMBER, intensity: 1.6 } });
       dress?.(bike);
       const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
       bike.position.set(-c.x, -box.min.y, -c.z);

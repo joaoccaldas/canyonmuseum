@@ -2,23 +2,92 @@
   "id": "./",
   "name": "Canyon Speedmax Museum",
   "short_name": "Canyon Museum",
-  "description": "Walk every Canyon Speedmax generation in a sunlit museum on the Kona coast, then the chapel, the upper rooms, and the pier.",
+  "description": "Walk every Canyon Speedmax generation in a sunlit museum on the Kona coast, then the chapel, the upper rooms, the time-trial wing and the pier.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "any",
   "background_color": "#f4efe7",
   "theme_color": "#1b1411",
-  "categories": ["sports", "education", "entertainment"],
+  "categories": [
+    "sports",
+    "education",
+    "entertainment"
+  ],
   "icons": [
-    { "src": "app/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "app/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "app/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "app/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    {
+      "src": "assets/pwa/icon-v3-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/pwa/icon-v3-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/pwa/icon-v3-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/pwa/icon-v3.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ],
   "shortcuts": [
-    { "name": "Kona by Year", "short_name": "The pier", "url": "./?room=pier", "icons": [{ "src": "app/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Collection", "url": "./Canyon_Collection.html", "icons": [{ "src": "app/icons/icon-192.png", "sizes": "192x192" }] }
+    {
+      "name": "Museum map",
+      "short_name": "Map",
+      "url": "./?map=1",
+      "icons": [
+        {
+          "src": "assets/pwa/icon-v3-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Against the Clock",
+      "short_name": "Time trial",
+      "url": "./?room=atlas",
+      "icons": [
+        {
+          "src": "assets/pwa/icon-v3-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Kona by Year",
+      "short_name": "The pier",
+      "url": "./?room=pier",
+      "icons": [
+        {
+          "src": "assets/pwa/icon-v3-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Collection",
+      "url": "./Canyon_Collection.html",
+      "icons": [
+        {
+          "src": "assets/pwa/icon-v3-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

@@ -6,17 +6,10 @@ import * as THREE from 'three';
 export const SROOM = { x0: -6.4, x1: 6.4, z0: 21.4, z1: 5.35, h: 5.4 };
 export const SDOOR = { x0: -1.6, x1: 1.6, h: 3.4 };
 
-// Copy and colours from the Bike Porn films (wyld-store/bike-porn). Sanctuary is the altar.
-const SPECS = [
-  { id: 'aero-glam', film: 'Aero Glam', tagline: 'They came for the watts. They stayed for the looks.', persona: 'The Alien', place: 'Crop circle · 3 a.m.', name: 'Alien Glam', sub: 'Toxic lime into black with a violet pearl, neon wheels and a full disc', stops: ['#050805', '#1fbf3f', '#8be04e', '#d9ff3f', '#7b4fd6'], angle: 40, scale: 1.8, flow: 1.1, x: -3.55, z: 8.6 },
-  { id: 'couture', film: 'Couture', tagline: 'Blonde. Bored. Twelve seconds faster than you.', persona: 'The Supermodel', place: 'Runway · front row', name: 'Blush Couture', sub: 'Blush, pearl and champagne gold, like a gown in motion', stops: ['#f2a7c3', '#fff1f6', '#e3b76a', '#ff8fbf', '#f6dcae'], angle: 70, scale: 1.2, flow: .7, x: 3.55, z: 8.6 },
-  { id: 'tiffany-tide', film: 'Offshore', tagline: 'One wave. One bike. No brakes.', persona: 'The Surfer', place: 'Golden hour · offshore wind', name: 'Tiffany Tide', sub: 'Tiffany, sky and cobalt, like a wave breaking', stops: ['#2f4fd6', '#6ec6ff', '#f4fbfb', '#8fe7dc', '#55d8d3'], angle: -24, scale: 1.3, flow: 1.2, x: -3.55, z: 12.2 },
-  { id: 'hex', film: 'Hex', tagline: 'Double, double, carbon trouble.', persona: 'The Witch', place: 'Moonlit woods · full moon', name: 'Witching Hour', sub: 'Midnight grape and potion green with a spell-bound pearl', stops: ['#0c0714', '#3a1f6b', '#7b4fd6', '#b6ff5a', '#1a0f2a'], angle: 55, scale: 1.5, flow: 1.3, x: 3.55, z: 12.2 },
-  { id: 'stay-weird', film: 'Stay Weird', tagline: 'Rules are for other bikes.', persona: 'The Weirdo', place: 'Sticker dream', name: 'Stay Weird', sub: 'Lilac and butter checkers from the Upcoming drop', stops: ['#a98bef', '#f6df86', '#1e1826', '#a98bef', '#f6df86'], angle: 0, scale: 2.4, flow: .15, x: -3.55, z: 15.8 },
-  { id: 'lake-house', film: 'The Lake House', tagline: 'Whatever you do, don’t ride down to the dock.', persona: 'The Final Girl', place: 'Haunted cabin · by the lake', name: 'Lake Fog', sub: 'Black water, cold teal and a drifting mist', stops: ['#03090c', '#0f3a44', '#5b8c8f', '#dfeae6', '#14242a'], angle: -15, scale: 1.4, flow: 1.6, x: 3.55, z: 15.8 },
-  { id: 'sunny-side', film: 'Sunny Side', tagline: 'She’s lovely. She’s Swedish. She’s already inside.', persona: 'The Babysitter', place: 'Midsummer meadow · too bright', name: 'WYLD Dye', sub: 'The signature pink and aqua jersey dye, sweet as a lullaby', stops: ['#ff3d8e', '#ff8fbf', '#e9cde8', '#8fe7dc', '#5fd8d3'], angle: 32, scale: 1.5, flow: 1, x: -3.55, z: 19.2 },
-  { id: 'sanctuary', film: 'Sanctuary', tagline: 'She has been waiting in the front pew.', persona: 'The Doll', place: 'Old chapel · midnight mass', name: 'Stained Glass', sub: 'A cathedral window in carbon: ruby, cobalt, gold and leaded black', stops: ['#b3122e', '#1d4fd6', '#f2c14e', '#2f9e5a', '#6f4cd9'], angle: 18, scale: 2.1, flow: .4, x: 0, z: 18.6, altar: true },
-];
+// Copy and colours come from museum/themes/films.json (window.__FILMS; also the studio's film themes).
+// Only where each film stands in the chapel is decided here.
+const PLACE = {"aero-glam": {"x": -3.55, "z": 8.6}, "couture": {"x": 3.55, "z": 8.6}, "tiffany-tide": {"x": -3.55, "z": 12.2}, "hex": {"x": 3.55, "z": 12.2}, "stay-weird": {"x": -3.55, "z": 15.8}, "lake-house": {"x": 3.55, "z": 15.8}, "sunny-side": {"x": -3.55, "z": 19.2}, "sanctuary": {"x": 0, "z": 18.6, "altar": true}};
+const SPECS = (window.__FILMS?.films || []).filter(f => PLACE[f.id]).map(f => ({ ...f, ...PLACE[f.id] }));
 
 export function sanctuaryWalkable(x, z) {
   const inDoor = x > SDOOR.x0 + .25 && x < SDOOR.x1 - .25 && z > 4.25 && z < SROOM.z1 + 1.1;

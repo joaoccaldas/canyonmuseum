@@ -146,7 +146,7 @@ def lerp(a, b, t):
 
 
 # ----------------------------------------------------------------------------- revolved parts (wheels)
-def revolve(name, centre, profile, m, seg=48, y0=0.0):
+def revolve(name, centre, profile, m, seg=48, y0=0.0, smooth=True):
     """profile: [(radius, lateral)] — revolved about the axle (Y) through centre."""
     bm = bmesh.new()
     rings = []
@@ -163,7 +163,7 @@ def revolve(name, centre, profile, m, seg=48, y0=0.0):
                 bm.faces.new(f)
             except ValueError:
                 pass
-    return obj(name, bm, m)
+    return obj(name, bm, m, smooth=smooth)
 
 
 def wheel(tag, c, R, kind, M, depth=0.05, spokes=20):
@@ -356,7 +356,13 @@ def build(b, skin):
             sweep(f'extension_{"l" if s < 0 else "r"}', ext, .022, .022, M['carbon'], kind='round', n=10)
             box(f'armpad_{"l" if s < 0 else "r"}', stem_end + Vector((-.02, y, .085)), (.12, .075, .018), M['saddle'])
         box('pad_riser', stem_end + Vector((-.02, 0, .05)), (.05, .2, .04), M['carbon'])
-    elif bars == 'drop':
+    elif bars in ('drop', 'drop_clip'):
+        if bars == 'drop_clip':                                       # clip-on extensions over the drops (short: the draft-legal rule / 1989 style)
+            reach = g.get('clip_reach', .3)
+            for s in (-1, 1):
+                y = s * g.get('ext_width', .08)
+                sweep(f'clip_{"l" if s < 0 else "r"}', [stem_end + Vector((-.04, y, .04)), stem_end + Vector((reach * .6, y, .05)), stem_end + Vector((reach, y, .06))], .022, .022, M['alu'], kind='round', n=10)
+                box(f'clip_pad_{"l" if s < 0 else "r"}', stem_end + Vector((-.02, y, .065)), (.1, .07, .016), M['saddle'])
         for s in (-1, 1):
             y = s * bw
             pts = [stem_end + Vector((0, s * .02, 0)), stem_end + Vector((0, y * .8, 0)), stem_end + Vector((.07, y, -.01)), stem_end + Vector((.1, y, -.08)), stem_end + Vector((.05, y, -.14)), stem_end + Vector((-.06, y, -.14))]
@@ -371,7 +377,7 @@ def build(b, skin):
     # drivetrain: chainring, cranks, a little cog, the chain line
     ring_r = b.get('chainring_r', .105)
     ring_prof = [(ring_r, .004), (ring_r, -.001), (ring_r - .012, -.001), (ring_r - .012, .004)] if not b.get('disc_ring') else [(ring_r, .004), (ring_r, -.001), (.02, -.001), (.02, .004)]
-    revolve('chainring', Vector((0, 0, 0)), ring_prof + [ring_prof[0]], M['steel'] if not b.get('disc_ring') else M['accent'], seg=48, y0=-.05)
+    revolve('chainring', Vector((0, 0, 0)), ring_prof + [ring_prof[0]], M['steel'] if not b.get('disc_ring') else M['accent'], seg=48, y0=-.05, smooth=False)
     crank = g.get('crank', .1725)
     for s, a in ((-1, math.radians(-60)), (1, math.radians(120))):
         p1 = Vector((math.cos(a) * crank, s * .085, math.sin(a) * crank))

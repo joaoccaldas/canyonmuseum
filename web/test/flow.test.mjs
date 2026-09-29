@@ -28,9 +28,13 @@ test('flow mode lets chrome recede during movement', () => {
 });
 
 
-test('mobile render scale drops only while moving and restores when stationary', () => {
-  assert.match(src, /qualityDpr = Math\.min\(devicePixelRatio, lite \? 1\.45 : 2\)/);
-  assert.match(src, /flowDpr = Math\.min\(devicePixelRatio, lite \? 1\.12 : 1\.65\)/);
+test('mobile render scale drops only while moving and restores when stationary', async () => {
+  const { renderSettings } = await import('../src/engine/profile.js');     // "Auto" keeps the original device rule
+  for (const dpr of [1, 2, 3]) for (const l of [true, false]) {
+    const r = renderSettings('auto', { lite: l, dpr });
+    assert.equal(r.dpr, Math.min(dpr, l ? 1.45 : 2)); assert.equal(r.flowDpr, Math.min(dpr, l ? 1.12 : 1.65)); assert.equal(r.lite, l);
+  }
+  assert.match(src, /let qualityDpr = RS\.dpr/); assert.match(src, /let flowDpr = RS\.flowDpr/);
   assert.match(src, /const targetDpr = flowing \? flowDpr : qualityDpr/);
   assert.match(src, /renderer\.setPixelRatio\(activeDpr\)/);
 });

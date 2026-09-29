@@ -15,17 +15,14 @@ const studio = key => {
 };
 
 // Documented finishes for the hall (same colours as tools/render_paintings.mjs).
-const FINISH = {
-  'speedmax-three-2005': '#14161a', 'speedmax-2007': '#8a1f1f', 'speedmax-al-2011': '#d8d8dc',
-  'speedmax-cf-2011': '#101014', cfr: '#eceaf0', slx: '#cdc8dd',
-};
-const GLB = {
-  'speedmax-three-2005': 'assets/heritage/speedmax-three-2005/speedmax_web.glb',
-  'speedmax-2007': 'assets/heritage/speedmax-2007/speedmax_web.glb',
-  'speedmax-al-2011': 'assets/heritage/speedmax-al-2011/speedmax_web.glb',
-  'speedmax-cf-2011': 'assets/heritage/speedmax-cf-2011/speedmax_web.glb',
-  cfr: 'assets/museum/speedmax_web.glb', slx: 'assets/museum-slx/speedmax_web.glb',
-};
+// wings and art are data: museum/world/wings/index.json lists the wing files in order; museum/art holds the catalogues
+const readJson = f => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
+const WINGS = readJson('museum/world/wings/index.json').wings.map(f => readJson(`museum/world/wings/${f}`));
+const ART = { paintings: readJson('museum/art/paintings.json').paintings,
+  sculptures: fs.existsSync(path.join(root, 'museum/art/sculptures.json')) ? readJson('museum/art/sculptures.json').sculptures : [] };
+const SKINS = JSON.parse(fs.readFileSync(path.join(root, 'museum/skins/museum.json'), 'utf8'));
+const FINISH = Object.fromEntries(SKINS.skins.filter(s => s.id.startsWith('hall-')).map(s => [s.id.slice(5), s.frame]));
+const GLB = JSON.parse(fs.readFileSync(path.join(root, 'museum/catalog/canyon-assets.json'), 'utf8')).glb;   // one list, shared with the studio catalogue
 
 // Part sheets for the exploded view. Modern bikes: PARTS from web/src/data.js (with the
 // profile's overrides). Heritage bikes: the archived specification rows, matched per part.
@@ -111,6 +108,11 @@ const html = fs.readFileSync(path.join(here, 'landing.template.html'), 'utf8')
   .replace('__PIECES__', () => JSON.stringify(pieces).replaceAll('<', '\\u003c'))
   .replace('__KONA__', () => fs.readFileSync(path.join(root, 'museum/kona_champions.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__WYLDROOM__', () => fs.readFileSync(path.join(root, 'museum/wyld_room.json'), 'utf8').replaceAll('<', '\\u003c'))
+  .replace('__SKINS__', () => JSON.stringify(SKINS).replaceAll('<', '\\u003c'))
+  .replace('__ROOMS__', () => fs.readFileSync(path.join(root, 'museum/world/rooms.json'), 'utf8').replaceAll('<', '\\u003c'))
+  .replace('__FILMS__', () => fs.readFileSync(path.join(root, 'museum/themes/films.json'), 'utf8').replaceAll('<', '\\u003c'))
+  .replace('__WINGS__', () => JSON.stringify(WINGS).replaceAll('<', '\\u003c'))
+  .replace('__ART__', () => JSON.stringify(ART).replaceAll('<', '\\u003c'))
   .replace('__ATLAS__', () => fs.readFileSync(path.join(root, 'museum/atlas/bikes.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__KONAYEARS__', () => JSON.stringify(JSON.parse(fs.readFileSync(path.join(root, 'museum/kona_years.json'), 'utf8'))).replaceAll('<', '\\u003c'))
   .replace('__APP__', () => app);
