@@ -1,5 +1,5 @@
 {
- "version": "f9b328451538",
+ "version": "ba4cf123dc3f",
  "core": [
   "index.html",
   "manifest.webmanifest",
@@ -11,8 +11,8 @@
   "app/icons/apple-touch-icon.png"
  ],
  "files": {
-  "index.html": "5vxkXoCIIOUffnvvMVg+GLIrd6H1EbbFzc7FVberyP8=",
-  "manifest.webmanifest": "Tt/Q5wdXAtRvmYrUEQrXAIxWVvjbxCqgKqEOPIzGqyQ=",
+  "index.html": "+QIavSrfdVs3GYcx0fq+DXKDzWPmslYb4Mq7VJdkwE8=",
+  "manifest.webmanifest": "ndJ7e3m3dfgM1dHC01W8PePQ5c/MQNqxqbRmKfHL3XM=",
   "app/icons/icon.svg": "yur+2IJEXj9kcNjKgUMxGP0XdnENeEwJksmarKELAgk=",
   "app/icons/favicon-32.png": "vlBuso7pS8gdl6S2CDDdj9KBbB6jV/wEk76WNkuh3/M=",
   "app/icons/icon-192.png": "u32Yb1mrP1MAcge+dl7zHGBdMRDDfU+qPfvwNK9RCO8=",
@@ -20,7 +20,8 @@
   "app/icons/maskable-512.png": "8CBzf+TzMebOZOELSDLLjk3NcIt7S/vMiZzi9Zd7VeU=",
   "app/icons/apple-touch-icon.png": "izT/OJe0BjxpPdCGHx4r/hZcqZqgrtMKV6uMzvqkjP8=",
   "Canyon_Collection.html": "w9z54bcmc3yfhFET0/31Jq/VT/H1at0pbb/DjOB3Syo=",
-  "Experiences.html": "Ur66YVW0GfVIwJYNMCc4PGL9tbf4VvKvuGvbTFnWIX8=",
+  "Experiences.html": "Vt1ZOi6Necf2TVkHMpsqmnYOE9W31XNO8qBdNC4iGL4=",
+  "Guide.html": "NV8P7KgTOk1nIsOrcTXZJaoeVV19wxYFsHuu+I/KoQ8=",
   "Speedmax_2007_Museum.html": "KMVVxg/yoQtGEchM//ixO/4B51vflgMoysrI29T/fCQ=",
   "Speedmax_AL_2011_Museum.html": "JaDmbc4Oon3pvfikKO/ypn0ZNHC+PG6G/ZrHPzc4Ayw=",
   "Speedmax_CF_2011_Museum.html": "JcET5oK6aqXgx091b9uQQmAXBVuJjCocexqNb/Ph3bs=",

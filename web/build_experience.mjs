@@ -23,6 +23,8 @@ const data = {
   product: 'https://www.canyon.com/{loc}/road-bikes/triathlon-bikes/speedmax/cfr/speedmax-cfr-axs/4524.html',
   stats: [[`${spec.weightKg} kg`, 'size M'], [c.gear, `${c.cassette} · 12 sp`], [c.wheels.split('·')[1].trim().replace(' mm', ''), 'mm rims']],
   history: JSON.parse(fs.readFileSync(path.join(root, 'museum/history.json'), 'utf8')),
+  // part → a Canyon store page checked to exist (museum/prices-se.json); others fall back to Canyon's search
+  buy: Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync(path.join(root, 'museum/prices-se.json'), 'utf8')).items).map(([k, v]) => [k === 'aeroshield_pro_upgrade' ? 'aeroshield' : k, { name: v.name, url: v.url, upgrade: v.match === 'upgrade' }])),
 };
 const res = await build({ entryPoints: [path.join(here, 'src/exp/main.js')], bundle: true, format: 'iife', minify: true, write: false, target: 'es2020', legalComments: 'none' });
 const html = fs.readFileSync(path.join(here, 'experience.template.html'), 'utf8')

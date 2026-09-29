@@ -81,6 +81,7 @@ body.walking #rail{transform:none}
 .chip.on .n{background:#2a3138}
 .chip.kona .n{background:linear-gradient(135deg,var(--wyld),var(--wyld-lilac) 50%,var(--wyld-aqua));color:#fff}
 .chip.pier .n{background:#12181d}
+.chip.out{text-decoration:none}.chip.out .n{background:#12181d;font-size:18px}
 .chip.hween .n{background:radial-gradient(circle at 50% 60%,#ff7a1a,#3a1206 70%);font-size:20px}
 .chip.wyld .n{background:linear-gradient(135deg,#ff3d8e,#ff8fbf 30%,#e9cde8 50%,#8fe7dc 70%,#5fd8d3);color:#fff}
 .chip.ghost .n{background:transparent;border:1px dashed rgba(18,24,29,.25);color:var(--faint)}
@@ -253,7 +254,9 @@ body.walking .credit{display:none}
   <nav>
     <button id="installBtn" hidden title="Install the museum on this device"><span class="long">Get the </span>app</button>
     <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
-    <a href="Canyon_Collection.html#compare">Compare</a>
+    <a class="wide" href="Canyon_Collection.html#compare">Compare</a>
+    <a href="Guide.html">Guide</a>
+    <button id="ppBtn" aria-label="Museum Passport" title="Museum Passport">🎟️</button>
     <a class="wide" href="Canyon_Collection.html#archive">Archive</a>
   </nav>
 </header>

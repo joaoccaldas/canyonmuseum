@@ -8,6 +8,7 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { buildPier, pierWalkable, PIER, ordinal } from './pier.js';
 import { initAppShell } from './app-shell.js';
+import { createPassport } from './passport.js';
 import { buildHalloween, hweenWalkable, HDOOR } from './halloween.js';
 import { applyWyld } from './skins/wyld.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -16,7 +17,10 @@ const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
 const WROOMDATA = window.__WYLDROOM || null;
-const KY = window.__KONAYEARS || null;                                // Kona by Year: the pier
+const KY = window.__KONAYEARS || null;
+let passport = null;                                                  // Museum Passport (created once the page is up)
+const stampIt = (...a) => passport?.stamp(...a);
+const bikeKey = p => p.key || `${p.name}-${p.years}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');                                // Kona by Year: the pier
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -102,7 +106,7 @@ scene.fog = new THREE.Fog('#e6eef0', 70, 420);
 const portraitFov = () => innerHeight > innerWidth ? 74 : 56;          // phones: a wider view, not a letterbox
 const camera = new THREE.PerspectiveCamera(portraitFov(), 1, .05, 900);
 const pmrem = new THREE.PMREMGenerator(renderer);
-scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;   // until the hall itself is captured (below)
 scene.environmentIntensity = .55;
 
 // ------------------------------------------------------------------ canvas textures (plaster, travertine, basalt, lettering)
@@ -864,6 +868,7 @@ function visitChamp(c) {
   document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'kona'));
 }
 function openChamp(c) {
+  stampIt(`champ:${c.year}`, `Kona champion ${c.year}`, 10);
   champ = c;
   $('cYears').textContent = `Kona ${c.year} · World Champion`;
   $('cName').textContent = c.athlete;
@@ -894,6 +899,7 @@ function visitWyld(v) {
   document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'wyld'));
 }
 function openWyld(v) {
+  stampIt(`wyld:${v.index}`, v.name, 5);
   const B = WROOMDATA.bike, P2 = WROOMDATA.palette;
   $('cYears').textContent = `WYLD Room · ${B.name} · ${B.year}`;
   $('cName').textContent = v.name; $('cMat').textContent = v.sub; $('cNote').textContent = v.text;
@@ -927,6 +933,7 @@ function visitPier(target) {                                          // target:
 const credit = c => `<a href="${esc(c.source.page)}" target="_blank" rel="noopener">© ${esc(c.source.author)} · ${esc(c.source.license)} ↗</a>`;
 const paintingFig = c => `<figure class="c-photo"><img src="assets/kona-years/${esc(c.id)}.jpg" alt="${esc(c.caption)}, as a painted canvas"><figcaption>${esc(c.caption)}<br>Painted from a Wikimedia Commons photograph: ${credit(c)} · the canvas carries the same licence</figcaption></figure>`;
 function openYear(s) {
+  stampIt(`kona:${s.year}`, `Kona ${s.year}`, 10);
   yearSel = s; champ = null; current = null;
   const raced = s.status === 'raced';
   $('cYears').textContent = raced ? `Kona ${s.year} · ${s.race}'s race · best Speedmax` : `Kona ${s.year}`;
@@ -954,6 +961,7 @@ function openEra(e) {
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 function openFinale() {
+  stampIt('room:pier-finish', 'The finish arch', 15);
   current = null; champ = null; yearSel = null;
   const cfr = PIECES.find(p => p.key === 'cfr');
   $('cYears').textContent = 'The finish · MY2027'; $('cName').textContent = cfr?.name || 'Speedmax CFR';
@@ -974,6 +982,7 @@ function visitHween() {
   document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'hween'));
 }
 function openHween() {
+  stampIt('room:lava-night', 'Lava Night room', 10);
   current = null; champ = null;
   const cfr = PIECES.find(p => p.key === 'cfr');
   $('cYears').textContent = 'Lava Night · Halloween'; $('cName').textContent = 'Speedmax CFR, after dark';
@@ -983,6 +992,7 @@ function openHween() {
   $('cMedia').innerHTML = '';
   $('cActions').innerHTML = (cfr?.viewer ? `<a class="btn primary" href="${esc(cfr.viewer)}"><span class="long">Enter </span>3D studio <span aria-hidden="true">→</span></a>` : '') + `<button class="btn ghost" id="cHweenOut">Back<span class="long"> to the hall</span></button>`;
   $('cHweenOut').onclick = () => { closeCard(); route({ x: -1, z: 2.5 }, null, null); };
+  $('cMedia').innerHTML = `<div class="c-parts"><small>Three full night experiences</small><div>${[['lava', '🎃 Lava Night'], ['camp13', '🏕️ Camp 13'], ['tunnel', '👻 Ghost Tunnel']].map(([h, t]) => `<a class="btn ghost" style="height:40px" href="Experiences.html#${h}">${t}</a>`).join('')}</div></div>`;
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
 
@@ -1051,7 +1061,7 @@ function coachDid(kind) {                                            // the hint
 $('coachOk')?.addEventListener('click', () => coachShow(coachState.k + 1));
 
 function enter() {
-  if (started) return; started = true;
+  if (started) return; started = true; stampIt('room:hall', 'The hall', 10);
   document.body.classList.add('walking'); $('intro').classList.add('off');
   const coaching = coarse && (() => { try { return localStorage.getItem('speedmax.coach.v1') !== '1'; } catch (_) { return true; } })();
   if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
@@ -1066,6 +1076,7 @@ $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? ''
 if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
+$('railInner').insertAdjacentHTML('beforeend', `<a class="chip out" href="Experiences.html#history"><span class="n" aria-hidden="true">📜</span><span><small>KOBLENZ · 1985</small><b>History Lane ↗</b></span></a><a class="chip out" href="Experiences.html#camp13"><span class="n" aria-hidden="true">🌙</span><span><small>3 NIGHTS</small><b>Speedmax Nights ↗</b></span></a>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
 $('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8); if (b.dataset.room === 'hween') visitHween(); else if (b.dataset.room === 'pier') visitPier(pier.stations[0]); else if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
 function railActive(p) {
@@ -1073,6 +1084,7 @@ function railActive(p) {
   document.querySelector(`.chip[data-i="${p?.index}"]`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
 }
 function openCard(p) {
+  stampIt(`bike:${bikeKey(p)}`, p.name, 10);
   $('cYears').textContent = `${p.years} · No. ${String(p.index + 1).padStart(2, '0')}`;
   $('cName').textContent = p.name; $('cMat').textContent = p.material || '';
   $('cNote').textContent = p.glb ? p.note : `${p.note} ${p.why || ''}`.trim();
@@ -1365,8 +1377,23 @@ function frame(now) {
   if (window.__foam) window.__foam.opacity = .38 + Math.sin(t * .9) * .14;
   renderer.render(scene, camera);
 }
+// Reflections of the real place: once the hall, sea and sky exist, render them into a cube map
+// from the middle of the aisle and use that as the environment. Paint, carbon and alloy then pick
+// up the travertine, the Pacific and the sky instead of a generic grey studio. One-off, 128 px faces
+// on phones.
+function captureEnvironment() {
+  const rt = new THREE.WebGLCubeRenderTarget(lite ? 128 : 256, { type: THREE.HalfFloatType });
+  const cube = new THREE.CubeCamera(.3, 900, rt); cube.position.set(0, 1.4, -20); scene.add(cube);
+  const hidden = [pier?.group, hween.group].filter(Boolean).filter(g => g.visible); hidden.forEach(g => { g.visible = false; });
+  const env = scene.environment; scene.environment = null; cube.update(renderer, scene); scene.environment = env;
+  hidden.forEach(g => { g.visible = true; }); scene.remove(cube);
+  const pm = pmrem.fromCubemap(rt.texture); scene.environment = pm.texture; scene.environmentIntensity = .85; rt.dispose();
+}
+requestAnimationFrame(() => { try { captureEnvironment(); } catch (e) { console.warn('environment capture', e); } });
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 initAppShell();
+passport = createPassport();
+$('ppBtn')?.addEventListener('click', () => passport.open());
 loadAll().then(loadWyldBikes).then(loadHweenBike).catch(e => console.warn('rooms', e));
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, halt: () => { path = null; P.vx = P.vz = 0; } };

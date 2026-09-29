@@ -84,10 +84,11 @@ async function runNight(build) {
 }
 function openPart(id) {
   const p = D.parts[id]; if (!p) return;
+  const buy = D.buy[id];
   passport.stamp(`part:${id}`, p.name, 5);
   card(`<div class="eb">Part · ${esc(p.group || '')}</div><h2>${esc(p.name)}</h2>${p.spec ? `<p class="spec">${esc(p.spec)}</p>` : ''}${p.weight ? `<p class="mut">${esc(p.weight)} g · manufacturer weight</p>` : ''}${p.note ? `<p>${esc(p.note)}</p>` : ''}
-    <p class="mut">The link opens Canyon’s own site search for this part; availability depends on your country.</p>`,
-    `<a class="btn primary" href="${esc(canyonSearch(loc, p.query || p.name))}" target="_blank" rel="noopener">Find at Canyon ↗</a><a class="btn" href="${esc(D.studio)}">Open in 3D studio</a>`);
+    ${buy ? `<p class="mut">On Canyon’s store: ${esc(buy.name)}${buy.upgrade ? ' (an upgrade for this cockpit)' : ''}.</p>` : '<p class="mut">The link opens Canyon’s own search for this part; availability depends on your country.</p>'}`,
+    `<a class="btn primary" href="${esc(buy ? buy.url.replace(/canyon\.com\/[a-z]{2}-[a-z]{2}\//, `canyon.com/${loc}/`) : canyonSearch(loc, p.name))}" target="_blank" rel="noopener">${buy ? 'Buy at Canyon' : 'Find at Canyon'} ↗</a><a class="btn" href="${esc(D.studio)}">Open in 3D studio</a>`);
 }
 
 // =================================================================== History Lane

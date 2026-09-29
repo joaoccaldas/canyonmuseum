@@ -43,13 +43,38 @@ A teak pier runs out of the apse over the Pacific (Kailua Pier is where every Ko
 - **Mobile budget:** static pier geometry is merged per material, festoon bulbs are one instanced mesh with no real lights, canvases load only when you walk toward the pier, and out on the pier the walled rooms are hidden and the shadow map is frozen.
 - **Test:** `node web/pier-smoke.mjs` (phone viewport: walks out, opens 2023, reaches the finish).
 
+## 🌙 Speedmax Nights & 📜 History Lane — `Experiences.html`
+
+Four standalone 3D experiences (one scene at a time, so phones only hold what they show):
+
+| | Theme | What's there |
+|---|---|---|
+| `#lava` | **Lava Night** — Halloween on the lava field | glowing cracks, jack-o'-lanterns, Hualālai, bats; CFR in black & ember |
+| `#camp13` | **Camp 13** — a cheesy summer-camp slasher night (all original) | misty lake, dock, cabins, campfire, a goalie-masked counselor with a floor pump; CFR in bone white & cherry red |
+| `#tunnel` | **Ghost Tunnel** — a haunted wind tunnel | rusted ribs, a slow fan, smoke streamlines flowing over a translucent ghost Speedmax |
+| `#history` | **History Lane** — Koblenz, 1985 → today | 15 sourced chapters (`museum/history.json`), painted Commons photographs, abstract bronze tributes, the current Speedmax at the end |
+
+Every night experience has an exploded view with part cards that link to Canyon (a checked product page where one exists, otherwise Canyon's own search), three hidden objects, a story card and opt-in synthesized ambience. The liveries are the museum's own, not Canyon colourways. Build: `node web/build_experience.mjs`. Test: `node web/exp-smoke.mjs`.
+
+## 🧭 Museum Guide — `Guide.html`
+
+A mobile-first web app (bottom tabs on phones, sidebar on desktop): **Home** (passport, fact of the day, shortcuts), **Bikes** (every generation: specs, 3D studio / exploded view, Canyon parts with checked store links), **Kona stats** (titles, course records, year-by-year best Speedmax — charts with tables), **News** (Kona/Ironman/Speedmax headlines refreshed daily by `.github/workflows/news.yml` → `museum/news.json`; headlines and links only), **Help** (tutorials and FAQ). Build: `node web/build_guide.mjs`. Test: `node web/guide-smoke.mjs`.
+
+## 🎟️ Museum Passport
+
+Stamps for bikes, Kona years, rooms, chapters and parts; XP levels from Age-grouper to World Champion; a daily streak with a Kona fact; nine badges; nine hidden objects. Registration (nickname, avatar, country) is on-device only — no account, nothing uploaded; a passport code moves it between devices. Shared by every page (`web/src/passport.js`).
+
+## ✨ Rendering
+
+The museum now captures its own hall, sea and sky into the environment map once at start-up, so paint, carbon and alloy reflect the place they stand in rather than a generic studio. Each night experience builds its environment from its own light (moon, fire, tubes).
+
 ## 📱 The app
 
 - **Install from the site:** "Get the app" in the header (Android/desktop Chrome prompt; iPhone: Share → Add to Home Screen). `manifest.webmanifest` + icons in `app/icons/`.
 - **Secure updates:** `node tools/build_app.mjs` seals each release — it hashes every file (SHA-256) into `app/app-manifest.json` and inlines them into `sw.js`. A new version installs only if every core file downloads intact and matches its hash; otherwise the visitor keeps the last good version. Heavy files are verified the same way on first use. Updates wait for the visitor to tap **Reload**. CI (`app-seal.yml`) fails if a change isn't re-sealed. Test: `node web/app-smoke.mjs` (install, offline reload, tampered release refused).
 - **Android app:** `app/native/` is a Capacitor shell that bundles the museum (offline, native WebView). `.github/workflows/android.yml` builds it, boots it on an emulator and publishes `downloads/SpeedmaxMuseum.apk` + `app/android-version.json` (version, size, SHA-256); the installed app checks that file over HTTPS and offers the update. Add the `SPEEDMAX_KEYSTORE_*` secrets so every release carries the same signature — Android refuses updates signed with a different key.
 
-Rebuild order: `node web/build_landing.mjs && node tools/build_app.mjs`.
+Rebuild order: `node web/build_landing.mjs && node web/build_experience.mjs && node web/build_guide.mjs && node tools/build_app.mjs`.
 
 ---
 
