@@ -1,0 +1,9 @@
+/* Kona Universe shared visual tokens. Canyon Museum is canonical. */
+:root{
+  --kw-sand:#f4efe7;--kw-paper:#fbf9f5;--kw-ink:#12181d;--kw-muted:#5f6a72;--kw-faint:#8e979d;
+  --kw-reef:#138a8f;--kw-lava:#e8471c;--kw-wyld:#ff3d8e;--kw-lilac:#e9cde8;--kw-aqua:#5fd8d3;
+  --kw-sans:'Manrope',system-ui,-apple-system,sans-serif;--kw-serif:'Instrument Serif',Georgia,serif;
+  --kw-r-sm:10px;--kw-r-md:14px;--kw-r-card:24px;--kw-r-pill:999px;
+  --kw-s1:8px;--kw-s2:12px;--kw-s3:16px;--kw-s4:24px;--kw-s5:32px;
+}
+button,input,select,textarea{font-family:var(--kw-sans)}
