@@ -5,7 +5,9 @@ export function makePaint(material,{flyTo,download,getCfg}) {
  // after the colours and setup, so a phone opens straight onto the colourways
  root.insertBefore(box,[...root.querySelectorAll('h3')].find(h=>/Wheel artwork/.test(h.textContent))||root.querySelector('.actions'));
  const U={artTexture:{value:new THREE.Texture()},artOn:{value:0},artScale:{value:1},artOffset:{value:new THREE.Vector2()},artAngle:{value:0},artOpacity:{value:1},artAspect:{value:1},artRepeat:{value:0}};
- material.onBeforeCompile=shader=>{
+ const prevOBC=material.onBeforeCompile,prevKey=material.customProgramCacheKey;   // chain: keep micro-noise / wyld shader edits
+ material.onBeforeCompile=(shader,renderer)=>{
+  if(prevOBC)prevOBC.call(material,shader,renderer);
   Object.assign(shader.uniforms,U);
   shader.vertexShader='varying vec3 artPosition;\n'+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>','#include <project_vertex>\nartPosition = (modelMatrix * vec4(transformed,1.0)).xyz;');
@@ -13,7 +15,7 @@ export function makePaint(material,{flyTo,download,getCfg}) {
   shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
   if(artOn>0.5){vec2 p=(artPosition.xy-vec2(.12,.64)-artOffset);float c=cos(artAngle),s=sin(artAngle);p=mat2(c,-s,s,c)*p;vec2 uv=p/vec2(.95*artScale,.95*artScale/artAspect)+.5;float mask=step(0.,uv.x)*step(0.,uv.y)*step(uv.x,1.)*step(uv.y,1.);if(artRepeat>.5){uv=fract(uv);mask=1.;}vec4 art=texture2D(artTexture,uv);diffuseColor.rgb=mix(diffuseColor.rgb,art.rgb,art.a*artOpacity*mask);}`);
  };
- material.customProgramCacheKey=()=> 'museum-art-v1';material.needsUpdate=true;
+ material.customProgramCacheKey=()=>'museum-art-v1'+(prevKey?'|'+prevKey.call(material):'');material.needsUpdate=true;
  let encoded=null,serial=0;
  const $=id=>document.getElementById(id);
  const settings=()=>Object.fromEntries(['scale','x','y','angle','opacity'].map(k=>[k,+$('paint-'+k).value]).concat([['repeat',$('paint-repeat').checked]]));

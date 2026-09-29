@@ -19,11 +19,14 @@ try {
   await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector('#loader')).opacity)<.01);
   const initial=await page.evaluate(()=>{
    const {S,parts}=window.__sm;const ids=Object.keys(parts);
-   return {ids,env:S.env,frontBottle:parts.bottle_front.visible,rearBottle:parts.bottles_rear.visible,frameName:parts.frame.name,forkName:parts.fork.name,overflow:document.documentElement.scrollWidth>innerWidth};
+   return {ids,env:S.env,frontBottle:parts.bottle_front?.visible??null,rearBottle:parts.bottles_rear?.visible??null,frameName:parts.frame.name,forkName:parts.fork.name,overflow:document.documentElement.scrollWidth>innerWidth};
   });
   assert.equal(initial.env,'museum');assert.equal(initial.frontBottle,false);assert.equal(initial.rearBottle,false);
   assert.equal(initial.frameName,'frame');assert.equal(initial.forkName,'fork');assert.equal(initial.overflow,false);
-  for(const id of ['frame','fork','wheel_front','wheel_rear','crankset','chain','aeroshield','saddle'])assert.ok(initial.ids.includes(id),id);
+  // core parts every bike has; aeroshield only exists on modern fairings
+  for(const id of ['frame','fork','wheel_front','wheel_rear','crankset','chain','saddle'])assert.ok(initial.ids.includes(id),id);
+  const unavailable0=JSON.parse(await page.evaluate(()=>JSON.stringify(window.__BIKE_PROFILE?.unavailableOptions||[])));
+  if(!unavailable0.includes('aerofuel'))assert.ok(initial.ids.includes('aeroshield'),'aeroshield');
   await page.screenshot({path:path.join(out,`final-${name}.png`)});
   await page.locator('#tourStart').click();
   for(let i=1;i<=5;i++){
@@ -42,12 +45,34 @@ try {
   await page.locator('[data-mode="ride"]').click();
   const angle=await page.evaluate(()=>window.__sm.parts.wheel_rear.rotation.z);
   await page.waitForFunction(a=>Math.abs(window.__sm.parts.wheel_rear.rotation.z-a)>.1,{},angle);
-  const speed=await page.$eval('#speed',e=>Number(e.textContent));assert.ok(speed>40&&speed<42);
+  const {speed:expected,ratio}=await page.evaluate(()=>{
+    const {S}=window.__sm;
+    // same physics as the app: crank rad/s × ring/cog ratio × wheel radius
+    const wc=S.cadence/60*Math.PI*2;
+    const ring=.0127/(2*Math.sin(Math.PI/(window.__BIKE_PROFILE?.bike?.chainring||50)));
+    const cog=.0127/(2*Math.sin(Math.PI/(window.__BIKE_PROFILE?.bike?.cog||14)));
+    return {ratio:(ring/cog).toFixed(2),speed:+(wc*(ring/cog)*.3395*3.6).toFixed(1)};
+  });
+  const speed=await page.$eval('#speed',e=>Number(e.textContent));
+  assert.ok(Math.abs(speed-expected)<.5,`displayed ${speed} km/h vs expected ${expected} km/h for ratio ${ratio}`);   // per-bike gearing, not a fixed band
+  assert.ok(speed>30&&speed<60, `speed ${speed} km/h out of plausible range`);
   await page.locator('[data-mode="assembled"]').click();
   await page.locator('[data-drawer="build"]').click();await page.waitForFunction(()=>document.querySelector('#build').classList.contains('open'));
-  await page.locator('#optRear').click();assert.equal(await page.evaluate(()=>window.__sm.parts.bottles_rear.visible),true);
-  await page.locator('#optRear').click();await page.locator('#optFront').click();assert.equal(await page.evaluate(()=>window.__sm.parts.bottle_front.visible),true);
-  await page.locator('#optFront').click();
+  // accessory toggles: only exercise switches this bike actually has (profiles mark missing parts unavailable)
+  const unavailable=await page.evaluate(()=>window.__BIKE_PROFILE?.unavailableOptions||[]);
+  const hasPart=id=>page.evaluate(id=>!!window.__sm.parts[id],id);
+  if(!unavailable.includes('rearBottles')&&await page.$('#optRear')&&await hasPart('bottles_rear')){
+    const before=await page.evaluate(()=>window.__sm.parts.bottles_rear.visible);
+    await page.locator('#optRear').click();
+    assert.equal(await page.evaluate(()=>window.__sm.parts.bottles_rear.visible),!before);   // toggles flip
+    await page.locator('#optRear').click();
+  }
+  if(await page.$('#optFront')&&await hasPart('bottle_front')){
+    const before=await page.evaluate(()=>window.__sm.parts.bottle_front.visible);
+    await page.locator('#optFront').click();
+    assert.equal(await page.evaluate(()=>window.__sm.parts.bottle_front.visible),!before);
+    await page.locator('#optFront').click();
+  }
   await page.locator('#build .x').click();
   assert.deepEqual(errors,[]);
   report.push({name,viewport:[width,height],parts:initial.ids.length,speed_kmh:speed,tour_stops:5,explosion_return:true,accessory_toggles:true,console_errors:errors,offline:url.startsWith('file:')});

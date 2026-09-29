@@ -151,6 +151,8 @@ M.bottle = physical({ color: 0x2a2c30, roughness: .12, transparent: true, opacit
 M.ghost = new THREE.MeshStandardMaterial({ color: 0x9aa7b3, transparent: true, opacity: .07, depthWrite: false });
 M.xray = new THREE.MeshBasicMaterial({ color: 0x6fd3ff, wireframe: true, transparent: true, opacity: .16, depthWrite: false });
 M.disc = physical({ color: 0x0c0c0d, roughness: .4, clearcoat: .6, clearcoatRoughness: .15 });
+// real paint and carbon aren't perfect mirrors: micro-variation breaks up the highlights
+TX.microNoise(M.paint); TX.microNoise(M.cockpit); TX.microNoise(M.crank); TX.microNoise(M.disc);
 
 function tuneStock(m) {
   if (m.name === 'led_green') { m.emissiveIntensity = 4; return m; }
@@ -377,7 +379,7 @@ function applyCfg() {
   if (c.wyld) { wyldCtl ? wyldCtl.set(wp) : (wyldCtl = applyWyld(M.paint, bike, wp)); }
   else if (wyldCtl) { wyldCtl.remove(); wyldCtl = null; }
   M.paint.color.set(c.frame);
-  const fin = { gloss: [.26, 1, .03], satin: [.5, .45, .3], matte: [.72, 0, .6] }[c.finish] || [.3, 1, .04];
+  const fin = { gloss: [.3, 1, .07], satin: [.5, .45, .3], matte: [.72, 0, .6] }[c.finish] || [.3, 1, .07];
   M.paint.roughness = fin[0]; M.paint.clearcoat = fin[1]; M.paint.clearcoatRoughness = fin[2];
   M.paint.iridescence = c.irid;
   M.decal.color.set(c.decal);

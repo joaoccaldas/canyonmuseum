@@ -96,3 +96,22 @@ export function groundTexture() {
   x.fillStyle = g; x.fillRect(0, 0, 1024, 1024);
   const t = new THREE.CanvasTexture(c); return t;
 }
+
+// Micro-variation for glossy surfaces: real paint has orange peel, not a perfect mirror.
+// Injects a tiny world-space noise into roughness so highlights break up — no textures,
+// no UVs needed, and it chains with any existing onBeforeCompile (artwork, wyld, …).
+export function microNoise(material, freq = 480, amt = .28) {
+  const prev = material.onBeforeCompile, prevKey = material.customProgramCacheKey;
+  material.onBeforeCompile = (shader, renderer) => {
+    if (prev) prev.call(material, shader, renderer);
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vMicroP;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvMicroP = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vMicroP;\nfloat mnH(vec3 p){ return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }\nfloat mnN(vec3 p){ vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);\n  float a = mnH(i), b = mnH(i + vec3(1.0, 0.0, 0.0)), c = mnH(i + vec3(0.0, 1.0, 0.0)), d = mnH(i + vec3(1.0, 1.0, 0.0));\n  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y) + (mnH(i + vec3(0.0, 0.0, 1.0)) - a) * f.z * .5; }')
+      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>\n  roughnessFactor = clamp(roughnessFactor * (1.0 - ${(amt * .5).toFixed(3)} + ${amt.toFixed(3)} * mnN(vMicroP * ${freq.toFixed(1)})), 0.02, 1.0);`);
+  };
+  material.customProgramCacheKey = () => 'micro-noise-v1|' + (prevKey ? prevKey.call(material) : '');
+  material.needsUpdate = true;
+  return material;
+}
