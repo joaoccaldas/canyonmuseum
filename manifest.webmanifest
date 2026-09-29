@@ -12,7 +12,7 @@
   "theme_color": "#f4efe7",
   "icons": [
     {
-      "src": "assets/pwa/icon.svg",
+      "src": "assets/pwa/icon-v2.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
