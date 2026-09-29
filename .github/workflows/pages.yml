@@ -42,7 +42,7 @@ jobs:
       - name: Stage static site (allowlist — only what the pages load or link)
         run: |
           mkdir _site
-          cp ./*.html manifest.webmanifest sw.js robots.txt sitemap.xml llms.txt _site/
+          cp ./*.html manifest.webmanifest sw.js robots.txt sitemap.xml llms.txt llms-full.txt _site/
           rsync -a assets/ _site/assets/ --exclude reference/
           mkdir -p _site/assets/reference && rsync -a assets/reference/paintings/ _site/assets/reference/paintings/
           mkdir -p _site/docs && cp docs/FIT_RESEARCH_AND_ROADMAP.md _site/docs/
