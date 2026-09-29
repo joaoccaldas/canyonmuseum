@@ -406,7 +406,7 @@ export async function initArtWorld(museum) {
 
     const arch = clonePrefabs(asset,['ARCH_']);
     arch.position.set(45,0,-43.9);
-    arch.scale.setScalar(2.25);
+    arch.scale.setScalar(1.24);
     hiddenRoom.add(arch);
 
     const totemA = clonePrefabs(asset,['TOTEM_']);
@@ -433,7 +433,7 @@ export async function initArtWorld(museum) {
 
     const cold = new THREE.HemisphereLight('#9b88bd','#170d12',.72);
     hiddenRoom.add(cold);
-    for (const [x,z,c] of [[38,-38,'#7b4ea0'],[52,-33,'#8e2635'],[38,-22,'#33576e'],[52,-18,'#6c5735']]) {
+    for (const [x,z,c] of [[45,-42,'#a568d0'],[38,-38,'#7b4ea0'],[52,-33,'#8e2635'],[38,-22,'#33576e'],[52,-18,'#6c5735']]) {
       const l = new THREE.PointLight(c,7.5,14,1.8);
       l.position.set(x,3.9,z);
       l.castShadow = false;
