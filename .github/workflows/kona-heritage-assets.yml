@@ -52,7 +52,7 @@ jobs:
 
       - name: Commit generated assets to this asset branch
         run: |
-          if git diff --quiet -- assets/kona-heritage; then
+          if [ -z "$(git status --porcelain -- assets/kona-heritage)" ]; then
             echo "Generated assets already current"
             exit 0
           fi
