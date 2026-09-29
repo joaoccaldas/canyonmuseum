@@ -15,7 +15,7 @@ test('mobile app manifest is installable and standalone', () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, './');
   assert.equal(manifest.scope, './');
-  assert.ok(manifest.icons.some(icon => /icon\.svg$/.test(icon.src)));
+  assert.ok(manifest.icons.some(icon => /icon-v2\.svg$/.test(icon.src)));
 });
 
 test('landing page wires manifest and install experience', () => {
