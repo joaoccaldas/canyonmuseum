@@ -30,15 +30,20 @@ test('landing page wires manifest and install experience', () => {
   assert.match(pwa, /unregister\(\)/);
 });
 
-test('service worker is conservative and does not pre-cache large bike GLBs', () => {
-  assert.match(sw, /network-first|Navigation stays network-first/);
-  assert.ok(!/\.glb['"]/u.test(sw.split('const SHELL =')[1]?.split(';')[0] || ''));
-  assert.match(sw, /event\.request\.destination/);
+test('sealed service worker verifies release files and keeps large GLBs out of the core shell', () => {
+  const app = JSON.parse(fs.readFileSync(path.join(root, 'app/app-manifest.json'), 'utf8'));
+  assert.ok(app.version && app.files && app.core?.length);
+  assert.ok(app.core.every(p => !/\.glb$/i.test(p)));
+  assert.match(sw, /fetchVerified/);
+  assert.match(sw, /integrity mismatch/);
+  assert.match(sw, /speedmax-core-/);
+  assert.match(sw, /status: 504/);                                    // offline asset requests resolve to a Response
 });
 
-test('installed apps pick up new versions and new icons', () => {
+test('installed apps pick up verified new versions and new icons', () => {
   assert.match(pwa, /visibilitychange/);                              // re-check for a new museum when the app is reopened
-  assert.match(sw, /stale-while-revalidate/);                         // assets refresh in the background
+  assert.match(sw, /skip-waiting/);
+  assert.match(sw, /type: 'version'/);
   const manifest = JSON.parse(fs.readFileSync(path.join(here, '../../manifest.webmanifest'), 'utf8'));
   for (const i of manifest.icons) assert.ok(fs.existsSync(path.join(here, '../..', i.src)), i.src);
   assert.ok(manifest.icons.some(i => i.purpose === 'maskable' && /-v\d+-/.test(i.src)));   // versioned names bust launcher caches
