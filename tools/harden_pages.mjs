@@ -93,7 +93,13 @@ fs.writeFileSync(path.join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="
 ${PAGES.map(p => `  <url><loc>${SITE}${p.file === 'index.html' ? '' : p.file}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
 </urlset>
 `);
-fs.writeFileSync(path.join(root, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE}sitemap.xml\n`);
+fs.writeFileSync(path.join(root, 'robots.txt'), `User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: *
+Allow: /
+Sitemap: ${SITE}sitemap.xml
+`);
 fs.writeFileSync(path.join(root, 'llms.txt'), `# ${NAME}
 
 > ${PAGES[0].description}
@@ -111,4 +117,39 @@ ${PAGES.map(p => `- [${p.title}](${SITE}${p.file === 'index.html' ? '' : p.file}
 ## Privacy
 No accounts, no analytics, no cookies, no tracking. The Passport and settings stay in the visitor's own browser (localStorage) and are never sent anywhere.
 `);
+const roomsMd = fs.existsSync(path.join(root, 'docs/ROOMS.md')) ? fs.readFileSync(path.join(root, 'docs/ROOMS.md'), 'utf8') : '';
+const islandGuide = fs.existsSync(path.join(root, 'museum/kona/island-guide.json')) ? JSON.parse(fs.readFileSync(path.join(root, 'museum/kona/island-guide.json'), 'utf8')) : null;
+const guideLines = islandGuide ? [
+  `Race context: ${islandGuide.race_2026.event} · ${islandGuide.race_2026.date} · ${islandGuide.race_2026.location}`,
+  `Population context: ${islandGuide.population.geography} · ${islandGuide.population.population.toLocaleString('en-US')} · estimate ${islandGuide.population.estimate_date}`,
+  '',
+  'Visitor places:',
+  ...islandGuide.places.map(p => `- ${p.name} · ${p.region} · ${p.categories.join(', ')} · source: ${p.source}`),
+  '',
+  'Editorial stories:',
+  ...islandGuide.stories.map(x => `- ${x.title}: ${x.summary} · source: ${x.source}`)
+].join('\n') : 'Kona island guide not built yet.';
+
+fs.writeFileSync(path.join(root, 'llms-full.txt'), `# ${NAME} — full machine-readable guide
+
+${DISCLAIMER}
+
+This file is generated from the same museum registries used by the public app. Stable ids in the JSON/data files are preferred over names for programmatic references.
+
+## Public pages
+${PAGES.map(p => `- ${p.title}: ${SITE}${p.file === 'index.html' ? '' : p.file}`).join('\n')}
+
+## Evidence model
+P = published source. F = visible/read from a reference photograph. I = inferred for the model. G = generated artwork. Generated or inferred material is not presented as published fact.
+
+## Rooms and exhibits
+${roomsMd}
+
+## Hawaiʻi Island / Kona guide
+${guideLines}
+
+## Privacy and app behavior
+No account is required. No default analytics, ad trackers or background location tracking. Profile, Passport, finds and saved app state are local-first unless a future sync feature is explicitly enabled by the visitor.
+`);
+
 console.log('hardened', PAGES.map(p => p.file).join(', '));
