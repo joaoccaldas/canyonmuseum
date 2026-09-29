@@ -808,7 +808,9 @@ async function loadAll() {
 const start = new THREE.Vector3(0, 0, 3.4);
 const P = { x: 0, z: 3.4, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
 let started = false, path = null, keys = new Set(), current = null, drag = null, bob = 0;
+let nearbyPiece = null;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
+$('nearby')?.addEventListener('click', () => { if (nearbyPiece) { haptic(8); visit(nearbyPiece); } });
 
 // ------------------------------------------------------------------ local-first Museum Passport
 const PASSPORT_KEY = 'speedmax.passport.v1';
@@ -1282,6 +1284,13 @@ function frame(now) {
       if (d < nearestD) { nearestD = d; nearest = p; }
     }
     if (nearestD > 4.2) nearest = null;
+  }
+  nearbyPiece = nearest;
+  const nearBtn = $('nearby');
+  if (nearBtn) {
+    const showNearby = !!nearest && moving < .82 && !$('card').classList.contains('on') && !tour.on;
+    nearBtn.hidden = !showNearby;
+    if (showNearby) $('nearbyName').textContent = nearest.name.replace(/^Speed[Mm]ax /, '');
   }
   for (const p of PIECES) {
     const want = p === current ? .85 : p === hot ? .6 : p === nearest ? .24 : 0;
