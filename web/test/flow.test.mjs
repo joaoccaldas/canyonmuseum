@@ -26,3 +26,11 @@ test('flow mode lets chrome recede during movement', () => {
   assert.match(tpl, /body\.flowing:not\(\.card-open\) header/);
   assert.match(tpl, /body\.flowing:not\(\.card-open\) #rail/);
 });
+
+
+test('mobile render scale drops only while moving and restores when stationary', () => {
+  assert.match(src, /qualityDpr = Math\.min\(devicePixelRatio, lite \? 1\.45 : 2\)/);
+  assert.match(src, /flowDpr = Math\.min\(devicePixelRatio, lite \? 1\.12 : 1\.65\)/);
+  assert.match(src, /const targetDpr = flowing \? flowDpr : qualityDpr/);
+  assert.match(src, /renderer\.setPixelRatio\(activeDpr\)/);
+});
