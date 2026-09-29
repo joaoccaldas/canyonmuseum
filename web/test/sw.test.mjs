@@ -12,7 +12,7 @@ function worker({ cached = {} } = {}) {
   const handlers = {}, store = new Map(Object.entries(cached));
   const caches = { open: async () => ({ match: async r => store.get(r.url || r), put: async (r, v) => store.set(r.url || r, v), addAll: async () => {} }), match: async r => store.get(r.url || r), keys: async () => [] };
   class Resp { constructor(body, init = {}) { this.body = body; this.status = init.status ?? 200; this.ok = this.status < 400; } clone() { return this; } }
-  const ctx = { self: { addEventListener: (t, f) => (handlers[t] = f), location: { origin: 'https://m.test' }, skipWaiting() {}, clients: { claim() {} } },
+  const ctx = { self: { addEventListener: (t, f) => (handlers[t] = f), location: { origin: 'https://m.test' }, registration: { scope: 'https://m.test/' }, skipWaiting() {}, clients: { claim() {} } },
     caches, fetch: async () => { throw new TypeError('Failed to fetch'); }, Response: Resp, URL, Promise };
   vm.runInNewContext(src, ctx);
   return async (url, mode, destination) => {
