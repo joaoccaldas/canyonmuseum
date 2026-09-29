@@ -24,11 +24,17 @@ test('every published page carries security, privacy and SEO metadata', () => {
 });
 
 test('crawler files exist and point at the public site', () => {
-  assert.match(fs.readFileSync(path.join(root, 'robots.txt'), 'utf8'), /Sitemap: https:\/\/joaoccaldas\.github\.io\/canyonmuseum\/sitemap\.xml/);
+  const robots = fs.readFileSync(path.join(root, 'robots.txt'), 'utf8');
+  assert.match(robots, /User-agent: OAI-SearchBot[\s\S]*Allow: \/+/);
+  assert.match(robots, /Sitemap: https:\/\/joaoccaldas\.github\.io\/canyonmuseum\/sitemap\.xml/);
   assert.match(fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8'), /<loc>https:\/\/joaoccaldas\.github\.io\/canyonmuseum\/<\/loc>/);
   const llms = fs.readFileSync(path.join(root, 'llms.txt'), 'utf8');
   assert.match(llms, /Not affiliated/); assert.match(llms, /No accounts, no analytics/);
   assert.doesNotMatch(llms, /Anne Haug/);                        // she won on a Cervélo: facts come from kona_champions.json
+  const full = fs.readFileSync(path.join(root, 'llms-full.txt'), 'utf8');
+  assert.match(full, /Rooms and exhibits/);
+  assert.match(full, /Hawaiʻi Island \/ Kona guide/);
+  assert.match(full, /Evidence model/);
 });
 
 test('deploy publishes an allowlist and runs a leak guard', () => {
@@ -36,4 +42,5 @@ test('deploy publishes an allowlist and runs a leak guard', () => {
   assert.doesNotMatch(wf, /rsync -a \.\/ _site\//);              // never the whole repository
   assert.match(wf, /--exclude reference\//);                      // saved third-party pages stay private
   assert.match(wf, /Leak guard/);
+  assert.match(wf, /llms-full\.txt/);
 });
