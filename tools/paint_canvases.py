@@ -15,7 +15,7 @@ tensor, so strokes wrap around a shoulder or follow a top tube instead of lying 
 direction. The originals stay credited: museum/kona_years.json keeps each file's author,
 licence and Commons page, and the wall label marks the canvas as a painted derivative.
 
-  python3 tools/paint_canvases.py            (from the repo root; needs Pillow + numpy)
+  python3 tools/paint_canvases.py [museum/history.json] [ids…]   (repo root; needs Pillow + numpy)
 """
 import json
 import zlib
@@ -146,11 +146,17 @@ def paint(src, dst_id, crop=None, grade=1.0):
 
 
 def main():
-    data = json.loads((ROOT / 'museum/kona_years.json').read_text())
+    global SRC, OUT
+    args = sys.argv[1:]
+    data_file = ROOT / 'museum/kona_years.json'
+    if args and args[0].endswith('.json'):                      # another collection, e.g. museum/history.json
+        data_file = ROOT / args.pop(0)
+    data = json.loads(data_file.read_text())
+    OUT = ROOT / data.get('dir', 'assets/kona-years'); SRC = OUT / 'src'
     jobs = {}
     for c in data['canvases']:
         jobs[c['id']] = c
-    only = set(sys.argv[1:])
+    only = set(args)
     for cid, c in jobs.items():
         if only and cid not in only: continue
         src = SRC / c['local']
@@ -159,7 +165,7 @@ def main():
         size = paint(src, cid, c.get('crop'), c.get('grade', 1.0))
         c['aspect'] = round(size['w'] / size['h'], 4)
         print(f"painted {cid:22s} {size['w']}x{size['h']}")
-    (ROOT / 'museum/kona_years.json').write_text(json.dumps(data, indent=1, ensure_ascii=False) + '\n')
+    data_file.write_text(json.dumps(data, indent=1, ensure_ascii=False) + '\n')
 
 
 if __name__ == '__main__':
