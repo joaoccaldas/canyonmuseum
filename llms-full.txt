@@ -249,7 +249,7 @@ Visitor places:
 - Kailua Bay · Kailua-Kona · race-week, ocean, swim · source: https://www.gohawaii.com/islands/hawaii-big-island/things-to-do/beaches/kailua-bay
 - Historic Kailua Village · Kailua-Kona · history, walk, food · source: https://www.gohawaii.com/islands/hawaii-big-island/regions/kona/historic-kailua-village-kailua-kona
 - Puʻuhonua o Hōnaunau National Historical Park · South Kona · history, culture, walk · source: https://www.nps.gov/puho/planyourvisit/index.htm
-- Kaloko-Honokōhau National Historical Park · North Kona · history, culture, coast, walk · source: https://www.gohawaii.com/kona
+- Kaloko-Honokōhau National Historical Park · North Kona · history, culture, coast, walk · source: https://www.nps.gov/kaho/learn/historyculture/index.htm
 - Kealakekua Bay · South Kona · history, ocean, snorkel · source: https://www.gohawaii.com/kona
 - Kona Coffee Country · North & South Kona uplands · coffee, food, culture, scenic · source: https://www.gohawaii.com/islands/hawaii-big-island/things-to-do/land-activities/coffee-plantations
 - Hawaiʻi Volcanoes National Park · Kaʻū / Puna · volcano, landscape, hike, full-day · source: https://www.gohawaii.com/experiences/sightseeing/Volcanoes
