@@ -28,6 +28,17 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Gate (tests + bike asset contract; nothing broken goes live)
+        run: |
+          (cd web && npm ci --ignore-scripts && npm test)
+          node tools/validate-bikes.mjs
+
       - name: Stage static site (allowlist — only what the pages load or link)
         run: |
           mkdir _site

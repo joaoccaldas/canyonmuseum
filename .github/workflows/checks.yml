@@ -1,0 +1,35 @@
+name: Museum checks
+
+# Every push and pull request: unit tests, the bike asset contract, and a rebuild that must match
+# what is committed. The Pages deploy runs the same gate before it publishes (pages.yml).
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci --ignore-scripts
+        working-directory: web
+      - name: Unit tests
+        run: npm test
+        working-directory: web
+      - name: Bike asset contract
+        run: node tools/validate-bikes.mjs
+      - name: Built pages are up to date
+        run: |
+          node web/build_landing.mjs
+          node tools/harden_pages.mjs
+          git diff --stat --exit-code -- index.html Experiences.html Canyon_Collection.html 'Speedmax_*_Museum.html' \
+            || { echo "::error::index.html is stale: run node web/build_landing.mjs && node tools/harden_pages.mjs and commit"; exit 1; }

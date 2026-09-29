@@ -14,7 +14,7 @@ import { buildGalleries, galleryWalkable, galleryFloorY, EDOOR, UPPER } from './
 import { createRoomSound } from './roomSound.js';
 import { buildAtlas, atlasWalkable, atlasFloorY, inAtlas, AROOMS, ATLAS } from './atlas.js';
 import { initMap } from './map.js';
-import { applyWyld } from './skins/wyld.js';
+import { slotsOf, applySkin, skinFromWyld, skinFromFilm } from './engine/skins.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
 import { initInstallExperience } from './pwa.mjs';
@@ -680,11 +680,10 @@ async function loadWyldBikes() {
       if (!o.isMesh) return;
       pickables.push(o); o.userData.wyldBike = b; delete o.userData.piece;
       for (const m of [].concat(o.material)) {
-        if (m.name === 'paint_frame') { m.roughness = b.wyld.sheer > .5 ? .18 : .3; if ('clearcoat' in m) m.clearcoat = 1; b.ctl = applyWyld(m, bike, b.wyld); }
-        if (m.name === 'decal_dark') m.color.set(b.decal);
       }
     });
   }
+  for (const b of wyldBikes) if (b.bike) { const paint = slotsOf(b.bike); applySkin(paint, skinFromWyld(b)); b.ctl = paint.dye; }
   // the confusing part: mirror twins and strays. Same materials as the exhibits, not pickable, desktop gets the full set.
   const W2 = wyldBikes, twin = (src, how, x, y, z, ry, roll = 0) => {
     const orig = src.bike.children[0].children[0], saved = [];
@@ -927,12 +926,12 @@ function dressBike(root, p) {
     o.castShadow = !lite; o.receiveShadow = !lite;
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     mats.forEach(m => {
-      if (m.name === 'paint_frame' && p.finish) { m.color.set(p.finish); m.roughness = .26; m.metalness = .15; if ('clearcoat' in m) m.clearcoat = 1; }
       if (m.name === 'paint_frame' && !m.userData.noised) { microNoise(m); m.userData.noised = true; }   // real paint has orange peel
       m.envMapIntensity = 1;
       o.userData.piece = p;
     });
   });
+  if (p.finish) applySkin(slotsOf(root), { id: `hall-${p.key}`, name: 'Documented finish', frame: p.finish });
 }
 async function loadBike(p) {
   const gltf = await loader.loadAsync(p.glb);
@@ -969,7 +968,7 @@ async function loadSanctuaryBikes() {
     const bike = gltf.scene.clone(true);
     bike.traverse(o => { if (o.isMesh) { o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); o.castShadow = false; } });
     dressBike(bike, { key: 'cfr', finish: null });
-    bike.traverse(o => { for (const m of [].concat(o.material || [])) if (m.name === 'paint_frame') applyWyld(m, bike, { stops: film.stops, angle: film.angle, scale: film.scale, flow: film.flow, darkness: film.id === 'aero-glam' || film.id === 'lake-house' || film.id === 'hex' ? .45 : 0 }); });
+    applySkin(slotsOf(bike), skinFromFilm(film));
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
     const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = film.rotY; holder.position.y = film.top;
@@ -977,7 +976,7 @@ async function loadSanctuaryBikes() {
     holder.traverse(o => { if (o.isMesh) { o.userData.sanctuary = film; pickables.push(o); } });
   }
 }
-const THEME_FINISH = { bio: '#1f6b3a', horror: '#1a0a0e', alien: '#0c3d3a', zombie: '#5a5834' };
+const SKIN = id => (window.__SKINS?.skins || []).find(s => s.id === id);
 async function loadThemeBikes() {
   const src = PIECES.find(p => p.key === 'cfr')?.glb;
   if (!src) return;
@@ -990,7 +989,8 @@ async function loadThemeBikes() {
       o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
       o.castShadow = !lite;
     });
-    dressBike(bike, { key: 'cfr', finish: THEME_FINISH[room.id] });
+    dressBike(bike, { key: 'cfr', finish: null });
+    applySkin(slotsOf(bike), SKIN(`theme-${room.id}`));
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
     const holder = new THREE.Group();
@@ -1003,9 +1003,6 @@ async function loadThemeBikes() {
       if (!o.isMesh) return;
       delete o.userData.piece;
       o.userData.gallery = room;
-      for (const m of [].concat(o.material || [])) {
-        if (m?.name === 'paint_frame') { m.emissive = new THREE.Color(THEME_FINISH[room.id]); m.emissiveIntensity = .28; }
-      }
       pickables.push(o);
     });
   }
@@ -1463,6 +1460,11 @@ function enter() {
   }
   writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach();
   if (!returning && pier && new URLSearchParams(location.search).get('room') === 'pier') setTimeout(() => visitPier(pier.stations[0]), 400);
+  { // app shortcuts and shared links: ?room=<map area id> walks there, ?map=1 opens the map
+    const q = new URLSearchParams(location.search), room = q.get('room');
+    if (room && room !== 'pier' && /^[a-z0-9-]{2,40}$/.test(room)) setTimeout(() => window.__museumGo?.(room), 450);
+    if (q.get('map')) setTimeout(() => window.__map?.open(), 450);
+  }
 }
 $('enterBtn').onclick = enter;
 
@@ -1507,6 +1509,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     else if (id.startsWith('room-')) visitGallery(galleries.rooms.find(r => 'room-' + r.id === id));
     else if (id.startsWith('atlas-')) visitAtlasRoom(atlas.rooms.find(r => 'atlas-' + r.id === id));
   };
+  window.__museumGo = go;
   window.__map = initMap({ areas, go, button: $('mapBtn'), pose: () => ({ x: P.x, z: P.z, yaw: P.yaw, floor: P.y > 3.3 ? 'upper' : 'ground' }) });
   // "you are here": the room's name under the logo; tap it for the map. A first visit to the wing gets one line of help.
   const where = $('where'); let lastWhere = null, wingHinted = (() => { try { return localStorage.getItem('speedmax.atlas.hint') === '1'; } catch (_) { return false; } })();

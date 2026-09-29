@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { rng } from './roomkit.js';
+import { slotsOf, applySkin as paint } from './engine/skins.js';
 
 const Y = 6.6;
 export const ATLAS = { x0: 10.8, x1: 16.4, z0: 27.2, z1: 51.2 };           // the corridor (the velodrome straight)
@@ -82,13 +83,9 @@ function compact(root) {
   }
   return out;
 }
-export function applySkin(inst, skin) {
-  if (!inst?.mats || !skin) return;
-  const set = (name, hex) => { const m = inst.mats[name]; if (m && hex) m.color.set(hex); };
-  set('paint_frame', skin.frame); set('paint_accent', skin.accent || skin.frame);
-  set('disc_face', skin.disc || '#16171b'); set('rim', skin.rim || '#15161a');
-  set('bar_tape', skin.tape || '#161616'); set('saddle', skin.saddle || '#141414');
-  inst.skin = skin;
+export function applySkin(inst, skin) {                              // one livery system: engine/skins.js
+  if (!inst?.paint || !skin) return;
+  paint(inst.paint, skin); inst.skin = skin;
 }
 
 export function buildAtlas(ctx) {
@@ -219,7 +216,7 @@ export function buildAtlas(ctx) {
       glow.rotation.x = -Math.PI / 2; glow.position.set(x, Y + .168, z); group.add(glow);
       const turn = new THREE.Group(); turn.position.set(x, Y + .16, z); group.add(turn);
       const standZ = THREE.MathUtils.clamp(z - Math.sign(zoff || 1) * 2.55, q.z0 + .6, q.z1 - .6);
-      const inst = { data: b, room, pos: new THREE.Vector3(x, Y, z), turn, view: new THREE.Vector3(x, Y, standZ), face: new THREE.Vector3(x, Y + .75, z), phase: k * 1.7, bike: null, mats: {}, skinIndex: 0 };
+      const inst = { data: b, room, pos: new THREE.Vector3(x, Y, z), turn, view: new THREE.Vector3(x, Y, standZ), face: new THREE.Vector3(x, Y + .75, z), phase: k * 1.7, bike: null, paint: null, skinIndex: 0 };
       if (b.ref) photoFrame(b.ref, 1.5, room.back + room.face * .08, Y + 1.85, z, room.face > 0 ? Math.PI / 2 : -Math.PI / 2);
       const label = lettering(1.9, .3, g => { g.fillStyle = '#12181d'; g.font = `700 .085px ${FONT}`; g.fillText(b.name.toUpperCase(), 0, .11); g.fillStyle = '#5f6a72'; g.font = `italic 400 .1px ${SERIF}`; g.fillText(`${b.year || b.era || ''}${b.kind === 'type' ? ' · type study' : ''}`, 0, .25); }, 512);
       label.rotation.x = -Math.PI / 2; label.rotation.z = room.face > 0 ? -Math.PI / 2 : Math.PI / 2; label.position.set(x + (room.face > 0 ? 1.3 : -1.3), Y + .02, z); group.add(label);
@@ -228,7 +225,7 @@ export function buildAtlas(ctx) {
   }
   // paint shop: one turntable in the middle, a wall of swatches (every livery of every bike)
   const paint = roomOfId.paint;
-  const show = { room: paint, turn: new THREE.Group(), pos: paint.center.clone(), view: new THREE.Vector3(paint.rect.x1 - 1.1, Y, paint.center.z + 2.2), face: new THREE.Vector3(paint.center.x, Y + .8, paint.center.z), bikeIndex: 0, skinIndex: 0, t: 0, mats: {}, bike: null, showcase: true };
+  const show = { room: paint, turn: new THREE.Group(), pos: paint.center.clone(), view: new THREE.Vector3(paint.rect.x1 - 1.1, Y, paint.center.z + 2.2), face: new THREE.Vector3(paint.center.x, Y + .8, paint.center.z), bikeIndex: 0, skinIndex: 0, t: 0, paint: null, bike: null, showcase: true };
   show.turn.position.set(paint.center.x, Y + .22, paint.center.z); group.add(show.turn);
   const table = new THREE.Mesh(new THREE.CylinderGeometry(1.35, 1.4, .22, 48), new THREE.MeshStandardMaterial({ color: '#f4efe7', roughness: .35 })); table.position.set(paint.center.x, Y + .11, paint.center.z); group.add(table);
   obstacles.push({ c: new THREE.Vector3(paint.center.x, 0, paint.center.z), r: 1.5 });
@@ -259,7 +256,7 @@ export function buildAtlas(ctx) {
     const cache = new Map();
     const get = async key => { if (!cache.has(key)) cache.set(key, loader.loadAsync(`assets/atlas/${key}/bike.glb`).then(g => compact(g.scene))); return cache.get(key); };
     const dress = (inst, proto) => {
-      const bike = proto.clone(true); bike.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); inst.mats[o.material.name] = o.material; o.castShadow = false; } });
+      const bike = proto.clone(true); bike.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.castShadow = false; } }); inst.paint = slotsOf(bike);
       const box3 = new THREE.Box3().setFromObject(bike), c = box3.getCenter(new THREE.Vector3());
       bike.position.set(-c.x, -box3.min.y, -c.z);
       const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = Math.PI / 2;
@@ -268,7 +265,7 @@ export function buildAtlas(ctx) {
     for (const inst of bikes) {
       try {
         const proto = await get(inst.data.key);
-        inst.mats = {}; const h = dress(inst, proto); inst.turn.add(h); inst.bike = h;
+        const h = dress(inst, proto); inst.turn.add(h); inst.bike = h;
         if (contactShadow) { const cs = contactShadow(1.9, .5); cs.rotation.z = Math.PI / 2; cs.position.y = .006; inst.turn.add(cs); }
         applySkin(inst, inst.data.skins[0]);
         h.traverse(o => { if (o.isMesh) { o.userData.atlas = inst; pickables.push(o); } });
@@ -280,8 +277,8 @@ export function buildAtlas(ctx) {
   function setShow(bi, si) {
     if (!show.protos) return;
     if (show.bike) { show.turn.remove(show.bike); }
-    show.bikeIndex = bi; show.skinIndex = si; show.mats = {};
-    const holder = (() => { const bike = show.protos[bi].clone(true); bike.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); show.mats[o.material.name] = o.material; } });
+    show.bikeIndex = bi; show.skinIndex = si;
+    const holder = (() => { const bike = show.protos[bi].clone(true); bike.traverse(o => { if (o.isMesh) o.material = o.material.clone(); }); show.paint = slotsOf(bike);
       const b3 = new THREE.Box3().setFromObject(bike), c = b3.getCenter(new THREE.Vector3()); bike.position.set(-c.x, -b3.min.y, -c.z); const h = new THREE.Group(); h.add(bike); h.scale.setScalar(1.15); return h; })();
     show.turn.add(holder); show.bike = holder; show.data = DATA.bikes[bi];
     applySkin(show, show.data.skins[si]);

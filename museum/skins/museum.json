@@ -1,0 +1,98 @@
+{
+ "schema_version": 1,
+ "note": "Museum liveries painted by web/src/engine/skins.js. Bike-specific liveries for the Against the Clock wing live with each bike in museum/atlas/bikes.json; the WYLD dyes and the Bike Porn films are adapted from museum/wyld_room.json and web/src/sanctuary.js.",
+ "skins": [
+  {
+   "id": "hall-speedmax-three-2005",
+   "name": "Documented finish",
+   "kind": "archive",
+   "frame": "#14161a"
+  },
+  {
+   "id": "hall-speedmax-2007",
+   "name": "Documented finish",
+   "kind": "archive",
+   "frame": "#8a1f1f"
+  },
+  {
+   "id": "hall-speedmax-al-2011",
+   "name": "Documented finish",
+   "kind": "archive",
+   "frame": "#d8d8dc"
+  },
+  {
+   "id": "hall-speedmax-cf-2011",
+   "name": "Documented finish",
+   "kind": "archive",
+   "frame": "#101014"
+  },
+  {
+   "id": "hall-cfr",
+   "name": "Documented finish",
+   "kind": "archive",
+   "frame": "#eceaf0"
+  },
+  {
+   "id": "hall-slx",
+   "name": "Documented finish",
+   "kind": "archive",
+   "frame": "#cdc8dd"
+  },
+  {
+   "id": "theme-bio",
+   "name": "Bio",
+   "kind": "theme",
+   "frame": "#1f6b3a",
+   "glow": {
+    "color": "#1f6b3a",
+    "intensity": 0.28
+   }
+  },
+  {
+   "id": "theme-horror",
+   "name": "Horror",
+   "kind": "theme",
+   "frame": "#1a0a0e",
+   "glow": {
+    "color": "#1a0a0e",
+    "intensity": 0.28
+   }
+  },
+  {
+   "id": "theme-alien",
+   "name": "Alien",
+   "kind": "theme",
+   "frame": "#0c3d3a",
+   "glow": {
+    "color": "#0c3d3a",
+    "intensity": 0.28
+   }
+  },
+  {
+   "id": "theme-zombie",
+   "name": "Zombie",
+   "kind": "theme",
+   "frame": "#5a5834",
+   "glow": {
+    "color": "#5a5834",
+    "intensity": 0.28
+   }
+  },
+  {
+   "id": "lava-night",
+   "name": "Lava Night",
+   "kind": "theme",
+   "frame": "#141116",
+   "finish": {
+    "roughness": 0.32,
+    "metalness": 0.25,
+    "clearcoat": 1
+   },
+   "decals": {
+    "color": "#ff7a1a",
+    "glow": "#ff4d00",
+    "intensity": 1.6
+   }
+  }
+ ]
+}
