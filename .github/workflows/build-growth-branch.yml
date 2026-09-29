@@ -35,11 +35,11 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - run: npm ci --ignore-scripts
         working-directory: web
+      - run: node tools/build_pages.mjs
+      - run: node tools/build_app.mjs
       - run: npm test
         working-directory: web
       - run: node tools/validate-bikes.mjs
-      - run: node tools/build_pages.mjs
-      - run: node tools/build_app.mjs
       - name: Commit generated growth artifacts
         run: |
           git config user.name "github-actions[bot]"
