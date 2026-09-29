@@ -28,13 +28,20 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Stage static site
+      - name: Stage static site (allowlist — only what the pages load or link)
         run: |
           mkdir _site
-          rsync -a ./ _site/             --exclude .git             --exclude .github             --exclude web/node_modules             --exclude _site             --exclude artifacts             --exclude output
-          test -f _site/index.html
-          test -f _site/manifest.webmanifest
-          test -f _site/sw.js
+          cp ./*.html manifest.webmanifest sw.js robots.txt sitemap.xml llms.txt _site/
+          rsync -a assets/ _site/assets/ --exclude reference/
+          mkdir -p _site/assets/reference && rsync -a assets/reference/paintings/ _site/assets/reference/paintings/
+          mkdir -p _site/docs && cp docs/FIT_RESEARCH_AND_ROADMAP.md _site/docs/
+          test -f _site/index.html && test -f _site/manifest.webmanifest && test -f _site/sw.js
+
+      - name: Leak guard (no local paths, private emails, keys or saved third-party pages)
+        run: |
+          if grep -rIlE '/Users/[a-z]+|/home/[a-z]+/|[A-Za-z0-9._%+-]+@(gmail|hotmail|outlook|icloud|yahoo)\.com|(^|[^A-Za-z0-9+/])(sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35})([^A-Za-z0-9+/]|$)|demandware|cloudflareinsights' _site; then
+            echo "::error::private or third-party content in the published site"; exit 1; fi
+          du -sh _site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

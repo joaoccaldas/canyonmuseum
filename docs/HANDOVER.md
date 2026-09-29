@@ -1,7 +1,7 @@
 # Trek triathlon museum: handover (2026-09-27)
 
-Repo: `/Users/joao/Developer/trek-tri-museum-3d`. **No git repo yet** (never `git init`-ed). Reference implementation
-(read-only, another session is working in it): `/Users/joao/Developer/speedmax-cfr-3d`. The brief this work follows is
+Repo: `~/Developer/trek-tri-museum-3d`. **No git repo yet** (never `git init`-ed). Reference implementation
+(read-only, another session is working in it): `~/Developer/speedmax-cfr-3d`. The brief this work follows is
 `speedmax-cfr-3d/docs/BRAND_MUSEUM_AGENT_PROMPT.md` (brand = Trek, category = triathlon/TT).
 
 ## What the owner asked for, in order

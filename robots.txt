@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://joaoccaldas.github.io/canyonmuseum/sitemap.xml

@@ -8,7 +8,7 @@ import numpy as np
 import bpy
 from mathutils import Vector
 
-R = '/Users/joao/Developer/trek-tri-museum-3d'
+R = os.path.expanduser('~/Developer/trek-tri-museum-3d')
 sys.path[:0] = [R + '/blender/heritage', R + '/blender']
 bpy.ops.wm.read_factory_settings(use_empty=True)
 import pillow_mesh as PM

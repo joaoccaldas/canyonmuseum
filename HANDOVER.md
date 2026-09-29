@@ -10,7 +10,7 @@ The museum is configured as self-contained offline HTML artifacts served via Pyt
 
 ```bash
 # Start local development server on port 8744
-cd /Users/joao/Developer/speedmax-cfr-3d
+cd ~/Developer/speedmax-cfr-3d
 python3 -m http.server 8744
 ```
 

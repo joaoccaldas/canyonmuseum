@@ -7,7 +7,11 @@
     "test": "node --test test/*.test.mjs",
     "test:unit": "node --test test/*.test.mjs",
     "build:landing": "node build_landing.mjs",
-    "test:visual": "node artworld-visual-smoke.mjs"
+    "test:visual": "node artworld-visual-smoke.mjs",
+    "build:harden": "node ../tools/harden_pages.mjs",
+    "build:site": "node build_landing.mjs && node ../tools/build_collection.mjs && node ../tools/harden_pages.mjs",
+    "audit:phones": "node phone-layout-audit.mjs",
+    "audit:zfight": "node zfight-audit.mjs"
   },
   "keywords": [
     "threejs",
