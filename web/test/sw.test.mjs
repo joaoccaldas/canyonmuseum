@@ -6,7 +6,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-const src = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '../../sw.js'), 'utf8');
+const base = path.join(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const src = fs.readFileSync(path.join(base, 'sw.js'), 'utf8');
+const appManifest = JSON.parse(fs.readFileSync(path.join(base, 'app/app-manifest.json'), 'utf8'));
+const signedAsset = Object.keys(appManifest.files).find(p => !appManifest.core.includes(p) && /\.(?:jpg|png|glb)$/i.test(p));
 
 function worker({ cached = {} } = {}) {
   const handlers = {}, store = new Map(Object.entries(cached));
@@ -21,7 +24,8 @@ function worker({ cached = {} } = {}) {
   };
 }
 test('offline asset with no cache still answers with a Response', async () => {
-  const r = await worker()('https://m.test/assets/x.jpg', 'no-cors', 'image');
+  assert.ok(signedAsset, 'release has a signed lazy asset');
+  const r = await worker()('https://m.test/' + signedAsset, 'no-cors', 'image');
   assert.ok(r && typeof r.status === 'number'); assert.equal(r.status, 504);
 });
 test('offline page with no cache gets the offline page, not another page', async () => {
