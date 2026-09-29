@@ -1625,7 +1625,7 @@ function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.user
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
-  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, hween.group.visible ? hween.floor : null, ...galleries.floors, ...(atlas.group.visible ? atlas.floors : []), ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
+  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, hween.group.visible ? hween.floor : null, ...galleries.floors, ...atlas.floors, ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
   for (const h of hits) { if (!h.object.visible) continue; const u = h.object.userData;
     if (u.artPortal) return { artPortal: u.artPortal }; if (u.hween) return { hween: true }; if (u.year) return { year: u.year }; if (u.era) return { era: u.era }; if (u.finale) return { finale: u.finale };
     if (u.atlas) return { atlas: u.atlas }; if (u.atlasSwatch) return { swatch: u.atlasSwatch }; if (u.atlasRef) return { ref: u.atlasRef }; if (u.atlasRoom && !u.floor) return { atlasRoom: u.atlasRoom };
@@ -1869,10 +1869,11 @@ function frame(now) {
     for (const p of PIECES) if (p.bike) p.bike.visible = reg !== 'gallery' && (DOORZ[reg] == null || reg === 'pier' || Math.abs(p.pos.z - DOORZ[reg]) < 7);
     for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg !== 'gallery' && reg !== 'champ' && P.z < -14);
     const upstairs = reg === 'gallery' || reg === 'stair';
-    hween.group.visible = reg === 'hween' || (!upstairs && P.z > -32);
-    sanctuary.group.visible = reg !== 'gallery';
+    hween.group.visible = reg === 'hween' || P.z > -32;
+    sanctuary.group.visible = true;                                   // the chapel's walls and roof always draw; upstairs only its bikes are culled
+    for (const f of sanctuary.films) if (f.bike) f.bike.visible = reg !== 'gallery';
     const themeRoom = galleries.update(t, P, reduce, scene, renderer, reg);
-    atlas.update(t, dt, P, upstairs && P.z > 17, reduce);
+    atlas.update(t, dt, P, upstairs, reduce);
     if (audio) {                                                      // the sea fades upstairs; each room brings its own bed
       roomSound.set(themeRoom?.id || null);
       const sea = audioOn ? (upstairs ? .05 : .2) : 0;

@@ -291,7 +291,9 @@ export function buildAtlas(ctx) {
   function paintWith(e) { setShow(e.bi, e.si); show.hold = 30; }
 
   function update(t, dt, visitor, visible, reduce) {
-    group.visible = visible;
+    group.visible = true;                                               // the building is always there; its bikes and clock only run when you can see them
+    for (const b of bikes) if (b.bike) b.bike.visible = visible;
+    if (show.bike) show.bike.visible = visible;
     if (!visible) return;
     const d = new Date(), s = d.getSeconds() + d.getMilliseconds() / 1000, m = d.getMinutes() + s / 60, h = (d.getHours() % 12) + m / 60;
     hS.rotation.z = -s / 60 * Math.PI * 2; hM.rotation.z = -m / 60 * Math.PI * 2; hH.rotation.z = -h / 12 * Math.PI * 2;

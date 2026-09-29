@@ -422,9 +422,10 @@ export function buildGalleries(ctx) {
     }
     const seen = visibleRooms(visitor, region);
     for (const L of live) {
-      const on = seen.includes(L.spot);
-      L.group.visible = on;
+      const on = seen.includes(L.spot);                              // walls and floors always draw; only the bike and the motion are culled
+      L.group.visible = true;
       if (L.spot.bike) L.spot.bike.visible = on;
+      for (const m of L.motes) m.points.visible = on;
       if (!on || reduce) continue;
       for (const m of L.motes) m.step(t);
       if (L.id === 'bio') {
