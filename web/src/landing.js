@@ -119,7 +119,7 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.AgXToneMapping;
 renderer.toneMappingExposure = .96;
 renderer.shadowMap.enabled = RS.shadows;                              // the slatted-roof stripes are the museum's signature (off on Low)
-renderer.shadowMap.type = lite ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog('#e6eef0', 70, 420);
@@ -1128,9 +1128,26 @@ const roomOf = (x, z) => {
 const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5, hween: (HDOOR.z0 + HDOOR.z1) / 2 };
 const PIER_IN = [{ x: 1.2, z: -38.6 }, { x: 5.6, z: -38.6 }, { x: 5.4, z: -44.6 }, { x: 5.4, z: -48.4 }];   // round the apse plinth, through the glass door
 const NAVE_LANE = 13.6;                                             // upstairs walking lane: east of the bay plinths (x 11.15), west of the room openings
+const fader = document.getElementById('fade');
+function teleport(end) {
+  const land = () => {
+    P.x = end.x; P.z = end.z; P.vx = P.vz = 0;
+    P.y = atlas.floorY(P.x, P.z) ?? galleryFloorY(P.x, P.z);
+    if (path?.face) { const fx = path.face.x - P.x, fz = path.face.z - P.z; P.yaw = Math.atan2(-fx, -fz); }
+    if (path) path.splice(0, path.length - 1);                       // arrive: the card opens as soon as we face the piece
+  };
+  if (reduce || !fader) { land(); return; }
+  fader.classList.add('on');
+  setTimeout(() => { land(); requestAnimationFrame(() => requestAnimationFrame(() => fader.classList.remove('on'))); }, 190);
+}
 function route(to, face, piece) {                                   // aisle first, then the doorway — never a diagonal through the plinths
   const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
-  const done = () => { path = pts; path.stuck = 0; path.face = face; path.piece = piece || null; };
+  const done = () => {
+    path = pts; path.stuck = 0; path.face = face; path.piece = piece || null;
+    // between rooms (or far away) we teleport: a short fade, then you stand at the last waypoint facing the piece
+    const end = pts[pts.length - 1], far = end && (roomOf(end.x, end.z) !== a || Math.hypot(end.x - P.x, end.z - P.z) > 9);
+    if (far && profile.get().travel !== 'walk') teleport(end);
+  };
   const aisleX = x => clamp(x, -1.2, 1.2);
   const viaAisle = (from, z) => {
     pts.push({ x: aisleX(from.x), z: from.z });
@@ -1347,12 +1364,14 @@ function openAtlas(inst) {
   current = null; champ = null;
   const b = inst.data; if (!b) return;
   const i = atlas.bikes.findIndex(x => x.data === b), next = atlas.bikes[(i + 1) % atlas.bikes.length];
-  renderCard(bikeCard(b, {
+  const card = bikeCard(b, {
     skin: inst.skin, method: window.__ATLAS?.method,
     onSkin: sk => { haptic(6); if (inst.showcase) { atlas.setShow(window.__ATLAS.bikes.indexOf(b), b.skins.indexOf(sk)); atlas.show.hold = 30; } else atlas.applySkin(inst, sk); },
     next: next?.data.name, onNext: () => visitAtlas(next),
     onPaint: atlas.show ? () => { if (!inst.showcase) { atlas.setShow(window.__ATLAS.bikes.indexOf(b), 0); atlas.show.hold = 30; } visitAtlas(atlas.show); } : null,
-  }));
+  });
+  card.actions.push({ label: 'Open in the studio', href: `Studio.html?p=atlas-${b.key}` });
+  renderCard(card);
 }
 function openArt(item) {
   current = null; champ = null;
@@ -1543,6 +1562,7 @@ function openCard(p) {
     + `<button class="btn ghost" id="cNext" aria-label="Next piece: ${esc(next.years)}">Next<span class="long">: ${esc(next.years)}</span> <span aria-hidden="true">→</span></button>`
     + (p.source && !p.viewer ? `<a class="c-src" href="${esc(p.source)}" target="_blank" rel="noopener">Archive source ↗</a>` : '');
   $('cNext').onclick = () => visit(next);
+  if (p.glb && p.key) $('cActions').insertAdjacentHTML('beforeend', `<a class="btn ghost" href="Studio.html?p=canyon-${p.key === 'cfr' || p.key === 'slx' ? p.key + '-2027' : esc(p.key)}">Paint it<span class="long"> in the studio</span></a>`);
   if ($('cExplode')) $('cExplode').onclick = () => setExploded(p, !(p.exT > 0));
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
@@ -1900,8 +1920,11 @@ initAppShell();
   const steps = [['the WYLD Room', loadWyldBikes], ['Lava Night', loadHweenBike], ['the Sanctuary', loadSanctuaryBikes], ['the Champions room', loadKonaMachines], ['the upper floor', loadThemeBikes], ['the wings', () => atlas.load(loader)]];
   const chip = $('bgload'), say = t => { if (chip) { chip.hidden = false; chip.querySelector('span').textContent = t; } };
   let chain = loadAll();
-  steps.forEach(([label, fn], i) => { chain = chain.then(() => { say(`Opening ${label} · ${i + 1} of ${steps.length}`); return fn(); }).catch(e => console.warn('rooms', label, e)); });
-  chain.then(() => { say('Every room is open'); setTimeout(() => { if (chip) chip.hidden = true; }, 2400); });
+  let offline = false;
+  const failed = e => { if (!offline && /fetch|network|load/i.test(String(e?.message || e))) { offline = true; say(navigator.onLine === false ? 'You are offline · rooms will open when you reconnect' : 'Cannot reach the museum files · check the server or your connection'); chip?.classList.add('warn'); } };
+  addEventListener('online', () => { if (offline) location.reload(); });
+  steps.forEach(([label, fn], i) => { chain = chain.then(() => { if (!offline) say(`Opening ${label} · ${i + 1} of ${steps.length}`); return fn(); }).catch(e => { console.warn('rooms', label, e); failed(e); }); });
+  chain.then(() => { if (offline) return; say('Every room is open'); setTimeout(() => { if (chip) chip.hidden = true; }, 2400); });
 }
 window.__gallery = galleries;
 // ------------------------------------------------------------------ profile, settings and sharing

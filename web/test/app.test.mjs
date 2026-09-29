@@ -52,7 +52,8 @@ test('every wing file is complete and every exhibit it names exists', () => {
       assert.ok((r.paintings || []).length <= (bikes.some(b => b.room === r.id) ? 4 : 6), `${r.id}: too many paintings for its walls`);
     }
   }
-  for (const b of bikes) assert.ok(roomIds.has(b.room), `bike ${b.key} names room ${b.room}`);
+  for (const b of bikes) if (b.museum !== false) assert.ok(roomIds.has(b.room), `bike ${b.key} names room ${b.room}`);
+  assert.ok(bikes.filter(b => b.studio).every(b => b.museum === false && !b.room), 'studio-only designs stay out of the wings');
 });
 
 test('wings connect: you can walk from the nave through every door to every room', () => {

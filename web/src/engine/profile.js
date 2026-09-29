@@ -17,8 +17,8 @@ export const QUALITY = {
 export const AVATARS = ['#e8471c', '#138a8f', '#1d4fd6', '#c9a13b', '#ff3d8e', '#12181d', '#5fd8d3', '#8a3316'];
 
 export const defaults = () => ({
-  v: 1, name: '', avatar: AVATARS[0], quality: 'auto', sound: false, motion: 'auto', units: 'metric',
-  favourites: [], createdAt: new Date().toISOString(), sync: null,
+  v: 1, name: '', avatar: AVATARS[0], quality: 'auto', sound: false, motion: 'auto', travel: 'teleport', units: 'metric',
+  favourites: [], liveries: [], createdAt: new Date().toISOString(), sync: null,
 });
 
 /** Validate/normalise a stored profile; unknown fields are dropped, bad values fall back to defaults. Pure. */
@@ -31,8 +31,13 @@ export function normalise(p) {
     quality: o.quality in QUALITY ? o.quality : d.quality,
     sound: !!o.sound,
     motion: ['auto', 'full', 'reduced'].includes(o.motion) ? o.motion : d.motion,
+    travel: ['teleport', 'walk'].includes(o.travel) ? o.travel : d.travel,
     units: ['metric', 'imperial'].includes(o.units) ? o.units : d.units,
     favourites: Array.isArray(o.favourites) ? [...new Set(o.favourites.filter(x => typeof x === 'string'))].slice(0, 500) : [],
+    liveries: Array.isArray(o.liveries) ? o.liveries.filter(x => x && typeof x === 'object' && typeof x.id === 'string' && /^#[0-9a-f]{6}$/i.test(x.frame || '')).slice(0, 40).map(x => ({
+      id: x.id.slice(0, 40), name: String(x.name || 'My livery').slice(0, 40), kind: 'studio', frame: x.frame,
+      ...Object.fromEntries(['accent', 'rim', 'disc', 'tape', 'saddle'].filter(k => /^#[0-9a-f]{6}$/i.test(x[k] || '')).map(k => [k, x[k]])),
+      ...(x.finish && typeof x.finish === 'object' ? { finish: { roughness: +x.finish.roughness || .26, metalness: +x.finish.metalness || .15, clearcoat: +x.finish.clearcoat || 0 } } : {}) })) : [],
     createdAt: typeof o.createdAt === 'string' ? o.createdAt : d.createdAt,
     sync: o.sync && typeof o.sync === 'object' ? { provider: String(o.sync.provider || ''), email: String(o.sync.email || '') } : null,
   };

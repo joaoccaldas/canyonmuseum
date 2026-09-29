@@ -29,7 +29,9 @@ jobs:
         run: node tools/validate-bikes.mjs
       - name: Built pages are up to date
         run: |
+          node tools/build_catalog.mjs
           node web/build_landing.mjs
+          node web/build_studio.mjs
           node tools/harden_pages.mjs
-          git diff --stat --exit-code -- index.html Experiences.html Canyon_Collection.html 'Speedmax_*_Museum.html' \
+          git diff --stat --exit-code -- museum/catalog/products.json index.html Studio.html Experiences.html Canyon_Collection.html 'Speedmax_*_Museum.html' \
             || { echo "::error::index.html is stale: run node web/build_landing.mjs && node tools/harden_pages.mjs and commit"; exit 1; }

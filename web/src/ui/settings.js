@@ -45,6 +45,7 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
         el('p', { class: 'set-note' }, `Now rendering: ${QUALITY[activeQuality()]?.label || 'Auto'}. Low keeps phones cool and saves data.`)),
       el('section', {}, el('h4', {}, 'Sound and motion'),
         el('div', { class: 'set-row' }, el('span', {}, 'Ambient sound'), seg('Sound', p.sound ? 'on' : 'off', [['off', 'Off'], ['on', 'On']], v => { profile.set({ sound: v === 'on' }); onSound(v === 'on'); })),
+        el('div', { class: 'set-row' }, el('span', {}, 'Moving between rooms'), seg('Travel', p.travel, [['teleport', 'Teleport'], ['walk', 'Walk']], v => profile.set({ travel: v }))),
         el('div', { class: 'set-row' }, el('span', {}, 'Motion'), seg('Motion', p.motion, [['auto', 'Auto'], ['full', 'Full'], ['reduced', 'Reduced']], v => { profile.set({ motion: v }); reloadNeeded = onMotion(v) || reloadNeeded; }))),
       el('section', {}, el('h4', {}, 'Sync across devices'),
         sync?.available
