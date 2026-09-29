@@ -9,8 +9,8 @@ const src = fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(here, '../landing.template.html'), 'utf8');
 
 test('museum uses tighter responsive framing', () => {
-  assert.match(src, /if \(a < \.78\) return 62/);
-  assert.match(src, /return 50;\s+\/\/ desktop/);
+  assert.match(src, /if \(a < \.78\) return 59/);
+  assert.match(src, /return 48;\s+\/\/ desktop/);
   assert.match(src, /PerspectiveCamera\(museumFov\(\), 1, \.06, 900\)/);
 });
 
