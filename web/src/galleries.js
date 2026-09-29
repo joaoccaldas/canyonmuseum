@@ -1,6 +1,8 @@
 // Upper floor, east of the glass: a stair tower, then one gallery with four themed floors
 // and three themed rooms. The ground museum stays Kona-warm. Colour up here belongs to the bay you are standing in.
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { rng, rootTex, crackTex, plasterTex, scrawlTex, hexTex, panelTex, glyphTex, fenceTex, mistTex, skyTex, motes } from './roomkit.js';
 
 export const UPPER = 6.6;
 export const EDOOR = { z0: 1.55, z1: 4.55, h: 3.4 };
@@ -110,20 +112,36 @@ export function buildGalleries(ctx) {
   // keep the visitor off the wall panels
   for (const b of bays) obstacles.push({ box: [NAVE.x0 + .05, NAVE.x0 + 1.1, b.z - 1.5, b.z + 1.5] });
 
+  // ---------------------------------------------------------------- theme rooms
+  // Each room is its own group so it can be hidden when you are not looking into it,
+  // and its animation only runs while it can be seen (see update()).
   const live = [];
   const rooms = ROOMS.map((r, i) => {
     const rw = 8.6, rd = r.z0 - r.z1, cx = NAVE.x1 + rw / 2, cz = (r.z0 + r.z1) / 2;
-    const roomMap = tex(r.floor, r.vein); roomMap.repeat.set(rw / 1.15, rd / 1.15);
-    const floorMat = new THREE.MeshStandardMaterial({ map: roomMap, roughness: .45, emissive: r.vein, emissiveIntensity: .08 });
+    const rg = new THREE.Group(); rg.name = `room-${r.id}`; group.add(rg);
+    const put = (mesh, x, y, z) => { mesh.position.set(x, y, z); rg.add(mesh); return mesh; };
+    const box = (w, h, d, x, y, z, mat) => put(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat), x, y, z);
+    const seed = 101 + i * 37;
+    const surf = {
+      bio: { floor: rootTex(r.floor, r.vein, seed, [rw / 2.4, rd / 2.4]), wall: rootTex('#0f2417', '#2f8a45', seed + 1, [2, 1], .55), rough: .5, metal: 0 },
+      horror: { floor: crackTex('#1b1114', '#050203', seed, [rw / 2.2, rd / 2.2], 4), wall: plasterTex('#2a1a1c', '#0b0304', seed + 1, [2, 1]), rough: .16, metal: .35 },
+      alien: { floor: hexTex('#07141c', '#3dffe0', [rw / 1.6, rd / 1.6]), wall: panelTex('#0a1a22', '#3dffe0', seed + 1, [2, 1]), rough: .28, metal: .45 },
+      zombie: { floor: crackTex('#3a3a26', '#15160c', seed, [rw / 2.6, rd / 2.6], 3, '#5a6a2a'), wall: crackTex('#34342a', '#1c1c14', seed + 1, [2, 1], 2), rough: .92, metal: 0 },
+    }[r.id];
+    const floorMat = new THREE.MeshStandardMaterial({ map: surf.floor, roughness: surf.rough, metalness: surf.metal, emissive: r.vein, emissiveIntensity: .06 });
+    if (r.id === 'bio' || r.id === 'alien') floorMat.emissiveMap = surf.floor;
     const slab = new THREE.Mesh(new THREE.BoxGeometry(rw, .1, rd), floorMat);
     slab.userData.floor = true;
-    at(slab, cx, Y - .04, cz); floors.push(slab); pickables.push(slab);
-    const ceilMat = new THREE.MeshStandardMaterial({ color: r.floor, roughness: 1 });
-    at(new THREE.Mesh(new THREE.BoxGeometry(rw, .1, rd), ceilMat), cx, Y + 4.05, cz);
-    const wallMat = new THREE.MeshStandardMaterial({ color: r.floor, roughness: .9, emissive: r.vein, emissiveIntensity: r.id === 'bio' ? .08 : .05 });
-    wall(rw, 4.0, .16, cx, Y + 2.0, r.z0, wallMat);
-    wall(rw, 4.0, .16, cx, Y + 2.0, r.z1, wallMat);
-    wall(.16, 4.0, rd, NAVE.x1 + rw, Y + 2.0, cz, wallMat);
+    put(slab, cx, Y - .04, cz); floors.push(slab); pickables.push(slab);
+    const ceilMat = r.id === 'zombie' ? new THREE.MeshBasicMaterial({ map: skyTex('#1d1a22', seed), fog: false }) : new THREE.MeshStandardMaterial({ color: r.floor, roughness: 1 });
+    box(rw, .1, rd, cx, Y + 4.05, cz, ceilMat);
+    const wallMat = new THREE.MeshStandardMaterial({ map: surf.wall, color: '#ffffff', roughness: .9, emissive: r.vein, emissiveIntensity: .03 });
+    box(rw, 4.0, .16, cx, Y + 2.0, r.z0, wallMat);
+    box(rw, 4.0, .16, cx, Y + 2.0, r.z1, wallMat);
+    box(.16, 4.0, rd, NAVE.x1 + rw, Y + 2.0, cz, wallMat);
+    // a lit threshold where the nave floor becomes the room's
+    const sill = new THREE.Mesh(new THREE.BoxGeometry(.06, .012, rd - .3), new THREE.MeshBasicMaterial({ color: r.vein, transparent: true, opacity: .55 }));
+    put(sill, NAVE.x1 - .1, Y + .012, cz);
     const ink = r.id === 'bio' || r.id === 'alien' ? '#e9ffe8' : r.id === 'zombie' ? '#f3f0c8' : '#ffd0d4';
     const mark = lettering(2.6, .62, g => {
       g.fillStyle = ink; g.font = `700 .18px ${FONT}`; g.fillText(r.name.toUpperCase(), 0, .26);
@@ -133,133 +151,226 @@ export function buildGalleries(ctx) {
     const standX = r.id === 'horror' ? cx : cx - 2.55;
     const standZ = r.id === 'horror' ? cz + 1.7 : cz;
     const specimen = r.id === 'horror' ? new THREE.Vector3(cx, Y, cz - 1.05) : new THREE.Vector3(cx + .55, Y, cz);
-    const spot = { ...r, index: i, kind: 'gallery', floorMat, pos: new THREE.Vector3(cx, Y, cz), specimen, specimenYaw: r.id === 'horror' ? 0 : Math.PI / 2, face: new THREE.Vector3(specimen.x, Y + 1.05, specimen.z), view: new THREE.Vector3(standX, Y, standZ) };
-    const lamp = new THREE.PointLight(r.id === 'horror' ? '#ffd0b0' : '#fff4e4', lite ? 7 : (r.id === 'horror' ? 5 : 11), 12, 1.5);
-    lamp.position.set(specimen.x, Y + 2.8, specimen.z); group.add(lamp);
+    const spot = { ...r, index: i, kind: 'gallery', floorMat, group: rg, pos: new THREE.Vector3(cx, Y, cz), specimen, specimenYaw: r.id === 'horror' ? 0 : Math.PI / 2, face: new THREE.Vector3(specimen.x, Y + 1.05, specimen.z), view: new THREE.Vector3(standX, Y, standZ), bounds: { x0: NAVE.x1, x1: NAVE.x1 + rw, z0: r.z1, z1: r.z0 } };
+    const lamp = new THREE.PointLight(r.id === 'horror' ? '#ffd0b0' : '#fff4e4', lite ? 7 : (r.id === 'horror' ? 2.5 : 11), 12, 1.5);
+    lamp.position.set(specimen.x, Y + 2.8, specimen.z); rg.add(lamp);
     slab.userData.gallery = spot;
+    const L = { id: r.id, spot, group: rg, floorMat, motes: [] };
+
     if (r.id === 'bio') {
-      const vines = new THREE.Group(); vines.position.set(cx, Y, cz); group.add(vines);
-      const vineMat = new THREE.MeshStandardMaterial({ color: '#1a5a30', emissive: '#3dba55', emissiveIntensity: .22, roughness: .62 });
-      const nV = lite ? 7 : 12;
+      // vines climb the east wall and run out along the ceiling; leaves are one instanced draw
+      const vineMat = new THREE.MeshStandardMaterial({ color: '#1d4a2a', emissive: '#2c8a44', emissiveIntensity: .16, roughness: .7 });
+      const vines = new THREE.Group(); vines.position.set(cx, Y, cz); rg.add(vines);
+      const nV = lite ? 8 : 14, curves = [], rand = rng(seed + 5);
       for (let k = 0; k < nV; k++) {
-        const z = -1.55 + (k / (nV - 1)) * 3.1;
+        const z = (-.5 + k / (nV - 1)) * (rd - .7), wob = () => (rand() - .5) * .5;
         const curve = new THREE.CatmullRomCurve3([
-          new THREE.Vector3(3.5, .08, z),
-          new THREE.Vector3(2.3, .7 + (k % 3) * .45, z * .55),
-          new THREE.Vector3(1.15, 1.35, z * .2),
-          new THREE.Vector3(.55, .35 + (k % 2) * .5, z * .08),
+          new THREE.Vector3(4.18, 0, z), new THREE.Vector3(4.12, 1.2, z + wob()), new THREE.Vector3(4.1, 2.5, z + wob()),
+          new THREE.Vector3(3.9, 3.88, z + wob()), new THREE.Vector3(2.6, 3.95, z * .9 + wob()), new THREE.Vector3(1.1 - rand() * 1.4, 3.9, z * .8 + wob()),
         ]);
-        vines.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 18, .055 + (k % 3) * .018, 6, false), vineMat));
+        curves.push(curve);
+        vines.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 44, .026 + (k % 3) * .012, 5, false), vineMat));
       }
-      const podMat = new THREE.MeshStandardMaterial({ color: '#2f8a45', emissive: '#7dff6b', emissiveIntensity: .28, roughness: .4 });
-      const pods = new THREE.InstancedMesh(new THREE.SphereGeometry(.22, 10, 8), podMat, lite ? 8 : 14);
-      const dummy = new THREE.Matrix4();
-      for (let k = 0; k < pods.count; k++) {
-        const a = k / pods.count * Math.PI * 2;
-        const s = .55 + (k % 4) * .22;
-        dummy.makeScale(s, s * 1.25, s).setPosition(cx + 1.3 + Math.cos(a) * 1.5, Y + .12 * s, cz + Math.sin(a) * 1.15);
-        pods.setMatrixAt(k, dummy);
+      const leafShape = new THREE.Shape(); leafShape.moveTo(0, 0); leafShape.quadraticCurveTo(.09, .1, 0, .26); leafShape.quadraticCurveTo(-.09, .1, 0, 0);
+      const leafMat = new THREE.MeshStandardMaterial({ color: '#2f7a3a', emissive: '#3dba55', emissiveIntensity: .12, side: THREE.DoubleSide, roughness: .6 });
+      const perVine = lite ? 10 : 22, leaves = new THREE.InstancedMesh(new THREE.ShapeGeometry(leafShape, 3), leafMat, nV * perVine);
+      const d = new THREE.Object3D(); let n = 0;
+      for (const c of curves) for (let j = 0; j < perVine; j++) {
+        const u = .04 + (j / perVine) * .94, p = c.getPointAt(u);
+        d.position.copy(p).add(vines.position);
+        d.rotation.set(rand() * 6.28, rand() * 6.28, rand() * 6.28); d.scale.setScalar(.7 + rand() * .9);
+        d.updateMatrix(); leaves.setMatrixAt(n++, d.matrix);
       }
-      group.add(pods);
-      const leafMat = new THREE.MeshStandardMaterial({ color: '#14381c', emissive: '#2f8a45', emissiveIntensity: .12, side: THREE.DoubleSide, roughness: .75 });
-      for (let k = 0; k < (lite ? 5 : 9); k++) {
-        const leaf = new THREE.Mesh(new THREE.CircleGeometry(.55, 7), leafMat);
-        leaf.position.set(cx + Math.cos(k) * 1.6, Y + 2.6 + (k % 3) * .25, cz + Math.sin(k * 1.3) * .8);
-        leaf.rotation.x = -1.1; leaf.rotation.z = k;
-        group.add(leaf);
+      rg.add(leaves);
+      // strands hang from the vines behind the bike, each with a lit tip
+      const nS = lite ? 12 : 26, strand = new THREE.InstancedMesh(new THREE.CylinderGeometry(.008, .012, 1, 4).translate(0, -.5, 0), vineMat, nS);
+      const tipMat = new THREE.MeshBasicMaterial({ color: '#c8ff7a' });
+      const tips = new THREE.InstancedMesh(new THREE.SphereGeometry(.035, 8, 6), tipMat, nS);
+      const hang = [];
+      for (let k = 0; k < nS; k++) {
+        const x = cx + 1.4 + rand() * 2.6, z = cz + (rand() - .5) * (rd - .8), len = .5 + rand() * 1.7;
+        hang.push({ x, z, len, ph: rand() * 6.28 });
       }
-      const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.9, .22, .72), new THREE.MeshStandardMaterial({ color: '#0c2414', roughness: .7, emissive: '#39ff64', emissiveIntensity: .15 }));
-      at(plinth, specimen.x, Y + .08, specimen.z);
+      const pose = t => {
+        hang.forEach((h, k) => {
+          const a = Math.sin(t * .6 + h.ph) * .05;
+          d.position.set(h.x, Y + 3.92, h.z); d.rotation.set(a, 0, a * .6); d.scale.set(1, h.len, 1); d.updateMatrix(); strand.setMatrixAt(k, d.matrix);
+          d.position.set(h.x + Math.sin(a * .6) * h.len, Y + 3.92 - h.len * Math.cos(a), h.z + Math.sin(a) * h.len); d.rotation.set(0, 0, 0); d.scale.setScalar(1); d.updateMatrix(); tips.setMatrixAt(k, d.matrix);
+        });
+        strand.instanceMatrix.needsUpdate = tips.instanceMatrix.needsUpdate = true;
+      };
+      pose(0); rg.add(strand, tips);
+      // pods keep to the walls, out of the sight line: a clouded shell and a lit core
+      const podMat = new THREE.MeshStandardMaterial({ color: '#2f8a45', emissive: '#7dff6b', emissiveIntensity: .25, roughness: .2, transparent: true, opacity: .62 });
+      const coreMat = new THREE.MeshBasicMaterial({ color: '#d4ff9a' });
+      const nP = lite ? 8 : 14, pods = new THREE.InstancedMesh(new THREE.SphereGeometry(.26, 16, 12), podMat, nP), cores = new THREE.InstancedMesh(new THREE.SphereGeometry(.08, 8, 6), coreMat, nP);
+      for (let k = 0; k < nP; k++) {
+        const side = k % 2 ? 1 : -1, s = .6 + rand() * .8;
+        const x = cx - .6 + (k / nP) * 4.6 + rand() * .3, z = cz + side * (rd / 2 - .38 - rand() * .25);
+        d.position.set(x, Y + .26 * s * 1.2, z); d.rotation.set(0, rand() * 6, 0); d.scale.set(s, s * 1.25, s); d.updateMatrix(); pods.setMatrixAt(k, d.matrix);
+        d.scale.setScalar(s); d.updateMatrix(); cores.setMatrixAt(k, d.matrix);
+      }
+      rg.add(pods, cores);
+      const mound = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 12, 0, 6.29, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ map: rootTex('#0c2414', '#39ff64', seed + 9, [2, 1]), roughness: .7, emissive: '#39ff64', emissiveIntensity: .08 }));
+      mound.scale.set(1.05, .2, .5); put(mound, specimen.x, Y, specimen.z);
       obstacles.push({ box: [specimen.x - .95, specimen.x + .95, specimen.z - .5, specimen.z + .5] });
-      live.push({ id: 'bio', vines, podMat, floorMat, cx, cz });
+      const glow = new THREE.PointLight('#5dff7a', lite ? 2 : 4, 7, 2); glow.position.set(cx + 3.4, Y + .6, cz); rg.add(glow);
+      const spores = motes({ n: lite ? 60 : 150, box: [cx - 3.6, cx + 4, Y + .1, Y + 3.8, r.z1 + .3, r.z0 - .3], color: '#c8ff7a', size: .045, rise: .07, sway: .18, seed: seed + 3 });
+      rg.add(spores.points); L.motes.push(spores);
+      Object.assign(L, { vines, podMat, tipMat, glow, pose });
     }
+
     if (r.id === 'horror') {
       obstacles.push({ box: [cx - 3.45, cx - 1.15, cz - 1.2, cz + 1.2] });
       obstacles.push({ box: [cx + 1.15, cx + 3.45, cz - 1.2, cz + 1.2] });
       obstacles.push({ box: [cx - .7, cx + .7, cz - 1.6, cz - .55] });
-      const dark = new THREE.MeshStandardMaterial({ color: '#1a0c10', roughness: .95, emissive: '#3a1018', emissiveIntensity: .2 });
-      wall(2.3, 3.6, .18, cx - 2.3, Y + 1.8, cz, dark);
-      wall(2.3, 3.6, .18, cx + 2.3, Y + 1.8, cz, dark);
-      const pivot = new THREE.Group(); pivot.position.set(cx, Y + 3.7, cz - .2); group.add(pivot);
+      const dark = new THREE.MeshStandardMaterial({ map: plasterTex('#241417', '#050102', seed + 4, [1, 1.5]), roughness: .95, emissive: '#3a1018', emissiveIntensity: .12 });
+      box(2.3, 3.6, .18, cx - 2.3, Y + 1.8, cz, dark);
+      box(2.3, 3.6, .18, cx + 2.3, Y + 1.8, cz, dark);
+      // the bulb swings, and its light swings with it
+      const pivot = new THREE.Group(); pivot.position.set(cx, Y + 3.95, cz - .45); rg.add(pivot);
       const bulbMat = new THREE.MeshBasicMaterial({ color: '#fff4e0' });
-      const bulb = new THREE.Mesh(new THREE.SphereGeometry(.16, 12, 8), bulbMat);
-      bulb.position.y = -1.35; pivot.add(bulb);
-      const cord = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, 1.3, 6), new THREE.MeshStandardMaterial({ color: '#222' }));
-      cord.position.y = -.65; pivot.add(cord);
-      const pool = new THREE.Mesh(new THREE.CircleGeometry(1.15, 20), new THREE.MeshBasicMaterial({ color: '#ffd0a8', transparent: true, opacity: .28, depthWrite: false }));
-      pool.rotation.x = -Math.PI / 2; pool.position.set(cx, Y + .02, cz - .4); group.add(pool);
-      const eyes = new THREE.MeshBasicMaterial({ color: '#ff1a2a', transparent: true });
-      const eyeGeo = new THREE.SphereGeometry(.05, 8, 6);
-      for (let k = 0; k < (lite ? 4 : 8); k++) {
-        const eye = new THREE.Mesh(eyeGeo, eyes);
-        const side = k % 2 === 0 ? -1 : 1;
-        eye.position.set(cx + side * 1.02, Y + 1.15 + (k % 4) * .38, cz - .9 + (k % 3) * .55);
-        group.add(eye);
+      const bulb = new THREE.Mesh(new THREE.SphereGeometry(.09, 12, 8), bulbMat); bulb.position.y = -1.55; pivot.add(bulb);
+      const shade = new THREE.Mesh(new THREE.ConeGeometry(.2, .16, 16, 1, true), new THREE.MeshStandardMaterial({ color: '#1a1414', roughness: .6, metalness: .6, side: THREE.DoubleSide }));
+      shade.position.y = -1.44; pivot.add(shade);
+      const cord = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, 1.4, 5), new THREE.MeshStandardMaterial({ color: '#111' })); cord.position.y = -.7; pivot.add(cord);
+      const bulbLight = new THREE.PointLight('#ffc68a', lite ? 5 : 9, 6.5, 1.8); bulbLight.position.y = -1.62; pivot.add(bulbLight);
+      const pool = new THREE.Mesh(new THREE.CircleGeometry(1.2, 28), new THREE.MeshBasicMaterial({ color: '#ffcf9a', transparent: true, opacity: .22, depthWrite: false, blending: THREE.AdditiveBlending }));
+      pool.rotation.x = -Math.PI / 2; put(pool, cx, Y + .015, cz - .45);
+      // eyes, in pairs, in the dark either side of the passage; each pair blinks on its own
+      const eyeMat = new THREE.MeshBasicMaterial({ color: '#ff1a2a' }), eyeGeo = new THREE.SphereGeometry(.028, 8, 6);
+      const pairs = [], rand = rng(seed + 7);
+      const spotsE = [[-1.22, 1.55, .18], [1.22, 1.35, .22], [-3.1, 1.7, -1.7], [3.05, 1.2, -1.85], [-2.4, .55, 1.9], [2.6, 2.2, 1.7], [-1.25, 2.6, -.2], [1.3, .9, -.3]].slice(0, lite ? 4 : 8);
+      for (const [dx, y, dz] of spotsE) {
+        const pr = new THREE.Group(); pr.position.set(cx + dx, Y + y, cz + dz); pr.lookAt(cx, Y + 1.6, cz + 1.7);
+        for (const s of [-1, 1]) { const e = new THREE.Mesh(eyeGeo, eyeMat); e.position.x = s * .06; e.scale.set(1.3, 1, .6); pr.add(e); }
+        rg.add(pr); pairs.push({ g: pr, ph: rand() * 20, rate: .6 + rand() * .9, home: pr.position.clone() });
       }
-      const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.5, .16, .7), new THREE.MeshStandardMaterial({ color: '#14080c', roughness: .8 }));
-      at(plinth, specimen.x, Y + .06, specimen.z);
-      live.push({ id: 'horror', pivot, bulbMat, eyes, pool, floorMat });
+      // chains from the ceiling, either side of the bulb
+      const linkGeo = new THREE.TorusGeometry(.045, .012, 5, 10), chainMat = new THREE.MeshStandardMaterial({ color: '#3a3232', metalness: .8, roughness: .45 });
+      const chains = [];
+      for (const [dx, dz, len] of [[-.75, -1.6, 16], [.8, -1.75, 22], [-.6, .5, 12]]) {
+        const cg = new THREE.Group(); cg.position.set(cx + dx, Y + 4.0, cz + dz);
+        const links = new THREE.InstancedMesh(linkGeo, chainMat, len), m = new THREE.Object3D();
+        for (let k = 0; k < len; k++) { m.position.set(0, -.07 - k * .075, 0); m.rotation.set(0, k % 2 ? Math.PI / 2 : 0, Math.PI / 2); m.updateMatrix(); links.setMatrixAt(k, m.matrix); }
+        cg.add(links); rg.add(cg); chains.push({ g: cg, ph: rand() * 6 });
+      }
+      // the far wall has been written on
+      const scrawl = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 2.2), new THREE.MeshStandardMaterial({ map: scrawlTex('#6a0c14', seed), transparent: true, roughness: .9, depthWrite: false }));
+      put(scrawl, cx, Y + 1.7, r.z1 + .1);
+      const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.5, .16, .7), new THREE.MeshStandardMaterial({ color: '#14080c', roughness: .3, metalness: .4 }));
+      put(plinth, specimen.x, Y + .06, specimen.z);
+      const dust = motes({ n: lite ? 40 : 90, box: [cx - 1.1, cx + 1.1, Y + .2, Y + 2.6, cz - 1.5, cz + .6], color: '#ffd9a8', size: .022, rise: .025, sway: .2, opacity: .7, seed: seed + 2 });
+      rg.add(dust.points); L.motes.push(dust);
+      Object.assign(L, { pivot, bulbMat, bulbLight, pool, pairs, chains });
     }
+
     if (r.id === 'alien') {
-      const ringMat = new THREE.MeshStandardMaterial({ color: '#0e3a36', emissive: '#3dffe0', emissiveIntensity: .45, roughness: .25, metalness: .5 });
+      // the rings hang above the bike and turn like a gyroscope; nothing crosses the frame at eye height
+      const ringMat = new THREE.MeshStandardMaterial({ color: '#0e3a36', emissive: '#3dffe0', emissiveIntensity: .55, roughness: .25, metalness: .6 });
       const rings = [];
-      for (let k = 0; k < 4; k++) {
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.15 + k * .28, .07, 10, 48), ringMat);
-        ring.position.set(cx + .2, Y + 1.15 + k * .55, cz);
-        ring.rotation.x = Math.PI / 2;
-        group.add(ring); rings.push(ring);
+      for (let k = 0; k < 3; k++) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.25 + k * .32, .035 + k * .01, 10, 64), ringMat);
+        ring.position.set(specimen.x, Y + 2.55 + k * .42, specimen.z); ring.rotation.x = Math.PI / 2;
+        rg.add(ring); rings.push(ring);
       }
-      const ribMat = new THREE.MeshStandardMaterial({ color: '#102028', emissive: '#3dffe0', emissiveIntensity: .45, roughness: .4 });
+      // ribs arch across the room from wall to wall, like the inside of a hull
+      const ribMat = new THREE.MeshStandardMaterial({ color: '#102028', emissive: '#3dffe0', emissiveIntensity: .35, roughness: .4, metalness: .5 });
+      const ribR = rd / 2 - .14;
       for (let k = 0; k < (lite ? 4 : 7); k++) {
-        const rib = new THREE.Mesh(new THREE.TorusGeometry(1.7, .06, 8, 24, Math.PI), ribMat);
-        rib.position.set(cx + 1.6, Y + 1.7, cz - 1.6 + k * .55);
-        rib.rotation.y = Math.PI / 2;
-        group.add(rib);
+        const rib = new THREE.Mesh(new THREE.TorusGeometry(ribR, .055, 8, 40, Math.PI), ribMat);
+        rib.position.set(cx - 3.3 + k * 1.15, Y, cz); rib.rotation.y = Math.PI / 2; rib.scale.set(1, 3.8 / ribR, 1);
+        rg.add(rib);
       }
-      const beam = new THREE.Mesh(new THREE.CylinderGeometry(.35, .9, 3.4, 16, 1, true), new THREE.MeshBasicMaterial({ color: '#3dffe0', transparent: true, opacity: .16, side: THREE.DoubleSide, depthWrite: false }));
-      beam.position.set(specimen.x, Y + 1.8, specimen.z); group.add(beam);
-      const grid = new THREE.InstancedMesh(new THREE.BoxGeometry(.04, .02, 3.2), new THREE.MeshBasicMaterial({ color: '#7dfff0' }), lite ? 6 : 10);
-      const dummy = new THREE.Matrix4();
-      for (let k = 0; k < grid.count; k++) { dummy.makeTranslation(cx - 2.2 + k * .55, Y + .03, cz); grid.setMatrixAt(k, dummy); }
-      group.add(grid);
-      const plinth = new THREE.Mesh(new THREE.CylinderGeometry(.85, .95, .18, 16), new THREE.MeshStandardMaterial({ color: '#07141c', emissive: '#3dffe0', emissiveIntensity: .35, metalness: .4, roughness: .3 }));
-      at(plinth, specimen.x, Y + .08, specimen.z);
+      const beam = new THREE.Mesh(new THREE.CylinderGeometry(.25, .95, 3.6, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#3dffe0', transparent: true, opacity: .09, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending }));
+      put(beam, specimen.x, Y + 1.9, specimen.z);
+      // the scan: a disc of light that passes through the frame, top to bottom and back
+      const scan = new THREE.Group(); scan.position.set(specimen.x, Y + 1, specimen.z); rg.add(scan);
+      const scanMat = new THREE.MeshBasicMaterial({ color: '#7dfff0', transparent: true, opacity: .16, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending });
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(1.25, 48), scanMat); disc.rotation.x = -Math.PI / 2; scan.add(disc);
+      const edge = new THREE.Mesh(new THREE.TorusGeometry(1.25, .012, 6, 64), new THREE.MeshBasicMaterial({ color: '#b8fff6' })); edge.rotation.x = Math.PI / 2; scan.add(edge);
+      const glyphs = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.4), new THREE.MeshBasicMaterial({ map: glyphTex('#7dfff0', seed), transparent: true, opacity: .55, depthWrite: false, blending: THREE.AdditiveBlending }));
+      glyphs.rotation.y = -Math.PI / 2; put(glyphs, NAVE.x1 + rw - .12, Y + 2.1, cz);
+      const plinth = new THREE.Mesh(new THREE.CylinderGeometry(.85, .95, .18, 32), new THREE.MeshStandardMaterial({ color: '#07141c', emissive: '#3dffe0', emissiveIntensity: .35, metalness: .6, roughness: .25 }));
+      put(plinth, specimen.x, Y + .08, specimen.z);
+      const halo = new THREE.Mesh(new THREE.RingGeometry(.96, 1.08, 48), new THREE.MeshBasicMaterial({ color: '#3dffe0', transparent: true, opacity: .8 }));
+      halo.rotation.x = -Math.PI / 2; put(halo, specimen.x, Y + .02, specimen.z);
       obstacles.push({ box: [specimen.x - .85, specimen.x + .85, specimen.z - .85, specimen.z + .85] });
-      live.push({ id: 'alien', rings, beam, floorMat });
+      const stars = motes({ n: lite ? 50 : 120, box: [cx - 3.8, cx + 4, Y + .3, Y + 3.9, r.z1 + .3, r.z0 - .3], color: '#9ffff4', size: .03, rise: .02, sway: .3, opacity: .75, seed: seed + 4 });
+      rg.add(stars.points); L.motes.push(stars);
+      Object.assign(L, { rings, beam, scan, scanMat, glyphs });
     }
+
     if (r.id === 'zombie') {
-      const cloth = new THREE.MeshStandardMaterial({ color: '#3a3a28', roughness: .9, emissive: '#6a6840', emissiveIntensity: .12 });
-      const skin = new THREE.MeshStandardMaterial({ color: '#8a8a55', roughness: .8, emissive: '#c6c07a', emissiveIntensity: .15 });
-      const figs = [];
-      const n = lite ? 5 : 8;
-      for (let k = 0; k < n; k++) {
-        const fig = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.CapsuleGeometry(.22, .78, 4, 8), cloth); body.position.y = .9; fig.add(body);
-        const head = new THREE.Mesh(new THREE.SphereGeometry(.2, 10, 8), skin); head.position.y = 1.55; fig.add(head);
-        const arm = new THREE.Mesh(new THREE.CapsuleGeometry(.07, .55, 3, 6), cloth);
-        arm.position.set(.28, .95, 0); arm.rotation.z = .9; fig.add(arm);
-        const side = k % 2 === 0 ? -1 : 1;
-        fig.position.set(cx + side * 2.7, Y, r.z1 + .7 + k * ((rd - 1.2) / n));
-        fig.userData.homeX = fig.position.x;
-        fig.scale.setScalar(1.15);
-        group.add(fig);
-        figs.push(fig);
+      // chain-link along both long walls; the figures are behind it, pressing in
+      const fenceMap = fenceTex([rw * 3.2, 2.6 * 3.2]);
+      const fenceMat = new THREE.MeshStandardMaterial({ map: fenceMap, alphaTest: .5, side: THREE.DoubleSide, roughness: .5, metalness: .7, color: '#9a977e' });
+      const fx0 = cx - 3.2, fx1 = NAVE.x1 + rw - .1, fw = fx1 - fx0, inset = 1.05;
+      for (const side of [-1, 1]) {
+        const fz = cz + side * (rd / 2 - inset);
+        put(new THREE.Mesh(new THREE.PlaneGeometry(fw, 2.6), fenceMat), (fx0 + fx1) / 2, Y + 1.3, fz);
+        const postGeo = new THREE.CylinderGeometry(.03, .03, 2.7, 6), postMat = new THREE.MeshStandardMaterial({ color: '#55533f', metalness: .7, roughness: .5 });
+        for (let k = 0; k <= 4; k++) put(new THREE.Mesh(postGeo, postMat), fx0 + k * fw / 4, Y + 1.35, fz);
+        obstacles.push({ box: [fx0 - .1, fx1, side < 0 ? r.z1 : fz - .08, side < 0 ? fz + .08 : r.z0] });
       }
-      const crateMat = new THREE.MeshStandardMaterial({ color: '#4a4630', roughness: .92 });
-      for (let k = 0; k < (lite ? 3 : 6); k++) {
-        const crate = new THREE.Mesh(new THREE.BoxGeometry(.55, .4 + (k % 3) * .12, .48), crateMat);
-        const side = k % 2 === 0 ? -1 : 1;
-        crate.position.set(cx + side * 3.3, Y + .22, cz - 1.6 + k * .55);
-        crate.rotation.y = k * .4;
-        group.add(crate);
+      // figures: two instanced draws (cloth, skin), posed every frame from a few numbers
+      const cloth = new THREE.MeshStandardMaterial({ color: '#3a3a28', roughness: .95, emissive: '#6a6840', emissiveIntensity: .08 });
+      const skin = new THREE.MeshStandardMaterial({ color: '#8a8a55', roughness: .75, emissive: '#c6c07a', emissiveIntensity: .12 });
+      const part = (geo, x, y, z, rx = 0, rz = 0) => geo.rotateX(rx).rotateZ(rz).translate(x, y, z);
+      const clothGeo = mergeGeometries([
+        part(new THREE.CapsuleGeometry(.19, .5, 4, 8), 0, 1.12, .06, .38),                       // torso, hunched
+        part(new THREE.CapsuleGeometry(.08, .62, 3, 6), -.11, .42, 0, 0, .05),                    // legs
+        part(new THREE.CapsuleGeometry(.08, .62, 3, 6), .11, .42, .04, -.12, -.04),
+        part(new THREE.CapsuleGeometry(.055, .5, 3, 6), -.24, 1.3, .36, Math.PI / 2 - .25),       // arms, reaching
+        part(new THREE.CapsuleGeometry(.055, .5, 3, 6), .24, 1.24, .34, Math.PI / 2 - .05),
+      ]);
+      const skinGeo = mergeGeometries([
+        part(new THREE.SphereGeometry(.15, 10, 8).scale(1, 1.12, 1), .03, 1.55, .26, 0, .35),     // head, lolling
+        part(new THREE.SphereGeometry(.055, 6, 5), -.24, 1.24, .7), part(new THREE.SphereGeometry(.055, 6, 5), .24, 1.2, .68),
+      ]);
+      const nF = lite ? 6 : 10, figC = new THREE.InstancedMesh(clothGeo, cloth, nF), figS = new THREE.InstancedMesh(skinGeo, skin, nF);
+      figC.frustumCulled = figS.frustumCulled = false;
+      const rand = rng(seed + 11), figs = [];
+      for (let k = 0; k < nF; k++) {
+        const side = k % 2 ? 1 : -1, fz = cz + side * (rd / 2 - inset);
+        figs.push({ x: fx0 + .4 + ((k >> 1) + rand() * .5) * (fw - .8) / Math.ceil(nF / 2), z: fz + side * .32, fz, side, ph: rand() * 6.28, s: 1.02 + rand() * .16, lean: (rand() - .5) * .2 });
       }
-      const haze = new THREE.Mesh(new THREE.BoxGeometry(rw - .4, 1.4, rd - .4), new THREE.MeshBasicMaterial({ color: '#c6c07a', transparent: true, opacity: .1, depthWrite: false }));
-      at(haze, cx, Y + .8, cz);
-      const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.9, .2, .75), new THREE.MeshStandardMaterial({ color: '#2a2c18', roughness: .85 }));
-      at(plinth, specimen.x, Y + .08, specimen.z);
+      const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e3 = new THREE.Euler(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3();
+      const pose = t => {
+        figs.forEach((f, k) => {
+          const press = Math.max(0, Math.sin(t * .5 + f.ph)) * .12;           // lean into the wire, fall back
+          const x = f.x + Math.sin(t * .23 + f.ph) * .35, z = f.z + f.side * -press;
+          e3.set(f.side * -(.08 + press * .6), (f.side < 0 ? 0 : Math.PI) + Math.sin(t * .4 + f.ph) * .25, f.lean + Math.sin(t * 1.3 + f.ph) * .06);
+          m4.compose(v3.set(x, Y, z), q.setFromEuler(e3), s3.setScalar(f.s));
+          figC.setMatrixAt(k, m4); figS.setMatrixAt(k, m4);
+        });
+        figC.instanceMatrix.needsUpdate = figS.instanceMatrix.needsUpdate = true;
+      };
+      pose(0); rg.add(figC, figS);
+      const crateMat = new THREE.MeshStandardMaterial({ map: crackTex('#4a4630', '#2a2818', seed + 3, [1, 1], 1), roughness: .92 });
+      for (const [dx, dz, s, ry] of [[3.6, -.9, .62, .2], [3.55, -.2, .48, .9], [3.7, .7, .55, .4], [3.1, .95, .4, 1.3]].slice(0, lite ? 2 : 4)) {
+        const crate = new THREE.Mesh(new THREE.BoxGeometry(s, s * .8, s), crateMat); crate.rotation.y = ry; put(crate, cx + dx, Y + s * .4, cz + dz);
+      }
+      // mist lies in layers and drifts; a sodium lamp on a pole buzzes over the block
+      const mist = [];
+      for (let k = 0; k < 3; k++) {
+        const map = mistTex(seed + k); map.repeat.set(2, 1.4);
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(rw - .3, rd - .3), new THREE.MeshBasicMaterial({ map, color: '#d8d49a', transparent: true, opacity: .55 - k * .14, depthWrite: false }));
+        m.rotation.x = -Math.PI / 2; put(m, cx, Y + .12 + k * .28, cz); mist.push(m);
+      }
+      const pole = box(.07, 3.6, .07, cx + 3.9, Y + 1.8, cz - rd / 2 + .45, new THREE.MeshStandardMaterial({ color: '#2a2a22', metalness: .6, roughness: .6 }));
+      box(.9, .05, .05, cx + 3.5, Y + 3.58, cz - rd / 2 + .45, pole.material);
+      const sodiumMat = new THREE.MeshBasicMaterial({ color: '#ffb35a' });
+      box(.3, .08, .16, cx + 3.1, Y + 3.52, cz - rd / 2 + .45, sodiumMat);
+      const sodium = new THREE.PointLight('#ff9d3c', lite ? 4 : 8, 9, 1.6); sodium.position.set(cx + 3.1, Y + 3.3, cz - rd / 2 + .6); rg.add(sodium);
+      const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.9, .2, .75), new THREE.MeshStandardMaterial({ map: crackTex('#3a3a2a', '#1c1c12', seed + 5, [2, 1], 2), roughness: .85 }));
+      put(plinth, specimen.x, Y + .08, specimen.z);
       obstacles.push({ box: [specimen.x - .8, specimen.x + .8, specimen.z - .5, specimen.z + .5] });
-      live.push({ id: 'zombie', figs, floorMat });
+      const ash = motes({ n: lite ? 50 : 120, box: [cx - 3.8, cx + 4, Y + .1, Y + 3.9, r.z1 + .3, r.z0 - .3], color: '#e8e2b0', size: .03, rise: -.12, sway: .25, opacity: .55, seed: seed + 6 });
+      rg.add(ash.points); L.motes.push(ash);
+      Object.assign(L, { pose, mist, sodium, sodiumMat });
     }
+    live.push(L);
     return spot;
   });
 
@@ -290,41 +401,67 @@ export function buildGalleries(ctx) {
 
   const baseFog = new THREE.Color('#e6eef0');
   const fogOf = Object.fromEntries(rooms.map(r => [r.id, new THREE.Color(r.fog)]));
-  function update(t, visitor, reduce, scene, renderer) {
-    const inside = rooms.find(r => visitor.x > NAVE.x1 - .3 && visitor.x < NAVE.x1 + 8.4 && visitor.z > r.z1 + .2 && visitor.z < r.z0 - .2);
+  const roomAt = (x, z) => rooms.find(r => x > NAVE.x1 - .3 && x < NAVE.x1 + 8.4 && z > r.z1 + .2 && z < r.z0 - .2) || null;
+  // upstairs: which rooms can be seen. Inside a room, only that room (its walls hide the rest);
+  // in the nave, the rooms whose openings are near; downstairs, none.
+  function visibleRooms(visitor, region) {
+    if (region !== 'gallery' && region !== 'stair') return [];
+    const inside = roomAt(visitor.x, visitor.z);
+    if (inside) return [inside];
+    return rooms.filter(r => Math.abs((r.z0 + r.z1) / 2 - visitor.z) < 11 || visitor.x > NAVE.x1 - 3);
+  }
+  function update(t, visitor, reduce, scene, renderer, region = 'gallery') {
+    const inside = roomAt(visitor.x, visitor.z);
     if (scene?.fog) scene.fog.color.copy(inside ? fogOf[inside.id] : baseFog);
     if (renderer) {
       const want = inside ? inside.exposure : .96;
       renderer.toneMappingExposure += (want - renderer.toneMappingExposure) * (reduce ? 1 : .08);
     }
-    if (reduce) return;
+    const seen = visibleRooms(visitor, region);
     for (const L of live) {
+      const on = seen.includes(L.spot);
+      L.group.visible = on;
+      if (L.spot.bike) L.spot.bike.visible = on;
+      if (!on || reduce) continue;
+      for (const m of L.motes) m.step(t);
       if (L.id === 'bio') {
-        L.vines.rotation.y = Math.sin(t * .35) * .08;
-        L.floorMat.emissiveIntensity = .12 + Math.sin(t * 1.6) * .08;
-        L.podMat.emissiveIntensity = .2 + Math.sin(t * 2.2) * .08;
+        L.pose(t);
+        L.floorMat.emissiveIntensity = .12 + Math.sin(t * 1.1) * .06;
+        L.podMat.emissiveIntensity = .22 + Math.sin(t * 1.9) * .1;
+        L.tipMat.color.setScalar(.75 + Math.sin(t * 2.6) * .25).multiply(new THREE.Color('#c8ff7a'));
+        L.glow.intensity = (lite ? 2 : 4) * (.75 + Math.sin(t * .8) * .25);
       } else if (L.id === 'horror') {
-        L.pivot.rotation.z = Math.sin(t * 1.15) * .42;
-        const flick = Math.sin(t * 18) > .92 ? .15 : 1;
+        L.pivot.rotation.z = Math.sin(t * 1.05) * .32; L.pivot.rotation.x = Math.sin(t * .7) * .08;
+        const flick = (Math.sin(t * 17) > .93 || Math.sin(t * 5.3 + 1) > .985) ? .12 : 1;
         L.bulbMat.color.setScalar(flick);
-        L.eyes.opacity = Math.sin(t * .7) > .2 ? 1 : .05;
-        L.eyes.transparent = true;
-        L.floorMat.emissiveIntensity = .05 + flick * .12;
+        L.bulbLight.intensity = (lite ? 5 : 9) * flick;
+        L.pool.material.opacity = .22 * flick;
+        L.pool.position.x = L.spot.pos.x + Math.sin(L.pivot.rotation.z) * 1.55;
+        L.floorMat.emissiveIntensity = .03 + flick * .05;
+        for (const e of L.pairs) {                                      // blink, and now and then look a little further out
+          const c = (t * e.rate + e.ph) % 7;
+          e.g.scale.y = c < .12 ? .08 : 1;
+          e.g.visible = c < 5.2 || flick < 1;
+          e.g.position.x = e.home.x + Math.sin(t * .3 + e.ph) * .05;
+        }
+        for (const c of L.chains) c.g.rotation.z = Math.sin(t * .9 + c.ph) * .03;
       } else if (L.id === 'alien') {
-        L.rings.forEach((ring, i) => { ring.rotation.z = t * (.35 + i * .08); });
-        L.beam.scale.y = .92 + Math.sin(t * 2.4) * .08;
-        L.floorMat.emissiveIntensity = .18 + Math.sin(t * 3) * .06;
+        L.rings.forEach((ring, i) => { ring.rotation.z = t * (.3 + i * .1) * (i % 2 ? -1 : 1); ring.rotation.x = Math.PI / 2 + Math.sin(t * .4 + i) * .12; });
+        L.beam.scale.y = .94 + Math.sin(t * 2.4) * .06;
+        const u = (Math.sin(t * .9) + 1) / 2;                           // scan sweeps 0.15 m → 1.6 m and back
+        L.scan.position.y = UPPER + .15 + u * 1.45;
+        L.scanMat.opacity = .1 + Math.abs(Math.cos(t * .9)) * .12;
+        L.glyphs.material.opacity = .4 + (Math.sin(t * 13) > .97 ? .35 : 0) + Math.sin(t * .6) * .1;
+        L.floorMat.emissiveIntensity = .14 + Math.sin(t * 2.2) * .05;
       } else if (L.id === 'zombie') {
-        L.figs.forEach((fig, i) => {
-          const w = Math.sin(t * .55 + i);
-          fig.position.x = fig.userData.homeX + w * .4;
-          fig.rotation.z = Math.sin(t * 1.4 + i) * .07;
-          fig.rotation.y = w;
-        });
-        L.floorMat.emissiveIntensity = .06;
+        L.pose(t);
+        L.mist.forEach((m, i) => { m.material.map.offset.set(t * (.012 + i * .006), t * (i % 2 ? -.008 : .006)); });
+        const buzz = Math.sin(t * 23) > .96 ? .35 : 1;
+        L.sodium.intensity = (lite ? 4 : 8) * buzz; L.sodiumMat.color.setScalar(buzz).multiply(new THREE.Color('#ffb35a'));
       }
     }
+    return inside;
   }
 
-  return { group, floors, bays, rooms, sign, update };
+  return { group, floors, bays, rooms, sign, update, roomAt };
 }

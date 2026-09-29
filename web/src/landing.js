@@ -11,6 +11,7 @@ import { initAppShell } from './app-shell.js';
 import { buildHalloween, hweenWalkable, HDOOR } from './halloween.js';
 import { buildSanctuary, sanctuaryWalkable, SDOOR, SROOM } from './sanctuary.js';
 import { buildGalleries, galleryWalkable, galleryFloorY, EDOOR, UPPER } from './galleries.js';
+import { createRoomSound } from './roomSound.js';
 import { applyWyld } from './skins/wyld.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
@@ -993,7 +994,7 @@ async function loadThemeBikes() {
     holder.add(bike);
     holder.rotation.y = room.specimenYaw || 0;
     holder.position.set(room.specimen.x, room.specimen.y + .2, room.specimen.z);
-    galleries.group.add(holder);
+    (room.group || galleries.group).add(holder);
     room.bike = holder;
     holder.traverse(o => {
       if (!o.isMesh) return;
@@ -1116,6 +1117,7 @@ const roomOf = (x, z) => {
 };
 const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5, hween: (HDOOR.z0 + HDOOR.z1) / 2 };
 const PIER_IN = [{ x: 1.2, z: -38.6 }, { x: 5.6, z: -38.6 }, { x: 5.4, z: -44.6 }, { x: 5.4, z: -48.4 }];   // round the apse plinth, through the glass door
+const NAVE_LANE = 13.6;                                             // upstairs walking lane: east of the bay plinths (x 11.15), west of the room openings
 function route(to, face, piece) {                                   // aisle first, then the doorway — never a diagonal through the plinths
   const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
   const done = () => { path = pts; path.stuck = 0; path.face = face; path.piece = piece || null; };
@@ -1124,8 +1126,8 @@ function route(to, face, piece) {                                   // aisle fir
     pts.push({ x: aisleX(from.x), z: from.z });
     if (Math.abs(from.z - z) > .6) pts.push({ x: 0, z });
   };
-  if (a === 'gallery' && b === 'gallery') { pts.push({ x: 12.2, z: P.z }, { x: 12.2, z: to.z }, { x: to.x, z: to.z }); return done(); }
-  if (a === 'stair' && b === 'gallery') { pts.push({ x: 10, z: 5.6 }, { x: 12.2, z: to.z }, { x: to.x, z: to.z }); return done(); }
+  if (a === 'gallery' && b === 'gallery') { pts.push({ x: NAVE_LANE, z: P.z }, { x: NAVE_LANE, z: to.z }, { x: to.x, z: to.z }); return done(); }
+  if (a === 'stair' && b === 'gallery') { pts.push({ x: 10, z: 5.6 }, { x: NAVE_LANE, z: to.z }, { x: to.x, z: to.z }); return done(); }
   if (a === b && a !== 'hall') { pts.push({ x: to.x, z: to.z }); return done(); }
   let from = { x: P.x, z: P.z };
   if (a === 'pier') { pts.push(...[...PIER_IN].reverse()); from = PIER_IN[0]; }
@@ -1136,7 +1138,7 @@ function route(to, face, piece) {                                   // aisle fir
   if (b === 'sanctuary') { viaAisle(from, 3.2); pts.push({ x: 0, z: 6.4 }, { x: to.x, z: to.z }); return done(); }
   if (b === 'gallery' || b === 'stair') {
     viaAisle(from, 3.0);
-    pts.push({ x: 4.5, z: 3.7 }, { x: 6.5, z: 3.7 }, { x: 8.8, z: 3.2 }, { x: 10, z: 1.5 }, { x: 10, z: 5.7 }, { x: 12.2, z: to.z }, { x: to.x, z: to.z });
+    pts.push({ x: 4.5, z: 3.7 }, { x: 6.5, z: 3.7 }, { x: 8.8, z: 3.2 }, { x: 10, z: 1.5 }, { x: 10, z: 5.7 }, { x: NAVE_LANE, z: to.z }, { x: to.x, z: to.z });
     return done();
   }
   if (b !== 'hall' && DOORZ[b] != null) { viaAisle(from, DOORZ[b]); pts.push({ x: -5.4, z: DOORZ[b] }, { x: -9.2, z: DOORZ[b] }, { x: to.x, z: to.z }); return done(); }
@@ -1418,7 +1420,7 @@ if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="c
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
-for (const r of galleries.rooms) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
+for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
 $('railInner').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8);
   const theme = galleries.rooms.find(r => r.id === b.dataset.room);
@@ -1607,7 +1609,7 @@ const joy = { on: false, x: 0, y: 0, id: null };
 }
 
 // ------------------------------------------------------------------ ocean ambience (synthesised, opt-in)
-let audio = null;
+let audio = null, roomSound = null, audioOn = false;
 $('soundBtn').onclick = () => {
   const on = $('soundBtn').getAttribute('aria-pressed') !== 'true';
   $('soundBtn').setAttribute('aria-pressed', on);
@@ -1619,9 +1621,12 @@ $('soundBtn').onclick = () => {
     const gain = ctx.createGain(); gain.gain.value = 0;
     const lfo = ctx.createOscillator(), lfoG = ctx.createGain(); lfo.frequency.value = .09; lfoG.gain.value = .12; lfo.connect(lfoG).connect(gain.gain);
     src.connect(lp).connect(gain).connect(ctx.destination); src.start(); lfo.start();
-    audio = { ctx, gain };
+    const rooms = ctx.createGain(); rooms.gain.value = 0; rooms.connect(ctx.destination);
+    roomSound = createRoomSound(ctx, rooms);
+    audio = { ctx, gain, rooms };
   }
-  if (audio) { audio.ctx.resume(); audio.gain.gain.setTargetAtTime(on ? .2 : 0, audio.ctx.currentTime, .6); }
+  audioOn = on;
+  if (audio) { audio.ctx.resume(); audio.sea = null; audio.rooms.gain.setTargetAtTime(on ? .9 : 0, audio.ctx.currentTime, .6); }
 };
 
 // ------------------------------------------------------------------ frame
@@ -1645,7 +1650,7 @@ function frame(now) {
   if (keys.has('arrowright') || keys.has('e')) P.yaw -= dt * 1.7;
   if (joy.on) { ix += joy.x; iz += -joy.y; }                          // triathlon joystick (touch)
   const sp = (keys.has('shift') ? 5.8 : 3.35) * (joy.on ? Math.min(1, Math.hypot(joy.x, joy.y)) * 1.08 : 1);
-  let wx = 0, wz = 0;
+  let wx = 0, wz = 0, following = false;
   if (Math.hypot(ix, iz) > .08) {
     const s = Math.sin(P.yaw), c = Math.cos(P.yaw), l = Math.max(1e-3, Math.hypot(ix, iz));
     wx = (-s * iz + c * ix) / l * sp; wz = (-c * iz - s * ix) / l * sp;
@@ -1654,6 +1659,7 @@ function frame(now) {
     const g = path[0], dx = g.x - P.x, dz = g.z - P.z, d = Math.hypot(dx, dz);
     if (d < .22) { path.shift(); }
     else {
+      following = true;
       const v = Math.min(4.8, d * 3.0 + 1.0); wx = dx / d * v; wz = dz / d * v;
       if (!path.face || path.length > 1) { const want = Math.atan2(-dx, -dz); P.yaw += (((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI) * (1 - Math.exp(-dt * 5.2)); }
     }
@@ -1667,12 +1673,14 @@ function frame(now) {
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 15); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
-  if (walkable(nx, nz)) { P.x = nx; P.z = nz; if (path) path.stuck = 0; }
-  else if (walkable(nx, P.z)) { P.x = nx; P.vz *= .5; if (path) path.stuck = 0; }
-  else if (walkable(P.x, nz)) { P.z = nz; P.vx *= .5; if (path) path.stuck = 0; }
-  else {
-    P.vx = P.vz = 0;
-    if (path) { path.stuck = (path.stuck || 0) + dt; if (path.stuck > .45) { path.shift(); path.stuck = 0; } }
+  if (walkable(nx, nz)) { P.x = nx; P.z = nz; }
+  else if (walkable(nx, P.z)) { P.x = nx; P.vz *= .5; }
+  else if (walkable(P.x, nz)) { P.z = nz; P.vx *= .5; }
+  else P.vx = P.vz = 0;
+  if (following && path?.length) {                                   // a waypoint is blocked when it stops getting closer, even while we slide along a wall
+    const g = path[0], d = Math.hypot(g.x - P.x, g.z - P.z);
+    if (path.goal !== g || d < path.best - .03) { path.goal = g; path.best = d; path.stuck = 0; }
+    else if ((path.stuck = (path.stuck || 0) + dt) > .6) { path.shift(); path.goal = null; path.stuck = 0; }
   }
   const moving = Math.hypot(P.vx, P.vz); bob += dt * moving * 3.1;
   const activeKeys = keys.has('w') || keys.has('a') || keys.has('s') || keys.has('d') || keys.has('arrowup') || keys.has('arrowdown');
@@ -1752,11 +1760,19 @@ function frame(now) {
   }
   { // draw only what can be seen: rooms hide each other's bikes (walls between them)
     const reg = roomOf(P.x, P.z);
-    for (const p of PIECES) if (p.bike) p.bike.visible = reg === 'hall' || Math.abs(p.pos.z - DOORZ[reg]) < 7;
-    for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg === 'hall' && P.z < -20 && P.x < 3);
-    hween.group.visible = reg === 'hween' || P.z > -32;
-    sanctuary.group.visible = true;
-    galleries.update(t, P, reduce, scene, renderer);
+    // hide a bike only where a wall really blocks it. Rooms without a door entry (sanctuary, stair, art portals)
+    // look straight into the hall, so they keep the hall bikes; only the closed side rooms and upstairs cull.
+    for (const p of PIECES) if (p.bike) p.bike.visible = reg !== 'gallery' && (DOORZ[reg] == null || reg === 'pier' || Math.abs(p.pos.z - DOORZ[reg]) < 7);
+    for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg !== 'gallery' && reg !== 'champ' && P.z < -14);
+    const upstairs = reg === 'gallery' || reg === 'stair';
+    hween.group.visible = reg === 'hween' || (!upstairs && P.z > -32);
+    sanctuary.group.visible = reg !== 'gallery';
+    const themeRoom = galleries.update(t, P, reduce, scene, renderer, reg);
+    if (audio) {                                                      // the sea fades upstairs; each room brings its own bed
+      roomSound.set(themeRoom?.id || null);
+      const sea = audioOn ? (upstairs ? .05 : .2) : 0;
+      if (sea !== audio.sea) { audio.sea = sea; audio.gain.gain.setTargetAtTime(sea, audio.ctx.currentTime, .8); }
+    }
     if (hween.group.visible) hween.update(t, reduce);
     if (pier) {
       pier.group.visible = reg === 'pier' || (reg === 'hall' && P.z < -22);
@@ -1784,5 +1800,6 @@ requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
 initAppShell();
 loadAll().then(loadWyldBikes).then(loadHweenBike).then(loadSanctuaryBikes).then(loadKonaMachines).then(loadThemeBikes).catch(e => console.warn('rooms', e));
+window.__gallery = galleries;
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
 initArtWorld(window.__museum).catch(e => console.warn('art world', e));
