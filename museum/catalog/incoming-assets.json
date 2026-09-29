@@ -1,0 +1,179 @@
+{
+ "schema_version": 1,
+ "note": "Cross-agent asset queue. This is planning metadata, not runtime content. Before build, re-check current catalogue/assets. 'reuse' means do not generate a duplicate.",
+ "items": [
+  {
+   "id": "trek-speed-concept-existing",
+   "type": "bike",
+   "brand": "Trek",
+   "model": "Speed Concept",
+   "action": "reuse",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect"
+   ],
+   "destination": "existing asset/catalogue record",
+   "status": "existing-reuse-only"
+  },
+  {
+   "id": "cervelo-p5-study",
+   "type": "bike",
+   "brand": "Cervélo",
+   "model": "P5",
+   "action": "create-if-missing",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect",
+    "customize"
+   ],
+   "destination": "assets/brands/cervelo/cervelo-p5-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "cervelo-p5x-study",
+   "type": "bike",
+   "brand": "Cervélo",
+   "model": "P5X",
+   "action": "create-if-missing",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect"
+   ],
+   "destination": "assets/brands/cervelo/cervelo-p5x-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "specialized-shiv-disc-study",
+   "type": "bike",
+   "brand": "Specialized",
+   "model": "Shiv Disc",
+   "action": "create-if-missing",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect",
+    "customize"
+   ],
+   "destination": "assets/brands/specialized/specialized-shiv-disc-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "felt-ia-study",
+   "type": "bike",
+   "brand": "Felt",
+   "model": "IA",
+   "action": "create-if-missing",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect"
+   ],
+   "destination": "assets/brands/felt/felt-ia-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "scott-plasma-study",
+   "type": "bike",
+   "brand": "Scott",
+   "model": "Plasma",
+   "action": "create-if-missing",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect"
+   ],
+   "destination": "assets/brands/scott/scott-plasma-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "bmc-speedmachine-study",
+   "type": "bike",
+   "brand": "BMC",
+   "model": "Speedmachine",
+   "action": "create-if-missing",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect",
+    "customize"
+   ],
+   "destination": "assets/brands/bmc/bmc-speedmachine-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "orbea-ordu-study",
+   "type": "bike",
+   "brand": "Orbea",
+   "model": "Ordu",
+   "action": "create-if-missing",
+   "priority": "kona-p1",
+   "purpose": [
+    "explore",
+    "collect"
+   ],
+   "destination": "assets/brands/orbea/orbea-ordu-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "nike-vaporfly-4pct-study",
+   "type": "shoe",
+   "brand": "Nike",
+   "model": "Vaporfly 4%",
+   "action": "create-if-missing",
+   "priority": "equipment-p2",
+   "purpose": [
+    "explore",
+    "collect"
+   ],
+   "destination": "assets/brands/nike/nike-vaporfly-4pct-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "nike-vaporfly-next-study",
+   "type": "shoe",
+   "brand": "Nike",
+   "model": "Vaporfly NEXT%",
+   "action": "create-if-missing",
+   "priority": "equipment-p2",
+   "purpose": [
+    "explore",
+    "collect"
+   ],
+   "destination": "assets/brands/nike/nike-vaporfly-next-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "nike-alphafly-next-study",
+   "type": "shoe",
+   "brand": "Nike",
+   "model": "Alphafly NEXT%",
+   "action": "create-if-missing",
+   "priority": "equipment-p2",
+   "purpose": [
+    "explore",
+    "collect",
+    "customize"
+   ],
+   "destination": "assets/brands/nike/nike-alphafly-next-study/",
+   "status": "asset-agent"
+  },
+  {
+   "id": "nike-alphafly-3-study",
+   "type": "shoe",
+   "brand": "Nike",
+   "model": "Alphafly 3",
+   "action": "create-if-missing",
+   "priority": "equipment-p2",
+   "purpose": [
+    "explore",
+    "collect",
+    "customize"
+   ],
+   "destination": "assets/brands/nike/nike-alphafly-3-study/",
+   "status": "asset-agent"
+  }
+ ]
+}
