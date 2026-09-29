@@ -27,41 +27,128 @@ and products without rewriting code.
 | App | on-device profile, quality presets, share-to-any-app, progressive loading, offline state, install as app, deep links |
 | Engineering | livery engine, wing engine, card engine, catalogue generator; 58 tests; CI gate |
 
-## Next — two weeks
+## Launch gate — today
 
-- **Performance (Phase 4):** share geometry between the Sanctuary's eight bikes and give distant
-  bikes a light model; target ≤ 1.5 M triangles and ≤ 400 draws anywhere on a phone. This is the
-  likely cause of “all the bikes disappear” on phones (the hall entrance draws ~6.5 M triangles today).
-- **Studio 2:** parts swaps (wheels, bars, saddle) from a parts catalogue with the same slot contract;
-  decals as data; a side-by-side compare; a “my garage” page for saved liveries and favourites.
-- **Share loop:** a share card per exhibit with an Open Graph image, so links preview well in
-  messaging apps; “made in the studio” gallery of the visitor's own shared looks (on-device).
-- **Come-back loop:** the Passport grows into collections (every Kona champion, every film theme, every
-  wing); a daily “bike of the day” on the landing screen; new wing announcements in-app.
-- **Accounts (optional):** Neon Auth + Postgres for sync across devices — profile, passport,
-  favourites, liveries. Needs the owner's go-ahead to create the Neon project, plus a privacy page.
+The product launches only when the **Explore → Collect → Customize → Share → Return** loop is real on a phone and the web/PWA build is the same product.
+
+**Required today**
+- Mobile-first museum entry, touch navigation, map/teleport and responsive 3D.
+- A coherent Kona-first world with sourced exhibit cards.
+- Passport/discovery persistence plus real hidden finds.
+- Studio customisation, favourites/saved liveries and shareable deep links.
+- Installable PWA, Android build path, deterministic build, integrity-sealed service worker.
+- CSP, no analytics/tracking, no required account, no private data in the public build.
+- Green unit tests, bike asset contract, generated-page check and browser sanity check.
+
+**Not required for today's launch**
+- Cloud accounts/sync, multiplayer, WebXR, monetisation, every equipment category, every brand, full trip-planner routing or full PT-BR translation.
+
+Every new idea is evaluated against four product loops:
+1. **Explore** — makes the world more useful or immersive.
+2. **Collect** — gives discovery persistent meaning.
+3. **Customize** — lets the visitor make something personally relevant.
+4. **Share** — creates a useful/social output or invitation to return.
+
+If an idea does not strengthen one of these loops, improve launch reliability, or create a credible commercial path, it stays in **Later**.
+
+## Now — Kona race-window sprint
+
+The 2026 IRONMAN World Championship is in Kailua-Kona on **10 October 2026**, so the first post-launch expansion is intentionally Kona-heavy.
+
+### P0 — reliability + mobile polish
+- Keep `main` deployable at all times; growth work stays on feature branches until tests, generated builds and phone QA pass.
+- Golden phone screenshots at 320, 360, 390 and 430 px plus one tablet/desktop baseline.
+- Browser sanity crawl every map area, guided-tour stop and Studio deep link.
+- Performance budget: progressive room loading, no new heavy model in the launch path without a measured frame/load budget.
+
+### P1 — Kona discovery and return loop
+- One canonical Passport state model; retire duplicate legacy discovery state only after migration tests.
+- Nine real hidden finds with rarity that unlocks **experiences**, not arbitrary currency.
+- Daily exhibit and weekly Kona collection challenge, deterministic and local-first.
+- Garage V1 for saved Studio looks after the current profile/passport stores are consolidated.
+- Share prompts only at meaningful moments: new find, collection completion, saved build, rare unlock.
+
+### P1 — Hawaiʻi Island story + trip-planning foundation
+Purpose: broaden the app from race museum to useful race-week companion while respecting Hawaiʻi as a living place, not race scenery.
+
+- Structured `museum/kona/island-guide.json`: history/culture, communities, landscapes, visitor places, categories, coordinates, source URLs, accessibility/safety notes and cultural-sensitivity flags.
+- New **Island Stories** museum wing: Voyaging & Kānaka Maoli, Royal Kona, Land & Volcanoes, Ocean & Fishponds, Coffee & Agriculture, Modern Hawaiʻi Island, and Visit with Care.
+- Trip-planner roadmap: saved places → themed half/full-day collections → map/deep links → race-week overlays. No booking, live traffic or location tracking in V1.
+- Use authoritative sources first (NPS, Hawaiʻi Tourism Authority, Census, official event sources) and explicitly distinguish history, present-day population data and visitor guidance.
+- Never reduce Native Hawaiian culture to decoration; culturally significant locations carry context and respectful-visit guidance.
+
+### P1 — gallery art direction
+- Room design is data: wall/floor material, trim, frames, plinths, light colour/intensity, signage and exhibit density.
+- **Materials & Motion** is the proving wing for Carbon, Air, Heat, Night, Archive and Next.
+- New room visuals must reuse the same engine and pass mobile draw/load budgets before more geometry is added.
+
+## P2 — international launch
+
+- English and Brazilian Portuguese are the first locale pair.
+- Stable entity IDs with localized content records; no translated IDs or duplicated product logic.
+- Canonical `/en/` and `/pt-br/` surfaces with reciprocal `hreflang`, localized metadata, sitemap entries and LLM summaries.
+- Translate navigation, Passport, Studio and Kona visitor content first; long-tail engineering/archive pages follow.
+- Add language choice to profile, but never require an account.
+
+## P2 — platform proof: brands + equipment
+
+Do not add brands/categories as bespoke features. Prove modular contracts.
+
+### One additional bike-brand wing first
+- Select one brand based on source quality, iconic triathlon/time-trial machines, model rights/provenance and partnership relevance.
+- The wing must be produced mostly from data using the existing room/wing/catalogue engines.
+- Refactor before brand #3 if brand #2 requires hard-coded renderer logic.
+
+### Equipment contract
+Start with **helmets**, then wheels, shoes and trisuits because each should exercise the same collectible/displayable/equippable interface.
+
+```
+CollectionItem
+  id
+  type: bike | helmet | wheel | shoe | trisuit | artifact | artwork
+  brand
+  era
+  rarity
+  sources[]
+  asset
+  slots[]
+  localized_content
+```
+
+The Studio then grows toward **My Race Setup** rather than independent product mini-apps.
+
+## P3 — retention and growth
+
+- Collection completion unlocks rooms, presentation finishes or experiences.
+- Curated race-week challenges and shareable collection cards.
+- Remixable Studio configurations and deep links.
+- Optional, transparent aggregate analytics only if product questions cannot be answered through opt-in research/device QA.
+
+## SEO + LLM discoverability
+
+- Human-facing canonical pages remain useful without JavaScript-only hidden text.
+- JSON-LD represents museum, products, exhibits, event context and provenance.
+- `robots.txt` explicitly permits normal search and ChatGPT Search crawler access while retaining the existing privacy/leak guard.
+- `llms.txt` stays concise; add `llms-full.txt` for rooms, product/entity IDs, evidence model and source links.
+- EN/PT-BR URLs use canonical + reciprocal `hreflang`; localized sitemap generated from the same content registry.
+- No keyword stuffing, doorway pages or synthetic-location pages.
 
 ## Then — this quarter
 
-- **Port the hand-built rooms to data (Phase 5):** hall, Sanctuary, WYLD, Champions, Lava Night, pier.
-  After that every room in the museum is a data file.
-- **Generated navigation (Phase 3):** walkable grid + A* from room outlines; delete hand-written routes.
-- **Events as a product:** `museum/events/*.json` already scopes the studio (featured bikes, themes,
-  share line). Add event wings (e.g. a race-week pop-up) and event-only liveries with start/end dates.
-- **Other brands and product types:** the catalogue already carries `brand` and `type`; add helmets,
-  wheels and skinsuits with their own asset contracts; brand-scoped studios (`?brand=`).
-- **Quality:** KTX2 textures, meshopt everywhere, content fetched as JSON (smaller first load),
-  per-device auto-tier from a warm-up benchmark.
+- **Port the remaining hand-built rooms to data:** hall, Sanctuary, WYLD, Champions, Lava Night, pier.
+- **Generated navigation:** walkable grid + A* from room outlines; delete hand-written routes.
+- **Events as a product:** event overlays and time-bounded collections without cloning the museum.
+- **Trip planner 2:** map clusters for race-week, history/culture, beaches/ocean, volcano/landscape, coffee/food and recovery; save/share an itinerary locally.
+- **Performance:** KTX2 textures, meshopt everywhere, content fetched as JSON, per-device warm-up benchmark.
 
 ## Later
 
-- WebXR: walk the museum in a headset (the renderer and teleport already fit).
-- Multiplayer visits: tour a friend around the museum (opt-in, ephemeral rooms).
-- Creator mode: build a room from the studio and share it as a link.
-- Native shells (Capacitor build exists in `app/native`) with the same web core.
+- Cloud sync/accounts only after a privacy review and a real cross-device retention need.
+- WebXR after mobile rendering budgets are stable.
+- Multiplayer visits only as opt-in ephemeral sessions.
+- Creator rooms after the room schema is stable enough not to expose unsafe arbitrary content.
+- Booking/commerce only through explicit partner integrations and clear separation from editorial museum content.
 
-## How we measure (without analytics)
+## How we measure without surveillance
 
-No tracking. We learn from: CI results, the smoke runs' draw-call and triangle numbers, device QA on
-real phones, and what visitors choose to send us. If product numbers are ever needed, they will be
-opt-in, aggregate, and documented here first.
+No default analytics. Use CI, browser/device QA, frame/load budgets, voluntary feedback and deliberately designed user tests. Any future telemetry must be opt-in, aggregate where possible, documented, and removable.
