@@ -55,9 +55,9 @@ nav a:hover,nav button:hover{background:var(--paper);border-color:rgba(18,24,29,
 #intro.off{opacity:0;visibility:hidden}
 .intro-inner{max-width:760px}
 .eyebrow{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--reef);font-weight:600}
-.eyebrow:before{content:"";width:34px;height:2px;background:linear-gradient(90deg,var(--wyld),var(--wyld-aqua))}
+.eyebrow:before{content:"";width:34px;height:2px;background:linear-gradient(90deg,#b4541f,#e0a458)}
 h1{font-family:var(--serif);font-weight:400;font-size:clamp(48px,7.4vw,108px);line-height:.95;letter-spacing:-.02em;margin:22px 0 22px}
-h1 em{font-style:italic;background:linear-gradient(100deg,var(--wyld) 10%,#c86bd8 55%,var(--wyld-aqua) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+h1 em{font-style:italic;background:linear-gradient(100deg,#9a3b17 10%,#c9652a 55%,#e0a458 95%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
 .lede{font-size:16px;line-height:1.7;color:var(--muted);max-width:500px;font-weight:400}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
 .btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.04em;transition:.25s}
@@ -87,7 +87,7 @@ body.walking #rail{transform:none}
 .chip .n{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--sand);font-size:12px;font-weight:700;overflow:hidden;flex:0 0 auto}
 .chip .n img{width:100%;height:100%;object-fit:cover}
 .chip.on .n{background:#2a3138}
-.chip.kona .n{background:linear-gradient(135deg,var(--wyld),var(--wyld-lilac) 50%,var(--wyld-aqua));color:#fff}
+.chip.kona .n{background:linear-gradient(135deg,#7a2e17,#b4541f 45%,#d98c3a 75%,#ecc98a);color:#fff}
 .chip.wyld .n{background:linear-gradient(135deg,#ff3d8e,#ff8fbf 30%,#e9cde8 50%,#8fe7dc 70%,#5fd8d3);color:#fff}
 .chip.ghost .n{background:transparent;border:1px dashed rgba(18,24,29,.25);color:var(--faint)}
 .chip span{display:flex;flex-direction:column;gap:2px}
@@ -144,7 +144,7 @@ body.walking #rail{transform:none}
 .joy-knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:#fff;box-shadow:0 6px 16px rgba(18,24,29,.28);
   display:grid;place-items:center;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
 #joy.on .joy-knob{transition:none}
-.joy-knob i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#5fd8d3 0 33%,#ff3d8e 0 66%,#e8471c 0)}
+.joy-knob i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#138a8f 0 33%,#f3b64f 0 66%,#e8471c 0)}
 body.walking.touch #joy{display:block}
 body.touch.card-open #joy{opacity:0;pointer-events:none}
 body.touch #toast{top:calc(72px + env(safe-area-inset-top));bottom:auto}
@@ -161,9 +161,9 @@ body.touring #tourPill{transform:translate(-50%,0)}
 #tourPill b{font-weight:700}#tourStep{color:#9fb0ba;font-variant-numeric:tabular-nums}
 #tourPill button{color:#fbf9f5;background:rgba(255,255,255,.1);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:600;min-height:36px}
 #tourPill button:hover{background:rgba(255,255,255,.2)}
-.tp-dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(#5fd8d3 0 33%,#ff3d8e 0 66%,#e8471c 0);animation:tp 1.6s ease-in-out infinite}
+.tp-dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(#138a8f 0 33%,#f3b64f 0 66%,#e8471c 0);animation:tp 1.6s ease-in-out infinite}
 @keyframes tp{50%{transform:scale(1.5)}}
-#tourBar{position:absolute;left:0;bottom:0;height:3px;width:calc(var(--p,0) * 100%);background:linear-gradient(90deg,#ff3d8e,#5fd8d3)}
+#tourBar{position:absolute;left:0;bottom:0;height:3px;width:calc(var(--p,0) * 100%);background:linear-gradient(90deg,#e8471c,#f3b64f)}
 body.touring #joy{opacity:.35}
 /* first-visit coach marks */
 #coach{position:fixed;inset:0;z-index:40;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;padding:0 20px calc(250px + var(--safe-b))}
@@ -171,7 +171,7 @@ body.touring #joy{opacity:.35}
 #coach>div{pointer-events:auto;background:var(--ink);color:var(--paper);border-radius:20px;padding:14px 16px 12px 18px;box-shadow:0 20px 40px -18px rgba(0,0,0,.55);display:grid;gap:6px;max-width:320px;animation:cin .4s cubic-bezier(.2,.8,.2,1)}
 #coach b{font-size:16px;font-weight:700}.coach-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 #coach small{font-size:12px;color:#9fb0ba}#coachOk{color:var(--ink);background:var(--paper);border-radius:999px;padding:8px 14px;font-size:12.5px;font-weight:700;min-height:36px}
-.coach-ring{position:fixed;border-radius:50%;box-shadow:0 0 0 4px #ff3d8e;animation:cr 1.4s ease-in-out infinite;pointer-events:none}
+.coach-ring{position:fixed;border-radius:50%;box-shadow:0 0 0 4px #e8471c;animation:cr 1.4s ease-in-out infinite;pointer-events:none}
 #coach[data-kind=joy] .coach-ring{left:calc(max(16px,env(safe-area-inset-left)) - 8px);bottom:calc(90px + var(--safe-b));width:144px;height:144px}
 #coach[data-kind=look] .coach-ring{left:50%;top:40%;width:90px;height:90px;margin-left:-45px}
 #coach[data-kind=tap] .coach-ring{display:none}
@@ -189,7 +189,7 @@ header .logo,header nav{transition:opacity .4s}
 #nearby:not([hidden]){opacity:1;pointer-events:auto;transform:translate(-50%,0)}
 #nearby small{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#9fb0ba}
 #nearby b{font-size:11.5px;white-space:nowrap}
-#nearby span{color:var(--wyld-aqua);font-size:14px}
+#nearby span{color:#e0a458;font-size:14px}
 #toast{position:fixed;left:50%;bottom:calc(104px + var(--safe-b));transform:translateX(-50%);z-index:14;font-size:12px;color:var(--muted);background:rgba(251,249,245,.85);
   padding:9px 16px;border-radius:999px;border:1px solid var(--line);opacity:0;transition:opacity .5s;pointer-events:none;white-space:nowrap}
 #toast.on{opacity:1}
@@ -300,8 +300,8 @@ body.walking .credit{display:none}
   <svg viewBox="0 0 120 120" aria-hidden="true"><defs>
     <path id="jarc1" d="M60 60 m-49 0 a49 49 0 0 1 24.5 -42.4"/><path id="jarc2" d="M60 60 m24.5 -42.4 a49 49 0 0 1 24.5 42.4"/><path id="jarc3" d="M15 72 a47 47 0 0 0 90 0"/></defs>
     <circle cx="60" cy="60" r="56" fill="rgba(251,249,245,.82)"/>
-    <path d="M60 60 m-49 0 a49 49 0 0 1 42 -48.5" fill="none" stroke="#5fd8d3" stroke-width="6" stroke-linecap="round"/>
-    <path d="M60 60 m8 -48.4 a49 49 0 0 1 38 57" fill="none" stroke="#ff3d8e" stroke-width="6" stroke-linecap="round"/>
+    <path d="M60 60 m-49 0 a49 49 0 0 1 42 -48.5" fill="none" stroke="#138a8f" stroke-width="6" stroke-linecap="round"/>
+    <path d="M60 60 m8 -48.4 a49 49 0 0 1 38 57" fill="none" stroke="#f3b64f" stroke-width="6" stroke-linecap="round"/>
     <path d="M60 60 m45 20 a49 49 0 0 1 -92 -13" fill="none" stroke="#e8471c" stroke-width="6" stroke-linecap="round"/>
     <text font-size="8.5" font-weight="700" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc1" startOffset="30%">SWIM</textPath></text>
     <text font-size="8.5" font-weight="700" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc2" startOffset="35%">BIKE</textPath></text>
