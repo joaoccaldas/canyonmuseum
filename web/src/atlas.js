@@ -11,7 +11,7 @@ export const ATLAS = { x0: 10.8, x1: 16.4, z0: 27.2, z1: 51.2 };           // th
 export const ADOOR = { x0: 11.8, x1: 15.4 };                                 // cut in the nave's north wall
 const EAST = { x0: 16.4, x1: 25.0 }, WEST = { x0: 2.2, x1: 10.8 };
 export const AROOMS = [
-  { id: 'hour', name: 'The Hour', sub: 'One rider, sixty minutes', side: 'east', z0: 27.8, z1: 35.2, tint: '#e8471c', wall: '#8a3316', ink: '#fbf1e6' },
+  { id: 'hour', name: 'The Hour', sub: 'One rider, sixty minutes', side: 'east', z0: 27.8, z1: 35.2, tint: '#f6c9a8', wall: '#8a3316', ink: '#fbf1e6' },
   { id: 'mono', name: 'Monocoque', sub: 'One piece, no tubes', side: 'east', z0: 35.6, z1: 43.0, tint: '#c9a13b', wall: '#1c1d20', ink: '#f4efe7' },
   { id: 'tri', name: 'Long course', sub: 'Triathlon machines', side: 'east', z0: 43.4, z1: 50.8, tint: '#5fd8d3', wall: '#0f5458', ink: '#e8f6f4' },
   { id: 'types', name: 'Types', sub: 'No maker named', side: 'west', z0: 27.8, z1: 35.2, tint: '#e0a458', wall: '#5a3a1e', ink: '#f6eadb' },
@@ -109,8 +109,8 @@ export function buildAtlas(ctx) {
   door.userData.floor = true; floors.push(door);
   box(EAST.x1 - WEST.x0, .12, ATLAS.z1 - ATLAS.z0, (WEST.x0 + EAST.x1) / 2, Y + H + .06, (ATLAS.z0 + ATLAS.z1) / 2, plaster);   // ceiling
   const sky = new THREE.MeshBasicMaterial({ color: '#fff8ea' });
-  const shaftMat = new THREE.MeshBasicMaterial({ color: '#fff1d6', transparent: true, opacity: .07, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending });
-  const poolMat = new THREE.MeshBasicMaterial({ color: '#ffe8c4', transparent: true, opacity: .16, depthWrite: false, blending: THREE.AdditiveBlending });
+  const shaftMat = new THREE.MeshBasicMaterial({ color: '#fff1d6', transparent: true, opacity: .022, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending });
+  const poolMat = new THREE.MeshBasicMaterial({ color: '#ffe8c4', transparent: true, opacity: .07, depthWrite: false, blending: THREE.AdditiveBlending });
   const shafts = [];
   for (let z = ATLAS.z0 + 2; z < ATLAS.z1 - 1; z += 4) {
     box(2.4, .02, 2.6, (ATLAS.x0 + ATLAS.x1) / 2, Y + H - .01, z, sky);
