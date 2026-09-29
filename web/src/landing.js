@@ -89,7 +89,10 @@ try {
     : `<li style="opacity:.6;padding:16px 18px">${esc(p.name)} · ${esc(p.years)} — not modelled</li>`).join('');
   throw e;
 }
-renderer.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.5 : 2));
+const qualityDpr = Math.min(devicePixelRatio, lite ? 1.45 : 2);
+const flowDpr = Math.min(devicePixelRatio, lite ? 1.12 : 1.65);
+let activeDpr = qualityDpr;
+renderer.setPixelRatio(activeDpr);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.AgXToneMapping;
 renderer.toneMappingExposure = .96;
@@ -1248,6 +1251,12 @@ function frame(now) {
   const moving = Math.hypot(P.vx, P.vz); bob += dt * moving * 3.1;
   const flowing = started && !tour.on && !$('card').classList.contains('on') && (moving > .16 || !!path);
   document.body.classList.toggle('flowing', flowing);
+  const targetDpr = flowing ? flowDpr : qualityDpr;
+  if (Math.abs(activeDpr - targetDpr) > .01) {
+    activeDpr = targetDpr;
+    renderer.setPixelRatio(activeDpr);
+    renderer.setSize(innerWidth, innerHeight, false);
+  }
   // before entering, the camera breathes at the doorway
   const idle = started ? 0 : 1;
   const yaw = P.yaw + idle * Math.sin(t * .13) * .1, pitch = P.pitch + idle * Math.sin(t * .1) * .015;
