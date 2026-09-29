@@ -6,6 +6,12 @@
 <title>Speedmax Museum — Kona</title>
 <meta name="description" content="Walk the Queen K: every Canyon Speedmax generation from 1999 to 2027, displayed as art in a sunlit museum on the Kona coast. Enter any bike's 3D studio.">
 <meta name="theme-color" content="#f4efe7">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Canyon Museum">
+<link rel="apple-touch-icon" href="./assets/pwa/icon.svg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2312181d'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23e8471c' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,6 +30,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px solid var(--reef);outline-offset:3px;border-radius:8px}
 #hall{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none;outline:none}
 body.walking #hall{cursor:grab}body.walking #hall.hot{cursor:pointer}
+body.secret-room header{opacity:0;transform:translateY(-18px);pointer-events:none}
+body.secret-room #rail{transform:translateY(140%)!important;pointer-events:none}
+body.secret-room .credit{opacity:0;pointer-events:none}
+header,#rail,.credit{transition:opacity .55s ease,transform .65s cubic-bezier(.2,.8,.2,1)}
 
 /* header */
 header{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;
@@ -36,6 +46,8 @@ nav{display:flex;gap:6px;align-items:center}
 nav a,nav button{font-size:12px;font-weight:600;padding:10px 16px;border-radius:999px;background:rgba(251,249,245,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);transition:.2s}
 nav a:hover,nav button:hover{background:var(--paper);border-color:rgba(18,24,29,.25)}
 #soundBtn[aria-pressed=true]{color:var(--reef)}
+#passportBtn{display:inline-flex;align-items:center;gap:7px}
+#passportCount{display:inline-grid;place-items:center;min-width:34px;height:22px;padding:0 7px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:10px;font-variant-numeric:tabular-nums}
 
 /* intro */
 #intro{position:fixed;inset:0;z-index:10;display:flex;align-items:center;padding:0 max(28px,7vw);
@@ -227,6 +239,7 @@ body.walking .credit{display:none}
   <a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
   <nav>
     <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
+    <button id="passportBtn" aria-label="Museum Passport progress">Passport <span id="passportCount">0/0</span></button>
     <a href="Canyon_Collection.html#compare">Compare</a>
     <a class="wide" href="Canyon_Collection.html#archive">Archive</a>
   </nav>
@@ -240,6 +253,7 @@ body.walking .credit{display:none}
     <div class="cta">
       <button class="btn primary" id="enterBtn" disabled>Loading the hall…</button>
       <button class="btn ghost" id="tourBtn"><span aria-hidden="true">▶</span> Guided tour · 3 min</button>
+      <button class="btn ghost" id="installBtn" hidden>Install app</button>
     </div>
     <div class="keys" aria-hidden="true">
       <div><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>Walk</div>
