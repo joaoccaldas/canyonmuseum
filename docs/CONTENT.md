@@ -49,6 +49,14 @@ Wings join end to end: a wing with a `north` door opens into the next wing's `so
 - `feature`: `paintshop` (turntable + every livery as a swatch) or `references` (every reference photograph).
 - **Bikes join a room from the bike side:** set `"room": "<room id>"` in `museum/atlas/bikes.json`.
 
+## The guided tour
+
+`museum/world/tour.json` lists the tour in walking order. Each stop names a room and picks exhibits by
+their own key — champion title `year`, WYLD `variant` id, pier `year` — never by position, so
+re-ordering a room never changes the tour. `{ "room": "hall", "set": "heritage" | "flagships" }` takes
+every model in that set; `"finale": true` ends at the pier's finish arch. `dwell_s` is the pause at each
+stop. A test checks every key exists.
+
 ## A bike
 
 Add an entry to `museum/atlas/bikes.json` (see `docs/ATLAS.md` for every field), then:

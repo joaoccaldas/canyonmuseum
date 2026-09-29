@@ -8,9 +8,13 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const src = fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(here, '../landing.template.html'), 'utf8');
 
-test('Museum Passport is local-first and contains no identity fields', () => {
-  assert.match(src, /speedmax\.passport\.v1/);
-  assert.match(src, /localStorage\.setItem\(PASSPORT_KEY/);
+test('Museum Passport is local-first and contains no identity fields', async () => {
+  const store = new Map(); globalThis.localStorage = { getItem: k => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)) };
+  const { readPassport, writePassport } = await import('../src/museum/passport.js');
+  const pp = readPassport(); assert.deepEqual(pp, { v: 1, discoveries: [], visits: 0, pose: null });
+  pp.discoveries.push('cfr'); writePassport(pp);
+  assert.deepEqual([...store.keys()], ['speedmax.passport.v1']); assert.deepEqual(readPassport().discoveries, ['cfr']);
+  store.set('speedmax.passport.v1', '{broken'); assert.deepEqual(readPassport().discoveries, []);   // damaged storage never breaks the app
   for (const forbidden of ['email', 'phone', 'address', 'birthdate']) {
     assert.ok(!new RegExp(`passport\\.${forbidden}\\b`).test(src), forbidden);
   }

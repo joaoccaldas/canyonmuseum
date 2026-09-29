@@ -4,6 +4,9 @@
 // visit a bike (click / tap / 1–9), then step into its full 3D studio.
 import * as THREE from 'three';
 import { FONT, SERIF } from './engine/type.js';
+import { HALL, WALK, EYE, DOOR, ROOM, WDOOR, WROOM, placePieces } from './museum/layout.js';
+import { createCanvasKit } from './museum/canvas.js';
+import { readPassport, writePassport as savePassport } from './museum/passport.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -12,7 +15,10 @@ import { initAppShell } from './app-shell.js';
 import { buildHalloween, hweenWalkable, HDOOR, HROOM } from './halloween.js';
 import { buildSanctuary, sanctuaryWalkable, SDOOR, SROOM } from './sanctuary.js';
 import { buildGalleries, galleryWalkable, galleryFloorY, EDOOR, UPPER } from './galleries.js';
-import { createRoomSound } from './roomSound.js';
+import { createTour } from './museum/tour.js';
+import { createCoach } from './museum/coach.js';
+import { createDyeKit } from './museum/dye.js';
+import { createAmbience } from './museum/audio.js';
 import { buildWings } from './engine/wing.js';
 import { renderCard, bikeCard, paintingCard, sculptureCard, photoCard, roomCard } from './engine/card.js';
 import { initMap } from './map.js';
@@ -49,37 +55,7 @@ const lite = RS.lite;
 const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const B2T = v => new THREE.Vector3(v[0], v[2], -v[1]);            // Blender (Z-up) -> three (Y-up)
 
-// ------------------------------------------------------------------ layout (metres; the hall runs toward -z)
-const HALL = { x0: -7, x1: 7, z0: 5, z1: -46.5, h: 5.4 };
-const WALK = { x0: -6.4, x1: 6.4, z0: 4.4, z1: -45.8 };
-const EYE = 1.6;
-// Kona Champions room, through a doorway in the plaster wall
-const DOOR = { z0: -18.8, z1: -15.6, h: 3.4 };
-const ROOM = { x0: -19.3, x1: -7.3, z0: -8.8, z1: -25.6, h: 4.6 };
-// WYLD room, second doorway: a bright loft with a window onto Kailua Pier
-const WDOOR = { z0: -30.8, z1: -27.6, h: 3.4 };
-const WROOM = { x0: -23.3, x1: -7.3, z0: -26.6, z1: -45.4, h: 5.2 };
-const STEP = 5.4, FIRST = -1;
-const TILT = .38;                                                   // plinths turn toward the approaching visitor
-const heritage = PIECES.filter(p => !p.flagship), flagships = PIECES.filter(p => p.flagship);
-heritage.forEach((p, i) => {
-  const left = i % 2 === 0;
-  p.pos = new THREE.Vector3(left ? -3.4 : 3.4, 0, FIRST - i * STEP);
-  p.rotY = left ? Math.PI / 2 - TILT : -Math.PI / 2 + TILT;         // drive side faces the aisle
-  p.plinth = [2.35, .5, 1.05];
-});
-flagships.forEach((p, i) => {
-  p.pos = new THREE.Vector3(i === 0 ? -1.75 : 1.75, 0, -41.4);
-  p.rotY = 0; p.plinth = null;                                      // shared apse plinth
-});
-PIECES.forEach((p, i) => {
-  p.index = i;
-  p.top = p.flagship ? .32 : p.plinth[1];
-  p.normal = new THREE.Vector3(Math.sin(p.rotY), 0, Math.cos(p.rotY));   // drive-side direction
-  const back = (p.flagship ? 3.1 : 2.8) + (coarse && innerHeight > innerWidth ? 1.1 : 0);
-  p.view = p.pos.clone().addScaledVector(p.normal, back);
-  p.view.x = clamp(p.view.x, WALK.x0 + .3, WALK.x1 - .3);
-});
+const { heritage, flagships } = placePieces(PIECES, { coarse });
 const pickables = [];
 const obstacles = [
   ...heritage.map(p => ({ c: p.pos, r: 1.45 })),
@@ -135,54 +111,8 @@ const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 scene.environmentIntensity = .55;
 
-// ------------------------------------------------------------------ canvas textures (plaster, travertine, basalt, lettering)
-const lettered = [];                                                 // redrawn once web fonts arrive
-let washTex = null;
-function wallWash(w, h, strength = .5) {                              // a picture light's cone, painted on (no real light: keeps 60 fps)
-  washTex ||= (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 512; const g = c.getContext('2d');
-    const r = g.createRadialGradient(128, 0, 10, 128, 60, 470); r.addColorStop(0, 'rgba(255,238,210,1)'); r.addColorStop(.45, 'rgba(255,232,200,.45)'); r.addColorStop(1, 'rgba(255,232,200,0)');
-    g.fillStyle = r; g.fillRect(0, 0, 256, 512); return new THREE.CanvasTexture(c); })();
-  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: washTex, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 }));
-}
-let contactTex = null;
-function contactShadow(len, wid) {                                   // soft dark footprint where the tyres meet the plinth
-  contactTex ||= (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d');
-    const r = g.createRadialGradient(128, 64, 4, 128, 64, 124); r.addColorStop(0, 'rgba(0,0,0,.55)'); r.addColorStop(.55, 'rgba(0,0,0,.2)'); r.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = r; g.scale(1, 1); g.fillRect(0, 0, 256, 128); return new THREE.CanvasTexture(c); })();
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(len, wid), new THREE.MeshBasicMaterial({ map: contactTex, transparent: true, depthWrite: false, fog: false }));
-  m.rotation.x = -Math.PI / 2; m.renderOrder = 1; return m;
-}
-function canvasTex(w, h, draw, repeat, text) {
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  const paint = () => { const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, w, h); draw(g, w, h); };
-  paint();
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-  if (text) lettered.push(() => { paint(); t.needsUpdate = true; });
-  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...repeat); }
-  return t;
-}
-const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
-const travertine = canvasTex(1024, 1024, (g, w, h) => {
-  g.fillStyle = '#e2d7c6'; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 1400; i++) {                                  // soft veining and pores
-    g.fillStyle = `rgba(${150 + rnd() * 40},${130 + rnd() * 30},${100 + rnd() * 30},${rnd() * .06})`;
-    const y = rnd() * h; g.fillRect(0, y, w, 1 + rnd() * 3);
-  }
-  for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(120,100,80,${.05 + rnd() * .08})`; g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 1 + rnd() * 3, .6 + rnd(), 0, 0, 7); g.fill(); }
-  g.strokeStyle = 'rgba(92,74,54,.72)'; g.lineWidth = 10;             // grout, one slab per tile
-  g.strokeRect(6, 6, w - 12, h - 12);
-  g.beginPath(); g.moveTo(0, h / 2); g.lineTo(w, h / 2); g.moveTo(w / 2, 0); g.lineTo(w / 2, h); g.stroke();
-}, [HALL.x1 - HALL.x0, HALL.z0 - HALL.z1].map(v => v / 2.4));
-const basaltTex = canvasTex(512, 512, (g, w, h) => {
-  g.fillStyle = '#1f2023'; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 5000; i++) { const v = 20 + rnd() * 40; g.fillStyle = `rgba(${v},${v},${v + 3},${.4 + rnd() * .5})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 2, 1 + rnd() * 2); }
-  for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(8,8,9,${.5 + rnd() * .4})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, .8 + rnd() * 2.2, 0, 7); g.fill(); }   // vesicles
-}, [2, 1]);
-function lettering(w, h, draw, px = 1024) {
-  const tex = canvasTex(px, Math.round(px * h / w), (g, cw, ch) => { g.scale(cw / w, ch / h); draw(g); }, null, true);
-  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
-}
-
+// ------------------------------------------------------------------ canvas textures (museum/canvas.js)
+const { lettered, wallWash, contactShadow, canvasTex, rnd, travertine, basaltTex, lettering } = createCanvasKit();
 
 // ------------------------------------------------------------------ the hall
 const M = {
@@ -370,48 +300,8 @@ else glassRun('x', HALL.x0, HALL.x1, HALL.z1);
   palm(-2, HALL.z1 - 3.4, 7.2, 1.3); palm(KY ? 11.6 : 5.5, HALL.z1 - 3.1, 6.3, -1);   // with the pier, this one steps aside onto the lava
 }
 
-// ------------------------------------------------------------------ WYLD: hand-dyed tapestries and light pools
-const hexRGB = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
-const RAMP = [WYLD.pink, WYLD.pink, WYLD.blush, WYLD.lilac, WYLD.mint, WYLD.aqua, WYLD.lilac, WYLD.blush, WYLD.pink].map(hexRGB);
-// the hall and the champions room are Kona, not WYLD: kapa earth, lava, ochre and sand at golden hour
-const KAPA = ['#7a2e17', '#7a2e17', '#b4541f', '#d98c3a', '#ecc98a', '#f3e4c6', '#c9a26a', '#9a4a22', '#7a2e17'].map(hexRGB);
-function dyeTex(seed, angle, soften = .18, ramp = RAMP) {
-  const W = lite ? 256 : 512, H = W * 2;
-  const tex = canvasTex(W, H, (g) => {
-    const img = g.createImageData(W, H), d = img.data, ca = Math.cos(angle), sa = Math.sin(angle);
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-      const u = x / W, v = y / H;
-      let t = (u * ca + v * 2 * sa) * 1.35 + .13 * Math.sin(v * 8.5 + seed) + .07 * Math.sin(u * 15 + v * 6 + seed * 2.1) + seed * .17;
-      t = ((t % 1) + 1) % 1 * 8; const i = Math.floor(t), f = t - i, s = f * f * (3 - 2 * f), a = ramp[i], b = ramp[i + 1];
-      const fold = .9 + .1 * Math.sin(u * 42 + Math.sin(v * 3) * 2);             // soft fabric folds
-      const k = (y * W + x) * 4;
-      for (let c = 0; c < 3; c++) d[k + c] = ((a[c] + (b[c] - a[c]) * s) * (1 - soften) + 243 * soften) * fold;
-      d[k + 3] = 255;
-    }
-    g.putImageData(img, 0, 0);
-  });
-  return tex;
-}
-const glowTex = canvasTex(256, 256, (g, w, h) => {
-  const r = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
-  r.addColorStop(0, 'rgba(255,255,255,.9)'); r.addColorStop(.45, 'rgba(255,255,255,.35)'); r.addColorStop(1, 'rgba(255,255,255,0)');
-  g.fillStyle = r; g.fillRect(0, 0, w, h);
-});
-const placed = (o, x, y, z) => { o.position.set(x, y, z); return o; };
-function lightPool(w, d, color, strength = .5) {
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: glowTex, color, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 }));
-  m.rotation.x = -Math.PI / 2; m.position.y = .004; return m;
-}
-function tapestry(w, h, seed, angle, ramp = KAPA) {
-  const g = new THREE.Group();
-  const cloth = new THREE.Mesh(new THREE.PlaneGeometry(w, h, 24, 1), new THREE.MeshStandardMaterial({ map: dyeTex(seed, angle, .18, ramp), roughness: .92, side: THREE.DoubleSide }));
-  const pos = cloth.geometry.attributes.position;                                  // gentle drape
-  for (let i = 0; i < pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i) / w * Math.PI * 7) * .025);
-  cloth.geometry.computeVertexNormals(); cloth.receiveShadow = true; g.add(cloth);
-  const rod = new THREE.Mesh(new THREE.CylinderGeometry(.018, .018, w + .24, 12), new THREE.MeshStandardMaterial({ color: '#b08a4e', metalness: .9, roughness: .3 }));
-  rod.rotation.z = Math.PI / 2; rod.position.y = h / 2 + .03; g.add(rod);
-  return g;
-}
+// ------------------------------------------------------------------ WYLD and Kona textiles (museum/dye.js)
+const { KAPA, dyeTex, placed, lightPool, tapestry } = createDyeKit({ canvasTex, lite, wyld: WYLD });
 
 // ------------------------------------------------------------------ Kona Champions room
 const champs = [];
@@ -1076,18 +966,8 @@ const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 $('nearby')?.addEventListener('click', () => { if (nearbyPiece) { haptic(8); visit(nearbyPiece); } });
 
 // ------------------------------------------------------------------ local-first Museum Passport
-const PASSPORT_KEY = 'speedmax.passport.v1';
-function readPassport() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(PASSPORT_KEY) || 'null');
-    if (raw?.v === 1 && Array.isArray(raw.discoveries)) return raw;
-  } catch (_) { }
-  return { v: 1, discoveries: [], visits: 0, pose: null };
-}
 const passport = readPassport();
-function writePassport() {
-  try { localStorage.setItem(PASSPORT_KEY, JSON.stringify(passport)); } catch (_) { }
-}
+const writePassport = () => savePassport(passport);
 function passportProgress() {
   const total = modelled.length;
   const seen = passport.discoveries.filter(k => modelled.some(p => p.key === k)).length;
@@ -1382,74 +1262,31 @@ function openArt(item) {
 }
 function openRef(ref) { current = null; champ = null; renderCard(photoCard(ref)); }
 
-// ------------------------------------------------------------------ guided tour: hands-free walk through the highlights
-const tour = { on: false, i: -1, t: 0, paused: false, stops: [] };
-const DWELL = 9;                                                     // seconds at each stop
-function tourStops() {
-  const H = PIECES.filter(p => p.glb && !p.flagship), F = PIECES.filter(p => p.flagship);
-  const stops = [{ kind: 'hween' }, ...H.map(p => ({ kind: 'piece', p })),
-    ...[0, 2, 4, 5].map(i => champs[i]).filter(Boolean).map(c => ({ kind: 'champ', c })),
-    ...[0, 3].map(i => wyldBikes[i]).filter(Boolean).map(v => ({ kind: 'wyld', v })),
-    ...F.map(p => ({ kind: 'piece', p })),
-    ...(pier ? [0, 4, 9, 10, 11].map(i => pier.stations[i]).filter(Boolean).map(y => ({ kind: 'pier', y })).concat([{ kind: 'pier', y: pier.finale }]) : [])];
-  return stops;
-}
-function tourGo(i) {
-  tour.i = i; tour.t = 0; const st = tour.stops[i];
-  if (!st) return tourEnd(true);
-  if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else if (st.kind === 'pier') visitPier(st.y); else if (st.kind === 'hween') visitHween(); else visitWyld(st.v);
-  $('tourStep').textContent = `${i + 1} / ${tour.stops.length}`;
-  $('tourBar').style.setProperty('--p', 0);
-}
-function tourStart() {
-  $('coach').hidden = true;
-  if (!started) enter();
-  tour.stops = tourStops(); tour.on = true; tour.paused = false; document.body.classList.add('touring');
-  $('tourPause').textContent = 'Pause'; haptic(12);
-  tourGo(0);
-}
-function tourEnd(finished) {
-  if (!tour.on) return;
-  tour.on = false; document.body.classList.remove('touring');
-  toast(finished ? 'That was the collection. Walk on, or tap any piece to revisit it.' : 'Tour paused — you have the controls.');
-}
-function tourTick(dt) {
-  if (!tour.on || tour.paused || path) return;
-  if (!$('card').classList.contains('on')) return;                   // wait until we've arrived and the card is up
-  tour.t += dt; $('tourBar').style.setProperty('--p', Math.min(1, tour.t / DWELL));
-  if (tour.t >= DWELL) tourGo(tour.i + 1);
-}
-$('tourBtn')?.addEventListener('click', tourStart);
-$('tourPause')?.addEventListener('click', () => { tour.paused = !tour.paused; $('tourPause').textContent = tour.paused ? 'Resume' : 'Pause'; });
-$('tourNext')?.addEventListener('click', () => tourGo(tour.i + 1));
-$('tourStop')?.addEventListener('click', () => tourEnd(false));
+// ------------------------------------------------------------------ guided tour (museum/tour.js; route in museum/world/tour.json)
 function haptic(ms = 8) { try { if (coarse) navigator.vibrate?.(ms); } catch (_) { } }
+const tour = createTour({
+  plan: window.__TOUR,
+  world: () => ({ pieces: PIECES, champs, wyld: wyldBikes, pier }),
+  go: st => { if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else if (st.kind === 'pier') visitPier(st.y); else if (st.kind === 'hween') visitHween(); else visitWyld(st.v); },
+  arrived: () => $('card').classList.contains('on'),
+  moving: () => !!path,
+  ui: { step: $('tourStep'), bar: $('tourBar'), pause: $('tourPause') },
+  onStart: () => { coach.hide(); if (!started) enter(); haptic(12); },
+  onEnd: finished => toast(finished ? 'That was the collection. Walk on, or tap any piece to revisit it.' : 'Tour paused — you have the controls.'),
+});
+$('tourBtn')?.addEventListener('click', () => tour.start());
+$('tourPause')?.addEventListener('click', () => tour.pause());
+$('tourNext')?.addEventListener('click', () => tour.next());
+$('tourStop')?.addEventListener('click', () => tour.end(false));
 
-// ------------------------------------------------------------------ first visit on a phone: three quick coach marks
-const coachState = { k: -1, steps: [] };
-function coach() {                                                  // returns true when the coach will speak
-  let seen = false; try { seen = localStorage.getItem('speedmax.coach.v1') === '1'; } catch (_) { }
-  if (seen || !coarse) return false;
-  coachState.steps = [['joy', 'Push the tri-stick to walk'], ['look', 'Drag anywhere to look around'], ['tap', 'Tap a bike to visit it']];
-  setTimeout(() => { if (!tour.on) coachShow(0); }, 900);
-  return true;
-}
-function coachShow(k) {
-  const el = $('coach'); coachState.k = k;
-  if (k >= coachState.steps.length) { el.hidden = true; try { localStorage.setItem('speedmax.coach.v1', '1'); } catch (_) { } return; }
-  const [kind, txt] = coachState.steps[k];
-  el.dataset.kind = kind; el.querySelector('b').textContent = txt; el.querySelector('small').textContent = `${k + 1} of ${coachState.steps.length}`; el.hidden = false;
-}
-function coachDid(kind) {                                            // the hint advances when the visitor does the thing
-  if (coachState.k < 0 || $('coach').hidden) return;
-  if (coachState.steps[coachState.k]?.[0] === kind) { haptic(6); coachShow(coachState.k + 1); }
-}
-$('coachOk')?.addEventListener('click', () => coachShow(coachState.k + 1));
+// ------------------------------------------------------------------ first visit on a phone: coach marks (museum/coach.js)
+const coach = createCoach({ el: $('coach'), enabled: coarse, busy: () => tour.on, haptic });
+$('coachOk')?.addEventListener('click', () => coach.next());
 
 function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
-  const coaching = coarse && (() => { try { return localStorage.getItem('speedmax.coach.v1') !== '1'; } catch (_) { return true; } })();
+  const coaching = coach.pending;
   const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld', 'pier', 'hween'].includes(passport.pose.region)
     && walkable(passport.pose.x, passport.pose.z);
   passport.visits = (passport.visits || 0) + 1;
@@ -1462,7 +1299,7 @@ function enter() {
     if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
     path = [{ x: 0, z: .6 }];
   }
-  writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach();
+  writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach.start();
   if (profile.get().sound && $('soundBtn').getAttribute('aria-pressed') !== 'true') $('soundBtn').click();
   if (!returning && pier && new URLSearchParams(location.search).get('room') === 'pier') setTimeout(() => visitPier(pier.stations[0]), 400);
   { // app shortcuts and shared links: ?room=<map area id> walks there, ?map=1 opens the map
@@ -1501,7 +1338,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
   const chip = room => document.querySelector(`.chip.${room}`)?.click();
   const go = id => {
     if (!started) enter();
-    tourEnd(false); closeCard();
+    tour.end(false); closeCard();
     const up = new THREE.Vector3();
     if (id === 'hall') route({ x: 0, z: -12 }, up.set(0, 1.4, -30), null);
     else if (['sanctuary', 'hween', 'pier', 'kona', 'wyld'].includes(id)) chip(id);
@@ -1528,7 +1365,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
   }, 350);
 }
 $('railInner').addEventListener('click', e => {
-  const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8);
+  const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tour.end(false); haptic(8);
   if (b.dataset.room?.startsWith('wing-')) { visitAtlasRoom(atlas.rooms.find(r => `wing-${r.wing}` === b.dataset.room)); return; }
   const theme = galleries.rooms.find(r => r.id === b.dataset.room);
   if (theme) visitGallery(theme);
@@ -1569,7 +1406,7 @@ function closeCard(keepCurrent) {
   $('card').classList.remove('on'); document.body.classList.remove('card-open');
   if (!keepCurrent) { if (exploded) setExploded(exploded, false); current = null; railActive(null); }
 }
-$('cardClose').onclick = () => { tourEnd(false); closeCard(); };
+$('cardClose').onclick = () => { tour.end(false); closeCard(); };
 let toastT; function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200); }
 initInstallExperience({ button: $('installBtn'), toast });
 
@@ -1651,7 +1488,7 @@ canvas.addEventListener('pointermove', e => {
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
     const k = coarse ? .0068 : .0044;
     P.yaw = drag.yaw + dx * k; P.pitch = clamp(drag.pitch + dy * k * .8, -.9, .7);
-    if (drag.moved > 6) { if (tour.on) tourEnd(false); path = null; if (drag.moved > 60) coachDid('look'); }
+    if (drag.moved > 6) { tour.end(false); path = null; if (drag.moved > 60) coach.did('look'); }
   } else if (started && !coarse) hover = { x: e.clientX, y: e.clientY };
 });
 canvas.addEventListener('pointerup', e => {
@@ -1662,12 +1499,12 @@ canvas.addEventListener('pointerup', e => {
   const hit = pick(e.clientX, e.clientY);
   if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
-  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.artPortal || hit?.year || hit?.era || hit?.finale || hit?.hween || hit?.sanctuary || hit?.gallery || hit?.kona || hit?.find) { haptic(8); tourEnd(false); coachDid('tap'); }
+  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.artPortal || hit?.year || hit?.era || hit?.finale || hit?.hween || hit?.sanctuary || hit?.gallery || hit?.kona || hit?.find) { haptic(8); tour.end(false); coach.did('tap'); }
   if (hit?.artPortal) { window.__museumArt?.enter?.(hit.artPortal); closeCard(); return; }
-  if (hit?.atlas) { haptic(8); tourEnd(false); hit.atlas.showcase ? openAtlas(hit.atlas) : visitAtlas(hit.atlas); return; }
+  if (hit?.atlas) { haptic(8); tour.end(false); hit.atlas.showcase ? openAtlas(hit.atlas) : visitAtlas(hit.atlas); return; }
   if (hit?.swatch) { haptic(8); atlas.paintWith(hit.swatch); openAtlas(atlas.show); return; }
   if (hit?.ref) { haptic(8); openRef(hit.ref); return; }
-  if (hit?.art) { haptic(8); tourEnd(false); visitArt(hit.art); return; }
+  if (hit?.art) { haptic(8); tour.end(false); visitArt(hit.art); return; }
   if (hit?.sanctuary) { visitSanctuary(hit.sanctuary); return; }
   if (hit?.gallery) { visitGallery(hit.gallery); return; }
   if (hit?.hween) { visitHween(); return; }
@@ -1694,7 +1531,7 @@ addEventListener('keydown', e => {
   if (e.target.closest?.('input,textarea,select,a')) return;
   const k = e.key.toLowerCase();
   if (!started) { if (k === 'enter' && !$('enterBtn').disabled) { e.preventDefault(); enter(); } return; }
-  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'q', 'e'].includes(k)) { keys.add(k); path = null; tourEnd(false); if (k.startsWith('arrow')) e.preventDefault(); }
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'q', 'e'].includes(k)) { keys.add(k); path = null; tour.end(false); if (k.startsWith('arrow')) e.preventDefault(); }
   if (k >= '1' && k <= '9' && PIECES[+k - 1]) visit(PIECES[+k - 1]);
   if (k === 'escape') { if (partSel && current) openCard(current); else closeCard(); }
   if (k === 'x' && current?.bike) setExploded(current, !(current.exT > 0));
@@ -1715,32 +1552,15 @@ const joy = { on: false, x: 0, y: 0, id: null };
   const move = e => { const r = pad.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     let dx = e.clientX - cx, dy = e.clientY - cy; const d = Math.hypot(dx, dy); if (d > R) { dx *= R / d; dy *= R / d; }
     joy.x = dx / R; joy.y = dy / R; knob.style.transform = `translate(${dx}px,${dy}px)`; };
-  pad?.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); tourEnd(false); setTimeout(() => coachDid('joy'), 700); joy.on = true; joy.id = e.pointerId; pad.setPointerCapture(e.pointerId); pad.classList.add('on'); path = null; move(e); });
+  pad?.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); tour.end(false); setTimeout(() => coach.did('joy'), 700); joy.on = true; joy.id = e.pointerId; pad.setPointerCapture(e.pointerId); pad.classList.add('on'); path = null; move(e); });
   pad?.addEventListener('pointermove', e => { if (joy.on && e.pointerId === joy.id) move(e); });
   const end = e => { if (e.pointerId !== joy.id) return; joy.on = false; joy.x = joy.y = 0; knob.style.transform = ''; pad.classList.remove('on'); };
   pad?.addEventListener('pointerup', end); pad?.addEventListener('pointercancel', end);
 }
 
-// ------------------------------------------------------------------ ocean ambience (synthesised, opt-in)
-let audio = null, roomSound = null, audioOn = false;
-$('soundBtn').onclick = () => {
-  const on = $('soundBtn').getAttribute('aria-pressed') !== 'true';
-  $('soundBtn').setAttribute('aria-pressed', on);
-  if (on && !audio) {
-    const ctx = new AudioContext(), len = ctx.sampleRate * 4, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
-    let last = 0; for (let i = 0; i < len; i++) { last = (last + .02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.2; }   // brown noise
-    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 520;
-    const gain = ctx.createGain(); gain.gain.value = 0;
-    const lfo = ctx.createOscillator(), lfoG = ctx.createGain(); lfo.frequency.value = .09; lfoG.gain.value = .12; lfo.connect(lfoG).connect(gain.gain);
-    src.connect(lp).connect(gain).connect(ctx.destination); src.start(); lfo.start();
-    const rooms = ctx.createGain(); rooms.gain.value = 0; rooms.connect(ctx.destination);
-    roomSound = createRoomSound(ctx, rooms);
-    audio = { ctx, gain, rooms };
-  }
-  audioOn = on;
-  if (audio) { audio.ctx.resume(); audio.sea = null; audio.rooms.gain.setTargetAtTime(on ? .9 : 0, audio.ctx.currentTime, .6); }
-};
+// ------------------------------------------------------------------ sound (museum/audio.js): the sea downstairs, a bed per theme room
+const ambience = createAmbience();
+$('soundBtn').onclick = () => { const on = $('soundBtn').getAttribute('aria-pressed') !== 'true'; $('soundBtn').setAttribute('aria-pressed', on); ambience.toggle(on); };
 
 // ------------------------------------------------------------------ frame
 function resize() {
@@ -1883,11 +1703,7 @@ function frame(now) {
     for (const f of sanctuary.films) if (f.bike) f.bike.visible = reg !== 'gallery';
     const themeRoom = galleries.update(t, P, reduce, scene, renderer, reg);
     atlas.update(t, dt, P, upstairs, reduce);
-    if (audio) {                                                      // the sea fades upstairs; each room brings its own bed
-      roomSound.set(themeRoom?.id || null);
-      const sea = audioOn ? (upstairs ? .05 : .2) : 0;
-      if (sea !== audio.sea) { audio.sea = sea; audio.gain.gain.setTargetAtTime(sea, audio.ctx.currentTime, .8); }
-    }
+    ambience.update(themeRoom?.id || null, upstairs);
     if (hween.group.visible) hween.update(t, reduce);
     if (pier) {
       pier.group.visible = reg === 'pier' || (reg === 'hall' && P.z < -22);
@@ -1899,7 +1715,7 @@ function frame(now) {
       pier.update(dt, reduce);
     }
   }
-  tourTick(dt);
+  tour.tick(dt);
   if (!reduce) for (const s2 of spinners) s2.o.rotation[s2.axis] += dt * s2.speed;
   if (!reduce) for (const wb of wyldBikes) if (wb.hover) wb.hover.position.y = wb.top + Math.sin(t * .8 + wb.index) * .014;   // Dye breathes on its cushion of air
   if (!reduce) for (const w of sway) { const a = Math.sin(t * .9 + w.phase) * w.amp + Math.sin(t * 2.3 + w.phase * 2) * w.amp * .3; w.o.rotation.z = a; w.o.rotation.x = a * .5; }
@@ -1953,6 +1769,13 @@ async function shareView(title) {
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
 $('cardShare')?.addEventListener('click', () => shareView($('cName').textContent));
 window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas };
+{ // the ⋯ menu: secondary actions, closed by any outside tap or Escape
+  const btn = $('moreBtn'), menu = $('moreMenu');
+  const set = open => { menu.hidden = !open; btn.setAttribute('aria-expanded', open); };
+  btn?.addEventListener('click', e => { e.stopPropagation(); set(menu.hidden); });
+  addEventListener('click', e => { if (!menu.hidden && !menu.contains(e.target)) set(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+}
 window.__atlas = atlas;
-window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart: () => tour.start(), pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
 initArtWorld(window.__museum).catch(e => console.warn('art world', e));

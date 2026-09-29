@@ -86,6 +86,13 @@ A skin is data:
 | `engine/share.js` | capture the view with a caption and share it (or save it) |
 | `ui/settings.js` | profile and settings sheet, header profile chip |
 | `map.js` | the two-floor map, generated from the same rectangles as the walls |
-| `landing.js` | still hosts the hand-built rooms, the walk loop and routing (being split in Phases 3–5) |
+| `museum/layout.js` | hall, rooms and doorways as numbers; `placePieces` seats the timeline and the flagships |
+| `museum/canvas.js` | canvas textures: lettering, wall washes, contact shadows, travertine and basalt |
+| `museum/dye.js` | hand-dyed textiles (WYLD and Kona kapa ramps), drapes and light pools |
+| `museum/passport.js` | the Museum Passport: read and write, validated |
+| `museum/audio.js` | ambient sound: the hall bed and each theme room's own bed |
+| `museum/tour.js` | guided tour: `planTour` resolves `museum/world/tour.json` by exhibit keys; `createTour` drives it |
+| `museum/coach.js` | first-visit coach marks on phones |
+| `landing.js` | the hand-built rooms (hall, Champions, WYLD, decor), the walk loop, routing and input (still being split, Phases 3–5) |
 
 See also `docs/CONTENT.md` (adding content, original sources) and `docs/APP.md` (profile, quality, sharing, accounts).

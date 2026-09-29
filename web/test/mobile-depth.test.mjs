@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as THREE from 'three';
+import { createDyeKit } from '../src/museum/dye.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const src = fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8');
@@ -27,8 +29,15 @@ test('no coplanar floors or walls: the shaking fix stays fixed', () => {
   assert.ok(src.includes('rfloor.position.set(RCX, -.098, RCZ)'));                   // champions floor proud of the hall slab
   assert.ok(src.includes('wfloor.position.set(CX - 1.2, -.098, CZ2)'));              // WYLD floor proud of the hall slab
   assert.ok(src.includes('if (WROOM.h > HALL.h + .01) wall('));                      // no negative-height wall on the hall's west face
-  const pool = src.match(/function lightPool[\s\S]+?\n\}/u)?.[0] || '';
-  assert.match(pool, /polygonOffset: true/);
+});
+
+test('light pools sit in front of the floor they light (museum/dye.js)', () => {
+  const kit = createDyeKit({ canvasTex: () => new THREE.Texture(), lite: true, wyld: { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' } });
+  const pool = kit.lightPool(2, 2, '#fff');
+  assert.equal(pool.material.polygonOffset, true);
+  assert.ok(pool.material.polygonOffsetFactor < 0 && pool.material.polygonOffsetUnits < 0);
+  assert.equal(pool.material.depthWrite, false);
+  assert.ok(pool.position.y > 0);
 });
 
 test('hall and champions room never use the WYLD palette', () => {

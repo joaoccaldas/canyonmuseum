@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "note": "The guided tour, in walking order. Each stop names a room from museum/world/rooms.json and picks exhibits by their own keys (champion title year, WYLD variant id, pier year), never by position, so re-ordering a room never changes the tour. Stops whose exhibit is missing are skipped.",
+  "dwell_s": 9,
+  "stops": [
+    { "room": "hween" },
+    { "room": "hall", "set": "heritage" },
+    { "room": "kona", "titles": [2015, 2017, 2019, 2024] },
+    { "room": "wyld", "variants": ["dye", "night"] },
+    { "room": "hall", "set": "flagships" },
+    { "room": "pier", "years": [2014, 2018, 2023, 2024, 2025], "finale": true }
+  ]
+}

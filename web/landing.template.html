@@ -360,6 +360,13 @@ html.phone-fit .credit{display:none}
   h1{font-size:clamp(34px,7vh,48px)!important;margin:8px 0}
   #intro .lede:not(.touch-only){display:none}
 }
+/* minimal header: four actions, the rest under ⋯ */
+.more-wrap{position:relative}
+#moreBtn{font-size:18px;line-height:1;padding:8px 14px}
+.more{position:absolute;right:0;top:calc(100% + 8px);display:grid;gap:2px;min-width:220px;padding:6px;border-radius:16px;background:rgba(251,249,245,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 16px 40px rgba(18,24,29,.18);z-index:30}
+.more>*{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;border:0!important;background:none!important;backdrop-filter:none!important;border-radius:10px!important;padding:10px 12px!important}
+.more>*:hover{background:var(--sand)!important}
+@media (max-width:760px){nav #studioLink,nav #shareBtn{padding:10px 12px}}
 /* teleport between rooms */
 #fade{position:fixed;inset:0;z-index:30;background:#0e1114;opacity:0;pointer-events:none;transition:opacity .19s ease}
 #fade.on{opacity:1}
@@ -399,7 +406,7 @@ nav .me i{display:grid;place-items:center;width:26px;height:26px;border-radius:5
 .set-row .btn{height:40px;padding:0 16px;font-size:12px}.btn.danger{color:#b3122e;border-color:rgba(179,18,46,.35)}
 .set-foot{font-size:11px;color:var(--faint);margin-top:6px}
 @media (max-width:520px){.set-opts{grid-template-columns:1fr}}
-#bgload{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(92px + var(--safe-b));z-index:14;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:999px;background:rgba(251,249,245,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);font-size:11.5px;font-weight:600;color:var(--muted);transition:opacity .5s}
+#bgload{position:fixed;right:max(16px,env(safe-area-inset-right));top:calc(env(safe-area-inset-top) + 64px);z-index:14;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:999px;background:rgba(251,249,245,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);font-size:11.5px;font-weight:600;color:var(--muted);transition:opacity .5s}
 #bgload i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--reef);animation:spin 0.9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 body:not(.walking) #bgload{display:none}
@@ -480,15 +487,21 @@ body.map-open #joy{opacity:0;pointer-events:none}
 <header>
   <div class="brand"><a class="logo" href="./" aria-label="Speedmax Museum home"><b>CANYON</b><small>Speedmax Museum · Kona</small></a>
   <button id="where" class="where" hidden aria-label="Where you are: open the map"><i></i><span><small></small><b></b></span></button></div>
-  <nav>
-    <button id="installBtn" hidden title="Install the museum on this device"><span class="long">Get the </span>app</button>
+  <nav aria-label="Museum">
     <button id="mapBtn" aria-label="Museum map" title="Map (M)">Map</button>
-    <button id="shareBtn" aria-label="Share this view" title="Share this view">Share</button>
     <a id="studioLink" href="Studio.html" title="Paint and share any bike">Studio</a>
-    <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
-    <button id="passportBtn" aria-label="Museum Passport progress">Passport <span id="passportCount">0/0</span></button>
-    <a href="Canyon_Collection.html#compare">Compare</a>
-    <a class="wide" href="Canyon_Collection.html#archive">Archive</a>
+    <button id="shareBtn" aria-label="Share this view" title="Share this view">Share</button>
+    <div class="more-wrap">
+      <button id="moreBtn" aria-label="More" aria-expanded="false" aria-controls="moreMenu" title="More">⋯</button>
+      <div id="moreMenu" class="more" hidden>
+        <button id="passportBtn" aria-label="Museum Passport progress">Passport <span id="passportCount">0/0</span></button>
+        <button id="soundBtn" aria-pressed="false" title="Ambient sound">Sound</button>
+        <button id="installBtn" hidden title="Install the museum on this device">Get the app</button>
+        <a href="Canyon_Collection.html#compare">Compare</a>
+        <a href="Canyon_Collection.html#archive">Archive</a>
+        <a href="Experiences.html">Nights &amp; History Lane</a>
+      </div>
+    </div>
     <button id="meBtn" class="me" aria-label="Profile and settings"><i aria-hidden="true"></i><span>Sign in</span></button>
   </nav>
 </header>
@@ -571,7 +584,7 @@ body.map-open #joy{opacity:0;pointer-events:none}
 
 <p class="credit">Independent study from public references. Not affiliated with or endorsed by Canyon Bicycles. 3D models are visual reconstructions.</p>
 
-<script>window.__PIECES=__PIECES__;window.__KONA=__KONA__;window.__WYLDROOM=__WYLDROOM__;window.__KONAYEARS=__KONAYEARS__;window.__ATLAS=__ATLAS__;window.__SKINS=__SKINS__;window.__WINGS=__WINGS__;window.__FILMS=__FILMS__;window.__ROOMS=__ROOMS__;window.__ART=__ART__;</script>
+<script>window.__PIECES=__PIECES__;window.__KONA=__KONA__;window.__WYLDROOM=__WYLDROOM__;window.__KONAYEARS=__KONAYEARS__;window.__ATLAS=__ATLAS__;window.__SKINS=__SKINS__;window.__WINGS=__WINGS__;window.__FILMS=__FILMS__;window.__ROOMS=__ROOMS__;window.__TOUR=__TOUR__;window.__ART=__ART__;</script>
 <script>__APP__</script>
 </body>
 </html>
