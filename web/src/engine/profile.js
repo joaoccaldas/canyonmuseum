@@ -18,7 +18,7 @@ export const AVATARS = ['#e8471c', '#138a8f', '#1d4fd6', '#c9a13b', '#ff3d8e', '
 
 export const defaults = () => ({
   v: 1, name: '', avatar: AVATARS[0], quality: 'auto', sound: false, motion: 'auto', travel: 'teleport', units: 'metric',
-  favourites: [], liveries: [], createdAt: new Date().toISOString(), sync: null,
+  favourites: [], liveries: [], garage: [], createdAt: new Date().toISOString(), sync: null,
 });
 
 /** Validate/normalise a stored profile; unknown fields are dropped, bad values fall back to defaults. Pure. */
@@ -38,6 +38,11 @@ export function normalise(p) {
       id: x.id.slice(0, 40), name: String(x.name || 'My livery').slice(0, 40), kind: 'studio', frame: x.frame,
       ...Object.fromEntries(['accent', 'rim', 'disc', 'tape', 'saddle'].filter(k => /^#[0-9a-f]{6}$/i.test(x[k] || '')).map(k => [k, x[k]])),
       ...(x.finish && typeof x.finish === 'object' ? { finish: { roughness: +x.finish.roughness || .26, metalness: +x.finish.metalness || .15, clearcoat: +x.finish.clearcoat || 0 } } : {}) })) : [],
+    garage: Array.isArray(o.garage) ? o.garage.filter(x => x && typeof x === 'object' && typeof x.id === 'string' && typeof x.productId === 'string').slice(0, 9).map(x => ({
+      id: x.id.slice(0, 48), productId: x.productId.slice(0, 80), name: String(x.name || 'Saved build').slice(0, 60),
+      look: typeof x.look === 'string' ? x.look.slice(0, 700) : '', scene: typeof x.scene === 'string' ? x.scene.slice(0, 30) : 'studio',
+      savedAt: Number.isFinite(+x.savedAt) ? +x.savedAt : Date.now(),
+    })) : [],
     createdAt: typeof o.createdAt === 'string' ? o.createdAt : d.createdAt,
     sync: o.sync && typeof o.sync === 'object' ? { provider: String(o.sync.provider || ''), email: String(o.sync.email || '') } : null,
   };
@@ -67,6 +72,11 @@ export function createProfile(store = localStore) {
     get exists() { return exists || !!p.name; },
     set(patch) { p = normalise({ ...p, ...patch }); store.save(p); emit(); return p; },
     toggleFavourite(id) { const f = new Set(p.favourites); f.has(id) ? f.delete(id) : f.add(id); return this.set({ favourites: [...f] }); },
+    saveGarage(build, limit = 9) {
+      if (!build?.id || !build?.productId || p.garage.length >= Math.max(0, Math.min(9, limit))) return false;
+      this.set({ garage: [build, ...p.garage.filter(x => x.id !== build.id)] }); return true;
+    },
+    removeGarage(id) { this.set({ garage: p.garage.filter(x => x.id !== id) }); return p.garage; },
     subscribe(f) { subs.add(f); return () => subs.delete(f); },
     export() {                                                        // everything the app stores about you, as one file
       const extra = {}; try { for (const k of LEGACY) extra[k] = localStorage.getItem(k); } catch (_) { }
