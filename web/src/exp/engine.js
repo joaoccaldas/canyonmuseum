@@ -25,7 +25,7 @@ export function createStage(canvas) {
   renderer.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.5 : 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.AgXToneMapping;
-  renderer.shadowMap.enabled = !lite; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = !lite; renderer.shadowMap.type = THREE.PCFShadowMap;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(50, 1, .05, 600);
   const pmrem = new THREE.PMREMGenerator(renderer);
