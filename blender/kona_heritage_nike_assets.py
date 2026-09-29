@@ -165,39 +165,65 @@ def bike(asset_id, style, frame=CARBON, accent=WHITE):
     g["evidence_class"] = "geometry-study"
     return g
 
-def shoe(asset_id, kind, accent):
-    g = bpy.data.objects.new(asset_id, None)
-    scene.collection.objects.link(g)
-    g.parent = ROOT_EMPTY
+def loft_mesh(name, sections, mat, parent):
+    """Create a smooth closed shoe-like volume from x/width/z_low/z_high sections."""
+    verts, faces = [], []
+    for x, half_w, z0, z1 in sections:
+        verts += [(x,-half_w,z0),(x,half_w,z0),(x,-half_w,z1),(x,half_w,z1)]
+    for i in range(len(sections)-1):
+        a=i*4; b=(i+1)*4
+        faces += [(a,b,b+1,a+1),(a+2,a+3,b+3,b+2),(a,a+2,b+2,b),(a+1,b+1,b+3,a+3)]
+    faces += [(0,1,3,2)]
+    e=(len(sections)-1)*4
+    faces += [(e,e+2,e+3,e+1)]
+    me=bpy.data.meshes.new(name+"_MESH")
+    me.from_pydata(verts, [], faces); me.update()
+    o=bpy.data.objects.new(name, me)
+    scene.collection.objects.link(o)
+    o.data.materials.append(mat); o.parent=parent
+    bev=o.modifiers.new("soft_form","BEVEL"); bev.width=.012; bev.segments=3
+    return o
 
-    sole = cube(asset_id+"_OUTSOLE", (0,0,.035), (.15,.06,.035), RUBBER, g, .035)
-    sole.rotation_euler[1] = -.05
-    foam = cube(asset_id+"_MIDSOLE", (0,0,.10), (.155,.062,.055 if kind!="vaporfly4pct" else .045), FOAM, g, .045)
-    foam.rotation_euler[1] = -.07
-    upper = cube(asset_id+"_UPPER", (-.005,0,.19), (.13,.052,.072), UPPER, g, .050)
-    upper.rotation_euler[1] = .05
-    cube(asset_id+"_TOE", (.15,0,.155), (.055,.05,.045), UPPER, g, .04)
-    cube(asset_id+"_HEEL", (-.15,0,.205), (.042,.054,.085), accent, g, .035)
-    plate = cube(asset_id+"_CARBON_PLATE", (.01,0,.11), (.13,.057,.006), CARBON, g, .004)
-    plate.rotation_euler[1] = -.04
+def shoe(asset_id, kind, accent):
+    """Museum v0.2 shoe study: lofted forms replace the original box blockout."""
+    g=bpy.data.objects.new(asset_id,None)
+    scene.collection.objects.link(g); g.parent=ROOT_EMPTY
+
+    if kind=="vaporfly4pct":
+        sole=[(-.155,.050,.012,.030),(-.115,.057,.010,.040),(-.055,.061,.010,.050),(.015,.062,.012,.060),(.080,.060,.015,.066),(.135,.052,.020,.060),(.175,.032,.026,.048)]
+        upper_h=[.120,.135,.130,.115,.092,.070,.045]
+    elif kind=="vaporflynext":
+        sole=[(-.158,.050,.012,.035),(-.118,.058,.010,.048),(-.055,.063,.010,.062),(.015,.064,.012,.071),(.082,.061,.017,.072),(.140,.052,.022,.062),(.178,.031,.030,.050)]
+        upper_h=[.125,.140,.136,.120,.096,.072,.046]
+    elif kind=="alphafly1":
+        sole=[(-.160,.052,.014,.050),(-.118,.061,.012,.070),(-.050,.066,.012,.080),(.020,.068,.015,.086),(.085,.067,.022,.090),(.145,.056,.032,.078),(.182,.033,.038,.056)]
+        upper_h=[.132,.150,.148,.132,.105,.078,.048]
+    else:
+        sole=[(-.160,.053,.012,.048),(-.120,.061,.010,.067),(-.055,.066,.010,.078),(.015,.068,.013,.085),(.082,.068,.020,.090),(.143,.058,.028,.079),(.182,.034,.035,.058)]
+        upper_h=[.128,.147,.145,.130,.105,.078,.048]
+
+    loft_mesh(asset_id+"_MIDSOLE", sole, FOAM, g)
+    upper_sections=[]
+    for (x,w,z0,z1),h in zip(sole,upper_h):
+        base=z1-.004
+        upper_sections.append((x,max(.025,w*.82),base,base+h))
+    loft_mesh(asset_id+"_UPPER", upper_sections, UPPER, g)
+    loft_mesh(asset_id+"_OUTSOLE", [(x,w*.96,max(0,z0-.006),z0+.006) for x,w,z0,z1 in sole], RUBBER, g)
+    loft_mesh(asset_id+"_CARBON_FLYPLATE", [(x,min(.056,w*.90),z0+(z1-z0)*.55,z0+(z1-z0)*.55+.004) for x,w,z0,z1 in sole], CARBON, g)
 
     if kind in {"alphafly1","alphafly3"}:
-        for idx, yy in enumerate((-.032,.032)):
-            bpy.ops.mesh.primitive_cylinder_add(
-                vertices=24, radius=.029, depth=.07,
-                location=(.105,yy,.12), rotation=(math.pi/2,0,0)
-            )
-            a = bpy.context.object
-            a.name = f"{asset_id}_AIRZOOM_{idx+1}"
-            a.data.materials.append(AIR)
-            a.parent = g
-    if kind == "alphafly3":
-        cube(asset_id+"_CONTINUOUS_BOTTOM", (.025,0,.08), (.155,.058,.020), FOAM, g, .025)
+        for idx,yy in enumerate((-.032,.032)):
+            bpy.ops.mesh.primitive_cylinder_add(vertices=32,radius=.027,depth=.050,location=(.095,yy,.062),rotation=(math.pi/2,0,0))
+            a=bpy.context.object; a.name=f"{asset_id}_AIRZOOM_{idx+1}"; a.scale.x=1.10
+            a.data.materials.append(AIR); a.parent=g
 
-    # neutral museum identifier panel, NOT a logo decal
-    cube(asset_id+"_MUSEUM_ID_PANEL", (.035,-.061,.20), (.075,.006,.018), accent, g, .005)
-    g["asset_kind"] = "shoe"
-    g["evidence_class"] = "geometry-study"
+    cube(asset_id+"_HEEL_COUNTER",(-.145,0,upper_sections[0][3]-.020),(.030,.047,.050),accent,g,.018)
+    cube(asset_id+"_COLLAR_VOID",(-.105,0,upper_sections[1][3]-.018),(.030,.030,.020),BLACK,g,.020)
+    cube(asset_id+"_MUSEUM_ID_PANEL",(.035,-.066,.145),(.070,.004,.012),accent,g,.004)
+
+    g["asset_kind"]="shoe"
+    g["evidence_class"]="geometry-study-v0.2"
+    g["public_status"]="prototype-not-cad-exact"
     return g
 
 ASSETS = {
