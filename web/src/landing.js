@@ -791,7 +791,7 @@ async function loadAll() {
     try { await loadBike(p); } catch (e) { console.warn('bike failed', p.key, e); }
     loaded++;
     $('loadstate').innerHTML = loaded < modelled.length ? `Unpacking the collection · ${loaded} / ${modelled.length}<i><b style="width:${loaded / modelled.length * 100}%"></b></i>` : `${modelled.length} bikes on display · ${PIECES.length - modelled.length} lost generations remembered`;
-    if (loaded === 1) { const b = $('enterBtn'); b.disabled = false; b.innerHTML = 'Enter the museum <span aria-hidden="true">→</span>'; }
+    if (loaded === 1) { const b = $('enterBtn'); b.disabled = false; b.innerHTML = passport.visits > 0 ? 'Continue the museum <span aria-hidden="true">→</span>' : 'Enter the museum <span aria-hidden="true">→</span>'; passportProgress(); }
   }
 }
 
@@ -800,6 +800,46 @@ const start = new THREE.Vector3(0, 0, 3.4);
 const P = { x: 0, z: 3.4, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
 let started = false, path = null, keys = new Set(), current = null, drag = null, bob = 0;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
+
+// ------------------------------------------------------------------ local-first Museum Passport
+const PASSPORT_KEY = 'speedmax.passport.v1';
+function readPassport() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PASSPORT_KEY) || 'null');
+    if (raw?.v === 1 && Array.isArray(raw.discoveries)) return raw;
+  } catch (_) { }
+  return { v: 1, discoveries: [], visits: 0, pose: null };
+}
+const passport = readPassport();
+function writePassport() {
+  try { localStorage.setItem(PASSPORT_KEY, JSON.stringify(passport)); } catch (_) { }
+}
+function passportProgress() {
+  const total = modelled.length;
+  const seen = passport.discoveries.filter(k => modelled.some(p => p.key === k)).length;
+  const count = $('passportCount'); if (count) count.textContent = `${seen}/${total}`;
+  return { seen, total };
+}
+function discover(p) {
+  if (!p?.key || !p.glb || passport.discoveries.includes(p.key)) return false;
+  passport.discoveries.push(p.key); writePassport();
+  const { seen, total } = passportProgress();
+  if (started) toast(`Museum Passport · discovered ${p.name} · ${seen}/${total}`);
+  return true;
+}
+function savePose() {
+  if (!started) return;
+  const region = roomOf(P.x, P.z);
+  if (region === 'horror') return;
+  passport.pose = { x: P.x, z: P.z, yaw: P.yaw, pitch: P.pitch, region };
+  writePassport();
+}
+addEventListener('pagehide', savePose);
+$('passportBtn')?.addEventListener('click', () => {
+  const { seen, total } = passportProgress();
+  toast(`Museum Passport · ${seen} of ${total} bikes discovered${seen === total && total ? ' · collection complete' : ''}`);
+});
+passportProgress();
 
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const roomOf = (x, z) => window.__museumArt?.regionOf?.(x, z) || (x >= WALK.x0 - .05 ? 'hall' : z > -26.1 ? 'champ' : 'wyld');
@@ -822,6 +862,7 @@ function route(to, face, piece) {                                   // via doorw
 function visit(p) {
   if (current && current !== p && current.exT > 0) setExploded(current, false);
   partSel = null; closeCard(true);
+  discover(p);
   route(p.view, p.pos.clone().setY(p.top + .75), p);
   current = p; railActive(p);
 }
@@ -952,8 +993,19 @@ function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
   const coaching = coarse && (() => { try { return localStorage.getItem('speedmax.coach.v1') !== '1'; } catch (_) { return true; } })();
-  if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
-  path = [{ x: 0, z: .6 }]; canvas.focus({ preventScroll: true }); haptic(10); coach();
+  const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld'].includes(passport.pose.region)
+    && walkable(passport.pose.x, passport.pose.z);
+  passport.visits = (passport.visits || 0) + 1;
+  if (returning) {
+    P.x = passport.pose.x; P.z = passport.pose.z; P.yaw = passport.pose.yaw || 0; P.pitch = passport.pose.pitch ?? -.04;
+    path = null;
+    const { seen, total } = passportProgress();
+    if (!coaching) toast(`Welcome back · Museum Passport ${seen}/${total}`);
+  } else {
+    if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
+    path = [{ x: 0, z: .6 }];
+  }
+  writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach();
 }
 $('enterBtn').onclick = enter;
 
