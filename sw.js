@@ -1,5 +1,5 @@
-const CACHE = 'canyon-museum-shell-v4';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './assets/pwa/icon-v3.svg', './assets/pwa/icon-v3-192.png', './assets/pwa/icon-v3-512.png'];
+const CACHE = 'canyon-museum-shell-v5';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './app/icons/icon.svg', './app/icons/icon-192.png', './app/icons/icon-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -18,7 +18,6 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Navigation stays network-first so visitors always get the newest museum when online.
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -32,8 +31,6 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static same-origin assets: serve from cache instantly, refresh in the background (stale-while-revalidate),
-  // so an installed app never gets stuck on old scripts, styles or images. Large GLBs are not precached.
   if (!['script', 'style', 'image', 'font'].includes(event.request.destination)) return;
   event.respondWith(caches.open(CACHE).then(cache => cache.match(event.request).then(hit => {
     const fresh = fetch(event.request).then(response => {

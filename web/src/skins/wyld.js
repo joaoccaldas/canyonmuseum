@@ -45,6 +45,11 @@ export function applyWyld(material, bike, params = {}) {
   };
   const setDir = deg => u.uWDir.value.set(Math.cos(deg * Math.PI / 180), Math.sin(deg * Math.PI / 180));
   setDir(p.angle);
+  // Optional five-stop ramp (Bike Porn films). The wave stays the museum dye; only the hues change.
+  if (p.stops?.length >= 5) {
+    const keys = ['uWPink', 'uWBlush', 'uWLilac', 'uWMint', 'uWAqua'];
+    p.stops.slice(0, 5).forEach((hex, i) => u[keys[i]].value.copy(lin(hex)));
+  }
 
   const prev = material.userData.wyld;
   if (prev) prev.detachUniformsOnly = true;

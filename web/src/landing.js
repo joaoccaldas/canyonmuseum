@@ -6,7 +6,13 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { buildPier, pierWalkable, PIER, ordinal } from './pier.js';
+import { initAppShell } from './app-shell.js';
+import { buildHalloween, hweenWalkable, HDOOR } from './halloween.js';
+import { buildSanctuary, sanctuaryWalkable, SDOOR, SROOM } from './sanctuary.js';
+import { buildGalleries, galleryWalkable, galleryFloorY, EDOOR, UPPER } from './galleries.js';
 import { applyWyld } from './skins/wyld.js';
+import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
 import { initInstallExperience } from './pwa.mjs';
 import { microNoise } from './tex.js';
@@ -18,15 +24,16 @@ const sway = [];                                                     // palm cro
 const spinners = [];                                                 // slowly turning sculptures and hung bikes
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
 const WROOMDATA = window.__WYLDROOM || null;
+const KY = window.__KONAYEARS || null;                                // Kona by Year: the pier
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 // Phone detection must survive a browser's "Desktop view", where pointer and
 // viewport width both lie; detect.js adds the physical-screen signal.
 const coarse = dc;
 if (coarse) document.body.classList.add('touch');
-const small = dssList.add('touch');
-const small = innerWidth < 760;
+const small = ds;
 const lite = coarse || small;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const B2T = v => new THREE.Vector3(v[0], v[2], -v[1]);            // Blender (Z-up) -> three (Y-up)
@@ -74,7 +81,7 @@ function walkable(x, z) {
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
   const inDoor2 = x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
   const inWyld = x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
-  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld) return false;
+  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z)) return false;
   for (const o of obstacles) {
     if (o.c && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
     if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
@@ -151,8 +158,9 @@ const travertine = canvasTex(1024, 1024, (g, w, h) => {
     const y = rnd() * h; g.fillRect(0, y, w, 1 + rnd() * 3);
   }
   for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(120,100,80,${.05 + rnd() * .08})`; g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 1 + rnd() * 3, .6 + rnd(), 0, 0, 7); g.fill(); }
-  g.strokeStyle = 'rgba(110,95,75,.22)'; g.lineWidth = 2;               // slab joints (1.2 m slabs)
-  g.strokeRect(1, 1, w - 2, h - 2); g.beginPath(); g.moveTo(0, h / 2); g.lineTo(w, h / 2); g.stroke();
+  g.strokeStyle = 'rgba(92,74,54,.72)'; g.lineWidth = 10;             // grout, one slab per tile
+  g.strokeRect(6, 6, w - 12, h - 12);
+  g.beginPath(); g.moveTo(0, h / 2); g.lineTo(w, h / 2); g.moveTo(w / 2, 0); g.lineTo(w / 2, h); g.stroke();
 }, [HALL.x1 - HALL.x0, HALL.z0 - HALL.z1].map(v => v / 2.4));
 const basaltTex = canvasTex(512, 512, (g, w, h) => {
   g.fillStyle = '#1f2023'; g.fillRect(0, 0, w, h);
@@ -183,6 +191,14 @@ const hall = new THREE.Group(); scene.add(hall);
 const L = HALL.x1 - HALL.x0, D = HALL.z0 - HALL.z1, CZ = (HALL.z0 + HALL.z1) / 2;
 const floor = new THREE.Mesh(new THREE.BoxGeometry(L + 8, .4, D + 6), M.floor);
 floor.position.set(0, -.2, CZ); floor.receiveShadow = true; floor.userData.floor = true; hall.add(floor);
+// Slabs in the mesh's own metres, so the joints scroll as you walk instead of stretching into one flat field.
+M.floor.onBeforeCompile = shader => {
+  shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>', `#include <uv_vertex>
+#ifdef USE_MAP
+  vMapUv = vec2(position.x, -position.z) * 0.85;
+#endif`);
+};
+M.floor.customProgramCacheKey = () => 'hall-floor-slabs';
 // the Queen K: a faded centre line and edge lines down the aisle
 {
   const dashes = new THREE.InstancedMesh(new THREE.PlaneGeometry(.1, 1.3), M.line, 40); let n = 0;
@@ -191,15 +207,38 @@ floor.position.set(0, -.2, CZ); floor.receiveShadow = true; floor.userData.floor
   for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .014, -16.5); e.renderOrder = 2; hall.add(e); }
 }
 // plaster wall (lava side) with a shadow-gap skirting
-for (const [a, b] of [[HALL.z0, DOOR.z1], [DOOR.z0, WDOOR.z1], [WDOOR.z0, HALL.z1]]) {
+for (const [a, b] of [[HALL.z0, HDOOR.z1], [HDOOR.z0, DOOR.z1], [DOOR.z0, WDOOR.z1], [WDOOR.z0, HALL.z1]]) {   // doorways: Lava Night, Kona Champions, WYLD
   const seg = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h, a - b), M.plaster);
   seg.position.set(HALL.x0 - .15, HALL.h / 2, (a + b) / 2); seg.receiveShadow = seg.castShadow = true; hall.add(seg);
 }
 { const lintel = new THREE.Mesh(new THREE.BoxGeometry(.3, HALL.h - DOOR.h, DOOR.z1 - DOOR.z0), M.plaster);
   lintel.position.set(HALL.x0 - .15, DOOR.h + (HALL.h - DOOR.h) / 2, (DOOR.z0 + DOOR.z1) / 2); hall.add(lintel);
-  const l2 = lintel.clone(); l2.position.z = (WDOOR.z0 + WDOOR.z1) / 2; hall.add(l2); }
-const backWall = new THREE.Mesh(new THREE.BoxGeometry(L, HALL.h, .3), M.plaster);
-backWall.position.set(0, HALL.h / 2, HALL.z0 + .15); backWall.receiveShadow = true; hall.add(backWall);
+  const l2 = lintel.clone(); l2.position.z = (WDOOR.z0 + WDOOR.z1) / 2; hall.add(l2);
+  const l3 = lintel.clone(); l3.position.z = (HDOOR.z0 + HDOOR.z1) / 2; hall.add(l3); }
+// north wall, with the doorway into Sanctuary
+for (const [a, b] of [[HALL.x0, SDOOR.x0], [SDOOR.x1, HALL.x1]]) {
+  const seg = new THREE.Mesh(new THREE.BoxGeometry(b - a, HALL.h, .3), M.plaster);
+  seg.position.set((a + b) / 2, HALL.h / 2, HALL.z0 + .15); seg.receiveShadow = true; hall.add(seg);
+}
+{ const lintelN = new THREE.Mesh(new THREE.BoxGeometry(SDOOR.x1 - SDOOR.x0, HALL.h - SDOOR.h, .3), M.plaster);
+  lintelN.position.set(0, SDOOR.h + (HALL.h - SDOOR.h) / 2, HALL.z0 + .15); hall.add(lintelN); }
+{ // a koa-gold skirting, and a plumeria lei over the chapel door
+  const skirt = new THREE.Mesh(new THREE.BoxGeometry(.05, .06, HALL.z0 - HALL.z1 - 1), new THREE.MeshStandardMaterial({ color: '#c9843a', roughness: .42, metalness: .4 }));
+  skirt.position.set(HALL.x0 + .02, .03, (HALL.z0 + HALL.z1) / 2); hall.add(skirt);
+  const petal = new THREE.MeshStandardMaterial({ color: '#f6f1e4', roughness: .55 });
+  const heart = new THREE.MeshStandardMaterial({ color: '#e2b23a', roughness: .4, emissive: '#e2b23a', emissiveIntensity: .15 });
+  const n = 14;
+  const flowers = new THREE.InstancedMesh(new THREE.SphereGeometry(.05, 10, 8), petal, n);
+  const hearts = new THREE.InstancedMesh(new THREE.SphereGeometry(.018, 8, 6), heart, n);
+  for (let i = 0; i < n; i++) {
+    const u = i / (n - 1);
+    const x = -1.35 + u * 2.7;
+    const y = SDOOR.h + .06 + Math.sin(u * Math.PI) * .16;
+    flowers.setMatrixAt(i, new THREE.Matrix4().setPosition(x, y, HALL.z0 - .05));
+    hearts.setMatrixAt(i, new THREE.Matrix4().setPosition(x, y + .01, HALL.z0 - .02));
+  }
+  hall.add(flowers, hearts);
+}
 // glass wall to the ocean, and the apse's glass end wall
 function glassRun(axis, from, to, fixed) {
   const len = Math.abs(to - from), n = Math.ceil(len / 2.6);
@@ -217,8 +256,12 @@ function glassRun(axis, from, to, fixed) {
   const sill = new THREE.Mesh(new THREE.BoxGeometry(axis === 'z' ? .2 : len, .06, axis === 'z' ? len : .2), M.mullion);
   sill.position.set(axis === 'z' ? fixed : (from + to) / 2, .03, axis === 'z' ? (from + to) / 2 : fixed); hall.add(sill);
 }
-glassRun('z', HALL.z0, HALL.z1, HALL.x1);
-glassRun('x', HALL.x0, HALL.x1, HALL.z1);
+glassRun('z', HALL.z0, EDOOR.z1, HALL.x1);                 // above the galleries door
+glassRun('z', EDOOR.z0, HALL.z1, HALL.x1);                 // the rest of the ocean wall
+{ const lintelE = new THREE.Mesh(new THREE.BoxGeometry(.2, HALL.h - EDOOR.h, EDOOR.z1 - EDOOR.z0), M.mullion);
+  lintelE.position.set(HALL.x1, EDOOR.h + (HALL.h - EDOOR.h) / 2, (EDOOR.z0 + EDOOR.z1) / 2); hall.add(lintelE); }
+if (KY) { glassRun('x', HALL.x0, 4.3, HALL.z1); glassRun('x', 6.5, HALL.x1, HALL.z1); }   // a doorway out to the pier
+else glassRun('x', HALL.x0, HALL.x1, HALL.z1);
 // skylight: open slats across the hall, the sun draws stripes on the floor
 {
   const n = Math.floor(D / .75);
@@ -313,7 +356,7 @@ glassRun('x', HALL.x0, HALL.x1, HALL.z1);
     sway.push({ o: crown, phase: rnd() * 6.28, amp: .045 }); return g;
   }
   for (let i = 0; i < 7; i++) palm(HALL.x1 + 2.2 + rnd() * 2.5, 2 - i * 7.2 - rnd() * 2, 6 + rnd() * 2.5, .8 + rnd() * 1.4);
-  palm(-2, HALL.z1 - 3.4, 7.2, 1.3); palm(5.5, HALL.z1 - 3.1, 6.3, -1);
+  palm(-2, HALL.z1 - 3.4, 7.2, 1.3); palm(KY ? 11.6 : 5.5, HALL.z1 - 3.1, 6.3, -1);   // with the pier, this one steps aside onto the lava
 }
 
 // ------------------------------------------------------------------ WYLD: hand-dyed tapestries and light pools
@@ -364,13 +407,14 @@ const champs = [];
 {
   const RW = ROOM.x1 - ROOM.x0, RD = ROOM.z0 - ROOM.z1, RCX = (ROOM.x0 + ROOM.x1) / 2, RCZ = (ROOM.z0 + ROOM.z1) / 2;
   const ink = new THREE.MeshStandardMaterial({ color: '#2a2118', roughness: .88, envMapIntensity: .3 });
-  const room = new THREE.Group(); scene.add(room);
+  const koa = new THREE.MeshStandardMaterial({ color: '#7a5538', roughness: .78, envMapIntensity: .55 });
+  const room = new THREE.Group(); room.name = 'champRoom'; scene.add(room);
   const rf = basaltTex.clone(); rf.repeat.set(6, 8); rf.needsUpdate = true;
   const rfloor = new THREE.Mesh(new THREE.BoxGeometry(RW, .2, RD), new THREE.MeshStandardMaterial({ map: rf, color: '#7a6b52', roughness: .22, metalness: .15, envMapIntensity: .9 }));
   rfloor.position.set(RCX, -.098, RCZ);   // 2 mm proud of the hall slab it overlaps: no z-fight in the doorway
   rfloor.receiveShadow = true; rfloor.userData.floor = true; room.add(rfloor); window.__roomFloor = rfloor;
   const ceil = new THREE.Mesh(new THREE.BoxGeometry(RW, .2, RD), ink); ceil.position.set(RCX, ROOM.h + .1, RCZ); room.add(ceil);
-  const box = (w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), ink); m.position.set(x, y, z); room.add(m); return m; };
+  const box = (w, h, d, x, y, z, mat = koa) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); m.receiveShadow = true; room.add(m); return m; };
   box(.3, ROOM.h, RD, ROOM.x0 - .15, ROOM.h / 2, RCZ);                                    // west
   box(RW, ROOM.h, .3, RCX, ROOM.h / 2, ROOM.z0 + .15);                                    // north
   box(RW, ROOM.h, .3, RCX, ROOM.h / 2, ROOM.z1 - .15);                                    // south
@@ -432,9 +476,26 @@ const champs = [];
     obstacles.push({ c: c.pos, r: .8 });
   });
   // west wall: the two machines that carried the titles, and the course between them
+  const konaMachines = [];
   KONA.machines.forEach((m, i) => {
-    const ph = framed(m.photo, 2.8, 2.1, m.name); ph.position.set(ROOM.x0 + .02, 2.35, i ? RCZ - 4.4 : RCZ + 4.4); ph.rotation.y = Math.PI / 2; room.add(ph);
+    const bz = i ? RCZ - 4.6 : RCZ + 4.6;
+    const ph = framed(m.photo, 2.8, 2.1, m.name); ph.position.set(ROOM.x0 + .02, 2.35, bz); ph.rotation.y = Math.PI / 2; room.add(ph);
+    const bx = ROOM.x0 + 4.5;
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.9, .38, .74), M.basaltPolished);
+    plinth.position.set(bx, .19, bz); plinth.castShadow = !lite; room.add(plinth);
+    const spot = {
+      generation: m.generation, name: m.name, text: m.text, index: i,
+      glb: `assets/kona-years/bikes/${m.generation}/speedmax_web.glb`,
+      finish: m.generation === 'cfr-2019' ? '#123352' : '#efe8d8',
+      pos: new THREE.Vector3(bx, 0, bz),
+      view: new THREE.Vector3(bx + 2.4, 0, bz),
+      face: new THREE.Vector3(bx, 1.05, bz),
+      yaw: Math.PI / 2,
+    };
+    plinth.userData.kona = spot; pickables.push(plinth); obstacles.push({ c: spot.pos, r: 1.05 });
+    konaMachines.push(spot);
   });
+  window.__konaMachines = konaMachines;
   if (KONA.scenery[0]) { const sc = framed(KONA.scenery[0], 2.6, 1.8, 'The Queen K — the Ironman bike course'); sc.position.set(ROOM.x0 + .02, 2.35, RCZ); sc.rotation.y = Math.PI / 2; room.add(sc); }
   // title over the doorway, hall side
   const sign = lettering(3.6, .9, g => {
@@ -448,7 +509,7 @@ const champs = [];
 const wyldBikes = [];
 if (WROOMDATA) {
   const W = WROOMDATA, RW = WROOM.x1 - WROOM.x0, RD = WROOM.z0 - WROOM.z1, CX = (WROOM.x0 + WROOM.x1) / 2, CZ2 = (WROOM.z0 + WROOM.z1) / 2;
-  const room = new THREE.Group(); scene.add(room);
+  const room = new THREE.Group(); room.name = 'wyldRoom'; scene.add(room);
   // a white gallery: pearl marble, a glossy floor, and the dye appears only as light and on the bikes
   const terr = canvasTex(1024, 1024, (g, w, h) => {
     g.fillStyle = '#f7f5f4'; g.fillRect(0, 0, w, h);
@@ -673,7 +734,7 @@ const infos = [];                                                   // decor wit
     sway.push({ o: crown, phase: seed * 1.7, amp: .012, pivot: true });
     scene.add(g); obstacles.push({ c: new THREE.Vector3(x, 0, z), r: .55 }); return g;
   }
-  [[6.1, 2.6], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, 3.6], [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
+  [[6.1, 0.35], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, -3.9], KY ? [-6.1, -37.4] : [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
     .forEach(([x, z], i) => pottedPalm(x, z, 2.2 + (i % 3) * .25, i + 1));
   if (false && WROOMDATA) [[WROOM.x0 + 3.2, WROOM.z0 - .8], [WROOM.x0 + 3.2, WROOM.z1 + .8], [WROOM.x1 - 1.1, WROOM.z1 + .8]].forEach(([x, z], i) => pottedPalm(x, z, 2.6, i + 7));   // the WYLD gallery stays botanically empty: clean white, bikes only
   [[ROOM.x0 + .9, ROOM.z0 - .9], [ROOM.x0 + .9, ROOM.z1 + .9]].forEach(([x, z], i) => pottedPalm(x, z, 2.4, i + 11));
@@ -827,8 +888,20 @@ heritage.forEach((p, i) => {
   }
 }
 
+// ------------------------------------------------------------------ the Kona Pier: Kona by Year
+const pier = KY ? buildPier({ scene, data: KY, lettering, canvasTex, M, WYLD, FONT, SERIF, lite, coarse, pickables, obstacles }) : null;
+// ------------------------------------------------------------------ Lava Night: the Halloween room by the entrance
+const hween = buildHalloween({ scene, canvasTex, lettering, lightPool, basaltTex, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x0 });
+hall.add(hween.sign);
+const sanctuary = buildSanctuary({ scene, lettering, lightPool, FONT, SERIF, lite, coarse, pickables, obstacles });
+sanctuary.sign.position.set(0, SDOOR.h + .7, HALL.z0 - .04); sanctuary.sign.rotation.y = Math.PI; hall.add(sanctuary.sign);
+const galleries = buildGalleries({ scene, lettering, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x1 });
+galleries.sign.rotation.y = -Math.PI / 2; hall.add(galleries.sign);
+
 // ------------------------------------------------------------------ bikes (streamed, nearest first)
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+let findsApi = null;
+buildFinds({ scene, loader, pickables }).then(api => { findsApi = api; }).catch(e => console.warn('finds', e));
 let loaded = 0; const modelled = PIECES.filter(p => p.glb);
 function chainOf(node) {                                            // instanced links along the stored path (static)
   const path = node.userData.chain_path; if (!path) return;
@@ -875,6 +948,104 @@ async function loadBike(p) {
   const cs = contactShadow(2.1, .55); cs.position.y = p.top + .004; cs.rotation.z = p.rotY; p.group.add(cs);
   bike.traverse(o => { if (o.isMesh) pickables.push(o); });
 }
+let pierBikeLoading = false, pierOut = false;
+const sideRooms = ['champRoom', 'wyldRoom'].map(n => scene.getObjectByName(n)).filter(Boolean);
+async function loadPierBike() {                                       // the current CFR, turning under the finish arch
+  if (!pier || pierBikeLoading) return; pierBikeLoading = true;
+  const cfr = PIECES.find(p => p.key === 'cfr'); if (!cfr?.glb) return;
+  const gltf = await loader.loadAsync(cfr.glb);
+  dressBike(gltf.scene, { key: 'cfr', finish: null }); gltf.scene.traverse(o => { o.castShadow = false; });
+  pier.setBike(gltf.scene);
+}
+async function loadSanctuaryBikes() {
+  const src = WROOMDATA?.bike?.glb || PIECES.find(p => p.key === 'cfr')?.glb;
+  if (!src || sanctuary.films.some(f => f.bike)) return;
+  const gltf = await loader.loadAsync(src);
+  for (const film of sanctuary.films) {
+    const bike = gltf.scene.clone(true);
+    bike.traverse(o => { if (o.isMesh) { o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); o.castShadow = false; } });
+    dressBike(bike, { key: 'cfr', finish: null });
+    bike.traverse(o => { for (const m of [].concat(o.material || [])) if (m.name === 'paint_frame') applyWyld(m, bike, { stops: film.stops, angle: film.angle, scale: film.scale, flow: film.flow, darkness: film.id === 'aero-glam' || film.id === 'lake-house' || film.id === 'hex' ? .45 : 0 }); });
+    const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
+    bike.position.set(-c.x, -box.min.y, -c.z);
+    const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = film.rotY; holder.position.y = film.top;
+    film.group.add(holder); film.bike = holder;
+    holder.traverse(o => { if (o.isMesh) { o.userData.sanctuary = film; pickables.push(o); } });
+  }
+}
+const THEME_FINISH = { bio: '#1f6b3a', horror: '#1a0a0e', alien: '#0c3d3a', zombie: '#5a5834' };
+async function loadThemeBikes() {
+  const src = PIECES.find(p => p.key === 'cfr')?.glb;
+  if (!src) return;
+  const gltf = await loader.loadAsync(src);
+  for (const room of galleries.rooms) {
+    if (room.bike) continue;
+    const bike = gltf.scene.clone(true);
+    bike.traverse(o => {
+      if (!o.isMesh) return;
+      o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
+      o.castShadow = !lite;
+    });
+    dressBike(bike, { key: 'cfr', finish: THEME_FINISH[room.id] });
+    const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
+    bike.position.set(-c.x, -box.min.y, -c.z);
+    const holder = new THREE.Group();
+    holder.add(bike);
+    holder.rotation.y = room.specimenYaw || 0;
+    holder.position.set(room.specimen.x, room.specimen.y + .2, room.specimen.z);
+    galleries.group.add(holder);
+    room.bike = holder;
+    holder.traverse(o => {
+      if (!o.isMesh) return;
+      delete o.userData.piece;
+      o.userData.gallery = room;
+      for (const m of [].concat(o.material || [])) {
+        if (m?.name === 'paint_frame') { m.emissive = new THREE.Color(THEME_FINISH[room.id]); m.emissiveIntensity = .28; }
+      }
+      pickables.push(o);
+    });
+  }
+}
+async function loadKonaMachines() {
+  const room = scene.getObjectByName('champRoom'); if (!room || !window.__konaMachines?.length) return;
+  for (const spot of window.__konaMachines) {
+    if (spot.bike) continue;
+    const gltf = await loader.loadAsync(spot.glb);
+    const bike = gltf.scene;
+    dressBike(bike, { key: spot.generation, finish: spot.finish });
+    const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
+    bike.position.set(-c.x, -box.min.y, -c.z);
+    const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = spot.yaw; holder.position.set(spot.pos.x, .38, spot.pos.z);
+    room.add(holder); spot.bike = holder;
+    holder.traverse(o => { if (o.isMesh) { o.userData.kona = spot; pickables.push(o); } });
+  }
+}
+function visitKona(spot) {
+  if (!spot) return;
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null;
+  route(spot.view, spot.face, null); path.kona = spot;
+}
+function openKona(spot) {
+  current = null; champ = null;
+  $('cYears').textContent = 'Size M · published geometry';
+  $('cName').textContent = spot.name;
+  $('cMat').textContent = spot.generation === 'cfr-2019' ? 'Disc brakes · 80 mm rims' : 'Rim brakes · Trident storage';
+  $('cNote').textContent = `${spot.text} Skeleton from Canyon’s size-M chart: stack 489 mm, reach 438 mm, seat angle 80.5°, chainstay 420 mm, wheelbase 1014 mm. Tube depths are a silhouette study, not a photo trace.`;
+  $('cStats').hidden = true;
+  $('cMedia').innerHTML = '';
+  const other = window.__konaMachines.find(s => s !== spot);
+  $('cActions').innerHTML = `<button class="btn primary" id="cOtherGen">${esc(other?.name || 'The other generation')} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back to the hall</button>`;
+  $('cOtherGen').onclick = () => visitKona(other);
+  $('cHall').onclick = () => { closeCard(); route({ x: 0, z: DZ }, null, null); };
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+async function loadHweenBike() {
+  const cfr = PIECES.find(p => p.key === 'cfr'); if (!cfr?.glb || hween.piece.bike) return;
+  const gltf = await loader.loadAsync(cfr.glb);
+  hween.setBike(gltf.scene, b => dressBike(b, { key: 'cfr', finish: null }));
+  hween.piece.bike.traverse(o => { if (o.isMesh) { o.userData.hween = hween.piece; delete o.userData.piece; } });
+}
 async function loadAll() {
   const order = [...modelled].sort((a, b) => a.pos.distanceTo(start) - b.pos.distanceTo(start));
   for (const p of order) {
@@ -887,7 +1058,7 @@ async function loadAll() {
 
 // ------------------------------------------------------------------ visitor
 const start = new THREE.Vector3(0, 0, 3.4);
-const P = { x: 0, z: 3.4, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
+const P = { x: 0, z: 3.4, y: 0, yaw: 0, pitch: -.04, vx: 0, vz: 0 };
 let started = false, path = null, keys = new Set(), current = null, drag = null, bob = 0;
 let nearbyPiece = null;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
@@ -929,25 +1100,47 @@ function savePose() {
 addEventListener('pagehide', savePose);
 $('passportBtn')?.addEventListener('click', () => {
   const { seen, total } = passportProgress();
-  toast(`Museum Passport · ${seen} of ${total} bikes discovered${seen === total && total ? ' · collection complete' : ''}`);
+  const found = readFinds().length;
+  toast(`Museum Passport · ${seen} of ${total} bikes · ${found} of ${FINDS.length} shoreline finds${seen === total && found === FINDS.length ? ' · the coast is complete' : ''}`);
 });
 passportProgress();
 
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
-const roomOf = (x, z) => window.__museumArt?.regionOf?.(x, z) || (x >= WALK.x0 - .05 ? 'hall' : z > -26.1 ? 'champ' : 'wyld');
-const DOORZ = { champ: DZ, wyld: WZ };
-function route(to, face, piece) {                                   // via doorways and the open aisle, never through plinths
+const roomOf = (x, z) => {
+  const art = window.__museumArt?.regionOf?.(x, z); if (art) return art;
+  if (x > 7.15 && z > .6 && z < 28 && x < 26) return galleryFloorY(x, z) > 2.2 ? 'gallery' : 'stair';
+  if (z > HALL.z0 - .15 && x > SROOM.x0 && x < SROOM.x1) return 'sanctuary';
+  if (KY && z < -46.3) return 'pier';
+  if (x >= WALK.x0 - .05) return 'hall';
+  return z > -8.6 ? 'hween' : z > -26.1 ? 'champ' : 'wyld';
+};
+const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5, hween: (HDOOR.z0 + HDOOR.z1) / 2 };
+const PIER_IN = [{ x: 1.2, z: -38.6 }, { x: 5.6, z: -38.6 }, { x: 5.4, z: -44.6 }, { x: 5.4, z: -48.4 }];   // round the apse plinth, through the glass door
+function route(to, face, piece) {                                   // aisle first, then the doorway — never a diagonal through the plinths
   const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
-  const done = () => { path = pts; path.face = face; path.piece = piece || null; };
+  const done = () => { path = pts; path.stuck = 0; path.face = face; path.piece = piece || null; };
+  const aisleX = x => clamp(x, -1.2, 1.2);
+  const viaAisle = (from, z) => {
+    pts.push({ x: aisleX(from.x), z: from.z });
+    if (Math.abs(from.z - z) > .6) pts.push({ x: 0, z });
+  };
+  if (a === 'gallery' && b === 'gallery') { pts.push({ x: 12.2, z: P.z }, { x: 12.2, z: to.z }, { x: to.x, z: to.z }); return done(); }
+  if (a === 'stair' && b === 'gallery') { pts.push({ x: 10, z: 5.6 }, { x: 12.2, z: to.z }, { x: to.x, z: to.z }); return done(); }
   if (a === b && a !== 'hall') { pts.push({ x: to.x, z: to.z }); return done(); }
   let from = { x: P.x, z: P.z };
-  if (a !== 'hall') { pts.push({ x: -9.2, z: DOORZ[a] }, { x: -5.4, z: DOORZ[a] }); from = pts[pts.length - 1]; }
-  const aisleX = x => clamp(x, -1.2, 1.2);
-  if (b !== 'hall') {
-    if (Math.abs(from.z - DOORZ[b]) > 2.5) pts.push({ x: aisleX(from.x), z: from.z }, { x: aisleX(0), z: DOORZ[b] });
-    pts.push({ x: -5.4, z: DOORZ[b] }, { x: -9.2, z: DOORZ[b] }, { x: to.x, z: to.z }); return done();
+  if (a === 'pier') { pts.push(...[...PIER_IN].reverse()); from = PIER_IN[0]; }
+  else if (a === 'sanctuary') { pts.push({ x: 0, z: 6.2 }, { x: 0, z: 3.2 }); from = { x: 0, z: 3.2 }; }
+  else if (a === 'gallery' || a === 'stair') { pts.push({ x: 10, z: 5.7 }, { x: 10, z: 1.5 }, { x: 8.8, z: 3.2 }, { x: 6.5, z: 3.7 }, { x: 0, z: 3.7 }); from = { x: 0, z: 3.7 }; }
+  else if (a !== 'hall' && DOORZ[a] != null) { pts.push({ x: -9.2, z: DOORZ[a] }, { x: -5.4, z: DOORZ[a] }); from = pts[pts.length - 1]; }
+  if (b === 'pier') { viaAisle(from, -38); pts.push(...PIER_IN, { x: to.x, z: to.z }); return done(); }
+  if (b === 'sanctuary') { viaAisle(from, 3.2); pts.push({ x: 0, z: 6.4 }, { x: to.x, z: to.z }); return done(); }
+  if (b === 'gallery' || b === 'stair') {
+    viaAisle(from, 3.0);
+    pts.push({ x: 4.5, z: 3.7 }, { x: 6.5, z: 3.7 }, { x: 8.8, z: 3.2 }, { x: 10, z: 1.5 }, { x: 10, z: 5.7 }, { x: 12.2, z: to.z }, { x: to.x, z: to.z });
+    return done();
   }
-  if (Math.abs(from.z - to.z) > 2.5) { pts.push({ x: aisleX(from.x), z: from.z }, { x: aisleX(to.x), z: to.z + (to.z < from.z ? 1.2 : -1.2) }); }
+  if (b !== 'hall' && DOORZ[b] != null) { viaAisle(from, DOORZ[b]); pts.push({ x: -5.4, z: DOORZ[b] }, { x: -9.2, z: DOORZ[b] }, { x: to.x, z: to.z }); return done(); }
+  viaAisle(from, to.z);
   pts.push({ x: to.x, z: to.z });
   done();
 }
@@ -977,7 +1170,7 @@ function openChamp(c) {
     .map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
   const m = KONA.machines.find(x => x.generation === c.generation);
   $('cMedia').innerHTML = `<figure class="c-photo"><img src="${esc(c.photo.src)}" alt="${esc(c.athlete)} — ${esc(c.photoCaption)}" referrerpolicy="no-referrer"><figcaption>${esc(c.photoCaption)}<br><a href="${esc(c.photo.page)}" target="_blank" rel="noopener">© ${esc(c.photo.author)} · ${esc(c.photo.license)} ↗</a></figcaption></figure>`
-    + (m ? `<p class="c-note" style="margin-top:14px"><b class="c-spec">${esc(m.name)}</b>${esc(m.text)} Its 3D reconstruction is in the workshop.</p>` : '')
+    + (m ? `<p class="c-note" style="margin-top:14px"><b class="c-spec">${esc(m.name)}</b>${esc(m.text)} The size-M study of that generation stands in this room.</p>` : '')
     + `<a class="c-src" href="${esc(c.source)}" target="_blank" rel="noopener">Race record ↗</a>`;
   const next = champs[(c.index + 1) % champs.length];
   $('cActions').innerHTML = `<button class="btn primary" id="cNextChamp">Next: ${esc(String(next.year))} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back to the hall</button>`;
@@ -1018,21 +1211,136 @@ function openInfo(n) {
   $('cInfoClose').onclick = () => closeCard();
   $('card').classList.add('on'); document.body.classList.add('card-open');
 }
+// ------------------------------------------------------------------ the pier: a year, a machine, the finish
+let yearSel = null;
+function visitPier(target) {                                          // target: a year station or the finale
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null; pier.load(); loadPierBike();
+  route(target.view, target.face, null); path.pier = target;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'pier'));
+}
+const credit = c => `<a href="${esc(c.source.page)}" target="_blank" rel="noopener">© ${esc(c.source.author)} · ${esc(c.source.license)} ↗</a>`;
+const paintingFig = c => `<figure class="c-photo"><img src="assets/kona-years/${esc(c.id)}.jpg" alt="${esc(c.caption)}, as a painted canvas"><figcaption>${esc(c.caption)}<br>Painted from a Wikimedia Commons photograph: ${credit(c)} · the canvas carries the same licence</figcaption></figure>`;
+function openYear(s) {
+  yearSel = s; champ = null; current = null;
+  const raced = s.status === 'raced';
+  $('cYears').textContent = raced ? `Kona ${s.year} · ${s.race}'s race · best Speedmax` : `Kona ${s.year}`;
+  $('cName').textContent = raced ? s.athlete : s.headline;
+  $('cMat').textContent = raced ? [ordinal(s.place), s.time || s.gap, s.bike].filter(Boolean).join(' · ') : 'No world championship on the Big Island';
+  $('cNote').textContent = s.note;
+  $('cStats').hidden = !raced;
+  if (raced) $('cStats').innerHTML = [[ordinal(s.place), s.place === 1 ? 'world champion' : 'place'], [s.time || s.gap, s.time ? 'finish' : 'to the winner'], [s.bike.replace('Speedmax ', ''), 'Speedmax']]
+    .map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
+  $('cMedia').innerHTML = (s.canvasInfo ? paintingFig(s.canvasInfo) : '')
+    + `<p class="c-view">${s.sources.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">Source ${i + 1} ↗</a>`).join(' · ')}</p>`;
+  const next = pier.stations[s.index + 1];
+  $('cActions').innerHTML = `<button class="btn primary" id="cNextYear">${next ? `Next: ${next.year}` : 'To the finish'} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back<span class="long"> to the hall</span></button>`;
+  $('cNextYear').onclick = () => visitPier(next || pier.finale);
+  $('cHall').onclick = () => { closeCard(); yearSel = null; route({ x: 0, z: -37.2 }, null, null); };
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+function openEra(e) {
+  current = null; champ = null;
+  $('cYears').textContent = 'The Kona machine'; $('cName').textContent = e.era.name.split(' · ')[0]; $('cMat').textContent = e.era.name.split(' · ')[1] || '';
+  $('cNote').textContent = e.era.text; $('cStats').hidden = true;
+  $('cMedia').innerHTML = paintingFig(e.canvas);
+  $('cActions').innerHTML = `<button class="btn primary" id="cWalk">Walk the years <span aria-hidden="true">→</span></button>`;
+  $('cWalk').onclick = () => visitPier(pier.stations[0]);
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+function openFinale() {
+  current = null; champ = null; yearSel = null;
+  const cfr = PIECES.find(p => p.key === 'cfr');
+  $('cYears').textContent = 'The finish · MY2027'; $('cName').textContent = cfr?.name || 'Speedmax CFR';
+  $('cMat').textContent = 'The descendant of every bike on this pier';
+  $('cNote').textContent = 'Twelve Octobers end here, under the arch: the current Speedmax CFR, turning slowly over Kailua Bay. Step into its studio to take it apart, paint it, or put it in the wind tunnel.';
+  $('cStats').hidden = !cfr?.stats; if (cfr?.stats) $('cStats').innerHTML = cfr.stats.map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
+  $('cMedia').innerHTML = '';
+  $('cActions').innerHTML = (cfr?.viewer ? `<a class="btn primary" href="${esc(cfr.viewer)}"><span class="long">Enter </span>3D studio <span aria-hidden="true">→</span></a>` : '') + `<button class="btn ghost" id="cBackYears">Back to 2014</button>`;
+  $('cBackYears').onclick = () => visitPier(pier.stations[0]);
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+
+// ------------------------------------------------------------------ Lava Night
+function visitHween() {
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null; loadHweenBike();
+  route(hween.piece.view, hween.piece.face, null); path.hween = true;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'hween'));
+}
+function openHween() {
+  current = null; champ = null;
+  const cfr = PIECES.find(p => p.key === 'cfr');
+  $('cYears').textContent = 'Lava Night · Halloween'; $('cName').textContent = 'Speedmax CFR, after dark';
+  $('cMat').textContent = 'Midnight black · ember lettering · a museum livery';
+  $('cNote').textContent = 'Once a year the lava field under the museum wakes up. The lanterns are carved, the bats are out, and the MY2027 Speedmax CFR wears black and ember. The paint is ours, made for the night — not a Canyon colourway. The skeleton is still waiting for its finish line.';
+  $('cStats').hidden = !cfr?.stats; if (cfr?.stats) $('cStats').innerHTML = cfr.stats.map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
+  $('cMedia').innerHTML = '';
+  $('cActions').innerHTML = (cfr?.viewer ? `<a class="btn primary" href="${esc(cfr.viewer)}"><span class="long">Enter </span>3D studio <span aria-hidden="true">→</span></a>` : '') + `<button class="btn ghost" id="cHweenOut">Back<span class="long"> to the hall</span></button>`;
+  $('cHweenOut').onclick = () => { closeCard(); route({ x: -1, z: 2.5 }, null, null); };
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+
+function visitSanctuary(film) {
+  if (!film) return;
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null;
+  route(film.view, film.face, null); path.sanctuary = film;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'sanctuary'));
+}
+function openSanctuary(film) {
+  current = null; champ = null;
+  $('cYears').textContent = `${film.film} · ${film.place}`;
+  $('cName').textContent = film.name;
+  $('cMat').textContent = film.sub;
+  $('cNote').textContent = `${film.tagline} ${film.persona}.`;
+  $('cStats').hidden = true;
+  const dyes = film.stops.map(c => `<span style="background:${c}" title="${c}"></span>`).join('');
+  $('cMedia').innerHTML = `<div class="c-dyes">${dyes}</div><p class="c-view">${esc(film.tagline)}</p>`;
+  const next = sanctuary.films[(film.index + 1) % sanctuary.films.length];
+  $('cActions').innerHTML = `<a class="btn primary" href="https://joaoccaldas.github.io/ai/studio/wyld-store/bike-porn/#${esc(film.id)}">Watch the film <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextFilm">Next<span class="long">: ${esc(next.name)}</span></button>`;
+  $('cNextFilm').onclick = () => visitSanctuary(next);
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+function visitGallery(spot) {
+  if (!spot) return;
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null;
+  route(spot.view, spot.face, null); path.gallery = spot;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'gallery'));
+}
+function openGallery(spot) {
+  current = null; champ = null;
+  const list = [...galleries.bays, ...galleries.rooms];
+  $('cYears').textContent = spot.sub || 'Upper floor';
+  $('cName').textContent = spot.title || spot.name;
+  $('cMat').textContent = galleries.rooms.some(r => r.id === spot.id) ? 'Themed room' : 'Themed floor';
+  $('cNote').textContent = spot.text;
+  $('cStats').hidden = true;
+  $('cMedia').innerHTML = `<div class="c-dyes"><span style="background:${spot.floor}"></span><span style="background:${spot.vein}"></span></div>`;
+  const next = list[(list.indexOf(spot) + 1) % list.length];
+  $('cActions').innerHTML = `<button class="btn primary" id="cNextBay">Next<span class="long">: ${esc(next.title || next.name)}</span> <span aria-hidden="true">→</span></button><button class="btn ghost" id="cGalleryDown">Down to the hall</button>`;
+  $('cNextBay').onclick = () => visitGallery(next);
+  $('cGalleryDown').onclick = () => { closeCard(); route({ x: 0, z: 2.2 }, null, null); };
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+
 // ------------------------------------------------------------------ guided tour: hands-free walk through the highlights
 const tour = { on: false, i: -1, t: 0, paused: false, stops: [] };
 const DWELL = 9;                                                     // seconds at each stop
 function tourStops() {
   const H = PIECES.filter(p => p.glb && !p.flagship), F = PIECES.filter(p => p.flagship);
-  const stops = [...H.map(p => ({ kind: 'piece', p })),
+  const stops = [{ kind: 'hween' }, ...H.map(p => ({ kind: 'piece', p })),
     ...[0, 2, 4, 5].map(i => champs[i]).filter(Boolean).map(c => ({ kind: 'champ', c })),
     ...[0, 3].map(i => wyldBikes[i]).filter(Boolean).map(v => ({ kind: 'wyld', v })),
-    ...F.map(p => ({ kind: 'piece', p }))];
+    ...F.map(p => ({ kind: 'piece', p })),
+    ...(pier ? [0, 4, 9, 10, 11].map(i => pier.stations[i]).filter(Boolean).map(y => ({ kind: 'pier', y })).concat([{ kind: 'pier', y: pier.finale }]) : [])];
   return stops;
 }
 function tourGo(i) {
   tour.i = i; tour.t = 0; const st = tour.stops[i];
   if (!st) return tourEnd(true);
-  if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else visitWyld(st.v);
+  if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else if (st.kind === 'pier') visitPier(st.y); else if (st.kind === 'hween') visitHween(); else visitWyld(st.v);
   $('tourStep').textContent = `${i + 1} / ${tour.stops.length}`;
   $('tourBar').style.setProperty('--p', 0);
 }
@@ -1085,7 +1393,7 @@ function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
   const coaching = coarse && (() => { try { return localStorage.getItem('speedmax.coach.v1') !== '1'; } catch (_) { return true; } })();
-  const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld'].includes(passport.pose.region)
+  const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld', 'pier', 'hween'].includes(passport.pose.region)
     && walkable(passport.pose.x, passport.pose.z);
   passport.visits = (passport.visits || 0) + 1;
   if (returning) {
@@ -1098,6 +1406,7 @@ function enter() {
     path = [{ x: 0, z: .6 }];
   }
   writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach();
+  if (!returning && pier && new URLSearchParams(location.search).get('room') === 'pier') setTimeout(() => visitPier(pier.stations[0]), 400);
 }
 $('enterBtn').onclick = enter;
 
@@ -1106,7 +1415,21 @@ $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? ''
   <span class="n">${p.thumb ? `<img src="${esc(p.thumb)}" alt="" loading="lazy">` : i + 1}</span><span><small>${esc(p.years)}</small><b>${esc(p.name.replace(/^Speed[Mm]ax /, ''))}</b></span></button>`).join('');
 if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
-$('railInner').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8); if (b.dataset.room === 'kona') visitChamp(champs[0]); else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]); else visit(PIECES[+b.dataset.i]); });
+if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
+$('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
+$('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
+for (const r of galleries.rooms) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
+$('railInner').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8);
+  const theme = galleries.rooms.find(r => r.id === b.dataset.room);
+  if (theme) visitGallery(theme);
+  else if (b.dataset.room === 'sanctuary') visitSanctuary(sanctuary.altar);
+  else if (b.dataset.room === 'hween') visitHween();
+  else if (b.dataset.room === 'pier') visitPier(pier.stations[0]);
+  else if (b.dataset.room === 'kona') visitChamp(champs[0]);
+  else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]);
+  else visit(PIECES[+b.dataset.i]);
+});
 function railActive(p) {
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', +c.dataset.i === p?.index));
   document.querySelector(`.chip[data-i="${p?.index}"]`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
@@ -1200,8 +1523,11 @@ function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.user
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.far = 40;
-  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor].filter(Boolean), false);
-  for (const h of hits) { if (!h.object.visible) continue; if (h.object.userData.artPortal) return { artPortal: h.object.userData.artPortal }; if (h.object.userData.info) return { info: h.object.userData.info }; if (h.object.userData.wyldBike) return { wyld: h.object.userData.wyldBike }; if (h.object.userData.piece) return { piece: h.object.userData.piece, obj: h.object }; if (h.object.userData.champ) return { champ: h.object.userData.champ }; if (h.object.userData.floor) return { point: h.point }; }
+  const hits = ray.intersectObjects([...pickables, floor, window.__roomFloor, window.__wyldFloor, hween.group.visible ? hween.floor : null, ...galleries.floors, ...(pier?.group.visible ? pier.floors : [])].filter(Boolean), false);
+  for (const h of hits) { if (!h.object.visible) continue; const u = h.object.userData;
+    if (u.artPortal) return { artPortal: u.artPortal }; if (u.hween) return { hween: true }; if (u.year) return { year: u.year }; if (u.era) return { era: u.era }; if (u.finale) return { finale: u.finale };
+    if (u.sanctuary) return { sanctuary: u.sanctuary }; if (u.gallery) return { gallery: u.gallery }; if (u.kona) return { kona: u.kona }; if (u.find) return { find: u.find };
+    if (u.info) return { info: u.info }; if (u.wyldBike) return { wyld: u.wyldBike }; if (u.piece) return { piece: u.piece, obj: h.object }; if (u.champ) return { champ: u.champ }; if (u.floor) return { point: h.point }; }
   return null;
 }
 canvas.addEventListener('pointerdown', e => {
@@ -1225,8 +1551,20 @@ canvas.addEventListener('pointerup', e => {
   const hit = pick(e.clientX, e.clientY);
   if (hit?.piece && hit.piece === current && current.exT > 0) { const id = partOf(current, hit.obj); if (id) { openPart(current, id); return; } }
   if (hit?.piece && hit.piece === current && $('card').classList.contains('on')) return;
-  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.artPortal) { haptic(8); tourEnd(false); coachDid('tap'); }
+  if (hit?.piece || hit?.champ || hit?.wyld || hit?.info || hit?.artPortal || hit?.year || hit?.era || hit?.finale || hit?.hween || hit?.sanctuary || hit?.gallery || hit?.kona || hit?.find) { haptic(8); tourEnd(false); coachDid('tap'); }
   if (hit?.artPortal) { window.__museumArt?.enter?.(hit.artPortal); closeCard(); return; }
+  if (hit?.sanctuary) { visitSanctuary(hit.sanctuary); return; }
+  if (hit?.gallery) { visitGallery(hit.gallery); return; }
+  if (hit?.hween) { visitHween(); return; }
+  if (hit?.year || hit?.finale) { visitPier(hit.year || hit.finale); return; }
+  if (hit?.era) { openEra(hit.era); return; }
+  if (hit?.find) {
+    const spot = hit.find;
+    if (findsApi?.take(spot)) toast(`${spot.name}. ${spot.line} ${findsApi.kept.size} of ${FINDS.length}.`);
+    else toast(`${spot.name} — already with you.`);
+    return;
+  }
+  if (hit?.kona) { visitKona(hit.kona); return; }
   if (hit?.champ) { visitChamp(hit.champ); return; }
   if (hit?.wyld) { visitWyld(hit.wyld); return; }
   if (hit?.info) { openInfo(hit.info); return; }
@@ -1247,6 +1585,8 @@ addEventListener('keydown', e => {
   if (k === 'x' && current?.bike) setExploded(current, !(current.exT > 0));
   if (k === 'k' && champs.length) visitChamp(champs[0]);
   if (k === 'y' && wyldBikes.length) visitWyld(wyldBikes[0]);
+  if (k === 'p' && pier) visitPier(pier.stations[0]);
+  if (k === 'h') visitHween();
   if (k === 'enter' && current?.viewer) location.href = current.viewer;
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
@@ -1321,16 +1661,19 @@ function frame(now) {
   if (path && path.face && path.length <= 1) {                        // arrive and turn to the piece
     const fx = path.face.x - P.x, fz = path.face.z - P.z;
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-    const wantPitch = Math.atan2(path.face.y - EYE, Math.hypot(fx, fz));
+    const wantPitch = Math.atan2(path.face.y - (P.y + EYE), Math.hypot(fx, fz));
     P.yaw += dyaw * (1 - Math.exp(-dt * 5.6)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 4.8));
-    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld; path = null; if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); }
+    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween, sa = path.sanctuary, gy = path.gallery, kn = path.kona; path = null; if (hw) openHween(); if (sa) openSanctuary(sa); if (gy) openGallery(gy); if (kn) openKona(kn); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 15); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
-  if (walkable(nx, nz)) { P.x = nx; P.z = nz; }
-  else if (walkable(nx, P.z)) { P.x = nx; P.vz *= .5; }
-  else if (walkable(P.x, nz)) { P.z = nz; P.vx *= .5; }
-  else { P.vx = P.vz = 0; if (path) path.shift(); }
+  if (walkable(nx, nz)) { P.x = nx; P.z = nz; if (path) path.stuck = 0; }
+  else if (walkable(nx, P.z)) { P.x = nx; P.vz *= .5; if (path) path.stuck = 0; }
+  else if (walkable(P.x, nz)) { P.z = nz; P.vx *= .5; if (path) path.stuck = 0; }
+  else {
+    P.vx = P.vz = 0;
+    if (path) { path.stuck = (path.stuck || 0) + dt; if (path.stuck > .45) { path.shift(); path.stuck = 0; } }
+  }
   const moving = Math.hypot(P.vx, P.vz); bob += dt * moving * 3.1;
   const activeKeys = keys.has('w') || keys.has('a') || keys.has('s') || keys.has('d') || keys.has('arrowup') || keys.has('arrowdown');
   const flowing = started && !tour.on && !$('card').classList.contains('on')
@@ -1344,8 +1687,10 @@ function frame(now) {
   }
   // before entering, the camera breathes at the doorway
   const idle = started ? 0 : 1;
+  const wantY = galleryFloorY(P.x, P.z);
+  P.y += (wantY - P.y) * (1 - Math.exp(-dt * 8));
   const yaw = P.yaw + idle * Math.sin(t * .13) * .1, pitch = P.pitch + idle * Math.sin(t * .1) * .015;
-  camera.position.set(P.x, EYE + (reduce ? 0 : Math.sin(bob) * .012 * Math.min(1, moving)), P.z);
+  camera.position.set(P.x, P.y + EYE + (reduce ? 0 : Math.sin(bob) * .045 * Math.min(1, moving)), P.z);
   fwd.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
   camera.lookAt(look.copy(camera.position).add(fwd));
   const cardOn = $('card').classList.contains('on'), W = innerWidth, H = innerHeight;
@@ -1354,7 +1699,7 @@ function frame(now) {
   else if (camera.view?.enabled) camera.clearViewOffset();
   // hover (desktop): halo + name tag
   let hot = null;
-  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
+  if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = h?.champ || (h?.hween ? { year: 'Lava Night', athlete: 'Speedmax CFR, after dark', time: 'Halloween' } : null) || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.sanctuary ? { year: h.sanctuary.film, athlete: h.sanctuary.name, time: h.sanctuary.persona } : h?.gallery ? { year: 'Upper floor', athlete: h.gallery.title || h.gallery.name, time: h.gallery.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
     if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
     if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
@@ -1396,13 +1741,32 @@ function frame(now) {
       const el = els[i]; if (!el) return;
       const vis = v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
       el.style.opacity = vis ? Math.min(1, (lab.ex - .05) * 2) : 0; el.style.pointerEvents = vis ? '' : 'none';
-      el.style.transform = `translate(${(v.x * .5 + .5) * innerWidth}px,${(-v.y * .5 + .5) * innerHeight}px)`;
+      const margin = 10, top = 70, bottom = 100;
+      let x = (v.x * .5 + .5) * innerWidth, y = (-v.y * .5 + .5) * innerHeight;
+      el.style.transform = `translate(${x}px,${y}px)`;
+      const maxX = Math.max(margin, innerWidth - el.offsetWidth - margin);
+      const maxY = Math.max(top, innerHeight - el.offsetHeight - bottom);
+      x = Math.min(Math.max(x, margin), maxX); y = Math.min(Math.max(y, top), maxY);
+      el.style.transform = `translate(${x}px,${y}px)`;
     });
   }
   { // draw only what can be seen: rooms hide each other's bikes (walls between them)
     const reg = roomOf(P.x, P.z);
     for (const p of PIECES) if (p.bike) p.bike.visible = reg === 'hall' || Math.abs(p.pos.z - DOORZ[reg]) < 7;
     for (const b of wyldBikes) if (b.bike) b.bike.visible = reg === 'wyld' || (reg === 'hall' && P.z < -20 && P.x < 3);
+    hween.group.visible = reg === 'hween' || P.z > -32;
+    sanctuary.group.visible = true;
+    galleries.update(t, P, reduce, scene, renderer);
+    if (hween.group.visible) hween.update(t, reduce);
+    if (pier) {
+      pier.group.visible = reg === 'pier' || (reg === 'hall' && P.z < -22);
+      // out on the pier the two walled rooms can't be seen and the hall's shadows don't move: skip both
+      const out = reg === 'pier';
+      if (out !== pierOut) { pierOut = out; for (const r of sideRooms) r.visible = !out; renderer.shadowMap.autoUpdate = !out; renderer.shadowMap.needsUpdate = true; }
+      if (out && P.z < -62) for (const p of PIECES) if (p.bike) p.bike.visible = false;
+      if (P.z < -26 && reg !== 'champ' && reg !== 'wyld' && started) { pier.load(); loadPierBike(); }
+      pier.update(dt, reduce);
+    }
   }
   tourTick(dt);
   if (!reduce) for (const s2 of spinners) s2.o.rotation[s2.axis] += dt * s2.speed;
@@ -1418,6 +1782,7 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 document.fonts?.ready.then(() => lettered.forEach(f => f()));
-loadAll().then(loadWyldBikes).catch(e => console.warn('wyld room', e));
-window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pickables, obstacles, loader };
+initAppShell();
+loadAll().then(loadWyldBikes).then(loadHweenBike).then(loadSanctuaryBikes).then(loadKonaMachines).then(loadThemeBikes).catch(e => console.warn('rooms', e));
+window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
 initArtWorld(window.__museum).catch(e => console.warn('art world', e));

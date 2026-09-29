@@ -17,6 +17,6 @@ export const small = innerWidth < 760 || desktopViewPhone;
 // Light performance mode: phone, small window, or battery-friendly request.
 export const lite = coarse || small;
 
-// CSS + JS should both honor the phone treatment; flip a class so media queries
-// that key off a body class (not viewport width) keep working in Desktop view.
-if (desktopViewPhone || coarse) document.documentElement.classList.add('is-phone');
+// Desktop-view phones are restyled by the inline fit() script in each viewer
+// (html.phone-fit + --fit). Do not add a class for every coarse pointer —
+// that overrode the real phone tab bar.

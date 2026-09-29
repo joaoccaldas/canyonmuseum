@@ -506,7 +506,11 @@ function flyTo(name, dur = 1.4) {
   const v = name==='lab'?{p:[2.55,1.8,3.7],t:[.15,.87,0]}:VIEWS[name]; if (!v) return;
   const p1 = new THREE.Vector3(...v.p), t1 = new THREE.Vector3(...v.t);
   if (coarse && name === 'hero') p1.multiplyScalar(1.25);
-  if (innerWidth < innerHeight) { p1.sub(t1).multiplyScalar(1.55).add(t1); }
+  // Desktop view keeps a wide layout, so the portrait pull-back never ran and
+  // the bike sat in the corner. phone-fit is that case; pull exploded further
+  // so the parts clear the bottom dock.
+  const fit = document.documentElement.classList.contains('phone-fit');
+  if (innerWidth < innerHeight || fit) p1.sub(t1).multiplyScalar(fit && name === 'exploded' ? 1.75 : 1.55).add(t1);
   if (!dur) { camera.position.copy(p1); controls.target.copy(t1); return; }
   tween(camera.position.clone(), controls.target.clone(), p1, t1, dur);
   $$('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === name));
@@ -752,14 +756,16 @@ let shift = 0, shiftT = 0;
 function applyShift() {
   const w = innerWidth, h = innerHeight;
   // Phones: keep the bike in the free space above any open sheet, so every change is visible.
+  // phone-fit is a phone whose layout viewport is still ~980 px.
   const sheet = document.querySelector('.drawer.open');
-  const up = w < 760 ? (sheet ? h * .24 : (S.env==='tunnel'||document.body.classList.contains('painting')) ? h*.15 : 0) : 0;
+  const phone = w < 760 || document.documentElement.classList.contains('phone-fit');
+  const up = phone ? (sheet ? h * .24 : (S.env==='tunnel'||document.body.classList.contains('painting')) ? h*.15 : 0) : 0;
   if (Math.abs(shift) < 1e-4&&!up) camera.clearViewOffset(); else camera.setViewOffset(w, h, -shift * w, up, w, h);
 }
 function resize() {
   const w = innerWidth, h = innerHeight;
   renderer.setSize(w, h, false); camera.aspect = w / h;
-  camera.fov = w < h ? 42 : 32;
+  camera.fov = (w < h || document.documentElement.classList.contains('phone-fit')) ? 42 : 32;
   applyShift();
   camera.updateProjectionMatrix();
   composer?.setSize(w, h); composer?.setPixelRatio?.(DPR);
@@ -799,7 +805,8 @@ function tick(now) {
     camera.position.lerpVectors(tw.p0, tw.p1, k); controls.target.lerpVectors(tw.t0, tw.t1, k);
     if (tw.t >= 1) tw = null;
   }
-  shiftT = (innerWidth>900&&$('.drawer.open'))?-.14:(!document.body.classList.contains('engaged') && innerWidth > 900) ? .13 : 0;
+  const fitPhone = document.documentElement.classList.contains('phone-fit');
+  shiftT = fitPhone ? 0 : (innerWidth>900&&$('.drawer.open'))?-.14:(!document.body.classList.contains('engaged') && innerWidth > 900) ? .13 : 0;
   if (Math.abs(shiftT - shift) > 1e-4) { shift += (shiftT - shift) * (1 - Math.exp(-dt * 3)); applyShift(); camera.updateProjectionMatrix(); }
   if(innerWidth<760)applyShift();
   controls.update();

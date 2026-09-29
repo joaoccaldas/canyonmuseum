@@ -249,6 +249,7 @@ export async function initArtWorld(museum) {
   scene.add(root);
 
   const installations = [];
+  api.installations = installations;
   const hiddenRoom = new THREE.Group();
   hiddenRoom.name = 'SECRET COLLECTION';
   hiddenRoom.visible = false;

@@ -34,6 +34,25 @@ When served locally via `python3 -m http.server 8744`:
 
 ---
 
+## 🌊 The Kona Pier — *Kona by Year*
+
+A teak pier runs out of the apse over the Pacific (Kailua Pier is where every Kona Ironman starts). Along it, one painted canvas per October from 2014 to 2025: the **best-placed Canyon Speedmax** in that year's Kona race, with place, time, bike and sources. 2020 (cancelled) and 2021 (raced in Utah) stand as an empty bay and an empty frame. At the end, under a FINISH arch, the current Speedmax CFR turns on a basalt table.
+
+- **Data:** `museum/kona_years.json` — results, headline and sources per year, plus the Commons credit for every canvas.
+- **Paintings:** `python3 tools/paint_canvases.py` turns the credited Wikimedia Commons photos in `assets/kona-years/src/` into oil-paint canvases (Kuwahara paint patches + brush streaks that follow the picture's contours) and a matching normal map, so the museum's light rakes across real impasto. Baked once, offline — nothing is filtered on the phone. Canvases are derivatives and keep their source licence (CC BY / CC BY-SA).
+- **Mobile budget:** static pier geometry is merged per material, festoon bulbs are one instanced mesh with no real lights, canvases load only when you walk toward the pier, and out on the pier the walled rooms are hidden and the shadow map is frozen.
+- **Test:** `node web/pier-smoke.mjs` (phone viewport: walks out, opens 2023, reaches the finish).
+
+## 📱 The app
+
+- **Install from the site:** "Get the app" in the header (Android/desktop Chrome prompt; iPhone: Share → Add to Home Screen). `manifest.webmanifest` + icons in `app/icons/`.
+- **Secure updates:** `node tools/build_app.mjs` seals each release — it hashes every file (SHA-256) into `app/app-manifest.json` and inlines them into `sw.js`. A new version installs only if every core file downloads intact and matches its hash; otherwise the visitor keeps the last good version. Heavy files are verified the same way on first use. Updates wait for the visitor to tap **Reload**. CI (`app-seal.yml`) fails if a change isn't re-sealed. Test: `node web/app-smoke.mjs` (install, offline reload, tampered release refused).
+- **Android app:** `app/native/` is a Capacitor shell that bundles the museum (offline, native WebView). `.github/workflows/android.yml` builds it, boots it on an emulator and publishes `downloads/SpeedmaxMuseum.apk` + `app/android-version.json` (version, size, SHA-256); the installed app checks that file over HTTPS and offers the update. Add the `SPEEDMAX_KEYSTORE_*` secrets so every release carries the same signature — Android refuses updates signed with a different key.
+
+Rebuild order: `node web/build_landing.mjs && node tools/build_app.mjs`.
+
+---
+
 ## 📚 Essential Documentation
 
 - 🔬 **[`ANALYSIS.md`](ANALYSIS.md):** Complete codebase evaluation, asset rendering breakdown, identified inefficiencies, and reusable template blueprint.
