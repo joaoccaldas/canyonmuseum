@@ -161,8 +161,8 @@ const M = {
   mullion: new THREE.MeshStandardMaterial({ color: '#2b2e33', roughness: .4, metalness: .6 }),
   glass: new THREE.MeshStandardMaterial({ color: '#d9eff0', roughness: .05, metalness: 0, transparent: true, opacity: .07, envMapIntensity: 1.2, depthWrite: false }),
   lectern: new THREE.MeshStandardMaterial({ color: '#faf8f4', roughness: .6 }),
-  line: new THREE.MeshBasicMaterial({ color: '#e9b84a', transparent: true, opacity: .55, fog: false }),
-  edge: new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .7, fog: false }),
+  line: new THREE.MeshBasicMaterial({ color: '#e9b84a', transparent: true, opacity: .55, fog: false, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
+  edge: new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .7, fog: false, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
   ring: new THREE.MeshBasicMaterial({ color: '#35c2bf', transparent: true, opacity: 0, fog: false, depthWrite: false }),
 };
 const hall = new THREE.Group(); scene.add(hall);
@@ -172,9 +172,9 @@ floor.position.set(0, -.2, CZ); floor.receiveShadow = true; floor.userData.floor
 // the Queen K: a faded centre line and edge lines down the aisle
 {
   const dashes = new THREE.InstancedMesh(new THREE.PlaneGeometry(.1, 1.3), M.line, 40); let n = 0;
-  for (let z = 3.5; z > -37; z -= 3.1) { dashes.setMatrixAt(n++, new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(0, .004, z)); }
+  for (let z = 3.5; z > -37; z -= 3.1) { dashes.setMatrixAt(n++, new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(0, .014, z)); }
   dashes.count = n; hall.add(dashes);
-  for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .004, -16.5); hall.add(e); }
+  for (const x of [-1.75, 1.75]) { const e = new THREE.Mesh(new THREE.PlaneGeometry(.06, 41), M.edge); e.rotation.x = -Math.PI / 2; e.position.set(x, .014, -16.5); e.renderOrder = 2; hall.add(e); }
 }
 // plaster wall (lava side) with a shadow-gap skirting
 for (const [a, b] of [[HALL.z0, DOOR.z1], [DOOR.z0, WDOOR.z1], [WDOOR.z0, HALL.z1]]) {
@@ -362,7 +362,7 @@ const champs = [];
   for (const [w, x, z, ry] of [[RD, ROOM.x0 + .02, RCZ, Math.PI / 2], [RW, RCX, ROOM.z0 - .02, 0], [RW, RCX, ROOM.z1 + .02, Math.PI]]) {
     const strip = new THREE.Mesh(new THREE.PlaneGeometry(w, .07), cove); strip.position.set(x, ROOM.h - .25, z); strip.rotation.y = ry; room.add(strip);
   }
-  room.add(placed(lightPool(RW * .9, RD * .9, WYLD.lilac, .18), RCX, .004, RCZ));
+  room.add(placed(lightPool(RW * .9, RD * .9, WYLD.lilac, .18), RCX, .014, RCZ));
   const inside = tapestry(5.2, 1.9, 4.1, .5); inside.position.set(ROOM.x1 - .02, 3.4, (DOOR.z0 + DOOR.z1) / 2 + 4.6); inside.rotation.y = -Math.PI / 2; room.add(inside);
   const inside2 = tapestry(5.2, 1.9, 1.7, 2.2); inside2.position.set(ROOM.x1 - .02, 3.4, (DOOR.z0 + DOOR.z1) / 2 - 4.6); inside2.rotation.y = -Math.PI / 2; room.add(inside2);
   box(.3, ROOM.h, (ROOM.z0 - DOOR.z1), ROOM.x1 + .15, ROOM.h / 2, (ROOM.z0 + DOOR.z1) / 2).visible = false;   // east face is the hall wall
@@ -535,7 +535,7 @@ async function loadWyldBikes() {
     const box = new THREE.Box3().setFromObject(bike), c = box.getCenter(new THREE.Vector3());
     bike.position.set(-c.x, -box.min.y, -c.z);
     const holder = new THREE.Group(); holder.add(bike); holder.rotation.y = b.rotY; holder.position.y = b.top; b.group.add(holder); b.bike = holder;
-    const cs = contactShadow(2.1, .55); cs.position.y = b.top + .004; cs.rotation.z = b.rotY; b.group.add(cs);
+    const cs = contactShadow(2.1, .55); cs.position.y = b.top + .012; cs.rotation.z = b.rotY; b.group.add(cs);
     holder.updateMatrixWorld(true);
     bike.traverse(o => {
       if (!o.isMesh) return;
