@@ -127,8 +127,9 @@
    ],
    "purpose": "Explore coastal cultural landscapes including traditional fishponds, heiau and petroglyphs.",
    "location_query": "Kaloko-Honokōhau National Historical Park, Hawaii",
-   "source": "https://www.gohawaii.com/kona",
-   "sensitivity": "culturally-significant"
+   "source": "https://www.nps.gov/kaho/learn/historyculture/index.htm",
+   "sensitivity": "culturally-significant",
+   "visit_with_care": "This is a living cultural landscape with fishponds, heiau, petroglyphs and historic trails. Follow park guidance and protect cultural resources."
   },
   {
    "id": "kealakekua-bay",
