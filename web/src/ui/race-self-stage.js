@@ -78,7 +78,7 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
   let disposed=false;
   const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power',alpha:true});
   const dpr=Math.min(devicePixelRatio||1,1.5);renderer.setPixelRatio(dpr);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-  const scene=new THREE.Scene(); scene.background=new THREE.Color('#0b1115');
+  const scene=new THREE.Scene(); renderer.setClearColor(0x000000,0);
   const camera=new THREE.PerspectiveCamera(38,1,.05,50); camera.position.set(.7,1.22,5.4);
   const controls=new OrbitControls(camera,canvas);controls.target.set(0,1.0,0);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=3.4;controls.maxDistance=7.5;controls.maxPolarAngle=Math.PI*.55;
   scene.add(new THREE.HemisphereLight('#d8f5ff','#142229',1.7));
