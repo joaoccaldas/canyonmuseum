@@ -82,7 +82,7 @@ jobs:
           retention-days: 14
       - name: Commit deterministic outputs
         env:
-          TARGET: ${{ inputs.target_ref }}
+          TARGET: ${{ inputs.target_ref || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
