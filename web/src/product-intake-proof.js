@@ -22,6 +22,7 @@ const idsByMode={
 };
 window.__intakeStage('PROOF_API_READY');
 requestAnimationFrame(loop);
+
 const allowed=new Set(idsByMode[mode]||idsByMode.both);
 const products=allProducts.filter(p=>allowed.has(p.id));
 window.__intakeStage('MODE_READY',{mode,productIds:products.map(p=>p.id)});
