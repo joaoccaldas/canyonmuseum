@@ -52,6 +52,19 @@ jobs:
               print(p, len(b))
           blend = Path('assets/kona-heritage/pack/kona_heritage_nike_pack.blend')
           assert blend.exists() and blend.stat().st_size > 0
+
+          import json
+          report=json.loads(Path('assets/kona-heritage/build-report.json').read_text())
+          for aid,row in report['bikes'].items():
+              for key in ('wheelbase','chainstay','bb_drop'):
+                  expected=row[f'expected_{key}_m']
+                  actual=row[f'actual_{key}_m']
+                  assert abs(expected-actual) <= 0.0005, f'{aid} {key} drift: {expected} vs {actual}'
+              if 'expected_stack_m' in row:
+                  assert abs(row['expected_stack_m']-row['actual_stack_m']) <= 0.0005, f'{aid} stack drift'
+              if 'expected_reach_m' in row:
+                  assert abs(row['expected_reach_m']-row['actual_reach_m']) <= 0.0005, f'{aid} reach drift'
+          print('manufacturer geometry QA passed')
           PY
 
       - name: Commit generated assets to this asset branch
