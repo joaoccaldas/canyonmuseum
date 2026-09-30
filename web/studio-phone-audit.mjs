@@ -14,7 +14,7 @@ const candidates = [
 const executablePath = candidates.find(p => fs.existsSync(p));
 if (!executablePath) throw new Error('Chrome/Chromium not found; set CHROME_PATH');
 
-const PHONES = [['320',320,568],['360',360,640],['390',390,844],['430',430,932]];
+const PHONES = [['320',320,568],['360',360,640],['390',390,844],['430',430,932],['landscape',844,390]];
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const browser = await puppeteer.launch({ executablePath, headless:'new', args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader'] });
 let failures = 0;
@@ -29,6 +29,10 @@ for (const [name,w,h] of PHONES) {
   await page.waitForFunction(() => window.__studio?.current?.product, { timeout:120000 });
   await page.evaluate(() => window.__studio.saveCurrentToSetup());
   await wait(700);
+  await page.evaluate(() => {
+    const label=document.querySelector('.setup-slot small');
+    if (label) label.textContent='A deliberately long product configuration label that must wrap without hiding the setup actions';
+  });
 
   const issues = await page.evaluate(() => {
     const out = [], vw=innerWidth, vh=innerHeight;
@@ -58,17 +62,22 @@ for (const [name,w,h] of PHONES) {
       if (!el.closest('.tabs') && (r.left < -1 || r.right > vw + 1)) out.push(`horizontal overflow ${n}`);
       if (el.matches('button') && (r.height < 40 || r.width < 40)) out.push(`small tap target ${n} ${Math.round(r.width)}x${Math.round(r.height)}`);
     }
-    if (panel && panel.scrollHeight > panel.clientHeight) {
-      panel.scrollTop = panel.scrollHeight;
+    const scroller=panel?.querySelector('.setup-scroll');
+    if (scroller && scroller.scrollHeight > scroller.clientHeight) {
+      scroller.scrollTop = scroller.scrollHeight;
       const share=panel.querySelector('button[aria-label="Share My Kona Setup"]');
       if (share) {
-        const r=share.getBoundingClientRect();
-        if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) {
-          const pr=panel.getBoundingClientRect();
-          out.push('share action not reachable after opening and scrolling');
-        }
+        const r=share.getBoundingClientRect(), pr=panel.getBoundingClientRect();
+        if (r.left < pr.left - 1 || r.right > pr.right + 1 || r.top < pr.top - 1 || r.bottom > pr.bottom + 1)
+          out.push(`share action not reachable after content scroll [${[r.left,r.top,r.right,r.bottom].map(Math.round)}]`);
       }
-      panel.scrollTop = 0;
+      scroller.scrollTop = 0;
+    }
+    const share=document.querySelector('button[aria-label="Share My Kona Setup"]');
+    if (share && visible(share)) {
+      const sr=share.getBoundingClientRect();
+      const pr=panel?.getBoundingClientRect();
+      if (pr && (sr.bottom > pr.bottom + 1 || sr.top < pr.top - 1)) out.push('sticky share leaves visible panel');
     }
     const slots=[...document.querySelectorAll('.setup-slot')].filter(visible);
     for (let i=1;i<slots.length;i++) {
