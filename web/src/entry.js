@@ -37,7 +37,8 @@ function loadScript(src) {
 
 const entryDataReady = fetch('app/entry-data.json',{cache:'no-store',credentials:'same-origin'})
   .then(r=>r.ok?r.json():Promise.reject(new Error('entry data')))
-  .catch(()=>({event:{date:'2026-10-10'}}));
+  .then(data=>{ window.__APP_DATA=data; window.__ENTRY_EVENT=data.event||{}; paintCount(); return data; })
+  .catch(()=>{ const data={event:{date:'2026-10-10'},race_week:[],places:[],featured_products:[],discover:[]}; window.__APP_DATA=data; window.__ENTRY_EVENT=data.event; return data; });
 let museumDataReady = null;
 const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js'));
 
@@ -78,7 +79,7 @@ window.__konaShell = shell;
 function enterApp() {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
-  shell.now?.();
+  entryDataReady.finally(()=>shell.now?.());
 }
 
 function paintIntent() {
