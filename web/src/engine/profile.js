@@ -17,7 +17,7 @@ export const QUALITY = {
 export const AVATARS = ['#e8471c', '#138a8f', '#1d4fd6', '#c9a13b', '#ff3d8e', '#12181d', '#5fd8d3', '#8a3316'];
 
 export const defaults = () => ({
-  v: 1, name: '', avatar: AVATARS[0], quality: 'auto', sound: false, motion: 'auto', travel: 'teleport', units: 'metric',
+  v: 1, name: '', avatar: AVATARS[0], quality: 'auto', sound: false, motion: 'auto', appearance: 'auto', travel: 'teleport', units: 'metric',
   favourites: [], liveries: [], createdAt: new Date().toISOString(), sync: null,
 });
 
@@ -31,6 +31,7 @@ export function normalise(p) {
     quality: o.quality in QUALITY ? o.quality : d.quality,
     sound: !!o.sound,
     motion: ['auto', 'full', 'reduced'].includes(o.motion) ? o.motion : d.motion,
+    appearance: ['auto','light','dark'].includes(o.appearance) ? o.appearance : d.appearance,
     travel: ['teleport', 'walk'].includes(o.travel) ? o.travel : d.travel,
     units: ['metric', 'imperial'].includes(o.units) ? o.units : d.units,
     favourites: Array.isArray(o.favourites) ? [...new Set(o.favourites.filter(x => typeof x === 'string'))].slice(0, 500) : [],
