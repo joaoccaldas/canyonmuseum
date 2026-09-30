@@ -135,7 +135,7 @@ html[data-theme="dark"]{
 .kona-list i{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;border-radius:13px;background:color-mix(in srgb,var(--kona-cyan) 14%,transparent);color:var(--kona-cyan);font:700 9px/1 var(--sans);font-style:normal;text-transform:uppercase}
 .kona-list div,.kona-timeline div{display:grid;gap:3px;min-width:0;flex:1}
 .kona-list b,.kona-timeline b{font-size:13.5px}.kona-list span,.kona-timeline span{font-size:11.5px;color:var(--kona-muted);line-height:1.35}
-.kona-list a{color:var(--kona-cyan);font-size:11.5px;text-decoration:none;font-weight:700}
+.kona-list a,.kona-list article>button{min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;color:var(--kona-cyan);font:700 11.5px/1 var(--sans);text-decoration:none;border:0;background:transparent;white-space:nowrap}
 .kona-timeline time{width:62px;flex:0 0 62px;color:var(--kona-cyan);font:700 11px var(--sans)}
 .kona-place-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .kona-place-grid>button{display:block;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer}
