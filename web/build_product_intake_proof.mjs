@@ -7,9 +7,9 @@ const res=await build({entryPoints:[path.join(root,'web/src/product-intake-proof
 const app=res.outputFiles[0].text.replace(/<\/script/gi,'<\\/script');
 const buttons=data.rooms.map(r=>`<button data-room="${r.id}">${r.title}</button>`).join('');
 const html=fs.readFileSync(path.join(root,'web/product-intake-proof.template.html'),'utf8')
- .replace('__ROOM_BUTTONS__',buttons)
- .replace('__DATA__',JSON.stringify(data).replaceAll('<','\\u003c'))
- .replace('__APP__',app);
+ .replace('__ROOM_BUTTONS__',()=>buttons)
+ .replace('__DATA__',()=>JSON.stringify(data).replaceAll('<','\\u003c'))
+ .replace('__APP__',()=>app);
 const out=process.argv[2]||path.join(root,'Product_Intake_Proof.html');
 fs.writeFileSync(out,html);
 console.log('wrote',path.relative(root,out),Math.round(html.length/1024),'KB');
