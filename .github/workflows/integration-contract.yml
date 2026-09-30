@@ -19,3 +19,7 @@ jobs:
           node-version: 20
       - name: Validate integration contract
         run: node tools/validate_integration_contract.mjs
+      - name: Verify generated public catalog is current
+        run: node tools/build_public_catalog.mjs --check
+      - name: Exercise public catalog adapter
+        run: node integrations/public-catalog.test.mjs
