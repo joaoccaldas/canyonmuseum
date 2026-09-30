@@ -1,3 +1,4 @@
+import { discoverLanes } from './discover-model.js';
 // ui/kona-shell.js — mobile-first app shell over the existing 3D museum.
 // Navigation/utility only. The 3D renderer remains the existing proven museum runtime.
 import { readGameState, gameProgress } from '../engine/game-state.js';
@@ -111,19 +112,21 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   function explore(){
-    title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
-    const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
-    const brands=window.__BRANDROOMS?.rooms||[];
-    const themes=window.__gallery?.rooms||[];
-    const row=(kicker,name,sub,id)=>'<button type="button" data-go="'+esc(id)+'"><article><small>'+esc(kicker)+'</small><b>'+esc(name)+'</b><span>'+esc(sub)+'</span></article></button>';
-    const rooms=named.map(a=>row(a.floor==='upper'?'Upper floor':'Ground', a.short||a.name, a.sub||'', a.id)).join('')
-      +brands.map(r=>row('Brand room', r.name, (r.products?.[0]?.model)||r.kicker||'', r.id)).join('')
-      +themes.map(r=>row('Upper floor', r.name, r.sub||'', 'room-'+r.id)).join('');
+    title.textContent='Discover'; eyebrow.textContent='KONA · PLACES · MACHINES · PEOPLE · STORIES';
+    const lanes=discoverLanes();
+    const laneCards=lanes.map(x=>'<button class="discover-lane" type="button" data-lane="'+esc(x.id)+'" style="--lane-image:url('+esc(x.image)+')"><article><small>'+esc(x.id)+'</small><b>'+esc(x.title)+'</b><span>'+esc(x.subtitle)+'</span><i aria-hidden="true">→</i></article></button>').join('');
     body.innerHTML=
-      '<section class="kona-hero-card"><small>WALK THE COAST</small><h3>Every room, one museum</h3><p>Kona hall, themed rooms, and the studies that have a place of their own.</p><button class="kona-primary" data-enter>Enter where you stand <span>→</span></button></section>'+
-      '<section class="kona-section"><div class="kona-section-head"><h3>Rooms</h3><small>Tap to walk</small></div><div class="kona-place-grid">'+rooms+'</div></section>';
+      '<section class="discover-intro"><small>EXPLORE A HIGHER VERSION OF KONA</small><h3>Places. Machines. People. Stories.</h3><p>Start with what interests you. Enter the 3D world only when you want to step inside.</p></section>'+
+      '<section class="discover-grid">'+laneCards+'</section>'+
+      '<section class="kona-section discover-world"><div class="kona-section-head"><div><small>IMMERSIVE WORLD</small><h3>Walk inside the stories</h3></div></div><button class="kona-primary" data-enter>Enter 3D world <span>→</span></button></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
-    body.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>walkTo(b.dataset.go)));
+    body.querySelectorAll('[data-lane]').forEach(b=>b.addEventListener('click',()=>{
+      const lane=b.dataset.lane;
+      if(lane==='machines'){ close(); location.href='Canyon_Collection.html'; return; }
+      if(lane==='places'){ plan(); return; }
+      // People and Stories remain in the lightweight shell until their canonical feeds are wired.
+      body.querySelector('.discover-intro p').textContent=lane==='people'?'Athlete and builder stories are being assembled from sourced profiles.':'Stories are being assembled from the living archive.';
+    }));
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
   }
 
