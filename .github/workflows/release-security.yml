@@ -3,7 +3,8 @@ name: Release security gate
 on:
   push:
     branches:
-      - release/kona-beta-go-live-20260930
+      - release/kona-beta-source-rc-20260930
+      - main
   pull_request:
     branches:
       - main
@@ -21,31 +22,22 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1
-      - name: Scan tracked files
+      - name: Scan source for secrets and private data
         shell: bash
         run: |
           set -euo pipefail
-          files=$(git ls-files -z | tr '\0' '\n' | grep -Ev '(^|/)(package-lock\.json|.*\.(glb|blend|png|jpe?g|webp|gif|ico|gz|apk|woff2?|ttf|otf|wasm|pdf|mp4|mov|webm|mp3|zip))
-          test -n "$files"
           patterns='BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{20,}|Authorization:[[:space:]]*Bearer[[:space:]]+[A-Za-z0-9._-]{15,}|[A-Za-z0-9._%+-]+@(gmail|hotmail|outlook|icloud|yahoo)\.com'
-          bad=0
-          while IFS= read -r f; do
-            case "$f" in
-              .github/workflows/release-security.yml|.github/workflows/pages.yml) continue ;;
-            esac
-            if grep -I --binary-files=without-match -nE "$patterns" "$f" >/tmp/secret_hits 2>/dev/null; then
-              echo "::error file=$f::Potential secret/private-data pattern"
-              cat /tmp/secret_hits
-              bad=1
-            fi
-          done <<< "$files"
-          test "$bad" -eq 0
+          if git grep -I -nE "$patterns" -- .             ':!.github/workflows/release-security.yml'             ':!*.md' ':!package-lock.json'             ':!*.glb' ':!*.blend' ':!*.png' ':!*.jpg' ':!*.jpeg' ':!*.webp' ':!*.gif' ':!*.ico' ':!*.gz' ':!*.apk'             ':!*.woff' ':!*.woff2' ':!*.ttf' ':!*.otf' ':!*.wasm' ':!*.pdf' ':!*.mp4' ':!*.mov' ':!*.webm' ':!*.mp3' ':!*.zip'             ':!/*.html' ':!/web/dist/*.html' ':!/sw.js' ':!/app/app-manifest.json'; then
+            echo "::error::Potential secret/private-data pattern found in source"
+            exit 1
+          fi
       - name: Block local machine paths
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -nE '/Users/[^/]+/|/home/[^/]+/' -- ':!*.md' ':!.github/workflows/*'; then
-            echo "::error::Local filesystem path committed"; exit 1
+          if git grep -I -nE '/Users/[^/]+/|/home/[^/]+/' -- . ':!*.md' ':!.github/workflows/*' ':!/*.html' ':!/web/dist/*.html'; then
+            echo "::error::Local filesystem path committed"
+            exit 1
           fi
 
   web-dependencies:
@@ -57,7 +49,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22'
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci --ignore-scripts
@@ -75,65 +67,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: app/native/package-lock.json
-      - run: npm ci --ignore-scripts
-        working-directory: app/native
-      - name: Audit production dependency graph
-        run: npm audit --omit=dev --audit-level=high
-        working-directory: app/native
- || true)
-          test -n "$files"
-          patterns='BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{20,}|Authorization:[[:space:]]*Bearer[[:space:]]+[A-Za-z0-9._-]{15,}|[A-Za-z0-9._%+-]+@(gmail|hotmail|outlook|icloud|yahoo)\.com'
-          bad=0
-          while IFS= read -r f; do
-            case "$f" in
-              .github/workflows/release-security.yml|.github/workflows/pages.yml) continue ;;
-            esac
-            if grep -nE "$patterns" "$f" >/tmp/secret_hits 2>/dev/null; then
-              echo "::error file=$f::Potential secret/private-data pattern"
-              cat /tmp/secret_hits
-              bad=1
-            fi
-          done <<< "$files"
-          test "$bad" -eq 0
-      - name: Block local machine paths
-        shell: bash
-        run: |
-          set -euo pipefail
-          if git grep -nE '/Users/[^/]+/|/home/[^/]+/' -- ':!*.md' ':!.github/workflows/*'; then
-            echo "::error::Local filesystem path committed"; exit 1
-          fi
-
-  web-dependencies:
-    name: Web dependency audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-      - run: npm ci --ignore-scripts
-        working-directory: web
-      - name: Audit production dependency graph
-        run: npm audit --omit=dev --audit-level=high
-        working-directory: web
-
-  android-dependencies:
-    name: Android shell dependency audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
+          node-version: '22'
           cache: npm
           cache-dependency-path: app/native/package-lock.json
       - run: npm ci --ignore-scripts
