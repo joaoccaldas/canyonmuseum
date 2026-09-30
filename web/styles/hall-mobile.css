@@ -107,7 +107,7 @@
 
 .quest-progress{display:flex;align-items:center;gap:12px;margin:0 0 28px;font:700 11px/1 var(--sans,system-ui);letter-spacing:.12em;color:var(--kona-muted,#5f6a72)}
 .quest-progress i{position:relative;display:block;height:2px;flex:1;background:var(--kona-line,rgba(18,24,29,.12));overflow:hidden}
-.quest-progress i::after{content:"";position:absolute;inset:0;right:auto;width:calc(var(--p) * 25%);background:var(--kona-accent,#e85a22)}
+.quest-progress i::after{content:"";position:absolute;inset:0;right:auto;width:calc(var(--p) * 20%);background:var(--kona-accent,#e85a22)}
 
 /* P0 responsive contract: normal CSS pixels, no browser-layout zoom compensation. */
 @media (max-width:760px),(pointer:coarse){
