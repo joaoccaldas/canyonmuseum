@@ -232,7 +232,7 @@ if (existingIdentity) {
   buildButton?.addEventListener('click', () => paintQuest('intent'));
 }
 paintIntent();
-entryDataReady.then(data=>{ window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
+entryDataReady.then(data=>{ window.__ENTRY_DATA=data||{}; window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
 
 function paintShared(draft){
   const host=questHost(); if(!host) return;
