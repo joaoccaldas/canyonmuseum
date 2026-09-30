@@ -65,7 +65,9 @@ for (const [name,w,h] of PHONES) {
         const r=share.getBoundingClientRect();
         if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) {
           const pr=panel.getBoundingClientRect();
-          out.push(`share unreachable share=[${[r.left,r.top,r.right,r.bottom].map(Math.round)}] panel=[${[pr.left,pr.top,pr.right,pr.bottom].map(Math.round)}] scroll=${Math.round(panel.scrollTop)}/${panel.scrollHeight}-${panel.clientHeight} vh=${vh}`);
+          const de=document.documentElement;
+          const vv=visualViewport;
+          out.push(`share unreachable share=[${[r.left,r.top,r.right,r.bottom].map(Math.round)}] panel=[${[pr.left,pr.top,pr.right,pr.bottom].map(Math.round)}] scroll=${Math.round(panel.scrollTop)}/${panel.scrollHeight}-${panel.clientHeight} inner=${innerWidth}x${innerHeight} client=${de.clientWidth}x${de.clientHeight} visual=${Math.round(vv?.width||0)}x${Math.round(vv?.height||0)}`);
         }
       }
       panel.scrollTop = 0;
