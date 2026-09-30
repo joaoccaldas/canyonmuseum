@@ -25,3 +25,5 @@ jobs:
         run: node integrations/public-catalog.test.mjs
       - name: Exercise MCP read prototype
         run: node integrations/mcp-read-adapter.test.mjs
+      - name: Validate story contract
+        run: node integrations/story-contract.test.mjs
