@@ -53,6 +53,19 @@ function loadScript(src) {
 const entryDataReady = fetch('app/entry-data.json',{cache:'no-store',credentials:'same-origin'})
   .then(r=>r.ok?r.json():Promise.reject(new Error('entry data')))
   .catch(()=>({event:{date:'2026-10-10'}}));
+let worldShellReady = null;
+const ensureWorldShell = () => {
+  if (document.getElementById('hall')) return Promise.resolve();
+  if (worldShellReady) return worldShellReady;
+  worldShellReady = fetch('app/world-shell.html',{cache:'no-store',credentials:'same-origin'})
+    .then(r=>r.ok?r.text():Promise.reject(new Error('world shell unavailable')))
+    .then(html=>{
+      const t=document.createElement('template'); t.innerHTML=html.trim();
+      const anchor=document.getElementById('appSheet');
+      document.body.insertBefore(t.content,anchor||document.body.firstChild);
+    });
+  return worldShellReady;
+};
 let museumDataReady = null;
 const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js'));
 
@@ -75,7 +88,8 @@ function openMuseum(room) {
   const btn = document.getElementById('enterBtn');
   if (btn && !window.__museum) btn.innerHTML = 'Opening the coast…';
   if (!opening) {
-    opening = ensureMuseumData()
+    opening = ensureWorldShell()
+      .then(() => ensureMuseumData())
       .then(() => loadScript('app/hall.js'))
       .then(() => window.__museum?.enter?.())
       .catch(err => { opening = null; console.warn('museum', err); });
