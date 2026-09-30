@@ -61,4 +61,5 @@ jobs:
           git add assets/kona-heritage
           git add -f assets/kona-heritage/pack/kona_heritage_nike_pack.blend
           git commit -m "build: generate Kona heritage and Nike 3D assets [skip ci]"
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
