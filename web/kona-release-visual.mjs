@@ -36,7 +36,7 @@ async function shot(theme,view){
       await p.evaluate(()=>window.__app.konaShell.plan());
       await new Promise(r=>setTimeout(r,900));
     }else if(view==='me'){
-      await p.evaluate(()=>window.__app.settings.open());
+      await p.evaluate(()=>window.__app.konaShell.me());
       await new Promise(r=>setTimeout(r,700));
     }
   }
