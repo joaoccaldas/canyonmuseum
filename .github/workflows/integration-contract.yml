@@ -37,3 +37,8 @@ jobs:
 
       - name: Validate commerce contracts
         run: node integrations/commerce-contract.test.mjs
+
+      - name: Validate reusable component intake
+        run: node integrations/candidate-components.test.mjs
+      - name: Validate equipment compatibility
+        run: node integrations/equipment-compatibility.test.mjs
