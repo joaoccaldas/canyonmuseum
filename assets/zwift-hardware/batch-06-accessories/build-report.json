@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "assets": {
+    "zwift-ride-tablet-holder": {
+      "type": "tablet_holder",
+      "weight_kg": 0.41,
+      "max_device_height_mm": 215,
+      "max_device_length_mm": 326,
+      "max_device_thickness_mm": 10,
+      "max_tablet_weight_kg": 1,
+      "accuracy": "published device limits + silhouette study",
+      "parts": [
+        "backplate",
+        "side supports",
+        "bottom lip",
+        "adjustable strap",
+        "mount arm",
+        "bar clamp"
+      ]
+    },
+    "zwift-ride-adjustable-crank-arms": {
+      "type": "crank_upgrade",
+      "material": "aluminum",
+      "crank_lengths_mm": [
+        160,
+        165,
+        170,
+        172.5,
+        175
+      ],
+      "contents": [
+        "left arm",
+        "right arm",
+        "2 crank bolts",
+        "2 caps"
+      ],
+      "mechanism": "bear claw adjustment system",
+      "accuracy": "official length/material/contents specs; arm silhouette study"
+    },
+    "zwift-ride-v2-multi-rail-saddle-clamp": {
+      "type": "saddle_clamp",
+      "generation": "V2",
+      "compatibility": "Ride V2",
+      "fore_aft_adjustment": "expanded / published qualitatively; exact clamp dimensions not published",
+      "accuracy": "documented assembly architecture + silhouette study",
+      "parts": [
+        "lower carriage",
+        "fore/aft slider",
+        "upper rail clamp",
+        "rails proxy",
+        "bolt"
+      ]
+    },
+    "zwift-ride-v1-adjustable-saddle-clamp-seatpost": {
+      "type": "saddle_clamp",
+      "generation": "V1 upgrade",
+      "compatibility": "Ride V1 only",
+      "fore_aft_adjustment": "expanded / published qualitatively; exact clamp dimensions not published",
+      "accuracy": "documented assembly architecture + silhouette study",
+      "parts": [
+        "lower carriage",
+        "fore/aft slider",
+        "upper rail clamp",
+        "rails proxy",
+        "bolt",
+        "seatpost"
+      ]
+    },
+    "zwift-smart-frame-replacement-saddle": {
+      "type": "saddle",
+      "dimensions_mm": [
+        245,
+        160
+      ],
+      "accuracy": "official Ride V2 saddle envelope",
+      "parts": [
+        "foam/top",
+        "base",
+        "rails"
+      ]
+    },
+    "zwift-smart-handlebar-y-cable": {
+      "type": "cable",
+      "topology": "Y cable",
+      "accuracy": "official replacement-product identity; lengths not asserted",
+      "parts": [
+        "trunk",
+        "left branch",
+        "right branch",
+        "3 connectors"
+      ]
+    },
+    "zwift-click-strap-bar-mount": {
+      "type": "mount",
+      "accuracy": "replacement product silhouette study",
+      "parts": [
+        "bar mount",
+        "rubber interface",
+        "Click cradle",
+        "strap"
+      ]
+    },
+    "zwift-training-mat": {
+      "type": "training_mat",
+      "dimensions_mm": [
+        2032,
+        914.4,
+        6
+      ],
+      "material": "6P-free PVC",
+      "properties": [
+        "water/sweat resistant",
+        "noise/vibration damping",
+        "floor protection"
+      ],
+      "accuracy": "official dimensions/material"
+    }
+  },
+  "sources": {
+    "tablet_holder": "https://eu.zwift.com/products/zwift-ride-tablet-holder",
+    "adjustable_cranks": "https://eu.zwift.com/products/zwift-ride-adjustable-crank-arms",
+    "v1_saddle_upgrade": "https://us.zwift.com/products/zwift-ride-v1-adjustable-saddle-clamp-and-seatpost",
+    "ride_setup": "https://eu.zwift.com/pages/zwift-ride-setup",
+    "replacement_parts": "https://eu.zwift.com/collections/replacement-parts",
+    "training_mat": "https://eu.zwift.com/products/zwift-training-mat"
+  }
+}
