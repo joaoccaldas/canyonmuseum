@@ -42,6 +42,25 @@ to the same room.
    (“Opening the Sanctuary · 3 of 6” … “Every room is open”).
 4. Cards and walls never wait on models; bikes fade in when ready.
 
+## My Kona Setup V0 — `web/src/studio/race-setup.js`
+
+The Studio can compose the current bike into a small local-first race setup without creating another configurator.
+
+- Storage key: `speedmax.raceSetup.v1`, separate from profile/passport state.
+- Event: `kona-2026`.
+- **Bike** stores only a catalogue `productId`, the existing validated Studio look payload and scene id.
+- **Wheels** are V0's inherited current-bike wheels.
+- **Helmet** and **Shoes** are structural empty slots. They accept no external ids yet, so incoming assets cannot silently bypass the future equipment contract.
+- The Setup tab is mobile-first and keeps Save/Share reachable in the bottom sheet.
+- Sharing uses the existing screenshot/share engine and a validated `?setup=<base64url>` state.
+- Shared state rejects unknown product ids, unsupported scenes, oversized/broken payloads and future-slot injection.
+- No account, network storage, analytics or location permission is introduced.
+
+The important architectural rule: **RaceSetup references stable product ids; it contains no Canyon/Nike/Trek-specific code.**
+New equipment should eventually integrate as catalogue asset + compatibility/capability metadata, not as a new application.
+
+Mobile acceptance is automated in `web/studio-phone-audit.mjs` at 320, 360, 390 and 430 px.
+
 ## Accounts (optional, planned)
 
 Decision (29 Sep 2026): **both** — the on-device profile stays the default; an optional
