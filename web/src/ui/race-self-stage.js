@@ -31,13 +31,13 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',bike=null,shoe
   const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power',alpha:true});
   const dpr=Math.min(devicePixelRatio||1,1.5);renderer.setPixelRatio(dpr);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   const scene=new THREE.Scene(); scene.background=new THREE.Color('#0b1115');
-  const camera=new THREE.PerspectiveCamera(34,1,.05,50); camera.position.set(2.6,1.35,3.5);
-  const controls=new OrbitControls(camera,canvas);controls.target.set(0,1,0);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=2;controls.maxDistance=6;controls.maxPolarAngle=Math.PI*.55;
+  const camera=new THREE.PerspectiveCamera(30,1,.05,50); camera.position.set(1.95,1.18,2.75);
+  const controls=new OrbitControls(camera,canvas);controls.target.set(0,.98,0);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=1.55;controls.maxDistance=5;controls.maxPolarAngle=Math.PI*.55;
   scene.add(new THREE.HemisphereLight('#ffffff','#22303a',1.5));
   const key=new THREE.DirectionalLight('#ffffff',2.2);key.position.set(3,5,2);scene.add(key);
   const rim=new THREE.DirectionalLight(accent,1.3);rim.position.set(-3,2,-2);scene.add(rim);
-  const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.25,1.32,.05,64),mat('#20272c',.55));platform.position.y=.025;scene.add(platform);
-  const avatar=proceduralAvatar(accent);avatar.position.set(-.4,.05,0);scene.add(avatar);
+  const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.48,1.55,.05,64),mat('#20272c',.55));platform.position.y=.025;scene.add(platform);
+  const avatar=proceduralAvatar(accent);avatar.scale.setScalar(1.18);avatar.position.set(-.48,.03,.08);scene.add(avatar);
 
   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
   const load=async(product,pos,scale=1.5)=>{
@@ -47,8 +47,8 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',bike=null,shoe
       const obj=gltf.scene.clone(true);frameObject(obj,scale);obj.position.add(new THREE.Vector3(...pos));scene.add(obj);
     }catch(_){}
   };
-  load(bike,[.65,.62,0],1.65);
-  load(shoe,[.78,.24,.75],.55);
+  load(bike,[.68,.58,-.03],1.48);
+  load(shoe,[.72,.2,.72],.48);
 
   function resize(){
     const rect=canvas.getBoundingClientRect();const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
