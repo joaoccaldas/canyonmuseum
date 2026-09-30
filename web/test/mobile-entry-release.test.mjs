@@ -12,3 +12,6 @@ const manifest=JSON.parse(fs.readFileSync(new URL('../../manifest.webmanifest',i
 const harden=fs.readFileSync(new URL('../../tools/harden_pages.mjs',import.meta.url),'utf8');
 test('installed app uses neutral KONA identity until final naming',()=>{assert.equal(manifest.short_name,'KONA');assert.match(manifest.name,/^KONA/);});
 test('public home is described as an application, not the Canyon parent museum',()=>{assert.match(harden,/file: 'index\.html', type: 'SoftwareApplication'/);assert.match(harden,/const NAME = 'KONA'/);});
+
+test('onboarding exposes progress and a reversible back path',()=>{assert.match(entry,/STEP \$\{stepIndex\+1\} OF 4/);assert.match(entry,/id="questBack"/);});
+test('registration remains after RaceIdentity payoff rather than gating entry',()=>{const reveal=entry.indexOf('This is your Kona');const save=entry.indexOf('Save your Kona');assert.ok(reveal>=0&&save>reveal);});
