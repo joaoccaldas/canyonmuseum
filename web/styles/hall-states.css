@@ -1,0 +1,29 @@
+/* 3D Hall interaction-state layer.
+   The world owns WALK. INSPECT/NAVIGATE reveal only the controls needed for that intent. */
+body.hall-walk #rail,
+body.hall-walk #tourPill,
+body.hall-walk #toast{opacity:0;pointer-events:none;transform:translateY(8px)}
+body.hall-walk #card{pointer-events:none}
+body.hall-walk #nearby:not([hidden]){opacity:.92}
+body.hall-walk #joy{opacity:.64}
+body.hall-walk #joy:hover,
+body.hall-walk #joy:focus-within,
+body.hall-walk #joy.active{opacity:1}
+
+body.hall-inspect #rail,
+body.hall-inspect #tourPill,
+body.hall-inspect #nearby{opacity:0;pointer-events:none}
+body.hall-inspect #card{opacity:1;pointer-events:auto}
+
+body.hall-navigate #rail{opacity:1;pointer-events:auto}
+body.hall-navigate #nearby,
+body.hall-navigate #tourPill{opacity:0;pointer-events:none}
+
+#rail,#tourPill,#nearby,#joy,#card,#toast{transition:opacity .22s ease,transform .22s ease}
+
+@media (pointer:coarse){
+ body.hall-walk #joy{display:block;min-width:var(--touch-min,44px);min-height:var(--touch-min,44px)}
+}
+@media (prefers-reduced-motion:reduce){
+ #rail,#tourPill,#nearby,#joy,#card,#toast{transition:none}
+}
