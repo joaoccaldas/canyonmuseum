@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'utf8');
+const home=fs.readFileSync(new URL('../src/ui/home.js',import.meta.url),'utf8');
 const avatarHome=fs.readFileSync(new URL('../src/ui/avatar-home.js',import.meta.url),'utf8');
 const raceCards=fs.readFileSync(new URL('../src/ui/race-cards.js',import.meta.url),'utf8');
 const discover=fs.readFileSync(new URL('../src/ui/discover.js',import.meta.url),'utf8');
@@ -13,7 +14,9 @@ const me=fs.readFileSync(new URL('../src/ui/me.js',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url),'utf8');
 
-test('shell orchestrates Race Self Home, Discover, Plan and Me surfaces',()=>{
+test('shell orchestrates calm Home, explicit Race Self, Discover, Plan and Me surfaces',()=>{
+  assert.match(shell,/renderHomeSurface/);
+  assert.match(shell,/function raceSelf/);
   assert.match(shell,/renderAvatarHome/);
   assert.match(shell,/renderDiscoverSurface/);
   assert.match(shell,/renderPlanSurface/);
@@ -35,7 +38,10 @@ test('Garage and Me resolve Product presentation from the shared public projecti
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Race Self Home is a game-style launcher hub and keeps museum/world optional',()=>{
+test('Home is calm 2D and Race Self stays an explicit immersive feature',()=>{
+  assert.match(home,/What matters today/);
+  assert.match(home,/data-home-race-self/);
+  assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
   for(const tile of ['3D World','Bike Studio','Garage','Collection','Races','Discover','Games','Self']) assert.match(avatarHome,new RegExp(tile));
   assert.match(avatarHome,/hub-launcher/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
@@ -56,9 +62,10 @@ test('Me is RaceIdentity-first and owns no independent persistence',()=>{
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('post-onboarding entry opens canonical Race Self Home',()=>{
+test('post-onboarding entry opens canonical Home while Race Self remains explicit',()=>{
   assert.match(entry,/enterApp\('home'\)/);
   assert.match(entry,/Open your Race Self/);
+  assert.match(shell,/openRaceSelf:raceSelf/);
 });
 
 test('visual evidence captures first pages across Random mode',()=>{

@@ -178,3 +178,13 @@ html.phone-fit #card{left:8px;right:auto;width:calc((100vw - 16px)/var(--fit))!i
   .map-list{grid-column:2;grid-row:2;display:grid;overflow-y:auto;overflow-x:hidden;margin:0}.map-list li{flex:auto}
   .map-foot{grid-column:1/-1;grid-row:3}
 }
+
+/* World chrome offsets relative to the consumer navigation shell. */
+@media(max-width:760px){
+  body.touch.walking #rail{bottom:76px}
+  body.touch #joy{bottom:calc(150px + var(--safe-b))}
+  body.touch #card{bottom:calc(86px + var(--safe-b));max-height:62dvh}
+  body.touch #konaWorld>header{padding-bottom:0}
+  body.touch #konaWorld>header nav{display:none}
+  body.touch #konaWorld>header .logo{background:color-mix(in srgb,var(--kona-surface-strong) 82%,transparent);border-color:var(--kona-line);color:var(--kona-text)}
+}

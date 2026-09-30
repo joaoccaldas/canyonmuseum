@@ -15,10 +15,13 @@ test('consumer index template contains no museum runtime DOM',()=>{
   assert.match(template,/id="intro"/);
   assert.match(template,/id="appSheet"/);
   assert.match(template,/app\/kona-core\.js/);
+  assert.doesNotMatch(template,/hall-web\.css|hall-mobile\.css/);
 });
 test('world shell is injected before museum runtime loads',()=>{
   assert.match(entry,/ensureWorldShell/);
   assert.match(entry,/app\/world-shell\.html/);
+  assert.match(entry,/hall-web\.css/);
+  assert.match(entry,/hall-mobile\.css/);
   assert.match(entry,/ensureWorldShell\(\)[\s\S]*ensureMuseumData\(\)[\s\S]*app\/hall\.js/);
 });
 test('build emits world shell as deterministic output',()=>{

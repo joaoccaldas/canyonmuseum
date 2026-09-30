@@ -66,7 +66,7 @@ for(const r of report){
  if(!['landing','onboarding','reveal'].includes(r.state) && r.metrics.introVisible) violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
  if(r.state==='onboarding' && !/Why are you here/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/onboarding: onboarding question missing`);
  if(r.state==='reveal' && !/This is your Kona|Enter KONA/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/reveal: payoff missing`);
- if(r.state==='home' && !/Race Self|3D World|Bike Studio|Garage|Collection|Races|Discover|Games|Self/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no game-hub content detected`);
+ if(r.state==='home' && !/What matters today|Your Race Self|Discover something|Check your setup/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no calm Home content detected`);
  if(r.state==='garage' && !/Garage|Your equipment|Mine|Dreaming|Try/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/garage: no Garage content detected`);
  if(r.viewport!=='desktop' && ['home','garage'].includes(r.state) && r.metrics.smallTargets.length) violations.push(`${r.viewport}/${r.theme}/${r.state}: touch targets below 48px: ${r.metrics.smallTargets.map(x=>x.text||x.tag).join(', ')}`);
  if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);

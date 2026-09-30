@@ -1,7 +1,8 @@
+import { readStorage, writeStorage, removeStorage, storageKey } from '../engine/storage.js';
 // studio/race-setup.js — My Kona Setup V0 domain contract.
 // Pure composition logic + a tiny persistence adapter. No DOM, brand-specific behavior,
 // account/network state, or executable content.
-export const RACE_SETUP_KEY = 'speedmax.raceSetup.v1';
+export const RACE_SETUP_KEY = storageKey('raceSetup');
 export const RACE_SETUP_SCHEMA_VERSION = 1;
 export const RACE_SETUP_EVENT = 'kona-2026';
 export const RACE_SETUP_SLOTS = ['bike', 'wheel', 'helmet', 'shoe'];
@@ -108,15 +109,15 @@ export function setupFromBike(product, lookPayload = '', scene = 'kona', product
 export function createRaceSetupStore(storage = globalThis.localStorage) {
   return {
     load(products) {
-      try { return normaliseRaceSetup(JSON.parse(storage?.getItem?.(RACE_SETUP_KEY) || 'null'), products); }
+      try { return normaliseRaceSetup(JSON.parse(readStorage('raceSetup',storage) || 'null'), products); }
       catch (_) { return createRaceSetup(); }
     },
     save(setup, products) {
       const clean = normaliseRaceSetup({ ...setup, updated_at:Date.now() }, products);
-      try { storage?.setItem?.(RACE_SETUP_KEY, JSON.stringify(clean)); } catch (_) { }
+      try { writeStorage('raceSetup',JSON.stringify(clean),storage); } catch (_) { }
       return clean;
     },
-    clear() { try { storage?.removeItem?.(RACE_SETUP_KEY); } catch (_) { } },
+    clear() { try { removeStorage('raceSetup',storage); } catch (_) { } },
   };
 }
 
