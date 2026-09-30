@@ -164,7 +164,7 @@ function paintQuest(step) {
     return `<button type="button" class="quest-choice${on}" data-set="${key}" data-value="${id}">${label}</button>`;
   }).join('');
   const stepNo={intent:1,races:2,bike:3,shoe:4,goal:5};
-  const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 4"><span>${stepNo[step]} / 4</span><i style="--p:${stepNo[step]}"></i></div>` : '';
+  const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 5"><span>${stepNo[step]} / 5</span><i style="--p:${stepNo[step]}"></i></div>` : '';
   const backFor={races:'intent',bike:'races',shoe:'bike',goal:'shoe'};
   const questNav = step === 'intent'
     ? '<div class="quest-nav"><button type="button" class="btn text" data-quest-cancel>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>'
