@@ -124,7 +124,7 @@ const h = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag);
 function drawPanel() {
   const P = $('panel'); P.replaceChildren(); $('card').hidden = tab !== 'info';
   document.querySelectorAll('.tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab));
-  requestAnimationFrame(() => document.querySelector(`.tabs [data-tab="${tab}"]`)?.scrollIntoView({ block:'nearest', inline:'center', behavior: reduce ? 'auto' : 'smooth' }));
+  requestAnimationFrame(() => document.querySelector(`.tabs [data-tab="${tab}"]`)?.scrollIntoView({ block:'nearest', inline:'center', behavior:'auto' }));
   if (tab === 'bikes') {
     const list = productsFor(CAT.products, { ...filter, event, favourites: profile.get().favourites });
     P.append(h('input', { class: 'search', type: 'search', placeholder: `Search ${CAT.products.length} bikes`, value: filter.q, oninput: e => { filter.q = e.target.value; drawPanel(); P.querySelector('.search').focus(); } }));
