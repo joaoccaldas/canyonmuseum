@@ -8,6 +8,7 @@ import { saveQuestIdentity } from './engine/identity.js';
 import { readStorage } from './engine/storage.js';
 import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, questReady, relationshipFor } from './quest.js';
 import { shareRaceIdentity } from './growth/share.js';
+import { ENTRY_EVENT } from './entry-config.js';
 
 const INTENT_KEY = 'speedmax.entryIntent.v1';
 const intro = document.getElementById('intro');
@@ -30,7 +31,8 @@ function loadScript(src) {
   return pending;
 }
 
-const dataReady = loadScript('app/museum-data.js');
+let dataReady = null;
+const ensureMuseumData = () => dataReady ||= loadScript('app/museum-data.js');
 
 function daysUntil(iso) {
   const n = Math.ceil((new Date(iso + 'T12:00:00') - Date.now()) / 86400000);
@@ -39,7 +41,7 @@ function daysUntil(iso) {
 
 function paintCount() {
   const el = document.getElementById('konaCount');
-  const event = window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {};
+  const event = ENTRY_EVENT;
   if (!el || !event.date) return;
   const days = daysUntil(event.date);
   el.textContent = days === 0 ? 'Race day in Kona' : days === 1 ? 'Kona in 1 day' : `Kona in ${days} days`;
@@ -51,7 +53,7 @@ function openMuseum(room) {
   const btn = document.getElementById('enterBtn');
   if (btn && !window.__museum) btn.innerHTML = 'Opening the coast…';
   if (!opening) {
-    opening = dataReady
+    opening = ensureMuseumData()
       .then(() => loadScript('app/hall.js'))
       .then(() => window.__museum?.enter?.())
       .catch(err => { opening = null; console.warn('museum', err); });
