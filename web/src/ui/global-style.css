@@ -1,25 +1,67 @@
-/* Kona Universe shared visual tokens. Canyon Museum is canonical.
-   Keep this file declarative: semantic aliases let legacy rooms adopt the same
-   brand without forcing every experience into one identical color treatment. */
+/* KONA shared visual system.
+   Product chrome is deliberately restrained: neutral + lava action + reef information.
+   Collection/partner palettes belong to room/content themes, never global interaction semantics. */
 :root{
-  --kw-sand:#f4efe7;--kw-paper:#fbf9f5;--kw-mist:#e6e9ed;--kw-blush:#fad8d6;
-  --kw-ink:#12181d;--kw-charcoal:#1f2328;--kw-slate:#4b5967;--kw-muted:#5f6a72;--kw-faint:#8e979d;
-  --kw-ocean:#138a8f;--kw-aqua:#00c2c8;--kw-electric:#00e5ff;
-  --kw-sunrise:#ff6a00;--kw-ember:#ff6a3d;--kw-hibiscus:#ff3d78;--kw-raspberry:#ff206d;
-  --kw-lilac:#c984ff;--kw-cobalt:#2e68ff;--kw-acid:#d7ff3f;--kw-grape:#8b5cf6;
-  --kw-wyld:#ff3d8e;--kw-wyld-lilac:#e9cde8;--kw-wyld-aqua:#5fd8d3;
+  --kw-sand:#f4efe7;
+  --kw-paper:#fbf9f5;
+  --kw-mist:#e6e9ed;
+  --kw-ink:#12181d;
+  --kw-charcoal:#1f2328;
+  --kw-slate:#4b5967;
+  --kw-muted:#5f6a72;
+  --kw-faint:#8e979d;
+  --kw-line:rgba(18,24,29,.12);
+
+  --kw-action:#e85a22;
+  --kw-action-hover:#cf4d19;
+  --kw-info:#138a8f;
+  --kw-success:#2bbf88;
+  --kw-warning:#d89024;
+  --kw-danger:#c5483b;
+
   --kw-sans:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
   --kw-serif:'Instrument Serif',Georgia,'Times New Roman',serif;
   --kw-mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-  --kw-r-sm:10px;--kw-r-md:14px;--kw-r-card:24px;--kw-r-pill:999px;
-  --kw-s1:8px;--kw-s2:12px;--kw-s3:16px;--kw-s4:24px;--kw-s5:32px;--kw-s6:48px;
-  --kw-shadow:0 24px 70px -28px rgba(18,24,29,.35);
+
+  --kw-r-sm:10px;
+  --kw-r-md:14px;
+  --kw-r-card:20px;
+  --kw-r-hero:24px;
+  --kw-r-pill:999px;
+
+  --kw-s1:8px;--kw-s2:12px;--kw-s3:16px;--kw-s4:24px;--kw-s5:32px;--kw-s6:48px;--kw-s7:64px;
+  --kw-touch:44px;
+  --kw-edge-mobile:20px;
+  --kw-content-max:1280px;
+  --kw-text-max:620px;
+
+  --kw-shadow:0 24px 70px -28px rgba(18,24,29,.28);
   --kw-ease:cubic-bezier(.2,.8,.2,1);
   --kw-fast:180ms;--kw-med:320ms;--kw-slow:650ms;
+
+  /* Backward-compatible semantic aliases. Do not use these to create new global colors. */
+  --kw-ocean:var(--kw-info);
+  --kw-sunrise:var(--kw-action);
+  --kw-ember:var(--kw-action);
 }
 html[data-theme="dark"]{
-  --kw-sand:#071116;--kw-paper:#0d1920;--kw-mist:#17232b;--kw-blush:#352326;
-  --kw-ink:#f5f3ee;--kw-charcoal:#f5f3ee;--kw-slate:#b4c0c8;--kw-muted:#b4c0c8;--kw-faint:#7f929e;
-  --kw-shadow:0 28px 80px -26px rgba(0,0,0,.72);
+  --kw-sand:#071116;
+  --kw-paper:#0d1920;
+  --kw-mist:#17232b;
+  --kw-ink:#f5f3ee;
+  --kw-charcoal:#f5f3ee;
+  --kw-slate:#b4c0c8;
+  --kw-muted:#b4c0c8;
+  --kw-faint:#7f929e;
+  --kw-line:rgba(245,243,238,.12);
+  --kw-action:#ff6a22;
+  --kw-action-hover:#ff7b38;
+  --kw-info:#39c8ef;
+  --kw-success:#55d6a0;
+  --kw-warning:#e4a14a;
+  --kw-danger:#f06e63;
+  --kw-shadow:0 28px 80px -26px rgba(0,0,0,.62);
 }
 button,input,select,textarea{font-family:var(--kw-sans)}
+:where(button,a,input,select,textarea):focus-visible{outline:2px solid var(--kw-action);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
