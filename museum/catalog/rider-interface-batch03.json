@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "batch": "rider-interface-03",
+  "purpose": "Wearables and rider/bike interface objects for Race Setup, engineering exhibits, collection, and avatar/equipment visualization.",
+  "assets": [
+    {
+      "id": "specialized-sworks-tt5-m",
+      "category": "helmet",
+      "brand": "Specialized",
+      "model": "S-Works TT 5",
+      "size": "M",
+      "status": "official-architecture + silhouette-study"
+    },
+    {
+      "id": "giro-aerohead-mips-ii-m",
+      "category": "helmet",
+      "brand": "Giro",
+      "model": "Aerohead Mips II",
+      "size": "M",
+      "status": "official-fit/weight + silhouette-study"
+    },
+    {
+      "id": "poc-procen-air-m",
+      "category": "helmet",
+      "brand": "POC",
+      "model": "Procen Air",
+      "size": "M",
+      "status": "official-architecture + provisional silhouette-study"
+    },
+    {
+      "id": "ism-pn31",
+      "category": "saddle",
+      "brand": "ISM",
+      "model": "PN 3.1",
+      "status": "official-dimensions"
+    },
+    {
+      "id": "garmin-edge1050",
+      "category": "electronics",
+      "brand": "Garmin",
+      "model": "Edge 1050",
+      "status": "official-dimensions"
+    },
+    {
+      "id": "shimano-pd-r9100",
+      "category": "pedals",
+      "brand": "Shimano",
+      "model": "Dura-Ace PD-R9100",
+      "status": "official-spec-driven"
+    }
+  ]
+}
