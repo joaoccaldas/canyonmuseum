@@ -72,6 +72,27 @@ try{
  catch(err){throw new Error('Magic-link confirmation did not render. Errors: '+authErrors.join(' | ')+' Note: '+await auth.$eval('#saveNote',e=>e.textContent));}
  assert.equal(otpSeen,true,'magic-link flow must issue the allowed Supabase OTP request');
  await auth.close();
+
+ // Install path: the visible CTA must always do something useful on Android.
+ const installPage=await browser.newPage();installPage.setDefaultTimeout(30000);
+ await installPage.setUserAgent('Mozilla/5.0 (Linux; Android 16; SM-S938B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Mobile Safari/537.36');
+ await installPage.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
+ await installPage.goto(base,{waitUntil:'domcontentloaded'});
+ await installPage.click('#entryInstall');
+ await installPage.waitForFunction(()=>!document.querySelector('#appSheet')?.hidden);
+ assert.match(await installPage.$eval('#appSheet',e=>e.textContent),/Add KONA to your phone|Native Android download|Install KONA/i,'Android install CTA must open an actionable install sheet');
+ await installPage.$eval('#appSheet .close',e=>e.click());
+ await installPage.evaluate(()=>{
+   const e=new Event('beforeinstallprompt',{cancelable:true});
+   Object.defineProperty(e,'prompt',{value:async()=>{}});
+   Object.defineProperty(e,'userChoice',{value:Promise.resolve({outcome:'dismissed'})});
+   dispatchEvent(e);
+ });
+ await installPage.click('#entryInstall');
+ await installPage.waitForFunction(()=>!document.querySelector('[data-pwa-action]')?.hidden);
+ assert.match(await installPage.$eval('[data-pwa-action]',e=>e.textContent),/Install KONA now/i,'native PWA prompt action must become visible when browser exposes it');
+ await installPage.close();
+
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
  console.log('P0 browser journey PASS: entry-only data → race search → identity → Race Self Studio → reload + magic-link request; museum/world stays lazy');
 } finally {await browser.close();}
