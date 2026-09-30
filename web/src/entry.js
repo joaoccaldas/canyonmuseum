@@ -71,8 +71,8 @@ function openMuseum(room) {
   return opening;
 }
 
-initAppShell();
-document.getElementById('entryInstall')?.addEventListener('click',()=>document.getElementById('installBtn')?.click());
+const appShell = initAppShell();
+document.getElementById('entryInstall')?.addEventListener('click',()=>appShell?.openInstall?.());
 const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
 window.__konaShell = shell;
 
