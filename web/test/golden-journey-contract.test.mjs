@@ -9,8 +9,10 @@ test('golden path starts person-first and does not import Three.js in entry',()=
   assert.equal(/from ['"]three/.test(entry),false);
 });
 
-test('primary app IA is Home Discover Garage Plan Me',()=>{
-  for(const label of ['Home','Discover','Garage','Plan','Me']) assert.match(shell,new RegExp(label));
+test('primary app IA is Home Discover Garage Plan Me through locale keys',()=>{
+  for(const key of ['nav.home','nav.discover','nav.garage','nav.plan','nav.me']) assert.match(shell,new RegExp("t\\('"+key+"'"));
+  const locales=JSON.parse(fs.readFileSync(new URL('../../museum/i18n/locales.json',import.meta.url),'utf8'));
+  for(const locale of ['en','pt-BR']) for(const key of ['nav.home','nav.discover','nav.garage','nav.plan','nav.me']) assert.ok(locales[locale]?.[key], locale+' missing '+key);
 });
 
 test('canonical Artifact is available to the journey',()=>{
