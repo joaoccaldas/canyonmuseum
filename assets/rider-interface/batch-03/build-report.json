@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "assets": {
+    "specialized-sworks-tt5-m": {
+      "type": "helmet",
+      "weight_g": null,
+      "accuracy": "official architecture + silhouette study",
+      "exploded_parts": [
+        "outer shell",
+        "shoulder-positioned aero tail",
+        "Class 1 optics visor",
+        "integrated aero head sock",
+        "retention straps"
+      ]
+    },
+    "giro-aerohead-mips-ii-m": {
+      "type": "helmet",
+      "weight_g": 450,
+      "accuracy": "official fit/weight + official architecture + silhouette study",
+      "exploded_parts": [
+        "outer hardshell",
+        "polycarbonate lower wrap",
+        "magnetic eye shield",
+        "EPS liner",
+        "Mips Air Node layer",
+        "Roc Loc fit dial"
+      ],
+      "fit_cm": {
+        "min": 55,
+        "max": 59
+      },
+      "fit_midpoint_head_radius_m": 0.0907
+    },
+    "poc-procen-air-m": {
+      "type": "helmet",
+      "weight_g": null,
+      "accuracy": "official architecture + provisional silhouette study",
+      "exploded_parts": [
+        "smooth aero shell",
+        "magnetic visor",
+        "left EVA ear cover",
+        "right EVA ear cover",
+        "internal liner"
+      ]
+    },
+    "ism-pn31": {
+      "type": "saddle",
+      "length_mm": 255,
+      "width_mm": 120,
+      "padding": "40-Series Foam",
+      "rails": "Chromoly",
+      "accuracy": "official dimensions hard-constrained",
+      "exploded_parts": [
+        "left PN pad",
+        "right PN pad",
+        "rear bridge",
+        "air-vent chassis",
+        "chromoly rails"
+      ]
+    },
+    "garmin-edge1050": {
+      "type": "bike_computer",
+      "dimensions_mm": [
+        60.2,
+        118.5,
+        16.3
+      ],
+      "weight_g": 161,
+      "display_diagonal_in": 3.5,
+      "display_px": [
+        480,
+        800
+      ],
+      "water_rating": "IPX7",
+      "accuracy": "official outer dimensions hard-constrained",
+      "exploded_parts": [
+        "body",
+        "3.5-inch display",
+        "quarter-turn mount interface",
+        "metal buttons"
+      ]
+    },
+    "shimano-pd-r9100": {
+      "type": "pedals",
+      "stack_height_mm": 14.8,
+      "pedal_center_mm": 52,
+      "pair_weight_g": 237,
+      "body_material": "carbon",
+      "body_cover": "special stainless",
+      "cleat": "SM-SH12",
+      "accuracy": "official Shimano specification constraints",
+      "exploded_parts": [
+        "carbon body",
+        "stainless platform",
+        "axle",
+        "front retention hook",
+        "rear retention hook"
+      ]
+    }
+  },
+  "sources": {
+    "specialized_tt5": "https://www.specialized.com/se/sv/s-works-tt-5/p/1000252641",
+    "giro_aerohead": "https://www.giro.com/product/aerohead-mips-ii-helmet/100000000300000150.html",
+    "poc_procen": "https://poc.com/de/pressroom/poc-release-procen-air-ef-pro-cycling-limited-edition",
+    "ism_pn31": "https://ismseat.com/performance-narrow/pn-3-1/",
+    "garmin_edge1050": "https://www.garmin.com/en-US/compare/?compareProduct=1196129",
+    "shimano_pd_r9100": "https://productinfo.shimano.com/ja/product/PD-R9100"
+  }
+}
