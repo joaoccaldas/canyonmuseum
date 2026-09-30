@@ -21,9 +21,11 @@ const icon = name => {
 export function initKonaShell({ profile, settings, enter }) {
   consumeAuthCallback();
   const facts = () => ({
-    event: window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {},
-    week: window.__EVENT?.current_facts?.race_week || [],
-    places: window.__ISLAND?.places || [],
+    event: window.__EVENT?.current_facts?.event || window.__APP_DATA?.event || window.__ISLAND?.race_2026 || {},
+    week: window.__EVENT?.current_facts?.race_week || window.__APP_DATA?.race_week || [],
+    places: window.__ISLAND?.places || window.__APP_DATA?.places || [],
+    featured: window.__APP_DATA?.featured_products || [],
+    discover: window.__APP_DATA?.discover || [],
   });
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
@@ -111,7 +113,8 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   function explore(){
-    title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
+    title.textContent='Discover'; eyebrow.textContent='KONA · DISCOVER';
+    const app=facts();
     const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
     const brands=window.__BRANDROOMS?.rooms||[];
     const themes=window.__gallery?.rooms||[];
@@ -119,9 +122,13 @@ export function initKonaShell({ profile, settings, enter }) {
     const rooms=named.map(a=>row(a.floor==='upper'?'Upper floor':'Ground', a.short||a.name, a.sub||'', a.id)).join('')
       +brands.map(r=>row('Brand room', r.name, (r.products?.[0]?.model)||r.kicker||'', r.id)).join('')
       +themes.map(r=>row('Upper floor', r.name, r.sub||'', 'room-'+r.id)).join('');
+    const lightweight=app.featured.map(p=>'<a class="kona-artifact-link" href="'+esc(p.canonical_url||'#')+'"><article><small>'+esc((p.brand||'Artifact')+(p.year?' · '+p.year:''))+'</small><b>'+esc(p.name)+'</b><span>Inspect the artifact without loading the 3D world.</span></article></a>').join('');
+    const placePreview=app.places.slice(0,2).map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span></article>').join('');
     body.innerHTML=
-      '<section class="kona-hero-card"><small>WALK THE COAST</small><h3>Every room, one museum</h3><p>Kona hall, themed rooms, and the studies that have a place of their own.</p><button class="kona-primary" data-enter>Enter where you stand <span>→</span></button></section>'+
-      '<section class="kona-section"><div class="kona-section-head"><h3>Rooms</h3><small>Tap to walk</small></div><div class="kona-place-grid">'+rooms+'</div></section>';
+      '<section class="kona-hero-card"><small>PLACES · MACHINES · PEOPLE · STORIES</small><h3>Discover before you enter</h3><p>Browse useful Kona context and canonical artifacts first. The immersive world loads only when you ask for it.</p><button class="kona-primary" data-enter>Enter the 3D world <span>→</span></button></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>Machines</h3><small>Canonical artifacts</small></div><div class="kona-place-grid">'+lightweight+'</div></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>Places</h3><small>Race-week context</small></div><div class="kona-place-grid">'+placePreview+'</div></section>'+
+      (rooms?'<section class="kona-section"><div class="kona-section-head"><h3>Rooms</h3><small>3D destinations</small></div><div class="kona-place-grid">'+rooms+'</div></section>':'');
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
     body.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>walkTo(b.dataset.go)));
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
