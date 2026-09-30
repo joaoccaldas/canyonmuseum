@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'utf8');
-const home=fs.readFileSync(new URL('../src/ui/home.js',import.meta.url),'utf8');
+const avatarHome=fs.readFileSync(new URL('../src/ui/avatar-home.js',import.meta.url),'utf8');
+const raceCards=fs.readFileSync(new URL('../src/ui/race-cards.js',import.meta.url),'utf8');
 const discover=fs.readFileSync(new URL('../src/ui/discover.js',import.meta.url),'utf8');
 const catalog=fs.readFileSync(new URL('../src/engine/catalog.js',import.meta.url),'utf8');
 const garage=fs.readFileSync(new URL('../src/ui/garage.js',import.meta.url),'utf8');
@@ -12,8 +13,8 @@ const me=fs.readFileSync(new URL('../src/ui/me.js',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url),'utf8');
 
-test('shell orchestrates extracted Home, Discover, Plan and Me surfaces',()=>{
-  assert.match(shell,/renderHomeSurface/);
+test('shell orchestrates Race Self Home, Discover, Plan and Me surfaces',()=>{
+  assert.match(shell,/renderAvatarHome/);
   assert.match(shell,/renderDiscoverSurface/);
   assert.match(shell,/renderPlanSurface/);
   assert.match(shell,/renderMeSurface/);
@@ -34,9 +35,11 @@ test('Garage and Me resolve Product presentation from the shared public projecti
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Home has one primary next action and no direct 3D dependency',()=>{
-  assert.match(home,/Make tomorrow easier/);
-  assert.doesNotMatch(home,/hall\.js|museum-data\.js|__museum/);
+test('Race Self Home is nine-menu, immersive and keeps museum/world optional',()=>{
+  for(const tab of ['Self','Gear','Bike','Kit','Races','Cards','Garage','World','Settings']) assert.match(avatarHome,new RegExp(tab));
+  assert.match(avatarHome,/app\/race-self-stage\.js/);
+  assert.doesNotMatch(avatarHome,/app\/hall\.js|museum-data\.js|__museum/);
+  assert.match(raceCards,/Search IRONMAN races/);
 });
 
 test('Plan is lightweight and independent of museum globals',()=>{
@@ -52,9 +55,9 @@ test('Me is RaceIdentity-first and owns no independent persistence',()=>{
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('post-onboarding entry opens canonical Garage',()=>{
-  assert.match(entry,/enterApp\('garage'\)/);
-  assert.match(entry,/Open your Garage/);
+test('post-onboarding entry opens canonical Race Self Home',()=>{
+  assert.match(entry,/enterApp\('home'\)/);
+  assert.match(entry,/Open your Race Self/);
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
