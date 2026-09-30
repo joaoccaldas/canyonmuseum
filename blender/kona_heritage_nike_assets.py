@@ -26,6 +26,7 @@ Outputs:
 from __future__ import annotations
 import bpy
 import math
+import json
 from pathlib import Path
 from mathutils import Vector
 
@@ -76,6 +77,8 @@ UPPER = material("MAT_ENGINEERED_MESH", (.84,.84,.82), .50, 0)
 
 ROOT_EMPTY = bpy.data.objects.new("KONA_HERITAGE_AND_NIKE_PACK", None)
 scene.collection.objects.link(ROOT_EMPTY)
+
+BUILD_REPORT = {"schema_version": 1, "bikes": {}, "shoes": {}}
 
 def cube(name, loc, scale, mat, parent, bevel=.015):
     bpy.ops.mesh.primitive_cube_add(location=loc)
@@ -275,6 +278,23 @@ def bike(asset_id, frame=CARBON, accent=WHITE):
     g["chainstay_m"]=cs
     g["bb_drop_m"]=drop
     g["scale_basis"]="manufacturer published geometry; metres"
+    BUILD_REPORT["bikes"][asset_id] = {
+        "expected_wheelbase_m": wb,
+        "actual_wheelbase_m": round(front[0]-rear[0], 6),
+        "expected_chainstay_m": cs,
+        "actual_chainstay_m": round((Vector(bb)-Vector(rear)).length, 6),
+        "expected_bb_drop_m": drop,
+        "actual_bb_drop_m": round(rear[2]-bb[2], 6),
+        "wheel_outer_diameter_m": geo["tire_od"],
+        "source": geo["source"],
+        "evidence_class": g["evidence_class"],
+    }
+    if "stack" in geo:
+        BUILD_REPORT["bikes"][asset_id]["expected_stack_m"] = geo["stack"]
+        BUILD_REPORT["bikes"][asset_id]["actual_stack_m"] = round(head_top[2]-bb[2], 6)
+    if "reach" in geo:
+        BUILD_REPORT["bikes"][asset_id]["expected_reach_m"] = geo["reach"]
+        BUILD_REPORT["bikes"][asset_id]["actual_reach_m"] = round(head_top[0]-bb[0], 6)
     return g
 
 def loft_mesh(name, sections, mat, parent):
@@ -346,6 +366,16 @@ def shoe(asset_id, kind, accent):
     g["asset_kind"]="shoe"
     g["evidence_class"]="geometry-study-v0.2"
     g["public_status"]="prototype-not-cad-exact"
+    xs=[x for x,w,z0,z1 in sole]
+    BUILD_REPORT["shoes"][asset_id] = {
+        "shell_x_span_m": round(max(xs)-min(xs), 6),
+        "kind": kind,
+        "status": g["public_status"],
+    }
+    if kind=="alphafly3":
+        BUILD_REPORT["shoes"][asset_id]["official_drop_mm"] = 8
+    elif kind=="vaporfly4":
+        BUILD_REPORT["shoes"][asset_id]["official_drop_mm"] = 6
     return g
 
 ASSETS = {
@@ -467,6 +497,8 @@ render_preview(
 for obj in ASSETS.values():
     obj.hide_render=False
     obj.hide_viewport=False
+
+(OUT / "build-report.json").write_text(json.dumps(BUILD_REPORT, indent=2) + "\n")
 
 pack_blend = PACK_OUT / "kona_heritage_nike_pack.blend"
 pack_glb = PACK_OUT / "kona_heritage_nike_pack.glb"
