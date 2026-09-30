@@ -48,3 +48,6 @@ jobs:
 
       - name: Validate tech room contract
         run: node integrations/tech-room.test.mjs
+
+      - name: Validate rider-interface candidate intake
+        run: node integrations/candidate-rider-interface.test.mjs
