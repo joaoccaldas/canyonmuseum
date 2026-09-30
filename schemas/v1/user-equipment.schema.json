@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/user-equipment.schema.json",
+  "title": "User Equipment Instance V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "user_id",
+    "product_id",
+    "relationship",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^equipment:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "user-equipment"
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^user:[a-z0-9:_-]+$"
+    },
+    "product_id": {
+      "type": "string",
+      "pattern": "^product:[a-z0-9:_-]+$"
+    },
+    "relationship": {
+      "$ref": "common.schema.json#/$defs/OwnershipState"
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/IsoDateTime"
+    },
+    "nickname": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 80
+    },
+    "customization": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "purchase": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "price": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 3,
+          "maxLength": 3
+        }
+      },
+      "additionalProperties": false
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "distance_km": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "hours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "last_used_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": true
+    },
+    "external_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/SourceRef"
+      }
+    },
+    "visibility": {
+      "$ref": "common.schema.json#/$defs/Visibility"
+    },
+    "vendor_analytics_eligible": {
+      "type": "boolean",
+      "description": "Computed only from explicit user consent; never inferred from visibility."
+    }
+  },
+  "additionalProperties": false
+}
