@@ -394,21 +394,21 @@ def shoe(asset_id, kind, accent):
 
     if kind=="vaporfly4pct":
         sole=[(-.155,.050,.012,.030),(-.115,.057,.010,.040),(-.055,.061,.010,.050),(.015,.062,.012,.060),(.080,.060,.015,.066),(.135,.052,.020,.060),(.175,.032,.026,.048)]
-        upper_h=[.120,.135,.130,.115,.092,.070,.045]
+        upper_h=[.118,.082,.122,.102,.070,.040,.018]
     elif kind=="vaporflynext":
         sole=[(-.158,.050,.012,.035),(-.118,.058,.010,.048),(-.055,.063,.010,.062),(.015,.064,.012,.071),(.082,.061,.017,.072),(.140,.052,.022,.062),(.178,.031,.030,.050)]
-        upper_h=[.125,.140,.136,.120,.096,.072,.046]
+        upper_h=[.122,.086,.126,.105,.073,.042,.020]
     elif kind=="alphafly1":
         sole=[(-.160,.052,.014,.050),(-.118,.061,.012,.070),(-.050,.066,.012,.080),(.020,.068,.015,.086),(.085,.067,.022,.090),(.145,.056,.032,.078),(.182,.033,.038,.056)]
-        upper_h=[.132,.150,.148,.132,.105,.078,.048]
+        upper_h=[.128,.090,.132,.108,.078,.045,.021]
     elif kind=="vaporfly4":
         # Nike Vaporfly 4: official UK9/US10 reference, 6 mm drop, ZoomX + full-length Flyplate.
         sole=[(-.158,.048,.010,.038),(-.115,.054,.009,.046),(-.052,.057,.010,.052),(.012,.058,.011,.054),(.074,.056,.013,.050),(.132,.048,.017,.043),(.170,.030,.022,.034)]
-        upper_h=[.112,.126,.121,.107,.086,.064,.040]
+        upper_h=[.110,.078,.116,.096,.066,.038,.018]
     else:
         # Alphafly 3: official UK9/US10 reference, 8 mm drop, continuous ZoomX + dual Air Zoom.
         sole=[(-.160,.053,.010,.055),(-.120,.061,.009,.064),(-.055,.066,.009,.071),(.015,.068,.010,.073),(.082,.068,.013,.065),(.143,.058,.020,.057),(.182,.034,.028,.047)]
-        upper_h=[.128,.147,.145,.130,.105,.078,.048]
+        upper_h=[.126,.088,.130,.106,.075,.043,.020]
 
     # Scale the external shell to a realistic men's UK9 / US10 museum reference.
     # Nike's official size chart gives foot length ~271 mm for this size. The modeled shell
@@ -430,9 +430,33 @@ def shoe(asset_id, kind, accent):
             a=bpy.context.object; a.name=f"{asset_id}_AIRZOOM_{idx+1}"; a.scale.x=1.10
             a.data.materials.append(AIR); a.parent=g
 
-    cube(asset_id+"_HEEL_COUNTER",(-.145,0,upper_sections[0][3]-.020),(.030,.047,.050),accent,g,.018)
-    cube(asset_id+"_COLLAR_VOID",(-.105,0,upper_sections[1][3]-.018),(.030,.030,.020),BLACK,g,.020)
-    cube(asset_id+"_MUSEUM_ID_PANEL",(.035,-.066,.145),(.070,.004,.012),accent,g,.004)
+    heel_x=sole[0][0]+.010
+    heel_base=sole[0][3]+.010
+    heel_top=upper_sections[0][3]
+    beam_between(asset_id+"_HEEL_COUNTER",(heel_x,0,heel_base),(heel_x-.006,0,heel_top),.032,.060,accent,g,.009)
+
+    # Collar opening and tongue make the object read as footwear in close-up.
+    cube(asset_id+"_COLLAR_VOID",(sole[1][0]+.010,0,upper_sections[1][3]-.010),(.026,.030,.014),BLACK,g,.014)
+    tongue_x=sole[2][0]+.020
+    beam_between(asset_id+"_TONGUE",(tongue_x,0,upper_sections[2][2]+.020),(tongue_x-.018,0,upper_sections[2][3]+.018),.024,.050,UPPER,g,.007)
+
+    # Five thin laces across the instep.
+    lace_xs=[sole[2][0]+.010, sole[2][0]+.035, sole[3][0], sole[3][0]+.025, sole[4][0]-.010]
+    for i,lx in enumerate(lace_xs):
+        # interpolate a conservative surface height from nearby upper profile
+        z=upper_sections[2][3]-(i*.008)
+        cyl_between(f"{asset_id}_LACE_{i+1}",(lx,-.043,z),(lx,.043,z),.0022,WHITE,g,8)
+
+    # outsole traction pads instead of one featureless bottom.
+    for i,(x,w,z0,z1) in enumerate(sole[1:-1]):
+        if i % 2 == 0:
+            cube(f"{asset_id}_OUTSOLE_PAD_{i}",(x,-.002,max(.004,z0)),(.025,max(.025,w*.75),.004),RUBBER,g,.003)
+
+    if kind in {"alphafly1","alphafly3"}:
+        # Lateral sculpted cutout around the visible Air Zoom pod.
+        cube(asset_id+"_FOREFOOT_CUTOUT",(sole[4][0],-.049,.055),(.043,.010,.023),BLACK,g,.012)
+
+    cube(asset_id+"_MUSEUM_ID_PANEL",(.020,-.052,.112),(.060,.003,.009),accent,g,.003)
 
     g["asset_kind"]="shoe"
     g["evidence_class"]="geometry-study-v0.2"
@@ -565,6 +589,17 @@ render_preview(
     {aid:((-1.80+i*1.20),0,.04) for i,aid in enumerate(shoe_ids)},
     target=(0,0,.13),
     camera=(0,-5.1,1.55),
+)
+
+render_preview(
+    "nike-current-v0.3.png",
+    ["nike-alphafly-3-study","nike-vaporfly-4-current"],
+    {
+        "nike-alphafly-3-study":(-.34,0,.04),
+        "nike-vaporfly-4-current":(.34,0,.04),
+    },
+    target=(0,0,.12),
+    camera=(0,-2.45,.82),
 )
 for obj in ASSETS.values():
     for part in descendants(obj):
