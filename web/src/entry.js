@@ -157,7 +157,7 @@ function paintQuest(step) {
     : '<div class="quest-nav"><button type="button" class="btn text" data-quest-back>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>';
   const screens = {
     intent: `<p class="eyebrow">Why are you here?</p><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
-    races: `<p class="eyebrow">Your races</p><p class="kona-note">Search any IRONMAN or IRONMAN 70.3 edition from the last 10 years. These become badges in your Race Self, Garage and Studio.</p><div data-race-picker></div>`,
+    races: `<p class="eyebrow">Your races</p><p class="kona-note">Search any IRONMAN or IRONMAN 70.3 edition from the last 10 years. These become badges in your Race Self, Garage and Studio.</p><div data-race-picker></div><button type="button" class="btn primary race-picker-continue" data-race-continue>Continue</button>`,
     bike: `<p class="eyebrow">Choose your bike</p><div class="kona-intents">${choices(BIKES, 'bikeId')}</div><button type="button" class="quest-choice" data-set="bikeId" data-value="">Choose later</button>`,
     shoe: `<p class="eyebrow">Choose your shoes</p><div class="kona-intents">${choices(SHOES, 'shoeId')}</div><button type="button" class="quest-choice" data-set="shoeId" data-value="">Choose later</button><p class="kona-note">The Alphafly here is an independent study, not a catalog shoe yet.</p>`,
     goal: `<p class="eyebrow">What would make Kona a win?</p><div class="kona-intents">${choices(GOALS, 'goal')}</div>`,
@@ -227,7 +227,10 @@ function paintQuest(step) {
   }
   host.hidden = false;
   host.innerHTML = progress + (screens[step] || screens.intent) + questNav;
-  if (step === 'races') renderRacePicker(host.querySelector('[data-race-picker]'));
+  if (step === 'races') {
+    renderRacePicker(host.querySelector('[data-race-picker]'));
+    host.querySelector('[data-race-continue]')?.addEventListener('click',()=>paintQuest('bike'));
+  }
   host.querySelector('[data-quest-back]')?.addEventListener('click',()=>paintQuest(backFor[step]||'intent'));
   host.querySelector('[data-quest-cancel]')?.addEventListener('click',()=>{ setEntryMode('landing'); host.hidden=true; });
   host.querySelector('[data-quest-skip]')?.addEventListener('click',enterApp);
