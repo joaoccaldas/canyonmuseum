@@ -47,11 +47,25 @@ for (const [name,w,h] of PHONES) {
       const s=getComputedStyle(el), r=el.getBoundingClientRect();
       return s.display!=='none' && s.visibility!=='hidden' && +s.opacity>.05 && r.width>2 && r.height>2;
     };
+    const activeTab=document.querySelector('.tabs [aria-selected="true"]');
+    if (activeTab) {
+      const r=activeTab.getBoundingClientRect();
+      if (r.left < -1 || r.right > vw + 1) out.push('active setup tab not horizontally visible');
+    }
     for (const el of document.querySelectorAll('.setup-slot,.setup-actions .btn,.tabs button')) {
       if (!visible(el)) continue;
       const r=el.getBoundingClientRect(), n=el.textContent.trim().slice(0,30);
-      if (r.left < -1 || r.right > vw + 1 || r.top < -1 || r.bottom > vh + 1) out.push(`offscreen ${n}`);
+      if (!el.closest('.tabs') && (r.left < -1 || r.right > vw + 1)) out.push(`horizontal overflow ${n}`);
       if (el.matches('button') && (r.height < 40 || r.width < 40)) out.push(`small tap target ${n} ${Math.round(r.width)}x${Math.round(r.height)}`);
+    }
+    if (panel && panel.scrollHeight > panel.clientHeight) {
+      panel.scrollTop = panel.scrollHeight;
+      const share=[...panel.querySelectorAll('button')].find(b => /Share My Kona Setup/.test(b.textContent));
+      if (share) {
+        const r=share.getBoundingClientRect();
+        if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) out.push('share action not reachable after scrolling');
+      }
+      panel.scrollTop = 0;
     }
     const slots=[...document.querySelectorAll('.setup-slot')].filter(visible);
     for (let i=1;i<slots.length;i++) {
