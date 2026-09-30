@@ -66,15 +66,25 @@ async function openCase(mode,name,w,h,{screenshots=false}={}){
     for(const id of MODE_IDS[mode]){
       const t=await page.evaluate(id=>{
         const ok=window.__intakeProof.inspectById(id);
-        return {ok,shown:document.querySelector('#info')?.dataset.productId||'',text:document.querySelector('#info')?.textContent||''};
+        const focused=window.__intakeProof.focusById(id);
+        return {ok,focused,shown:document.querySelector('#info')?.dataset.productId||'',text:document.querySelector('#info')?.textContent||''};
       },id);
       if(!t.ok||t.shown!==id)issues.push('inspect failed '+id);
+      if(!t.focused)issues.push('focus failed '+id);
       if(!/candidate/.test(t.text))issues.push('readiness missing '+id);
     }
 
-    for(const b of await page.$$('[data-room]'))await b.click();
+    if(MODE_IDS[mode].length===1){
+      await page.evaluate(id=>window.__intakeProof.focusById(id),MODE_IDS[mode][0]);
+      await new Promise(r=>setTimeout(r,350));
+    }
     metrics=await page.evaluate(()=>window.__intakeProof.metrics());
     if(metrics.draw_calls<=0||metrics.triangles<=0)issues.push('renderer metrics empty');
+    if(MODE_IDS[mode].length===1){
+      const expectedTris=await page.evaluate(id=>window.__INTAKE_PROOF.products.find(p=>p.id===id)?.metrics?.triangles_approx||0,MODE_IDS[mode][0]);
+      if(expectedTris>0 && metrics.triangles<expectedTris*.35)
+        issues.push('candidate not visibly framed; rendered triangles '+metrics.triangles+' expected approx '+expectedTris);
+    }
     if(metrics.load_ms==null)issues.push('load timing missing');
 
     const expected=MODE_IDS[mode].map(id=>id==='cervelo-p5-disc-mk2-size54'?'cervelo-p5-disc-mk2-size54.glb':'nike-alphafly-3-study.glb');
@@ -82,8 +92,9 @@ async function openCase(mode,name,w,h,{screenshots=false}={}){
 
     if(screenshots){
       const slug=mode==='cervelo'?'cervelo':'alphafly';
-      await page.evaluate(()=>{document.getElementById('info').hidden=true;});
-      await page.screenshot({path:path.join(outDir,`${slug}-room-${name}.png`),fullPage:false});
+      await page.evaluate(id=>{document.getElementById('info').hidden=true;window.__intakeProof.focusById(id);},MODE_IDS[mode][0]);
+      await new Promise(r=>setTimeout(r,350));
+      await page.screenshot({path:path.join(outDir,slug+'-room-'+name+'.png'),fullPage:false});
       const id=MODE_IDS[mode][0];
       await page.evaluate(id=>window.__intakeProof.inspectById(id),id);
       await page.screenshot({path:path.join(outDir,`${slug}-info-${name}.png`),fullPage:false});
