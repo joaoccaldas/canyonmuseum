@@ -1,5 +1,5 @@
 {
- "version": "0b8887f09e9f",
+ "version": "f8025d3c1bf8",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -21,7 +21,7 @@
   "assets/pwa/icon-v3-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/icon-v3-maskable-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/apple-touch-icon-v3.png": "R7r+34dBZMxUezo2xBD34dbHtfTyvjdCViUhs3wRamI=",
-  "app/hall.js": "yWrfwnxnqs/GfCkY/W6zWHV7ytpvT3ler8omfZZmxWc=",
+  "app/hall.js": "z6pxdf2E6gx25qIRf5h62VepuA1woOOwu9Oz1OWi/Zg=",
   "app/studio.js": "sqih8AX6sWsjxK56y/lRUvOWSq1EKqV4QNxl0W/0LJc=",
   "app/studio-catalog.js": "Qj8rIu7C13w5fDmtGeLtuZmcl2S6tEN+XVDRHPYEZZ8=",
   "Canyon_Collection.html": "weOlH8QsluZ69syQBjJMnn2xMEXTu4ZY7QDYUf1ARb8=",
