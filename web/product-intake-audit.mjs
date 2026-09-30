@@ -102,7 +102,10 @@ async function openCase(mode,name,w,h,{screenshots=false}={}){
     }
     return out;
   }):[];
-  issues.push(...layout,...errors,...requestFailures.map(x=>'requestfailed '+x.url+' '+x.reason),...badResponses.map(x=>'http '+x.status+' '+x.url));
+  const relevantErrors=errors.filter(x=>!/favicon\.ico/i.test(x));
+  const relevantRequestFailures=requestFailures.filter(x=>!/favicon\.ico/i.test(x.url));
+  const relevantBadResponses=badResponses.filter(x=>!/favicon\.ico/i.test(x.url));
+  issues.push(...layout,...relevantErrors,...relevantRequestFailures.map(x=>'requestfailed '+x.url+' '+x.reason),...relevantBadResponses.map(x=>'http '+x.status+' '+x.url));
   const unique=[...new Set(issues)];
   const result={mode,viewport:name,width:w,height:h,startup_ms:startupMs,ready,last_stage:diag?.stages?.at(-1)||null,diagnostic_errors:diag?.errors||[],request_failures:requestFailures,issues:unique,metrics};
   results.push(result);
