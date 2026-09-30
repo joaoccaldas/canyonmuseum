@@ -285,29 +285,43 @@ def bike(asset_id, frame=CARBON, accent=WHITE):
 
     # Main frame uses measured nodes and aero-depths tuned by documented product architecture.
     beam_between(asset_id+"_DOWN_TUBE",head_bottom,bb,.105,.048,frame,g,.014)
-    beam_between(asset_id+"_TOP_TUBE",head_top,seat_top,.055,.040,frame,g,.012)
+    top_rear=(seat_top[0],0,head_top[2])
+    beam_between(asset_id+"_TOP_TUBE",top_rear,head_top,.060,.042,frame,g,.012)
     beam_between(asset_id+"_SEAT_TUBE",bb,seat_top,.090,.046,frame,g,.014)
+    if abs(top_rear[2]-seat_top[2]) > .005:
+        beam_between(asset_id+"_SEAT_MAST_FAIRING",seat_top,top_rear,.090,.046,frame,g,.012)
     beam_between(asset_id+"_CHAIN_STAY",bb,rear,.040,.026,frame,g,.008)
     beam_between(asset_id+"_SEAT_STAY",seat_top,rear,.034,.022,frame,g,.008)
     beam_between(asset_id+"_FORK_L",head_bottom,(front[0],-.035,front[2]),.050,.026,frame,g,.008)
     beam_between(asset_id+"_FORK_R",head_bottom,(front[0],.035,front[2]),.050,.026,frame,g,.008)
 
     # Product-specific architecture, scaled from the measured frame.
-    if style=="shiv":
-        # Shiv's integrated nutrition/hydration Fuelcell occupies the central/rear frame volume.
-        cube(asset_id+"_FUELCELL",(bb[0]-.025,0,bb[2]+.205),(.115,.048,.125),accent,g,.032)
-        cube(asset_id+"_REAR_HYDRATION",(seat_top[0]-.055,0,seat_top[2]-.075),(.055,.052,.135),frame,g,.028)
+    if style=="p5":
+        # P5: deep rear wheel-hugging seat mast, top-tube storage and deep head/fork junction.
+        cube(asset_id+"_P5_REAR_MAST",(seat_top[0]-.010,0,wr+.165),(.070,.046,.205),frame,g,.026)
+        cube(asset_id+"_P5_TOP_STORAGE",((top_rear[0]+head_top[0])*.58,0,head_top[2]+.055),(.145,.045,.050),BLACK,g,.022)
+        cube(asset_id+"_P5_HEAD_SHOULDER",(head_top[0]-.018,0,head_top[2]-.055),(.074,.046,.090),frame,g,.022)
+    elif style=="shiv":
+        # Shiv Disc: massive rear sail / hydration architecture plus central Fuelcell.
+        cube(asset_id+"_SHIV_REAR_SAIL",(seat_top[0]-.060,0,wr+.190),(.115,.052,.235),frame,g,.034)
+        cube(asset_id+"_FUELCELL",(bb[0]-.020,0,bb[2]+.205),(.125,.050,.135),accent,g,.030)
+        cube(asset_id+"_SHIV_HEAD_BLOCK",(head_top[0]-.015,0,head_top[2]-.060),(.072,.048,.105),frame,g,.024)
     elif style=="felt":
-        cube(asset_id+"_IA_HEAD_FAIRING",(head_bottom[0]-.018,0,head_bottom[2]+.110),(.072,.048,.145),frame,g,.032)
-        cube(asset_id+"_IA_REAR_CUTOUT",(rear[0]+.045,0,wr+.055),(.060,.048,.170),frame,g,.035)
+        cube(asset_id+"_IA_HEAD_FAIRING",(head_bottom[0]-.010,0,head_bottom[2]+.120),(.080,.050,.165),frame,g,.032)
+        cube(asset_id+"_IA_REAR_MAST",(seat_top[0]-.035,0,wr+.180),(.085,.050,.215),frame,g,.032)
+        cube(asset_id+"_IA_BENTO",((top_rear[0]+head_top[0])*.55,0,head_top[2]+.045),(.110,.042,.040),BLACK,g,.020)
     elif style=="plasma":
-        cube(asset_id+"_PLASMA_STORAGE",(seat_top[0]-.060,0,seat_top[2]-.145),(.070,.050,.150),frame,g,.030)
-        cube(asset_id+"_PLASMA_HYDRATION",(head_top[0]-.085,0,head_top[2]+.010),(.105,.046,.070),accent,g,.025)
+        cube(asset_id+"_PLASMA_REAR_STORAGE",(seat_top[0]-.065,0,wr+.195),(.085,.052,.220),frame,g,.030)
+        cube(asset_id+"_PLASMA_TOP_HYDRATION",((top_rear[0]+head_top[0])*.60,0,head_top[2]+.050),(.120,.047,.048),accent,g,.024)
+        cube(asset_id+"_PLASMA_HEAD",(head_top[0]-.020,0,head_top[2]-.060),(.075,.050,.105),frame,g,.024)
     elif style=="bmc":
-        cube(asset_id+"_FUEL_TANK_1200",(head_top[0]-.070,0,head_top[2]-.055),(.120,.048,.075),accent,g,.030)
-        cube(asset_id+"_REAR_STORAGE_260",(seat_top[0]-.055,0,seat_top[2]-.110),(.060,.050,.120),frame,g,.025)
+        # Speedmachine: large Fuel Tank 1200 in the central triangle and Rear Storage 260 behind seat mast.
+        cube(asset_id+"_FUEL_TANK_1200",(bb[0]+.110,0,bb[2]+.185),(.160,.052,.150),BLACK,g,.026)
+        cube(asset_id+"_REAR_STORAGE_260",(seat_top[0]-.090,0,wr+.205),(.105,.052,.205),BLACK,g,.028)
+        cube(asset_id+"_BMC_HEAD",(head_top[0]-.018,0,head_top[2]-.060),(.078,.050,.110),frame,g,.024)
     elif style=="ordu":
-        cube(asset_id+"_ORDU_FRONT_POST",(head_top[0]+.010,0,head_top[2]+.080),(.030,.030,.105),frame,g,.015)
+        cube(asset_id+"_ORDU_FRONT_POST",(head_top[0]+.010,0,head_top[2]+.085),(.030,.032,.110),frame,g,.015)
+        cube(asset_id+"_ORDU_REAR_MAST",(seat_top[0]-.020,0,wr+.180),(.065,.045,.195),frame,g,.026)
 
     # Cockpit positions are constrained where manufacturer pad numbers are available.
     pad_x=bb[0]+geo.get("pad_reach",geo.get("reach",.40)+.12)
@@ -318,8 +332,9 @@ def bike(asset_id, frame=CARBON, accent=WHITE):
     cyl_between(asset_id+"_EXT_L",(bar_x,-.070,bar_z+.015),(pad_x+.10,-.070,pad_z+.020),.013,BLACK,g)
     cyl_between(asset_id+"_EXT_R",(bar_x,.070,bar_z+.015),(pad_x+.10,.070,pad_z+.020),.013,BLACK,g)
 
-    saddle_z=seat_top[2]+.105
-    cube(asset_id+"_SADDLE",(seat_top[0]-.020,0,saddle_z),(.120,.045,.025),BLACK,g,.018)
+    saddle_z=max(seat_top[2],top_rear[2])+.125
+    beam_between(asset_id+"_SEATPOST",(top_rear[0],0,top_rear[2]),(top_rear[0]-.018,0,saddle_z-.020),.050,.030,BLACK,g,.008)
+    cube(asset_id+"_SADDLE",(top_rear[0]-.038,0,saddle_z),(.120,.045,.025),BLACK,g,.018)
     disc(asset_id+"_CHAINRING",bb,.105,BLACK,g)
     cyl_between(asset_id+"_CRANK_ARM",bb,(bb[0]+.165,0,bb[2]-.020),.010,SILVER,g,12)
     cube(asset_id+"_PEDAL",(bb[0]+.180,0,bb[2]-.025),(.025,.045,.009),BLACK,g,.005)
@@ -435,12 +450,12 @@ def shoe(asset_id, kind, accent):
     return g
 
 ASSETS = {
-    "cervelo-p5-disc-mk2-size54": bike("cervelo-p5-disc-mk2-size54", CARBON, RED),
-    "specialized-shiv-disc-size-m": bike("specialized-shiv-disc-size-m", CARBON, RED),
+    "cervelo-p5-disc-mk2-size54": bike("cervelo-p5-disc-mk2-size54", CARBON, WHITE),
+    "specialized-shiv-disc-size-m": bike("specialized-shiv-disc-size-m", YELLOW, RED),
     "felt-ia-2015-size54": bike("felt-ia-2015-size54", CARBON, WHITE),
-    "scott-plasma-rc-provisional": bike("scott-plasma-rc-provisional", CARBON, YELLOW),
-    "bmc-speedmachine-01-size-m": bike("bmc-speedmachine-01-size-m", CARBON, TEAL),
-    "orbea-ordu-current-sm": bike("orbea-ordu-current-sm", CARBON, BLUE),
+    "scott-plasma-rc-provisional": bike("scott-plasma-rc-provisional", TEAL, BLACK),
+    "bmc-speedmachine-01-size-m": bike("bmc-speedmachine-01-size-m", CARBON, WHITE),
+    "orbea-ordu-current-sm": bike("orbea-ordu-current-sm", TEAL, BLACK),
     "nike-vaporfly-4pct-study": shoe("nike-vaporfly-4pct-study", "vaporfly4pct", RED),
     "nike-vaporfly-next-study": shoe("nike-vaporfly-next-study", "vaporflynext", BLUE),
     "nike-alphafly-next-study": shoe("nike-alphafly-next-study", "alphafly1", TEAL),
