@@ -55,9 +55,15 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Race badges</h3><small>Past & future</small></div><div data-race-badges></div></section>';
 
   let stageApi=null;
-  import('./race-self-stage.js').then(async m=>{
-    stageApi=await m.mountRaceSelfStage(root.querySelector('[data-race-self-stage]'),{accent,bike,shoe});
-  }).catch(()=>{});
+  const mountStage=()=>window.__mountRaceSelfStage?.(root.querySelector('[data-race-self-stage]'),{accent,bike,shoe}).then?.(api=>{stageApi=api});
+  if(window.__mountRaceSelfStage) mountStage();
+  else {
+    const script=document.createElement('script');
+    script.src='app/race-self-stage.js';
+    script.onload=mountStage;
+    script.onerror=()=>{};
+    document.body.append(script);
+  }
 
   await renderRaceBadges(root.querySelector('[data-race-badges]'),{limit:8,empty:true});
 
