@@ -5,6 +5,7 @@ import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
 import { saveQuestIdentity } from './engine/identity.js';
+import { readStorage } from './engine/storage.js';
 import { BIKES, GOALS, INTENTS, SHOES, emptyQuest, questReady, relationshipFor } from './quest.js';
 
 const INTENT_KEY = 'speedmax.entryIntent.v1';
@@ -164,7 +165,30 @@ function paintQuest(step) {
   }));
 }
 
-document.getElementById('buildSelf')?.addEventListener('click', () => paintQuest('intent'));
+function existingRaceIdentity() {
+  try {
+    const raw = readStorage('raceIdentity');
+    const value = raw ? JSON.parse(raw) : null;
+    return value?.entity_type === 'race-identity' && value?.event_id ? value : null;
+  } catch (_) { return null; }
+}
+
+const existingIdentity = existingRaceIdentity();
+const buildButton = document.getElementById('buildSelf');
+if (existingIdentity) {
+  const lede = document.querySelector('#intro .lede');
+  const note = document.querySelector('#intro .kona-note');
+  if (lede) lede.textContent = existingIdentity.goal?.label
+    ? `Your Kona is saved. Next: ${existingIdentity.goal.label}.`
+    : 'Your Kona is saved. Pick up where you left off.';
+  if (buildButton) {
+    buildButton.textContent = 'Continue your Kona';
+    buildButton.addEventListener('click', () => shell.now?.());
+  }
+  if (note) note.textContent = 'Your RaceIdentity stays private on this device unless you choose to save or share it.';
+} else {
+  buildButton?.addEventListener('click', () => paintQuest('intent'));
+}
 paintIntent();
 dataReady.then(paintCount).catch(() => {});
 
