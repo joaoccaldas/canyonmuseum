@@ -123,7 +123,7 @@ let tab = 'bikes', filter = { brand: null, origin: null, q: '' };
 const ORIGIN = { 'canyon-model': 'Canyon, current', 'canyon-archive': 'Canyon, archive', 'geometry-study': 'Champions', 'photo-rebuild': 'Named machines', 'type-study': 'Type studies', 'studio-design': 'Studio designs' };
 const h = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else if (v === true) n.setAttribute(k, ''); else if (v != null && v !== false) n.setAttribute(k, v); } for (const k of kids.flat()) if (k != null) n.append(k.nodeType ? k : document.createTextNode(k)); return n; };
 function drawPanel() {
-  const P = $('panel'); P.replaceChildren(); $('card').hidden = tab !== 'info';
+  const P = $('panel'); P.replaceChildren(); P.classList.toggle('setup-mode', tab === 'setup'); $('card').hidden = tab !== 'info';
   document.querySelectorAll('.tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab));
   requestAnimationFrame(() => document.querySelector(`.tabs [data-tab="${tab}"]`)?.scrollIntoView({ block:'nearest', inline:'center', behavior:'auto' }));
   if (tab === 'bikes') {
@@ -220,17 +220,19 @@ function renderRaceSetup(P) {
     type:'button', class:`setup-slot${soon ? ' soon' : ''}`, disabled: soon, onclick
   }, h('i', {}, icon), h('span', {}, h('b', {}, label), h('small', {}, value)), h('span', { class:'status' }, state));
   P.append(
-    h('div', { class:'setup-head' },
-      h('div', {}, h('small', {}, 'Kona 2026'), h('h3', {}, 'My Kona Setup')),
-      h('div', { class:'setup-score' }, `${n} / 4`)
+    h('div', { class:'setup-scroll' },
+      h('div', { class:'setup-head' },
+        h('div', {}, h('small', {}, 'Kona 2026'), h('h3', {}, 'My Kona Setup')),
+        h('div', { class:'setup-score' }, `${n} / 4`)
+      ),
+      h('div', { class:'setup-grid' },
+        slot('△', 'Bike', bikeProduct ? `${bikeProduct.brand} · ${bikeProduct.name}` : 'Choose your race bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
+        slot('◉', 'Wheels', bikeProduct ? 'Current bike wheels' : 'Comes with your bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
+        slot('◒', 'Helmet', 'Equipment slot ready', 'Soon', null, true),
+        slot('⌁', 'Shoes', 'Equipment slot ready', 'Soon', null, true)
+      ),
+      h('p', { class:'setup-note' }, 'Stored only on this device. No account, tracking or background location. Helmet and shoe slots are intentionally dormant until validated assets clear the intake contract.')
     ),
-    h('div', { class:'setup-grid' },
-      slot('△', 'Bike', bikeProduct ? `${bikeProduct.brand} · ${bikeProduct.name}` : 'Choose your race bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
-      slot('◉', 'Wheels', bikeProduct ? 'Current bike wheels' : 'Comes with your bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
-      slot('◒', 'Helmet', 'Equipment slot ready', 'Soon', null, true),
-      slot('⌁', 'Shoes', 'Equipment slot ready', 'Soon', null, true)
-    ),
-    h('p', { class:'setup-note' }, 'Stored only on this device. No account, tracking or background location. Helmet and shoe slots are intentionally dormant until validated assets clear the intake contract.'),
     h('div', { class:'setup-actions' },
       h('button', { type:'button', class:'btn primary', onclick:saveCurrentToSetup }, bikeProduct && current?.product.id === bikeProduct.id ? 'Update bike' : 'Save bike'),
       bikeProduct ? h('button', { type:'button', class:'btn ghost', 'aria-label':'Share My Kona Setup', onclick:shareRaceSetup }, 'Share setup') : null
