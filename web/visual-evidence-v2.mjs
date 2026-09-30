@@ -44,7 +44,7 @@ async function capture(vp,state,theme){
    const visible=el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&+s.opacity>.02&&r.width>0&&r.height>0};
    const els=[...document.querySelectorAll('button,a,[role=button]')].filter(visible);
    const primary=els.filter(x=>x.matches('.primary,[data-primary=true]'));
-   const small=els.map(x=>{const r=x.getBoundingClientRect();return{tag:x.tagName,text:(x.textContent||'').trim().slice(0,50),w:r.width,h:r.height};}).filter(x=>x.w<44||x.h<44);
+   const small=els.map(x=>{const r=x.getBoundingClientRect();return{tag:x.tagName,text:(x.textContent||'').trim().slice(0,50),w:r.width,h:r.height};}).filter(x=>x.w<48||x.h<48);
    const intro=document.getElementById('intro');
    const activeNav=[...document.querySelectorAll('.kona-bottom-nav .on,.kona-bottom-nav [aria-current="page"]')].map(x=>(x.textContent||'').trim());
    const visibleText=(document.body.innerText||'').replace(/\s+/g,' ').trim().slice(0,600);
@@ -66,8 +66,9 @@ for(const r of report){
  if(!['landing','onboarding','reveal'].includes(r.state) && r.metrics.introVisible) violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
  if(r.state==='onboarding' && !/Why are you here/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/onboarding: onboarding question missing`);
  if(r.state==='reveal' && !/This is your Kona|Enter KONA/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/reveal: payoff missing`);
- if(r.state==='home' && !/Race Self|Self|Gear|Bike|Kit|Races|Cards|Garage|World|Settings/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no Race Self Studio content detected`);
+ if(r.state==='home' && !/Race Self|3D World|Bike Studio|Garage|Collection|Races|Discover|Games|Self/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no game-hub content detected`);
  if(r.state==='garage' && !/Garage|Your equipment|Mine|Dreaming|Try/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/garage: no Garage content detected`);
+ if(r.viewport!=='desktop' && ['home','garage'].includes(r.state) && r.metrics.smallTargets.length) violations.push(`${r.viewport}/${r.theme}/${r.state}: touch targets below 48px: ${r.metrics.smallTargets.map(x=>x.text||x.tag).join(', ')}`);
  if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);
  if(r.state==='me' && !/Me|Passport|XP|Credits/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: no Me/Passport content detected`);
 }
