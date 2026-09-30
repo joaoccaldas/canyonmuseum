@@ -9,3 +9,5 @@ test('reveal has exactly one primary continuation into app',()=>{assert.match(en
 test('save/sign-in remains optional after reveal',()=>assert.match(entry,/Save across devices/));
 test('CSP allows the exact public Supabase project used by auth adapter',()=>assert.match(harden,/connect-src[^\n]*https:\/\/mtvpnoqwjpoqaiocrklq\.supabase\.co/));
 test('entry source itself never imports Three.js',()=>{assert.equal(/from ['"]three/.test(entry),false);assert.equal(/app\/hall\.js/.test(entry),true);});
+
+test('generated core bundle carries the P0 continuation contract',()=>{const bundle=fs.readFileSync(new URL('../../app/kona-core.js',import.meta.url),'utf8');assert.match(bundle,/Enter KONA/);});
