@@ -1,6 +1,6 @@
 import { readStorage, writeStorage, storageKey } from './storage.js';
 // Canonical graph for the device. Product, equipment, and race identity stay separate.
-// Race Setup V0 (speedmax.raceSetup.v1) is left in place. This module projects it.
+// RaceSetup is persisted by storage.js; this module only projects setup state into the canonical graph.
 // An unlabeled setup is relationship "try": it is not owned and it is not dream demand.
 // Nothing here is eligible for vendor analytics. Tokens never live in these records.
 
