@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/external-gear-link.schema.json",
+  "title": "External Gear Link V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "user_id",
+    "provider",
+    "provider_gear_id",
+    "match_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^external-gear:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "external-gear-link"
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^user:[a-z0-9:_-]+$"
+    },
+    "provider": {
+      "const": "strava"
+    },
+    "provider_gear_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider_gear_type": {
+      "enum": [
+        "bike",
+        "shoe",
+        "unknown"
+      ]
+    },
+    "provider_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "distance_m": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "match_status": {
+      "enum": [
+        "unmatched",
+        "suggested",
+        "confirmed",
+        "rejected"
+      ]
+    },
+    "product_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^product:[a-z0-9:_-]+$"
+    },
+    "user_equipment_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^equipment:[a-z0-9:_-]+$"
+    },
+    "match_confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "last_synced_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}
