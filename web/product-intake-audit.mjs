@@ -102,7 +102,7 @@ async function openCase(mode,name,w,h,{screenshots=false}={}){
     }
     return out;
   }):[];
-  const relevantErrors=errors.filter(x=>!/favicon\.ico/i.test(x));
+  const relevantErrors=errors.filter(x=>!/favicon\.ico/i.test(x) && !/Failed to load resource: the server responded with a status of 404/i.test(x));
   const relevantRequestFailures=requestFailures.filter(x=>!/favicon\.ico/i.test(x.url));
   const relevantBadResponses=badResponses.filter(x=>!/favicon\.ico/i.test(x.url));
   issues.push(...layout,...relevantErrors,...relevantRequestFailures.map(x=>'requestfailed '+x.url+' '+x.reason),...relevantBadResponses.map(x=>'http '+x.status+' '+x.url));
