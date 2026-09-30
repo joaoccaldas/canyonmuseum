@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "assets": {
+    "dt-swiss-arc1100-db80-front": {
+      "type": "wheel",
+      "rim_diameter": "700C / 29in",
+      "rim_height_mm": 80,
+      "inner_width_mm": 20,
+      "outer_width_mm": 32,
+      "axle_mm": "12x100",
+      "brake": "Center Lock disc",
+      "hub": "180",
+      "exploded_parts": [
+        "rim/disc",
+        "hub",
+        "spokes",
+        "centerlock rotor",
+        "thru axle"
+      ]
+    },
+    "dt-swiss-arc1100-db80-rear": {
+      "type": "wheel",
+      "rim_diameter": "700C / 29in",
+      "rim_height_mm": 80,
+      "inner_width_mm": 20,
+      "outer_width_mm": 32,
+      "axle_mm": "12x142",
+      "brake": "Center Lock disc",
+      "hub": "180 / Ratchet EXP 36",
+      "exploded_parts": [
+        "rim/disc",
+        "hub",
+        "spokes",
+        "centerlock rotor",
+        "thru axle",
+        "freehub body"
+      ]
+    },
+    "dt-swiss-arc1100-disc-rear": {
+      "type": "wheel",
+      "rim_diameter": "700C / 29in",
+      "rim_height_mm": "disc",
+      "inner_width_mm": 20,
+      "outer_width_mm": 27,
+      "axle_mm": "12x142",
+      "brake": "Center Lock disc",
+      "hub": "180 / Ratchet EXP 36",
+      "exploded_parts": [
+        "rim/disc",
+        "hub",
+        "monocoque disc",
+        "centerlock rotor",
+        "thru axle",
+        "freehub body"
+      ]
+    },
+    "shimano-fc-r9200-54-40-170": {
+      "type": "crankset",
+      "rear_speeds": 12,
+      "chainline_mm": 44.5,
+      "pcd_mm": 110,
+      "spider_arms": 4,
+      "chainrings": "54-40T",
+      "q_factor_mm": 148,
+      "crank_length_mm": 170,
+      "materials": {
+        "crank_arm": "aluminum",
+        "axle": "steel",
+        "outer_ring": "aluminum/CFRP",
+        "inner_ring": "aluminum"
+      },
+      "exploded_parts": [
+        "left crank arm",
+        "axle",
+        "right crank/spider",
+        "54T outer ring",
+        "40T inner ring",
+        "4 fixing bolts"
+      ]
+    },
+    "shimano-cs-r9200-11-30": {
+      "type": "cassette",
+      "rear_speeds": 12,
+      "type_name": "HYPERGLIDE+",
+      "combination": "11-30T",
+      "teeth": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        19,
+        21,
+        24,
+        27,
+        30
+      ],
+      "steel_gears": 7,
+      "titanium_gears": 5,
+      "aluminum_spider_arms": 2,
+      "weight_g": 223,
+      "exploded_parts": [
+        "lockring",
+        "11T",
+        "12T",
+        "13T",
+        "14T",
+        "15T",
+        "16T",
+        "17/19T unit",
+        "21/24/27/30T unit",
+        "spider carriers"
+      ]
+    },
+    "profile-design-43asc-400": {
+      "type": "aerobar_extensions",
+      "extension_length_mm": 400,
+      "min_length_from_front_clamp_mm": 290,
+      "angle_deg": 43,
+      "rise_mm": 107,
+      "offset_total_mm": 16,
+      "outer_diameter_mm": 22.2,
+      "inner_diameter_mm": 18.8,
+      "construction": "carbon",
+      "weight_pair_g": 232,
+      "exploded_parts": [
+        "left extension",
+        "right extension",
+        "22.2 mm clamp zones"
+      ]
+    }
+  },
+  "sources": {
+    "dt_swiss_arc_80_front": "https://www.dtswiss.com/en/support/product-support?matnr=WARC110AIDXCA12557",
+    "dt_swiss_arc_80_rear": "https://www.dtswiss.com/en/support/product-support?matnr=WARC110NIDJCA12558",
+    "dt_swiss_disc": "https://www.dtswiss.com/en/wheels/wheels-road/aero/arc-1100-dicut-disc",
+    "shimano_fc_r9200": "https://productinfo.shimano.com/pdfs/product/archive/2025-2026_Specifications_v035_en.pdf",
+    "shimano_fc_exploded": "https://dassets.shimano.com/content/dam/global/cg1SHICCycling/final/ev/ev/EV-FC-R9200-P-4810.pdf",
+    "shimano_cs_r9200": "https://productinfo.shimano.com/pdfs/product/archive/2025-2026_Specifications_v035_en.pdf",
+    "shimano_cs_exploded": "https://dassets.shimano.com/content/dam/global/cg1SHICCycling/final/ev/ev/EV-CS-R9200-4808.pdf",
+    "profile_43asc": "https://profile-design.com/products/43-asc-carbon-extensions"
+  }
+}
