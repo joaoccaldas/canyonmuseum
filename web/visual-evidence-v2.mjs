@@ -26,7 +26,7 @@ async function capture(vp,state,theme){
        const equipment={schema_version:1,id:'equipment:visual-fixture:dream:canyon-cfr-2027',entity_type:'user-equipment',user_id:'user:visual-fixture',product_id:'product:canyon-cfr-2027',relationship:'dream',created_at:'2026-09-30T00:00:00.000Z',nickname:null,customization:{provenance:'visual-evidence'},visibility:'private',vendor_analytics_eligible:false};
        const identity={schema_version:1,id:'race-identity:visual-fixture:kona-2026',entity_type:'race-identity',user_id:'user:visual-fixture',mode:'dream',event_id:'event:kona-2026',goal:{type:'experience',target_seconds:null,label:'Finish'},style:'custom',avatar:{avatar_id:'avatar:visual-fixture',appearance:{}},setup:{bike:equipment.id,wheel_front:null,wheel_rear:null,helmet:null,shoe:null,trisuit:null,watch:null,wetsuit:null,nutrition:null},visibility:'private',share_slug:null,intent:'dreaming'};
        localStorage.setItem('kona.userEquipment.v1',JSON.stringify([equipment]));
-       const race={race_id:'race:im-kalmar:2024:visual-fixture',relationship:'completed',selected_at:'2026-09-30T00:00:00.000Z',result:null};
+       const race={race_id:'race:im-kalmar:2024:9ca4223e-fee3-4583-a796-4f360a13cfc4',relationship:'completed',selected_at:'2026-09-30T00:00:00.000Z',result:null};
        localStorage.setItem('kona.raceIdentity.v1',JSON.stringify(identity));
        localStorage.setItem('kona.raceHistory.v1',JSON.stringify([race]));
      });
