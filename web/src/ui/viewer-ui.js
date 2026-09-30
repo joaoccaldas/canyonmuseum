@@ -49,7 +49,7 @@ export function setupViewerUI({
     m.customProgramCacheKey=()=> 'museum-disc-v1';
     return m;
   };
-  const installDiscArt=url=>{
+  const installDiscArt=(url,onDone=()=>{})=>{
     const img=new Image();
     img.onload=()=>{
       const c=document.createElement('canvas'), scale=Math.min(1,1024/Math.max(img.width,img.height));
@@ -60,8 +60,9 @@ export function setupViewerUI({
       discArt.uniforms.artTex.value=tex; discArt.uniforms.artAspect.value=c.width/c.height; discArt.uniforms.artOn.value=1;
       discMesh?.traverse(o=>{ if(o.isMesh){ o.material=discMat(o.material); o.material.needsUpdate=true; } });
       $('#discArtControls').hidden=false; $('#discArtStatus').textContent=`${img.width} × ${img.height} · local`;
+      onDone();
     };
-    img.onerror=()=>{ $('#discArtStatus').textContent='Could not decode image.'; };
+    img.onerror=()=>{ $('#discArtStatus').textContent='Could not decode image.'; onDone(); };
     img.src=url;
   };
   const discFile=$('#discFile');
@@ -70,8 +71,7 @@ export function setupViewerUI({
     if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>12*1024*1024){
       $('#discArtStatus').textContent='PNG, JPEG or WebP up to 12 MB.'; e.target.value=''; return;
     }
-    const url=URL.createObjectURL(file); installDiscArt(url);
-    setTimeout(()=>URL.revokeObjectURL(url),0); e.target.value='';
+    const url=URL.createObjectURL(file); installDiscArt(url,()=>URL.revokeObjectURL(url)); e.target.value='';
   };
 
   for(const [id,key] of [['#wyldDark','wyldDark'],['#wyldSheer','wyldSheer'],['#wyldAlpha','wyldAlpha']]){
