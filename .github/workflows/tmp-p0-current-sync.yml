@@ -1,0 +1,25 @@
+name: Temporary P0 current output sync
+on:
+  push:
+    branches: [release/mobile-entry-onboarding-p0-current-20260930]
+    paths-ignore: ['*.html','web/dist/**','docs/ROOMS.md','museum/catalog/products.json','sw.js','app/app-manifest.json']
+permissions: { contents: write }
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: release/mobile-entry-onboarding-p0-current-20260930, fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm, cache-dependency-path: web/package-lock.json }
+      - run: npm ci --ignore-scripts
+        working-directory: web
+      - run: node tools/build_pages.mjs
+      - run: node tools/build_app.mjs
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add museum/catalog/products.json docs/ROOMS.md ./*.html web/dist/*.html sw.js app/app-manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "build: sync P0 current release outputs [skip ci]"
+          git push origin HEAD:release/mobile-entry-onboarding-p0-current-20260930
