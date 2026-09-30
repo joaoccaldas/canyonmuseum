@@ -122,3 +122,24 @@ html.phone-fit .credit{display:none}
   #intro .lede:not(.touch-only){display:none}
 }
 @media (max-width:520px){.set-opts{grid-template-columns:1fr}}
+
+
+/* Cinematic mobile hall: first-person by default, exhibit sheet on intent. */
+@media (max-width:760px),(pointer:coarse){
+  body.walking:not(.card-open):not(.touring) header{opacity:.88}
+  body.walking:not(.card-open):not(.touring) header nav{opacity:.72}
+  body.flowing:not(.card-open):not(.touring) header{opacity:.50;transform:translateY(-4px)}
+  body.flowing:not(.card-open):not(.touring) #rail{opacity:.12}
+  body.card-open header,
+  body.card-open #nearby{opacity:0!important;pointer-events:none!important}
+  body.card-open #rail{transform:translateY(140%)!important;opacity:0!important;pointer-events:none!important}
+  body.card-open #card{
+    bottom:calc(14px + var(--safe-b));
+    max-height:min(62dvh,calc(100dvh - 42px - var(--safe-b)));
+    border-radius:26px;
+  }
+  #joy{width:96px;height:96px;bottom:calc(82px + var(--safe-b))}
+  .joy-knob{width:48px;height:48px;margin:-24px 0 0 -24px}
+  #nearby{border-radius:999px}
+  #nearby small{display:none}
+}
