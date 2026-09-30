@@ -35,8 +35,9 @@ test('Garage and Me resolve Product presentation from the shared public projecti
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Race Self Home is nine-menu, immersive and keeps museum/world optional',()=>{
-  for(const tab of ['Self','Gear','Bike','Kit','Races','Cards','Garage','World','Settings']) assert.match(avatarHome,new RegExp(tab));
+test('Race Self Home is a game-style launcher hub and keeps museum/world optional',()=>{
+  for(const tile of ['3D World','Bike Studio','Garage','Collection','Races','Discover','Games','Self']) assert.match(avatarHome,new RegExp(tile));
+  assert.match(avatarHome,/hub-launcher/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
   assert.doesNotMatch(avatarHome,/app\/hall\.js|museum-data\.js|__museum/);
   assert.match(raceCards,/Search IRONMAN races/);

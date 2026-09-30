@@ -152,3 +152,29 @@ html.phone-fit #coach{
 }
 html.phone-fit header,html.phone-fit #rail,html.phone-fit #nearby,html.phone-fit #tourPill{width:calc(100vw / var(--fit));max-width:calc(100vw / var(--fit))}
 html.phone-fit #card{left:8px;right:auto;width:calc((100vw - 16px)/var(--fit))!important;max-height:calc((100dvh - 150px)/var(--fit))}
+
+/* World map on phones: map first, list second. */
+@media(max-width:760px),(pointer:coarse){
+  #map{padding:0;align-items:stretch}
+  .map-card{width:100%;height:100dvh;max-height:none;border-radius:0;padding:max(12px,env(safe-area-inset-top)) 10px calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;overflow:hidden}
+  .map-head{grid-template-columns:minmax(0,1fr) 48px;gap:8px}
+  .map-head>div:first-child{min-width:0}.map-head h3{font-size:32px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.map-head>div:first-child p{display:none}
+  .map-tabs{grid-column:1/-1;grid-row:2;width:100%;overflow-x:auto;justify-self:stretch;border-radius:14px;padding:4px}.map-tabs button{flex:1 0 auto;min-height:48px;padding-inline:12px}
+  .map-close{grid-column:2;grid-row:1}
+  .map-legend{margin-top:8px;padding:8px 10px;gap:10px;white-space:nowrap;overflow-x:auto}
+  .map-plan{min-height:0;margin:8px 0 4px;border-radius:16px}
+  .map-plan svg{height:100%;min-height:42dvh;max-height:none}
+  .map-list{display:flex;overflow-x:auto;gap:8px;margin:6px 0 0;padding-bottom:2px;scroll-snap-type:x proximity}
+  .map-list li{flex:0 0 min(72vw,260px);scroll-snap-align:start}
+  .map-list button,.map-list li.future>div{min-height:58px;padding:8px 10px;background:rgba(255,255,255,.46)}
+  .map-list b{font-size:12px}.map-list small{font-size:10px}
+  .map-foot{margin:6px 2px 0;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+@media(max-height:560px) and (orientation:landscape){
+  .map-card{grid-template-columns:minmax(0,1fr) minmax(260px,.42fr);grid-template-rows:auto 1fr auto;gap:8px}
+  .map-head{grid-column:1/-1}
+  .map-legend{display:none}
+  .map-plan{grid-column:1;grid-row:2;margin:0}.map-plan svg{min-height:0;height:100%}
+  .map-list{grid-column:2;grid-row:2;display:grid;overflow-y:auto;overflow-x:hidden;margin:0}.map-list li{flex:auto}
+  .map-foot{grid-column:1/-1;grid-row:3}
+}

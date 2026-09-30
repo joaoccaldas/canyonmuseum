@@ -111,10 +111,15 @@ export function initAppShell() {
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (wantReload) { wantReload = false; location.reload(); } });
   navigator.serviceWorker.register('sw.js', { scope: './', updateViaCache: 'none' }).then(reg => {
     const offer = w => pill('KONA update verified and ready', 'Reload', () => { wantReload = true; w.postMessage('skip-waiting'); });
-    if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
+    const activateOrOffer = w => {
+      const inWorld = document.body.classList.contains('museum-open') || document.body.classList.contains('walking');
+      if (!inWorld) { wantReload = true; w.postMessage('skip-waiting'); }
+      else offer(w);
+    };
+    if (reg.waiting && navigator.serviceWorker.controller) activateOrOffer(reg.waiting);
     reg.addEventListener('updatefound', () => {
       const w = reg.installing;
-      w?.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) offer(w); });
+      w?.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) activateOrOffer(w); });
     });
     const check = () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); };
     setInterval(check, 30 * 60 * 1000); document.addEventListener('visibilitychange', check);

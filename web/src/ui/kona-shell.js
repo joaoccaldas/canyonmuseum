@@ -41,12 +41,13 @@ export function initKonaShell({ profile, settings, enter }) {
 
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
   const setActive=id=>shell.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===id));
-  const close=()=>{panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
+  const leaveRaceSelf=()=>document.body.classList.remove('race-self-open');
+  const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=close;
 
   async function now(){
     title.textContent='Race Self'; eyebrow.textContent='KONA · YOUR WORLD';
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
+    panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('home');
     await renderAvatarHome(body,{
       profile,
       settings,
@@ -59,24 +60,28 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   async function collection(){
+    leaveRaceSelf();
     title.textContent='Collection'; eyebrow.textContent='KONA · CARDS & ITEMS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('');
     await renderCollectionSurface(body);
   }
 
   async function garage(){
+    leaveRaceSelf();
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
     await renderGarageSurface(body);
   }
 
   function plan(){
+    leaveRaceSelf();
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
     renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
   }
 
   async function me(){
+    leaveRaceSelf();
     title.textContent='Me'; eyebrow.textContent='KONA · PASSPORT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
     await renderMeSurface(body,{settings});
@@ -89,6 +94,7 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   async function explore(){
+    leaveRaceSelf();
     title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
     await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});

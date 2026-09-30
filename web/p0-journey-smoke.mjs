@@ -39,8 +39,9 @@ try{
  assert.equal(museumHeavy().length,0,'onboarding/reveal must request zero museum/world assets');
  await page.click('#enterKona');
  await page.waitForFunction(()=>document.querySelector('#intro')?.hasAttribute('hidden'));
+ await page.waitForSelector('.player-hub',{timeout:8000});
  assert.equal(museumHeavy().length,0,'Race Self home must not request museum/world assets');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Self|Gear|Bike|Kit|Races|Cards|Garage|World|Settings/i,'post-onboarding state should be Race Self Studio');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/RACE SELF|3D World|Bike Studio|Garage|Collection|Races|Discover|Games|Self/i,'post-onboarding state should be Race Self game hub');
  assert.ok(await page.$eval('[data-tab="home"]',e=>e.classList.contains('on')),'Home nav should be active after reveal');
  await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]'),{timeout:5000});
  await new Promise(r=>setTimeout(r,500));
