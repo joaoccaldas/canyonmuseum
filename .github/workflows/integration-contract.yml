@@ -54,3 +54,6 @@ jobs:
 
       - name: Validate product experience aggregation
         run: node integrations/product-experience.test.mjs
+
+      - name: Validate affiliate revenue priority
+        run: node integrations/affiliate-priority.test.mjs
