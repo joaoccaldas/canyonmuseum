@@ -58,7 +58,20 @@
         "scale": 1.5,
         "flow": 1
       },
-      "text": "The original: fuchsia running through blush and lilac into a cool aqua, laid down in soft diagonal waves like the jersey it was sampled from."
+      "text": "The original: fuchsia running through blush and lilac into a cool aqua, laid down in soft diagonal waves like the jersey it was sampled from.",
+      "display": {
+        "kind": "hero",
+        "x": -14.6,
+        "z": -34.2,
+        "rotY": 0.22,
+        "top": 0.28,
+        "label": "Hero plinth",
+        "camera": {
+          "x": -14.6,
+          "z": -30.5,
+          "y": 1.55
+        }
+      }
     },
     {
       "id": "tide",
@@ -72,7 +85,20 @@
         "scale": 2.7,
         "flow": 1.5
       },
-      "text": "The same dyes stood upright and pulled tight, so the colour breaks over the frame like sets rolling into Kailua Bay."
+      "text": "The same dyes stood upright and pulled tight, so the colour breaks over the frame like sets rolling into Kailua Bay.",
+      "display": {
+        "kind": "gallery",
+        "x": -19.25,
+        "z": -30.7,
+        "rotY": 1.18,
+        "top": 0.24,
+        "label": "Ocean wall",
+        "camera": {
+          "x": -16.2,
+          "z": -30.7,
+          "y": 1.55
+        }
+      }
     },
     {
       "id": "sheer",
@@ -86,7 +112,20 @@
         "scale": 1.2,
         "flow": 0.8
       },
-      "text": "A translucent clear coat: the dye tints the carbon instead of covering it, so the weave glows through pink and aqua."
+      "text": "A translucent clear coat: the dye tints the carbon instead of covering it, so the weave glows through pink and aqua.",
+      "display": {
+        "kind": "gallery",
+        "x": -10.9,
+        "z": -38.4,
+        "rotY": -1.18,
+        "top": 0.24,
+        "label": "Carbon study",
+        "camera": {
+          "x": -13.9,
+          "z": -38.4,
+          "y": 1.55
+        }
+      }
     },
     {
       "id": "night",
@@ -100,7 +139,31 @@
         "scale": 1.9,
         "flow": 1.2
       },
-      "text": "The dye at dusk on the Queen K: every hue kept, the value dropped, with aqua lettering that catches the last light."
+      "text": "The dye at dusk on the Queen K: every hue kept, the value dropped, with aqua lettering that catches the last light.",
+      "display": {
+        "kind": "alcove",
+        "x": -18.7,
+        "z": -42.1,
+        "rotY": 2.2,
+        "top": 0.24,
+        "label": "Night alcove",
+        "camera": {
+          "x": -16.2,
+          "z": -39.8,
+          "y": 1.55
+        }
+      }
     }
-  ]
+  ],
+  "layout": {
+    "version": 2,
+    "intent": "Four readable gallery stations with a consistent bike scale, clear circulation and a distinct hero/secondary hierarchy.",
+    "circulation_min_m": 1.4,
+    "hero": "dye",
+    "notes": [
+      "All four primary public bikes remain upright and floor-mounted.",
+      "Experimental suspended or vertical duplicates may remain only as secondary art and never replace the primary readable bike.",
+      "Kailua Pier view remains a background feature, not a competing focal point."
+    ]
+  }
 }
