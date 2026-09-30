@@ -3,7 +3,8 @@
 import { consumeAuthCallback } from '../cloud/supabase-lite.js';
 import { applyBrandMode } from '../brand/runtime.js';
 import { renderGarageSurface } from './garage.js';
-import { renderHomeSurface } from './home.js';
+import { renderAvatarHome } from './avatar-home.js';
+import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
 import { renderMeSurface } from './me.js';
@@ -45,14 +46,22 @@ export function initKonaShell({ profile, settings, enter }) {
   const close=()=>{panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=close;
 
-  function now(){
-    title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
-    renderHomeSurface(body,{
-      event:facts().event,
-      openGarage:garage,
-      openDiscover:explore,
-    });
+  async function now(){
+    title.textContent='Race Self'; eyebrow.textContent='KONA · YOUR WORLD';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
+    await renderAvatarHome(body,{
+      profile,
+      openMuseum:()=>{ close(); enter?.(); },
+      openGarage:garage,
+      openPlan:plan,
+      openCollection:collection,
+    });
+  }
+
+  async function collection(){
+    title.textContent='Collection'; eyebrow.textContent='KONA · CARDS & ITEMS';
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('');
+    await renderCollectionSurface(body);
   }
 
   async function garage(){
@@ -94,5 +103,5 @@ export function initKonaShell({ profile, settings, enter }) {
 
   const applyTheme=p=>applyBrandMode(p?.appearance||'auto');
   applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);
-  return { now, garage, plan, me, explore, close };
+  return { now, garage, plan, me, explore, collection, close };
 }
