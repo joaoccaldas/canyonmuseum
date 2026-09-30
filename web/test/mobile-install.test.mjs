@@ -13,6 +13,7 @@ test('stale APK is never advertised when native artifact is unpublished',()=>{
   assert.equal(version.published,false);
   assert.equal('apk' in version,false);
 });
-test('install copy uses neutral KONA product language',()=>{
-  assert.match(shell,/KONA installed/);
+test('native update copy no longer advertises Speedmax Museum as the parent app',()=>{
+  assert.equal(/Speedmax Museum .* is available/.test(shell),false);
+  assert.match(shell,/KONA .* is available/);
 });
