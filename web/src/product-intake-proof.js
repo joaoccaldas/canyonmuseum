@@ -13,19 +13,12 @@ window.__intakeStage('THREE_READY',{revision:THREE.REVISION});
 const DATA=window.__INTAKE_PROOF;
 const params=new URLSearchParams(location.search);
 const mode=params.get('mode')||'both';
+const candidateIndex=Number.parseInt(params.get('candidate')||'',10);
 const allProducts=DATA.products;
-const idsByMode={
-  harness:[],
-  cervelo:['cervelo-p5-disc-mk2-size54'],
-  alphafly:['nike-alphafly-3-study'],
-  both:allProducts.map(p=>p.id)
-};
-window.__intakeStage('PROOF_API_READY');
-requestAnimationFrame(loop);
-
-const allowed=new Set(idsByMode[mode]||idsByMode.both);
-const products=allProducts.filter(p=>allowed.has(p.id));
-window.__intakeStage('MODE_READY',{mode,productIds:products.map(p=>p.id)});
+const products=mode==='harness' ? [] :
+  mode==='single' && Number.isInteger(candidateIndex) ? [allProducts[candidateIndex]].filter(Boolean) :
+  allProducts;
+window.__intakeStage('MODE_READY',{mode,candidateIndex:Number.isInteger(candidateIndex)?candidateIndex:null,productIds:products.map(p=>p.id)});
 const productById=Object.fromEntries(products.map(p=>[p.id,p]));
 const roomByProduct=new Map(DATA.rooms.flatMap(r=>r.products.map(id=>[id,r.id])));
 const canvas=document.getElementById('proof');
