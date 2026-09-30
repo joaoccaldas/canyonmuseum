@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/race-identity.schema.json",
+  "title": "Race Identity V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "user_id",
+    "mode",
+    "event_id",
+    "setup",
+    "avatar",
+    "visibility"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^race-identity:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "race-identity"
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^user:[a-z0-9:_-]+$"
+    },
+    "mode": {
+      "enum": [
+        "real",
+        "dream",
+        "surprise"
+      ]
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^event:[a-z0-9:_-]+$"
+    },
+    "goal": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "finish",
+            "time",
+            "podium",
+            "experience",
+            "dreaming"
+          ]
+        },
+        "target_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "style": {
+      "enum": [
+        "aero",
+        "balanced",
+        "comfort",
+        "experimental",
+        "custom"
+      ]
+    },
+    "avatar": {
+      "type": "object",
+      "required": [
+        "avatar_id"
+      ],
+      "properties": {
+        "avatar_id": {
+          "type": "string",
+          "pattern": "^avatar:[a-z0-9:_-]+$"
+        },
+        "appearance": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "setup": {
+      "type": "object",
+      "properties": {
+        "bike": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "wheel_front": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "wheel_rear": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "helmet": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "shoe": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "trisuit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "watch": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "wetsuit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^equipment:[a-z0-9:_-]+$"
+        },
+        "nutrition": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "pattern": "^equipment:[a-z0-9:_-]+$"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "visibility": {
+      "$ref": "common.schema.json#/$defs/Visibility"
+    },
+    "share_slug": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-z0-9-]{4,80}$"
+    }
+  },
+  "additionalProperties": false
+}
