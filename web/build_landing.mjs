@@ -41,5 +41,18 @@ const html = fs.readFileSync(path.join(here, 'landing.template.html'), 'utf8')
   .replace('__HALL_MOBILE_CSS__', () => packCss('styles/hall-mobile.css'));
 const out = process.env.OUT_HTML || path.join(root, 'index.html');
 fs.writeFileSync(out, html);
+const pt = html
+  .replace('<html lang="en">','<html lang="pt-BR">')
+  .replace('<title>KONA · Race the version of yourself</title>','<title>KONA · Corra como a versão de você que quer se tornar</title>')
+  .replace('href="https://joaoccaldas.github.io/canyonmuseum/">\n<meta property="og:type"', 'href="https://joaoccaldas.github.io/canyonmuseum/pt-br.html">\n<meta property="og:type"')
+  .replace('content="KONA · Race the version of yourself"','content="KONA · Corra como a versão de você que quer se tornar"')
+  .replace('content="Build your race identity, explore triathlon machines, people, places and stories, and prepare for Kona race week."','content="Crie sua identidade de prova, explore máquinas, atletas, lugares e histórias do triathlon e prepare sua semana em Kona."')
+  .replace('content="https://joaoccaldas.github.io/canyonmuseum/"','content="https://joaoccaldas.github.io/canyonmuseum/pt-br.html"')
+  .replace('What would you race if Kona were tomorrow?','Com o que você competiria em Kona se a prova fosse amanhã?')
+  .replace('Build my Kona self','Criar meu eu de Kona')
+  .replace('No account yet. The museum opens only if you choose Explore.','Sem conta por enquanto. O mundo 3D só abre quando você escolhe Descobrir.')
+  .replace('The museum, on your phone','KONA no seu celular')
+  .replace('Add to Home Screen','Adicionar à tela inicial');
+fs.writeFileSync(path.join(root,'pt-br.html'),pt);
 const pieces = data.pieces;
 console.log(`wrote ${path.relative(root, out)} · ${pieces.length} pieces (${pieces.filter(p => p.glb).length} modelled) · shell ${(html.length / 1024).toFixed(0)} kB · core ${(coreBundled.length / 1024).toFixed(0)} kB · data ${(dataBytes / 1024).toFixed(0)} kB · hall ${(bundled.length / 1024).toFixed(0)} kB`);
