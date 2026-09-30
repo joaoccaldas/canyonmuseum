@@ -2,6 +2,7 @@
 // Studio is optional configuration depth, not the ownership database.
 import { readGarage, groupGarage } from '../engine/garage.js';
 import { getPublicProduct } from '../engine/catalog.js';
+import { renderRaceBadges } from './race-cards.js';
 
 const legacyId = id => String(id || '').replace(/^product:/, '');
 
@@ -23,6 +24,11 @@ export async function renderGarageSurface(root) {
     node('p','', 'Saved equipment lives here. Studio only configures a product you choose.')
   );
   root.append(hero);
+  const raceSection=node('section','kona-section artifact artifact--label');
+  const raceHead=node('div','kona-section-head'); raceHead.append(node('h3','','Race badges'),node('small','','Profile'));
+  const raceHost=node('div','race-badge-strip');
+  raceSection.append(raceHead,raceHost); root.append(raceSection);
+  await renderRaceBadges(raceHost,{limit:8,empty:false});
 
   for (const [relationship, label] of [['owned','Mine'],['dream','Dreaming'],['try','Try']]) {
     const section = node('section','kona-section artifact artifact--label');

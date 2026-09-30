@@ -4,6 +4,7 @@ import { readGameState, gameProgress } from '../engine/game-state.js';
 import { ensureProgression } from '../engine/progression.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
+import { renderRaceBadges } from './race-cards.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const legacyId = id => String(id || '').replace(/^product:/,'');
@@ -51,9 +52,11 @@ export async function renderMeSurface(root,{settings}={}) {
       '<article><small>Parts</small><b>'+p.parts+'</b><span>inspected</span></article>'+
       '<article><small>Garage</small><b>'+p.garage+'</b><span>equipment links</span></article>'+
     '</div></section>'+
+    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Race badges</h3><small>Past & future</small></div><div data-profile-races></div></section>'+
     '<section class="kona-section artifact artifact--label" id="konaAccount"><div class="kona-section-head"><h3>Sync across devices</h3><small>Optional · beta</small></div><p class="kona-source-note" data-status>Checking account…</p></section>'+
     '<section class="kona-section artifact artifact--label"><button class="kona-primary" type="button" data-settings>Profile, privacy & settings <span>→</span></button></section>';
 
+  await renderRaceBadges(root.querySelector('[data-profile-races]'),{limit:20,empty:true});
   root.querySelector('[data-settings]')?.addEventListener('click',()=>settings?.open?.());
   const account=root.querySelector('#konaAccount'), status=account?.querySelector('[data-status]');
   if(!account||!cloudAvailable()){ if(status) status.textContent='Cloud sync unavailable. Local Passport still works normally.'; return; }
