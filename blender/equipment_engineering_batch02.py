@@ -395,8 +395,10 @@ for asm,exp in pairs:
     bpy.ops.render.render(write_still=True)
 
     set_tree_hidden(asm,True);set_tree_hidden(exp,False)
-    mn,mx=root_bounds(exp);center=(mn+mx)/2;span=max(mx.x-mn.x,mx.z-mn.z,.15)
-    cam.location=(center.x,-max(1.2,span*3.0),center.z+span*.45)
+    mn,mx=root_bounds(exp);center=(mn+mx)/2
+    span=max(mx.x-mn.x,mx.y-mn.y,mx.z-mn.z,.15)
+    # 3/4 engineering view so parts exploded along the axle remain visibly separated.
+    cam.location=(center.x+span*1.35, center.y-span*2.6, center.z+span*.95)
     cam.rotation_euler=(center-cam.location).to_track_quat("-Z","Y").to_euler()
     scene.render.filepath=str(PREV/f"{aid}-exploded.jpg")
     bpy.ops.render.render(write_still=True)
