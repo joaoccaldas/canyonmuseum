@@ -21,6 +21,7 @@ Statuses:
 | Idea | Loop / purpose | Status | Why |
 |---|---|---:|---|
 | Launch PWA hardening | Reliability | DONE | Required before public use; merged to main with checks + seal green. |
+| My Kona Setup V0 | Customize + Share + Return + platform proof | NOW / BUILT | Composes the existing Studio bike into a local/shareable race object; creates brand/equipment sockets without adding another configurator. |
 | Data-driven room art direction | Explore | NOW | Makes existing/new rooms feel authored without custom room code. |
 | Materials & Motion wing | Explore + Collect | NOW | Reuses existing assets and proves the room design schema cheaply. |
 | Island Stories wing | Explore + race-week utility | NOW | Directly relevant to Kona race window and expands the museum beyond equipment. |
@@ -30,7 +31,7 @@ Statuses:
 | EN + PT-BR locale contract | Market expansion | NOW (foundation only) | Stable ids/localization policy can land safely; translated public URLs wait until content exists. |
 | Full PT-BR UI/content | Explore + market launch | NEXT | Needs locale extraction from runtime strings and translation QA first. |
 | Daily/weekly Kona challenges | Collect + Return | NEXT | Depends on one canonical Passport state model. |
-| Garage for saved builds | Customize + Return + Share | NEXT | High value, but should use the consolidated local profile/Passport store. |
+| Garage for multiple saved builds | Customize + Return + Share | NEXT | My Kona Setup V0 proves one composed race object first; a multi-build Garage should reuse that contract after Passport/profile consolidation. |
 | One additional bike-brand wing | Explore + platform proof | NEXT | Must prove brand #2 can be data-driven before scaling brands. |
 | Helmets collection/configurator | Collect + Customize | NEXT | Best first equipment category after item contract is stable. |
 | Wheels | Collect + Customize | NEXT | Natural second equipment category and bike-slot integration. |
