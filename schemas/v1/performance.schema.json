@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/performance.schema.json",
+  "title": "Athlete Performance V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "athlete_id",
+    "event_id",
+    "date",
+    "status",
+    "sources"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^performance:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "athlete-performance"
+    },
+    "athlete_id": {
+      "type": "string",
+      "pattern": "^athlete:[a-z0-9:_-]+$"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^event:[a-z0-9:_-]+$"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "enum": [
+        "finished",
+        "dnf",
+        "dns",
+        "dsq",
+        "unknown"
+      ]
+    },
+    "overall_place": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "category_place": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "overall_time_seconds": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "splits": {
+      "type": "object",
+      "properties": {
+        "swim_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "t1_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "bike_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "t2_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "run_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 1200
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.schema.json#/$defs/SourceRef"
+      }
+    }
+  },
+  "additionalProperties": false
+}
