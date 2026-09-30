@@ -15,6 +15,7 @@ const MODE_IDS={
   alphafly:['nike-alphafly-3-study'],
   both:['cervelo-p5-disc-mk2-size54','nike-alphafly-3-study']
 };
+const MODE_QUERY={harness:'mode=harness',cervelo:'mode=single&candidate=0',alphafly:'mode=single&candidate=1',both:'mode=both'};
 const candidateFiles=['cervelo-p5-disc-mk2-size54.glb','nike-alphafly-3-study.glb'];
 const browser=await puppeteer.launch({executablePath,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-precise-memory-info']});
 const results=[]; let failures=0;
@@ -31,7 +32,7 @@ async function openCase(mode,name,w,h,{screenshots=false}={}){
 
   const started=Date.now();
   let navError=null;
-  try{await page.goto(base+`Product_Intake_Proof.html?mode=${mode}`,{waitUntil:'load',timeout:15000});}
+  try{await page.goto(base+`Product_Intake_Proof.html?${MODE_QUERY[mode]}`,{waitUntil:'load',timeout:15000});}
   catch(e){navError=String(e?.message||e);}
   let ready=false;
   try{
