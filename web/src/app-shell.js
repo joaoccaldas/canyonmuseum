@@ -67,35 +67,44 @@ export function initAppShell() {
 
   async function beginInstall() {
     const s = state();
-    if (s.action === 'prompt' && deferred) {
-      deferred.prompt();
-      await deferred.userChoice.catch(() => {});
-      deferred = null;
-      syncInstallUI();
-      return;
-    }
-    if (s.action !== 'instructions' || !sheet) return;
+    if (!sheet) return;
     const iosRow = sheet.querySelector('[data-ios]');
     const pwaRow = sheet.querySelector('[data-pwa]');
+    const pwaAction = sheet.querySelector('[data-pwa-action]');
     const apk = sheet.querySelector('[data-apk]');
+    const apkUnavailable = sheet.querySelector('[data-apk-unavailable]');
+    if (pwaAction) {
+      pwaAction.hidden = !(s.action === 'prompt' && deferred);
+      pwaAction.onclick = async () => {
+        if (!deferred) return;
+        const prompt = deferred;
+        deferred = null;
+        await prompt.prompt();
+        await prompt.userChoice.catch(() => {});
+        syncInstallUI();
+        if (document.body.classList.contains('installed')) sheet.hidden = true;
+      };
+    }
     if (iosRow) {
       iosRow.hidden = s.kind !== 'ios-instructions';
       const small = iosRow.querySelector('small');
       if (small) small.textContent = installInstructions(s.kind);
     }
     if (pwaRow) {
-      pwaRow.hidden = !['android-instructions','unavailable'].includes(s.kind);
+      pwaRow.hidden = s.action === 'prompt' || !['android-instructions','unavailable'].includes(s.kind);
       const small = pwaRow.querySelector('small');
       if (small) small.textContent = installInstructions(s.kind);
     }
-    if (apk) {
-      apk.hidden = true;
+    if (apk) apk.hidden = true;
+    if (apkUnavailable) apkUnavailable.hidden = true;
+    if (android) {
       fetch('app/android-version.json',{cache:'no-store',credentials:'same-origin'}).then(r=>r.ok?r.json():null).then(v=>{
         if(v?.published && typeof v.apk==='string' && !/^[a-z]+:/i.test(v.apk)){
           apk.href=v.apk; apk.hidden=false;
-          const small=apk.querySelector('small'); if(small) small.textContent='Optional native Android build · '+(v.versionName||'current');
-        }
-      }).catch(()=>{});
+          if(apkUnavailable) apkUnavailable.hidden=true;
+          const small=apk.querySelector('small'); if(small) small.textContent='Signed native Android build · '+(v.versionName||'current');
+        } else if(apkUnavailable) apkUnavailable.hidden=false;
+      }).catch(()=>{if(apkUnavailable) apkUnavailable.hidden=false;});
     }
     sheet.hidden = false;
   }

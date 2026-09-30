@@ -9,7 +9,7 @@ const root = path.resolve(here, '../..');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'), 'utf8'));
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(root, 'web/landing.template.html'), 'utf8');
-const pwa = fs.readFileSync(path.join(root, 'web/src/pwa.mjs'), 'utf8');
+const appShell = fs.readFileSync(path.join(root, 'web/src/app-shell.js'), 'utf8');
 
 test('mobile app manifest is installable and standalone', () => {
   assert.equal(manifest.display, 'standalone');
@@ -18,16 +18,17 @@ test('mobile app manifest is installable and standalone', () => {
   assert.ok(manifest.icons.some(icon => /icon-v3\.svg$/.test(icon.src)));
 });
 
-test('landing page wires manifest and install experience', () => {
+test('consumer landing wires one truthful install experience', () => {
   assert.match(tpl, /rel="manifest" href="\.\/manifest\.webmanifest"/);
   assert.match(tpl, /apple-mobile-web-app-capable/);
-  assert.match(tpl, /id="installBtn"/);
-  assert.match(pwa, /beforeinstallprompt/);
-  assert.match(pwa, /Add to Home Screen/);
-  assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'(, \{ updateViaCache: 'none' \})?\)/);   // updateViaCache: installed apps always fetch a fresh sw.js
-  assert.match(pwa, /127\.0\.0\.1.*localhost.*\[::1\]/s);
-  assert.match(pwa, /getRegistrations\(\)/);
-  assert.match(pwa, /unregister\(\)/);
+  assert.match(tpl, /id="entryInstall"/);
+  assert.match(tpl, /data-pwa-action/);
+  assert.match(appShell, /beforeinstallprompt/);
+  assert.match(appShell, /data-pwa-action/);
+  assert.match(appShell, /prompt\.prompt/);
+  assert.match(appShell, /app\/android-version\.json/);
+  assert.match(appShell, /published/);
+  assert.match(appShell, /serviceWorker\.register\('sw\.js', \{ scope: '\.\/', updateViaCache: 'none' \}\)/);
 });
 
 test('sealed service worker verifies release files and keeps GLBs out of the core shell', () => {
@@ -38,6 +39,7 @@ test('sealed service worker verifies release files and keeps GLBs out of the cor
   assert.ok(!app.core.includes('app/museum-data.js') && app.files['app/museum-data.js']);
   assert.ok(!app.core.includes('app/hall.js') && app.files['app/hall.js']);
   assert.ok(!app.core.includes('app/race-self-stage.js') && app.files['app/race-self-stage.js']);
+  assert.ok(!app.core.includes('app/world-shell.html') && app.files['app/world-shell.html']);
   assert.ok(app.files['app/studio.js'] && app.files['app/studio-catalog.js']);
   const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const coreJs = fs.readFileSync(path.join(root, 'app/kona-core.js'), 'utf8');
@@ -54,7 +56,7 @@ test('sealed service worker verifies release files and keeps GLBs out of the cor
 });
 
 test('installed apps pick up verified new versions and every public icon exists', () => {
-  assert.match(pwa, /visibilitychange/);
+  assert.match(appShell, /visibilitychange/);
   assert.match(sw, /skip-waiting/);
   assert.match(sw, /type: 'version'/);
   const manifest = JSON.parse(fs.readFileSync(path.join(here, '../../manifest.webmanifest'), 'utf8'));

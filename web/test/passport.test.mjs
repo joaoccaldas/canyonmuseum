@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const src = fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8');
-const tpl = fs.readFileSync(path.join(here, '../landing.template.html'), 'utf8');
+const tpl = fs.readFileSync(path.join(here, '../world-shell.template.html'), 'utf8');
 
 test('Museum Passport is local-first and contains no identity fields', () => {
   assert.match(src, /speedmax\.passport\.v1/);

@@ -5,6 +5,7 @@ import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
+import { AVATAR_OPTIONS, AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -28,6 +29,7 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
   const [bike,shoe]=await Promise.all([equipped(snapshot,identity.setup?.bike),equipped(snapshot,identity.setup?.shoe)]);
   const p=profile?.get?.()||{};
   const accent=p.avatar||AVATARS[0];
+  let avatarStyle=normaliseAvatarStyle({...p.avatarStyle,accent});
   const goal=identity.goal?.label||'Build your Kona';
   const intent=String(identity.intent||identity.mode||'exploring').replace(/[-_]+/g,' ');
   const bikeTitle=bike?[bike.brand,bike.name||bike.label||bike.model].filter(Boolean).join(' '):'Choose a bike';
@@ -62,7 +64,7 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
 
   let stageApi=null;
   const mountStage=()=>{
-    const result=window.__mountRaceSelfStage?.(root.querySelector('[data-race-self-stage]'),{accent,bike,shoe});
+    const result=window.__mountRaceSelfStage?.(root.querySelector('[data-race-self-stage]'),{accent,avatarStyle,bike,shoe});
     if(result?.then) result.then(api=>{stageApi=api});
   };
   if(window.__mountRaceSelfStage) mountStage();
@@ -82,18 +84,37 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
   root.querySelector('[data-hub-close]')?.addEventListener('click',closeDrawer);
 
   const showSelf=()=>{
-    drawerKicker.textContent='SELF';drawerTitle.textContent='Avatar & kit';
+    const style=normaliseAvatarStyle(profile?.get?.().avatarStyle);
+    const optionRow=(slot,values)=>'<section class="avatar-slot"><small>'+slot.toUpperCase()+'</small><div class="avatar-options">'+values.map(v=>{
+      const color=AVATAR_COLORS[slot]?.[v]||'#777';
+      return '<button type="button" data-avatar-slot="'+slot+'" data-avatar-value="'+v+'" class="'+(style[slot]===v?'on':'')+'" style="--slot-color:'+color+'"><i></i><span>'+v.replace(/-/g,' ')+'</span></button>';
+    }).join('')+'</div></section>';
+    drawerKicker.textContent='SELF';drawerTitle.textContent='Customize your avatar';
     drawerBody.innerHTML=
-      '<div class="hub-self-grid">'+
+      '<div class="hub-self-grid avatar-builder">'+
+        optionRow('skin',AVATAR_OPTIONS.skin)+
+        optionRow('hair',AVATAR_OPTIONS.hair)+
+        optionRow('top',AVATAR_OPTIONS.top)+
+        optionRow('bottoms',AVATAR_OPTIONS.bottoms)+
+        optionRow('shoes',AVATAR_OPTIONS.shoes)+
+        optionRow('accessory',AVATAR_OPTIONS.accessory)+
         '<section><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
         '<section><small>GEAR</small><b>'+esc(bikeTitle)+'</b><span>'+esc(shoeTitle)+'</span></section>'+
       '</div>';
     drawer.hidden=false;
+    drawerBody.querySelectorAll('[data-avatar-slot]').forEach(btn=>btn.addEventListener('click',()=>{
+      avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,[btn.dataset.avatarSlot]:btn.dataset.avatarValue,accent:profile.get().avatar});
+      profile.set({avatarStyle});
+      drawerBody.querySelectorAll('[data-avatar-slot="'+btn.dataset.avatarSlot+'"]').forEach(x=>x.classList.toggle('on',x===btn));
+      stageApi?.setAvatarStyle?.(avatarStyle);
+    }));
     drawerBody.querySelectorAll('[data-avatar]').forEach(btn=>btn.addEventListener('click',()=>{
-      profile?.set?.({avatar:btn.dataset.avatar});
-      stageApi?.setAccent?.(btn.dataset.avatar);
+      const nextAccent=btn.dataset.avatar;
+      avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,accent:nextAccent});
+      profile?.set?.({avatar:nextAccent,avatarStyle});
+      stageApi?.setAvatarStyle?.(avatarStyle);
       drawerBody.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('on',x===btn));
-      const marker=root.querySelector('.hub-player i'); if(marker) marker.style.setProperty('--avatar',btn.dataset.avatar);
+      const marker=root.querySelector('.hub-player i'); if(marker) marker.style.setProperty('--avatar',nextAccent);
     }));
   };
   const showRaces=()=>{
