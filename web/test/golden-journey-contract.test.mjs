@@ -1,4 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import { LOCALES, t } from '../src/i18n.js';
 
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'utf8');
@@ -11,8 +12,8 @@ test('golden path starts person-first and does not import Three.js in entry',()=
 
 test('primary app IA is Home Discover Garage Plan Me through locale keys',()=>{
   for(const key of ['nav.home','nav.discover','nav.garage','nav.plan','nav.me']) assert.match(shell,new RegExp("t\\('"+key+"'"));
-  const locales=JSON.parse(fs.readFileSync(new URL('../../museum/i18n/locales.json',import.meta.url),'utf8'));
-  for(const locale of ['en','pt-BR']) for(const key of ['nav.home','nav.discover','nav.garage','nav.plan','nav.me']) assert.ok(locales[locale]?.[key], locale+' missing '+key);
+  assert.deepEqual(LOCALES,['en','pt-BR']);
+  for(const locale of LOCALES) for(const key of ['nav.home','nav.discover','nav.garage','nav.plan','nav.me']) assert.notEqual(t(key,locale),key, locale+' missing '+key);
 });
 
 test('canonical Artifact is available to the journey',()=>{
