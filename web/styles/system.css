@@ -1,3 +1,4 @@
+@import url('./tokens.css');
 /* WEB + shared — KONA shell and type, injected into every page by tools/harden_pages.mjs.
    Desktop shell lives here. Phone shell: shell-mobile.css
    Hall chrome: hall-web.css (desktop) and hall-mobile.css (phone and phone-fit).
@@ -146,3 +147,11 @@ html[data-theme="dark"]{
 .kona-place-grid b{font:400 22px/1.05 var(--serif);margin:6px 0}.kona-place-grid span{font-size:10.5px;line-height:1.4;color:var(--kona-muted)}
 .kona-place-grid em{font:700 9px var(--sans);color:var(--kona-accent);margin-top:7px;text-transform:uppercase;letter-spacing:.1em}
 .kona-source-note{color:var(--kona-faint);font-size:10.5px;line-height:1.5;padding:0 4px 12px}
+
+/* Semantic aliases: canonical token layer, behavior-preserving migration. */
+:root{
+ --kona-bg:var(--color-bg);--kona-surface:color-mix(in srgb,var(--color-surface) 94%,transparent);--kona-surface-strong:var(--color-surface);
+ --kona-text:var(--color-ink);--kona-muted:var(--color-muted);--kona-faint:var(--color-faint);--kona-line:var(--color-line);
+ --kona-accent:var(--color-accent);--kona-cyan:var(--color-info);--kona-success:var(--color-success);
+ --sans:var(--font-ui);--serif:var(--font-display);--mono:var(--font-mono);
+}
