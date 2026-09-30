@@ -15,6 +15,7 @@ import { createProfile, renderSettings, QUALITY, AVATARS } from '../engine/profi
 import { captureView, shareImage } from '../engine/share.js';
 import { initSettings } from '../ui/settings.js';
 import { SCENES, encodeLook, decodeLook, productsFor } from './model.js';
+import { readRaceSetup, writeRaceSetup, encodeRaceSetup, decodeRaceSetup, completedSlots, RACE_SETUP_EVENT } from './race-setup.js';
 
 const $ = id => document.getElementById(id);
 const CAT = window.__PRODUCTS, FILMS = window.__FILMS?.films || [], MSKINS = window.__SKINS?.skins || [], WYLD = window.__WYLDROOM?.variants || [], EVENTS = window.__EVENTS || [];
@@ -23,7 +24,9 @@ const touch = matchMedia('(pointer: coarse)').matches || innerWidth < 760;
 const RS = renderSettings(profile.get().quality, { lite: touch, dpr: devicePixelRatio });
 const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const q = new URLSearchParams(location.search);
-const event = EVENTS.find(e => e.id === q.get('event')) || null;
+const sharedSetup = decodeRaceSetup(q.get('setup'), CAT.products);
+const event = EVENTS.find(e => e.id === (q.get('event') || sharedSetup?.event)) || null;
+let raceSetup = sharedSetup || readRaceSetup(CAT.products);
 
 // ---------------------------------------------------------------- renderer, camera, stage
 const canvas = $('stage');
@@ -154,6 +157,7 @@ function drawPanel() {
       h('button', { type: 'button', 'aria-pressed': String((look.finish || 'gloss') === f), onclick: () => { applyLook({ ...look, finish: f }); drawPanel(); } }, f[0].toUpperCase() + f.slice(1))))));
     P.append(h('div', { class: 'row' },
       h('button', { type: 'button', class: 'btn primary', onclick: saveLivery }, 'Save to my liveries'),
+      h('button', { type: 'button', class: 'btn ghost', onclick: saveCurrentToSetup }, 'Add to My Kona Setup'),
       h('button', { type: 'button', class: 'btn ghost', onclick: () => { applyLook(defaultLook(p)); drawPanel(); } }, 'Reset')));
   } else if (tab === 'themes' && current) {
     const ids = event?.themes?.length ? [...event.themes, ...FILMS.map(f => f.id).filter(i => !event.themes.includes(i))] : FILMS.map(f => f.id);
@@ -168,6 +172,8 @@ function drawPanel() {
       h('button', { type: 'button', 'aria-pressed': String(sceneId === k), onclick: () => { setScene(k); writeUrl(); drawPanel(); } }, h('i', { style: `background:linear-gradient(${s.sky[0]},${s.sky[1]})` }), s.label)))));
     P.append(h('div', { class: 'sec' }, h('h4', {}, 'Quality'), h('p', { class: 'count' }, `${QUALITY[profile.get().quality].label} · change it in your profile`),
       h('button', { type: 'button', class: 'btn ghost', onclick: () => settingsUI.open() }, 'Profile and quality')));
+  } else if (tab === 'setup') {
+    renderRaceSetup(P);
   } else if (tab === 'info' && current) {
     const p = current.product;
     renderCard({ ...bikeCard({ name: p.name, year: p.year, era: p.era || p.years, maker: p.brand, kind: p.origin === 'type-study' || p.origin === 'studio-design' ? 'type' : 'named', text: p.text || '', geometry: {}, skins: p.skins || [], facts: (p.facts || []).map(f => [f.cls, f.text]), ref: p.ref, arch: p.family }, { method: p.atlasKey ? window.__ATLAS_METHOD : null }), stats: [],
@@ -177,6 +183,61 @@ function drawPanel() {
     else P.append(h('p', { class: 'src' }, 'Only in the studio.'));
     P.append(h('p', { class: 'src' }, 'Sources: ', (p.sources || []).map((s, i) => [i ? ' · ' : '', s.url ? h('a', { href: s.url, target: '_blank', rel: 'noopener' }, s.label) : `${s.label} (${s.file})`])));
   }
+}
+function setupShareUrl() {
+  const enc = encodeRaceSetup(raceSetup, CAT.products); if (!enc) return location.href;
+  const u = new URL(location.href);
+  for (const k of ['p','s','scene','event']) u.searchParams.delete(k);
+  u.searchParams.set('setup', enc);
+  return u.href;
+}
+function saveCurrentToSetup() {
+  if (!current) return;
+  raceSetup = writeRaceSetup({
+    version: 1,
+    event: RACE_SETUP_EVENT,
+    bike: { productId: current.product.id, look: encodeLook(look), scene: sceneId },
+    updatedAt: Date.now(),
+  }, CAT.products);
+  toast('Saved to My Kona Setup');
+  tab = 'setup'; dock(false); drawPanel();
+}
+async function shareRaceSetup() {
+  if (!raceSetup?.bike) { toast('Add a bike to your setup first'); return; }
+  const product = CAT.products.find(p => p.id === raceSetup.bike.productId);
+  if (!product) return;
+  const blob = await captureView(renderer, scene, camera, { title: 'My Kona 2026 Setup', place: product.name, site: 'Speedmax Museum' });
+  const r = await shareImage(blob, {
+    title: 'My Kona 2026 Setup',
+    text: `My Kona 2026 Setup · ${product.name}`,
+    url: setupShareUrl(),
+    filename: `kona-setup-${product.id}.jpg`
+  });
+  toast({ shared:'Shared', link:'Link shared', saved:'Image saved', cancelled:'Not shared' }[r]);
+}
+function renderRaceSetup(P) {
+  const bikeProduct = raceSetup?.bike ? CAT.products.find(p => p.id === raceSetup.bike.productId) : null;
+  const n = completedSlots(raceSetup);
+  const slot = (icon, label, value, state, onclick, soon=false) => h('button', {
+    type:'button', class:`setup-slot${soon ? ' soon' : ''}`, disabled: soon, onclick
+  }, h('i', {}, icon), h('span', {}, h('b', {}, label), h('small', {}, value)), h('span', { class:'status' }, state));
+  P.append(
+    h('div', { class:'setup-head' },
+      h('div', {}, h('small', {}, 'Kona 2026'), h('h3', {}, 'My Kona Setup')),
+      h('div', { class:'setup-score' }, `${n} / 4`)
+    ),
+    h('div', { class:'setup-grid' },
+      slot('△', 'Bike', bikeProduct ? `${bikeProduct.brand} · ${bikeProduct.name}` : 'Choose your race bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
+      slot('◉', 'Wheels', bikeProduct ? 'Current bike wheels' : 'Comes with your bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
+      slot('◒', 'Helmet', 'Equipment slot ready', 'Soon', null, true),
+      slot('⌁', 'Shoes', 'Equipment slot ready', 'Soon', null, true)
+    ),
+    h('div', { class:'setup-actions' },
+      h('button', { type:'button', class:'btn primary', onclick:saveCurrentToSetup }, bikeProduct && current?.product.id === bikeProduct.id ? 'Update current bike' : 'Save current bike to setup'),
+      bikeProduct ? h('button', { type:'button', class:'btn ghost', onclick:shareRaceSetup }, 'Share My Kona Setup') : null
+    ),
+    h('p', { class:'setup-note' }, 'Stored only on this device. No account, tracking or background location. Helmet and shoe slots are intentionally dormant until validated assets clear the intake contract.')
+  );
 }
 function saveLivery() {
   const s = { ...skinFor(look), id: `mine-${Date.now().toString(36)}`, name: `${current.product.name.split(' ').slice(-1)[0]} ${((profile.get().liveries || []).length + 1)}`, kind: 'studio' };
@@ -235,9 +296,11 @@ renderer.setAnimationLoop(now => {
 });
 
 // ---------------------------------------------------------------- start: from the link, the event, or the first product
-setScene(q.get('scene') && SCENES[q.get('scene')] ? q.get('scene') : (event ? 'kona' : 'studio'));
-const start = CAT.products.find(p => p.id === q.get('p')) || (event && CAT.products.find(p => p.id === event.featured?.[0])) || CAT.products[0];
-const fromLink = decodeLook(q.get('s'), start, FILMS);
+const requestedScene = sharedSetup?.bike?.scene || q.get('scene');
+setScene(requestedScene && SCENES[requestedScene] ? requestedScene : (event ? 'kona' : 'studio'));
+const start = CAT.products.find(p => p.id === (sharedSetup?.bike?.productId || q.get('p'))) || (event && CAT.products.find(p => p.id === event.featured?.[0])) || CAT.products[0];
+const fromLink = decodeLook(sharedSetup?.bike?.look || q.get('s'), start, FILMS);
+if (sharedSetup?.bike) tab = 'setup';
 show(start, fromLink);
 dock(innerWidth < 900);
-window.__studio = { CAT, show, applyLook, setDream, get current() { return current; }, get look() { return look; }, renderer, scene, camera };
+window.__studio = { CAT, show, applyLook, setDream, get current() { return current; }, get look() { return look; }, get raceSetup() { return raceSetup; }, saveCurrentToSetup, renderer, scene, camera };
