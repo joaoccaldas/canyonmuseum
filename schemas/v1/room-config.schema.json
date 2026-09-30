@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/room-config.schema.json",
+  "title": "Experience Room Config V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "room_type",
+    "theme",
+    "layout",
+    "content"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^room-config:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "room-config"
+    },
+    "room_type": {
+      "enum": [
+        "brand",
+        "athlete",
+        "event",
+        "product",
+        "science",
+        "history",
+        "collection"
+      ]
+    },
+    "subject_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "theme": {
+      "type": "object",
+      "required": [
+        "palette",
+        "lighting",
+        "materials",
+        "typography"
+      ],
+      "properties": {
+        "palette": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "lighting": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "materials": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "typography": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "ambient_audio": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "layout": {
+      "type": "object",
+      "required": [
+        "template"
+      ],
+      "properties": {
+        "template": {
+          "enum": [
+            "gallery",
+            "timeline",
+            "trophy",
+            "lab",
+            "chapel",
+            "archive",
+            "custom"
+          ]
+        },
+        "bounds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "stations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "navigation": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "hero": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "product_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^product:[a-z0-9:_-]+$"
+          }
+        },
+        "performance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^performance:[a-z0-9:_-]+$"
+          }
+        },
+        "media_asset_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^media-asset:[a-z0-9:_-]+$"
+          }
+        },
+        "career_milestone_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^career-milestone:[a-z0-9:_-]+$"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "rights_status": {
+      "enum": [
+        "clear",
+        "review",
+        "blocked",
+        "private-prototype"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/SourceRef"
+      }
+    }
+  },
+  "additionalProperties": false
+}
