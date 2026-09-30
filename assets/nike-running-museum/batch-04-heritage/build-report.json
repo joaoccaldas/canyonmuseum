@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "assets": {
+    "nike-cortez-1972": {
+      "type": "shoe",
+      "release_year": 1972,
+      "history": "Early Nike running icon; full-length cushioning and sponge-rubber layer lineage.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.285,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter"
+      ],
+      "outsole_kind": "herringbone",
+      "tech": null
+    },
+    "nike-oregon-waffle-1973": {
+      "type": "shoe",
+      "release_year": 1973,
+      "history": "Commercial evolution of Bowerman's waffle experiments.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.283,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter"
+      ],
+      "outsole_kind": "waffle",
+      "tech": null
+    },
+    "nike-waffle-trainer-1975": {
+      "type": "shoe",
+      "release_year": 1975,
+      "history": "Nike's first blockbuster running success; early waffle-traction landmark.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.286,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter"
+      ],
+      "outsole_kind": "waffle",
+      "tech": null
+    },
+    "nike-pre-montreal-1975": {
+      "type": "shoe",
+      "release_year": 1975,
+      "history": "Racing flat associated with Steve Prefontaine-era design ahead of Montreal 1976.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.28,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter"
+      ],
+      "outsole_kind": "waffle",
+      "tech": null
+    },
+    "nike-tailwind-1978": {
+      "type": "shoe",
+      "release_year": 1978,
+      "history": "First Nike running shoe to introduce Air cushioning.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.289,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter",
+        "tailwind-air"
+      ],
+      "outsole_kind": "air",
+      "tech": "tailwind-air"
+    },
+    "nike-sting-1978": {
+      "type": "shoe",
+      "release_year": 1978,
+      "history": "Suede-and-nylon racing flat referenced by Nike as an early racing icon.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.278,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter"
+      ],
+      "outsole_kind": "waffle",
+      "tech": null
+    },
+    "nike-pegasus-1-1983": {
+      "type": "shoe",
+      "release_year": 1983,
+      "history": "Original Pegasus: heel Air, EVA/Tomilite, waffle outsole.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.29,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter",
+        "pegasus-air"
+      ],
+      "outsole_kind": "air",
+      "tech": "pegasus-air"
+    },
+    "nike-air-max-1-1987": {
+      "type": "shoe",
+      "release_year": 1987,
+      "history": "Running-origin Air Max platform with visible Air architecture.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.292,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter",
+        "visible-air"
+      ],
+      "outsole_kind": "air",
+      "tech": "visible-air"
+    },
+    "nike-flyknit-racer-2012": {
+      "type": "shoe",
+      "release_year": 2012,
+      "history": "Flyknit Racer debuted Nike's digitally engineered knit upper at the 2012 London Games.",
+      "geometry_confidence": "silhouette-study",
+      "modeled_shell_length_m": 0.286,
+      "construction_parts": [
+        "upper",
+        "overlays",
+        "tongue/laces",
+        "midsole",
+        "outsole",
+        "heel counter",
+        "flyknit"
+      ],
+      "outsole_kind": "flat",
+      "tech": "flyknit"
+    }
+  },
+  "sources": {
+    "cortez": "https://www.nike.com/gb/a/cortez-history",
+    "moon_waffle": "https://about.nike.com/en/magazine/nike-moon-shoe-waffle-iron-true-history",
+    "pegasus": "https://about.nike.com/en/magazine/how-nike-created-the-pegasus-running-shoe",
+    "tailwind": "https://about.nike.com/en-GB/magazine/nike-pegasus-the-origin-of-a-running-workhorse",
+    "pre_montreal_sting": "https://about.nike.com/en/newsroom/releases/nike-international-running-pack-official-images",
+    "flyknit": "https://about.nike.com/en/newsroom/releases/next-generation-flyknit-footwear-official-images"
+  }
+}
