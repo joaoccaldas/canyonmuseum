@@ -3,53 +3,124 @@
   "$id": "https://caldas.studio/schemas/integration-object-v1.json",
   "title": "Caldas Studio Integration Object V1",
   "type": "object",
-  "required": ["schema_version", "id", "object_type", "capabilities"],
+  "required": [
+    "schema_version",
+    "id",
+    "object_type",
+    "capabilities"
+  ],
   "properties": {
-    "schema_version": { "const": 1 },
+    "schema_version": {
+      "const": 1
+    },
     "id": {
       "type": "string",
       "minLength": 1,
       "pattern": "^[a-z0-9][a-z0-9._-]*$"
     },
     "object_type": {
-      "enum": ["product", "world", "event", "collection", "race_setup", "place", "experience"]
+      "enum": [
+        "product",
+        "world",
+        "event",
+        "collection",
+        "race_setup",
+        "place",
+        "experience"
+      ]
     },
     "product_type": {
-      "enum": ["bike", "shoe", "helmet", "wheel", "trisuit", "artifact", "artwork"]
+      "enum": [
+        "bike",
+        "shoe",
+        "helmet",
+        "wheel",
+        "trisuit",
+        "artifact",
+        "artwork",
+        "crankset",
+        "cassette",
+        "aerobar_extensions",
+        "hydration",
+        "saddle",
+        "groupset"
+      ]
     },
-    "brand": { "type": ["string", "null"] },
+    "brand": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "event_ids": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "capabilities": {
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "enum": ["inspect", "rotate", "explode", "customize", "collect", "equip", "compare", "share", "purchase_link", "visit"]
+        "enum": [
+          "inspect",
+          "rotate",
+          "explode",
+          "customize",
+          "collect",
+          "equip",
+          "compare",
+          "share",
+          "purchase_link",
+          "visit"
+        ]
       }
     },
     "representation": {
-      "enum": ["reference-calibrated", "geometry-study", "concept", "published", "generated", "provisional"]
+      "enum": [
+        "reference-calibrated",
+        "geometry-study",
+        "concept",
+        "published",
+        "generated",
+        "provisional"
+      ]
     },
     "source_records": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "canonical_url": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "format": "uri-reference"
     },
-    "public": { "type": "boolean" }
+    "public": {
+      "type": "boolean"
+    }
   },
   "allOf": [
     {
       "if": {
-        "properties": { "object_type": { "const": "product" } },
-        "required": ["object_type"]
+        "properties": {
+          "object_type": {
+            "const": "product"
+          }
+        },
+        "required": [
+          "object_type"
+        ]
       },
-      "then": { "required": ["product_type"] }
+      "then": {
+        "required": [
+          "product_type"
+        ]
+      }
     }
   ],
   "additionalProperties": true
