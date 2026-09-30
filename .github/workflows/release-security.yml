@@ -27,7 +27,10 @@ jobs:
         run: |
           set -euo pipefail
           patterns='BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{20,}|Authorization:[[:space:]]*Bearer[[:space:]]+[A-Za-z0-9._-]{15,}|[A-Za-z0-9._%+-]+@(gmail|hotmail|outlook|icloud|yahoo)\.com'
-          if git grep -I -nE "$patterns" -- .             ':!.github/workflows/release-security.yml'             ':!*.md' ':!package-lock.json'             ':!*.glb' ':!*.blend' ':!*.png' ':!*.jpg' ':!*.jpeg' ':!*.webp' ':!*.gif' ':!*.ico' ':!*.gz' ':!*.apk'             ':!*.woff' ':!*.woff2' ':!*.ttf' ':!*.otf' ':!*.wasm' ':!*.pdf' ':!*.mp4' ':!*.mov' ':!*.webm' ':!*.mp3' ':!*.zip'             ':!/*.html' ':!/web/dist/*.html' ':!/sw.js' ':!/app/app-manifest.json'; then
+          # Scan every tracked text surface. Do not exempt docs, generated HTML,
+          # manifests, or service-worker output: private data is forbidden anywhere
+          # in this public repository. Binary assets remain ignored by git grep -I.
+          if git grep -I -nE "$patterns" -- . ':!.github/workflows/release-security.yml'; then
             echo "::error::Potential secret/private-data pattern found in source"
             exit 1
           fi
@@ -35,7 +38,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -I -nE '/Users/[^/]+/|/home/[^/]+/' -- . ':!*.md' ':!.github/workflows/*' ':!/*.html' ':!/web/dist/*.html'; then
+          # Local-machine paths are private metadata too, including when they
+          # appear in documentation or generated HTML. Exclude workflow sources
+          # only because they contain this detector pattern by definition.
+          if git grep -I -nE '/Users/[^/]+/|/home/[^/]+/' -- . ':!.github/workflows/*'; then
             echo "::error::Local filesystem path committed"
             exit 1
           fi
