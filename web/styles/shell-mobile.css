@@ -61,3 +61,41 @@ html.phone-fit #appSheet>div{zoom:var(--fit);width:min(420px,calc((100vw - 24px)
   .race-self-actions,.kona-item-grid{grid-template-columns:1fr}
   .race-self-actions>a,.race-self-actions>button{min-height:104px}
 }
+
+/* Race Self Studio V1 */
+.race-self-shell{display:flex;flex-direction:column;min-height:min(72dvh,720px);border-radius:24px;overflow:hidden;background:#0b1115;color:#f8f5ef;box-shadow:0 30px 80px rgba(0,0,0,.18)}
+.race-self-stage-wrap{position:relative;min-height:clamp(320px,48dvh,520px);background:#0b1115;overflow:hidden}
+.race-self-stage{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.race-self-stage-copy{position:absolute;left:18px;right:18px;bottom:18px;z-index:2;pointer-events:none;text-shadow:0 3px 22px rgba(0,0,0,.55)}
+.race-self-stage-copy small{font:800 10px/1.2 var(--sans);letter-spacing:.2em;color:#72d3d6}
+.race-self-stage-copy h3{font:400 clamp(38px,10vw,62px)/.92 var(--serif);margin:6px 0;letter-spacing:-.04em}
+.race-self-stage-copy p{font-size:12.5px;line-height:1.4;color:#dce4e6;max-width:34rem;overflow-wrap:anywhere}
+.race-self-dock{background:var(--kona-surface,#fbf9f5);color:var(--kona-text,#12181d);border-radius:22px 22px 0 0;margin-top:-10px;z-index:3;box-shadow:0 -14px 36px rgba(0,0,0,.18);overflow:hidden}
+.race-self-tabs{display:flex;gap:4px;padding:10px 10px 8px;overflow-x:auto;scrollbar-width:none}.race-self-tabs::-webkit-scrollbar{display:none}
+.race-self-tabs button{flex:0 0 auto;min-height:42px;padding:0 14px;border-radius:999px;border:0;background:transparent;color:var(--kona-muted);font:650 12px/1 var(--sans)}
+.race-self-tabs button.on{background:var(--kona-text);color:var(--kona-bg)}
+.race-self-pane{min-height:92px;max-height:220px;overflow:auto;padding:10px 14px 16px;overscroll-behavior:contain}
+.race-self-profile{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(90px,.5fr);gap:14px;align-items:end}
+.race-self-profile small,.race-self-mini-grid small{display:block;font:750 9px/1.2 var(--sans);letter-spacing:.16em;color:var(--kona-muted);margin-bottom:7px}
+.race-self-profile b{font:400 26px/1 var(--serif)}
+.race-self-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.race-self-mini-grid article{min-width:0;padding:12px;border:1px solid var(--kona-line);border-radius:14px}.race-self-mini-grid b{display:block;font:400 22px/1 var(--serif);overflow-wrap:anywhere}.race-self-mini-grid span{display:block;margin-top:5px;font-size:11px;line-height:1.4;color:var(--kona-muted)}
+.race-self-swatches{display:flex;flex-wrap:wrap;gap:7px}.race-self-swatches button{width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:var(--swatch);box-shadow:0 0 0 1px var(--kona-line)}.race-self-swatches button.on{border-color:var(--kona-bg);box-shadow:0 0 0 2px var(--kona-text)}
+
+/* Standard Race Card V1: same object in registration, profile, Garage and Studio. */
+.race-picker{display:grid;gap:12px;margin-top:16px}.race-picker label span{display:block;margin-bottom:7px;font:750 10px/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--kona-muted)}
+.race-picker input{width:100%;min-height:52px;padding:0 15px;border-radius:14px;border:1px solid var(--kona-line);background:var(--kona-surface);color:inherit;font:500 14px/1 var(--sans)}
+.race-picker-results,.race-picker-selected [data-race-badges],.race-badge-strip,[data-profile-races],.studio-race-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.race-card{position:relative;min-width:0;min-height:142px;padding:14px;border-radius:17px;border:1px solid var(--kona-line);background:linear-gradient(155deg,color-mix(in srgb,var(--kona-surface) 96%,transparent),color-mix(in srgb,var(--kona-cyan) 6%,var(--kona-surface)));overflow:hidden}
+.race-card::after{content:"";position:absolute;width:88px;height:88px;right:-34px;bottom:-34px;border:14px solid color-mix(in srgb,var(--kona-accent) 20%,transparent);border-radius:50%;pointer-events:none}
+.race-card-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.race-card-top small{font:800 9px/1.2 var(--sans);letter-spacing:.14em;color:var(--kona-cyan)}.race-card-top b{font:400 24px/1 var(--serif)}
+.race-card h4{font:400 24px/1 var(--serif);margin:13px 0 7px;letter-spacing:-.02em;overflow-wrap:anywhere}.race-card p{font-size:10.5px;color:var(--kona-muted);margin:0}
+.race-card-badge{display:inline-flex;margin-top:12px;padding:5px 8px;border-radius:999px;background:var(--kona-text);color:var(--kona-bg);font:750 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase}
+.race-card-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}.race-card-actions button{min-height:32px;padding:0 9px;border:1px solid var(--kona-line);border-radius:999px;background:var(--kona-surface);font:650 10px/1 var(--sans)}
+.studio-race-badges{margin-top:12px}
+@media(max-width:520px),(pointer:coarse){
+  .race-self-shell{margin:-2px;min-height:calc(100dvh - 160px)}
+  .race-self-stage-wrap{min-height:42dvh}
+  .race-self-pane{max-height:190px}
+  .race-self-mini-grid,.race-picker-results,.race-picker-selected [data-race-badges],.race-badge-strip,[data-profile-races],.studio-race-badges{grid-template-columns:1fr}
+  .race-card{min-height:125px}
+}
