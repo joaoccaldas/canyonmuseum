@@ -63,7 +63,10 @@ for (const [name,w,h] of PHONES) {
       const share=panel.querySelector('button[aria-label="Share My Kona Setup"]');
       if (share) {
         const r=share.getBoundingClientRect();
-        if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) out.push('share action not reachable after scrolling');
+        if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) {
+          const pr=panel.getBoundingClientRect();
+          out.push(`share unreachable share=[${[r.left,r.top,r.right,r.bottom].map(Math.round)}] panel=[${[pr.left,pr.top,pr.right,pr.bottom].map(Math.round)}] scroll=${Math.round(panel.scrollTop)}/${panel.scrollHeight}-${panel.clientHeight} vh=${vh}`);
+        }
       }
       panel.scrollTop = 0;
     }
