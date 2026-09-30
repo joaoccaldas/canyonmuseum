@@ -1,14 +1,7 @@
+import { loadPublicCatalog } from '../engine/catalog.js';
 // ui/discover.js — lightweight editorial discovery. Loads public JSON only on intent.
 // 3D remains an explicit deeper action.
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let cache=null;
-async function catalog(){
-  if(cache)return cache;
-  cache=fetch('integrations/public-catalog.json',{cache:'force-cache',credentials:'same-origin'})
-    .then(r=>r.ok?r.json():Promise.reject(new Error('catalog unavailable')))
-    .catch(()=>({products:[],places:[],events:[]}));
-  return cache;
-}
 const category=(name,sub)=>'<article class="discover-category artifact artifact--label"><small>'+esc(name)+'</small><b>'+esc(sub)+'</b></article>';
 
 export async function renderDiscoverSurface(root,{enter}={}){
@@ -27,7 +20,7 @@ export async function renderDiscoverSurface(root,{enter}={}){
       '<button class="kona-primary" type="button" data-enter-world>Enter the world <span>→</span></button></section>';
   root.querySelector('[data-enter-world]')?.addEventListener('click',()=>enter?.());
 
-  const data=await catalog();
+  const data=await loadPublicCatalog();
   const products=(data.products||[]).filter(x=>x.public!==false).slice(0,4);
   const places=(data.places||[]).slice(0,3);
   const feed=root.querySelector('[data-discover-feed]');
