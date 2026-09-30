@@ -14,6 +14,7 @@ export const APP_STATE_KEYS = Object.freeze([
   'speedmax.atlas.hint',
   'speedmax.raceSetup.v1',
   'speedmax.garage.v1',
+  'speedmax.progression.v1',
   'speedmax.exp.tut.v1',
   'speedmax.hist.tut.v1',
 ]);

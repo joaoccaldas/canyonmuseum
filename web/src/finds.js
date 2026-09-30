@@ -1,6 +1,7 @@
 // Shoreline finds. Small objects left off the aisle — a plumeria, a cowrie, a lava stone,
 // a scrap of black coral, a race bib. They are not on the rail. Tap one to keep it.
 import * as THREE from 'three';
+import { applyStoredEvent } from './engine/progression.js';
 
 export const FINDS = [
   { id: 'plumeria', mesh: 'plumeria', name: 'A plumeria', line: 'Left by the chapel door, the colour of the late light on Aliʻi.', x: 2.35, z: 3.55, y: .02, yaw: .4 },
@@ -65,6 +66,7 @@ export async function buildFinds(ctx) {
       spot.holder.visible = false;
       kept.add(spot.id);
       writeFinds([...kept]);
+      try { applyStoredEvent({ type: 'FIND_DISCOVERED', subject: `find:shore:${spot.id}` }); } catch (_) { /* the object is still kept */ }
       return true;
     },
   };

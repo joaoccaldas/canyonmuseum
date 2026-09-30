@@ -1,6 +1,7 @@
 // ui/kona-shell.js — mobile-first app shell over the existing 3D museum.
 // Navigation/utility only. The 3D renderer remains the existing proven museum runtime.
 import { readGameState, gameProgress } from '../engine/game-state.js';
+import { ensureProgression } from '../engine/progression.js';
 import { consumeAuthCallback, sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -75,8 +76,10 @@ export function initKonaShell({ profile, settings, enter }) {
 
   async function me(){
     title.textContent='Me'; eyebrow.textContent='KONA · PASSPORT';
+    try { ensureProgression(); } catch (_) { /* local passport still reads */ }
     const p=gameProgress(readGameState());
-    body.innerHTML='<section class="kona-hero-card"><small>YOUR KONA PASSPORT</small><h3>'+p.xp+' XP · '+p.streak+' day streak</h3><p>'+p.stamps+' stamps · '+p.badges+' badges · '+p.hidden+'/9 hidden finds</p><a class="kona-primary" href="Studio.html#setup">Open My Kona Setup <span>→</span></a></section>'+
+    const tier=p.accessTier==='passport'?'Passport':p.accessTier==='athlete'?'Athlete profile':'Visitor';
+    body.innerHTML='<section class="kona-hero-card"><small>'+esc(tier).toUpperCase()+' · '+(esc(p.levelName)||'VISITOR')+'</small><h3>'+p.xp+' XP · '+p.streak+' day streak</h3><p>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds'+(p.credits!=null?' · '+p.credits+' Kona Credits':'')+'</p><a class="kona-primary" href="Studio.html#setup">Open My Kona Setup <span>→</span></a></section>'+
       '<section class="kona-section"><div class="kona-section-head"><h3>Your collection</h3><small>Exploration unlocks more</small></div><div class="kona-place-grid"><article><small>Bikes</small><b>'+p.bikes+'</b><span>visited</span></article><article><small>Kona years</small><b>'+p.konaYears+'</b><span>discovered</span></article><article><small>Parts</small><b>'+p.parts+'</b><span>inspected</span></article><article><small>Garage</small><b>'+p.garage+'</b><span>saved builds</span></article></div></section>'+
       '<section class="kona-section" id="konaAccount"><div class="kona-section-head"><h3>Sync across devices</h3><small>Optional · beta</small></div><p class="kona-source-note" data-status>Checking account…</p></section>'+
       '<section class="kona-section"><button class="kona-primary" type="button" data-settings>Profile, privacy & settings <span>→</span></button></section>';
