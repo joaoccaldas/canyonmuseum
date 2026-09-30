@@ -59,13 +59,33 @@ jobs:
           NODE
       - name: Build test-only intake rooms
         run: node web/build_product_intake_proof.mjs
+      - name: Pre-browser HTTP smoke
+        run: |
+          python3 -m http.server 8754 --bind 127.0.0.1 >/tmp/canyon-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:8754/Product_Intake_Proof.html >/tmp/proof.html && break
+            sleep .25
+          done
+          grep -q "BOOT_HTML" /tmp/proof.html
+          grep -q "__intakeProofDiagnostics" /tmp/proof.html
+          curl -fsSI http://127.0.0.1:8754/assets/kona-heritage/bikes/cervelo-p5-disc-mk2-size54.glb | grep -q "200 OK"
+          curl -fsSI http://127.0.0.1:8754/assets/kona-heritage/shoes/nike-alphafly-3-study.glb | grep -q "200 OK"
+          echo "proof page + inline bundle markers + both GLBs: HTTP 200"
       - name: Mobile/browser intake audit
         run: |
           python3 -m http.server 8754 --bind 127.0.0.1 >/tmp/canyon-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
-          sleep 2
-          CHROME_PATH="$(which google-chrome || which google-chrome-stable || which chromium)" node web/product-intake-audit.mjs http://127.0.0.1:8754/
+          for i in {1..20}; do curl -fsS http://127.0.0.1:8754/Product_Intake_Proof.html >/dev/null && break; sleep .25; done
+          CHROME_PATH="$(which google-chrome || which google-chrome-stable || which chromium)" node web/product-intake-audit.mjs http://127.0.0.1:8754/ proof-artifacts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: product-intake-proof-v0
+          path: proof-artifacts/
+          if-no-files-found: warn
       - name: Remove test-only built page
         run: rm -f Product_Intake_Proof.html
       - name: Commit deterministic release outputs
