@@ -1048,7 +1048,7 @@ async function loadAll() {
     try { await loadBike(p); } catch (e) { console.warn('bike failed', p.key, e); }
     loaded++;
     $('loadstate').innerHTML = loaded < modelled.length ? `Unpacking the collection · ${loaded} / ${modelled.length}<i><b style="width:${loaded / modelled.length * 100}%"></b></i>` : `${modelled.length} bikes on display · ${PIECES.length - modelled.length} lost generations remembered`;
-    if (loaded === 1) { const b = $('enterBtn'); b.disabled = false; b.innerHTML = passport.visits > 0 ? 'Continue the museum <span aria-hidden="true">→</span>' : 'Enter the museum <span aria-hidden="true">→</span>'; passportProgress(); }
+    if (loaded === 1) { const b = $('enterBtn'); if (b && !document.body.classList.contains('walking')) { b.disabled = false; } passportProgress(); }
   }
 }
 
@@ -1460,7 +1460,7 @@ function enter() {
     if (q.get('map')) setTimeout(() => window.__map?.open(), 450);
   }
 }
-$('enterBtn').onclick = enter;
+if ($('enterBtn') && !document.getElementById('konaShell')) $('enterBtn').onclick = enter;
 
 // ------------------------------------------------------------------ UI: rail, card, toast, hover tag
 $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? '' : ' ghost'}" data-i="${i}" aria-label="${esc(p.name)}, ${esc(p.years)}">
@@ -1947,7 +1947,8 @@ async function shareView(title) {
 }
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
 $('cardShare')?.addEventListener('click', () => shareView($('cName').textContent));
-const konaShell = initKonaShell({ profile, settings: settingsUI, enter });
+const konaShell = document.getElementById('konaShell') ? window.__konaShell : initKonaShell({ profile, settings: settingsUI, enter });
+if (window.__konaSettingsBridge) window.__konaSettingsBridge.open = () => settingsUI.open();
 window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas, konaShell };
 window.__atlas = atlas;
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };

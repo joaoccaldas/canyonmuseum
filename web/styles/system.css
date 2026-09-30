@@ -30,6 +30,28 @@ code,kbd,pre,samp{font-family:var(--mono)}
 .t-body{font-size:var(--fs-body);line-height:var(--lh-body)}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
+/* The story is the front door. The hall canvas stays out of the first paint. */
+body:not(.museum-open) > header,
+body:not(.museum-open) > #hall,
+body:not(.museum-open) > #joy,
+body:not(.museum-open) > #rail,
+body:not(.museum-open) > #card,
+body:not(.museum-open) > #nearby,
+body:not(.museum-open) > #tourPill,
+body:not(.museum-open) > #fallback{display:none}
+#intro.kona-entry{align-items:flex-start;overflow:auto;background:var(--kona-bg,#f4efe7);padding-top:max(28px,env(safe-area-inset-top));padding-bottom:calc(108px + env(safe-area-inset-bottom))}
+#intro.kona-entry h1{font-size:clamp(46px,8vw,92px)}
+.kona-count{margin:0 0 12px;font:700 13px/1.3 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--kona-accent,#e85a22)}
+.kona-intents{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.kona-intents button{min-height:48px;padding:0 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--kona-text,#12181d) 18%,transparent);background:transparent;color:inherit;font:700 13px/1 var(--sans)}
+.kona-intents button.on{background:var(--kona-text,#12181d);color:var(--kona-bg,#f4efe7)}
+.kona-today{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:8px;max-width:420px}
+.kona-today button,.kona-today a{display:flex;align-items:center;min-height:48px;padding:0 16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--kona-text,#12181d) 12%,transparent);background:var(--kona-surface-strong,#fbf9f5);color:inherit;text-decoration:none;font:600 15px/1.2 var(--sans);text-align:left}
+.kona-note{max-width:36rem;color:var(--kona-muted,#5f6a72)}
+#konaQuest h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,56px);line-height:1;margin:8px 0}
+#konaQuest input{width:100%;max-width:360px;min-height:48px;margin:8px 0;padding:12px 14px;border-radius:12px;border:1px solid var(--kona-line,rgba(18,24,29,.12));background:transparent;color:inherit}
+#konaQuest .btn{margin-right:8px;margin-top:8px}
+
 
 /* KONA beta brand layer ---------------------------------------------------- */
 :root{

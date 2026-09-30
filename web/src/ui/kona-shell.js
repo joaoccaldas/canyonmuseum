@@ -20,9 +20,11 @@ const icon = name => {
 
 export function initKonaShell({ profile, settings, enter }) {
   consumeAuthCallback();
-  const event = window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {};
-  const week = window.__EVENT?.current_facts?.race_week || [];
-  const places = window.__ISLAND?.places || [];
+  const facts = () => ({
+    event: window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {},
+    week: window.__EVENT?.current_facts?.race_week || [],
+    places: window.__ISLAND?.places || [],
+  });
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
     '<div id="konaPanel" class="kona-panel" hidden>'+
@@ -40,13 +42,13 @@ export function initKonaShell({ profile, settings, enter }) {
 
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
   const setActive=id=>shell.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===id));
-  const close=()=>{panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive('explore');};
+  const close=()=>{panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=close;
 
-  const raceDays=event.date ? daysUntil(event.date) : null;
-  const nextExpo=week.find(x=>new Date(x.date+'T23:59:00')>=new Date()) || week[0];
-
   function now(){
+    const { event, week, places } = facts();
+    const raceDays=event.date ? daysUntil(event.date) : null;
+    const nextExpo=week.find(x=>new Date(x.date+'T23:59:00')>=new Date()) || week[0];
     title.textContent='Now'; eyebrow.textContent='KONA · RACE WEEK';
     const expo=nextExpo ? '<article><i>Expo</i><div><b>'+esc(fmtDate(nextExpo.date))+' · '+esc(nextExpo.start)+'–'+esc(nextExpo.end)+'</b><span>'+esc(nextExpo.venue)+'</span></div></article>' : '';
     const placeCards=places.slice(0,4).map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span></article>').join('');
@@ -54,7 +56,7 @@ export function initKonaShell({ profile, settings, enter }) {
       '<section class="kona-hero-card"><small>IRONMAN WORLD CHAMPIONSHIP · '+esc(event.location||'Kailua-Kona, Hawaiʻi')+'</small>'+
       '<h3>'+(raceDays==null?'Kona awaits':raceDays===0?'Race day':raceDays+' days to race day')+'</h3>'+
       '<p>'+(event.date?esc(fmtDate(event.date)):'2026')+' · '+esc(event.venue||'Kailua Pier')+'</p>'+
-      '<button class="kona-primary" data-enter>Enter the museum <span>→</span></button></section>'+
+      '<button class="kona-primary" data-enter>Explore the coast <span>→</span></button></section>'+
       '<section class="kona-section"><div class="kona-section-head"><h3>What matters next</h3><small>Official 2026 sources</small></div><div class="kona-list">'+expo+
       '<article><i>Setup</i><div><b>Build your Kona setup</b><span>Bike today. Wheels, helmet and shoes plug into the same setup.</span></div><a href="Studio.html#setup">Open →</a></article>'+
       '<article><i>Explore</i><div><b>Walk the collection</b><span>Bikes, engineering, Kona stories and hidden rooms.</span></div></article></div></section>'+
@@ -64,6 +66,7 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   function plan(){
+    const { week, places } = facts();
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
     const days=week.map(x=>'<article><time>'+esc(fmtDate(x.date))+'</time><div><b>IRONMAN Expo</b><span>'+esc(x.start)+'–'+esc(x.end)+' · '+esc(x.venue)+'</span></div></article>').join('');
     const cards=places.map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span>'+(p.visit_with_care?'<em>Visit with care</em>':'')+'</article>').join('');
@@ -105,8 +108,7 @@ export function initKonaShell({ profile, settings, enter }) {
     close();
     const go=window.__museumGo;
     if(go){ go(id); return; }
-    enter?.();
-    document.querySelector(`.chip[data-room="${CSS.escape(id)}"]`)?.click();
+    enter?.(id);
   }
   function explore(){
     title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
@@ -130,7 +132,6 @@ export function initKonaShell({ profile, settings, enter }) {
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close();});
-  setActive('explore');
 
   const applyTheme=p=>{ const v=p?.appearance||'auto'; if(v==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme=v; };
   applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);

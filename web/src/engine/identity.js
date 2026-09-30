@@ -123,6 +123,57 @@ export function projectSetup(setup, products = [], { userId = LOCAL_USER_ID, mod
   return { equipment, identity };
 }
 
+const EMPTY_SETUP = {
+  bike: null, wheel_front: null, wheel_rear: null, helmet: null, shoe: null,
+  trisuit: null, watch: null, wetsuit: null, nutrition: null,
+};
+
+/** The first-minute quest. Owned, dream, and try stay separate. */
+export function identityFromQuest(draft, { userId = LOCAL_USER_ID, now = new Date().toISOString() } = {}) {
+  const intent = draft?.intent;
+  const relationship = intent === 'racing' ? 'owned' : intent === 'dreaming' ? 'dream' : 'try';
+  const mode = intent === 'racing' ? 'real' : intent === 'exploring' ? 'surprise' : 'dream';
+  const equipment = [];
+  const setup = { ...EMPTY_SETUP };
+  for (const [field, id, type] of [['bike', draft?.bikeId, 'bike'], ['shoe', draft?.shoeId, 'shoe']]) {
+    if (!id) continue;
+    const row = equipmentRecord({
+      userId, product: { id, type, category: type }, relationship, now,
+      customization: { provenance: 'kona-self' },
+    });
+    equipment.push(row);
+    setup[field] = row.id;
+  }
+  const who = slug(String(userId).replace(/^user:/, ''));
+  return {
+    equipment,
+    identity: {
+      schema_version: 1,
+      id: `race-identity:${who}:kona-2026`,
+      entity_type: 'race-identity',
+      user_id: String(userId).startsWith('user:') ? userId : `user:${who}`,
+      mode,
+      event_id: 'event:kona-2026',
+      goal: { type: 'experience', target_seconds: null, label: draft?.goal || null },
+      style: 'custom',
+      avatar: { avatar_id: `avatar:${who}`, appearance: {} },
+      setup,
+      visibility: 'private',
+      share_slug: null,
+      intent: intent || null,
+    },
+  };
+}
+
+export function saveQuestIdentity(draft, storage = globalThis.localStorage) {
+  const graph = identityFromQuest(draft);
+  try {
+    storage?.setItem?.(USER_EQUIPMENT_KEY, JSON.stringify(graph.equipment));
+    storage?.setItem?.(RACE_IDENTITY_KEY, JSON.stringify(graph.identity));
+  } catch { /* the quest key still holds the answers */ }
+  return graph;
+}
+
 export function syncIdentityFromSetup(setup, products, storage = globalThis.localStorage, options = {}) {
   const graph = projectSetup(setup, products, options);
   try {
