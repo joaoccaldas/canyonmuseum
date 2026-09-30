@@ -55,10 +55,10 @@ export function initKonaShell({ profile, settings, enter }) {
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
   }
 
-  function garage(){
+  async function garage(){
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
-    renderGarageSurface(body);
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
+    await renderGarageSurface(body);
   }
 
   function plan(){
