@@ -4,6 +4,10 @@
    Colours stay with each page (the engineering studios are dark by design).
    Canvas lettering uses the same families (web/src/engine/type.js). */
 :root{
+  --kw-sand:#f4efe7;--kw-paper:#fbf9f5;--kw-mist:#e6e9ed;--kw-blush:#fad8d6;
+  --kw-ink:#12181d;--kw-muted:#5f6a72;--kw-faint:#8e979d;--kw-ocean:#138a8f;
+  --kw-sunrise:#ff6a00;--kw-ember:#ff6a3d;--kw-hibiscus:#ff3d78;--kw-lilac:#c984ff;
+  --kw-cobalt:#2e68ff;--kw-acid:#d7ff3f;--kw-grape:#8b5cf6;--kw-aqua:#00c2c8;
   --sans:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
   --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
   --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
@@ -28,7 +32,7 @@ code,kbd,pre,samp{font-family:var(--mono)}
 .t-eyebrow{font:700 var(--fs-eyebrow)/1.3 var(--sans);letter-spacing:var(--ls-eyebrow);text-transform:uppercase}
 .t-title{font-family:var(--serif);font-weight:400;font-size:var(--fs-title);line-height:1}
 .t-body{font-size:var(--fs-body);line-height:var(--lh-body)}
-@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 
 /* The story is the front door. The hall canvas stays out of the first paint. */
 body:not(.museum-open) > header,
@@ -56,15 +60,15 @@ body:not(.museum-open) > #fallback{display:none}
 /* KONA beta brand layer ---------------------------------------------------- */
 :root{
   color-scheme:light dark;
-  --kona-bg:#f4efe7;
-  --kona-surface:rgba(251,249,245,.92);
-  --kona-surface-strong:#fbf9f5;
-  --kona-text:#12181d;
-  --kona-muted:#5f6a72;
-  --kona-faint:#8e979d;
-  --kona-line:rgba(18,24,29,.12);
-  --kona-accent:#e85a22;
-  --kona-cyan:#1db7d8;
+  --kona-bg:var(--kw-sand);
+  --kona-surface:color-mix(in srgb,var(--kw-paper) 92%,transparent);
+  --kona-surface-strong:var(--kw-paper);
+  --kona-text:var(--kw-ink);
+  --kona-muted:var(--kw-muted);
+  --kona-faint:var(--kw-faint);
+  --kona-line:color-mix(in srgb,var(--kw-ink) 12%,transparent);
+  --kona-accent:var(--kw-sunrise);
+  --kona-cyan:var(--kw-ocean);
   --kona-success:#2bbf88;
   --kona-shadow:0 24px 70px -28px rgba(18,24,29,.35);
 }
@@ -77,7 +81,7 @@ html[data-theme="dark"]{
   --kona-muted:#b4c0c8;
   --kona-faint:#7f929e;
   --kona-line:rgba(238,247,250,.13);
-  --kona-accent:#ff6a22;
+  --kona-accent:var(--kw-ember);
   --kona-cyan:#39c8ef;
   --kona-success:#55d6a0;
   --kona-shadow:0 28px 80px -26px rgba(0,0,0,.72);
