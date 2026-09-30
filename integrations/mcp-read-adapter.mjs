@@ -4,7 +4,9 @@ import {
   listEvents,
   getEvent,
   listEventPlaces,
-  getPlace
+  getPlace,
+  listEventSources,
+  getEventSchedule
 } from "./public-catalog.mjs";
 
 const TOOL_NAMES = new Set([
@@ -13,7 +15,9 @@ const TOOL_NAMES = new Set([
   "list_events",
   "get_event",
   "list_event_places",
-  "get_place"
+  "get_place",
+  "list_event_sources",
+  "get_event_schedule"
 ]);
 
 function plainObject(v) {
@@ -55,6 +59,16 @@ export function invokeReadTool(name, args = {}) {
       rejectUnknownArgs(args, new Set(["event_id","category"]));
       if (typeof args.event_id !== "string" || !args.event_id) throw new Error("event_id required");
       return listEventPlaces(args.event_id, { category: args.category ?? null });
+    }
+    case "list_event_sources": {
+      rejectUnknownArgs(args, new Set(["event_id","current_only"]));
+      if (typeof args.event_id !== "string" || !args.event_id) throw new Error("event_id required");
+      return listEventSources(args.event_id,{currentOnly:args.current_only === true});
+    }
+    case "get_event_schedule": {
+      rejectUnknownArgs(args, new Set(["event_id"]));
+      if (typeof args.event_id !== "string" || !args.event_id) throw new Error("event_id required");
+      return getEventSchedule(args.event_id);
     }
     case "get_place": {
       rejectUnknownArgs(args, new Set(["id"]));
