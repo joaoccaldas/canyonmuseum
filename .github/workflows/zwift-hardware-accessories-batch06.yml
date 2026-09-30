@@ -1,0 +1,50 @@
+name: Build Zwift accessory batch 06
+on:
+  push:
+    branches: [assets/kona-environment-pack-20260930]
+    paths:
+      - blender/zwift_hardware_accessories_batch06.py
+      - museum/instructions/zwift-hardware-accessories.json
+      - .github/workflows/zwift-hardware-accessories-batch06.yml
+  workflow_dispatch:
+permissions: { contents: write }
+concurrency:
+  group: zwift-hardware-accessories-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: python -m pip install --upgrade pip bpy
+      - run: python blender/zwift_hardware_accessories_batch06.py
+      - name: Validate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('assets/zwift-hardware/batch-06-accessories')
+          glbs=sorted(root.glob('*.glb')); assert len(glbs)==8
+          for p in glbs:
+              b=p.read_bytes(); assert b[:4]==b'glTF'; assert int.from_bytes(b[8:12],'little')==len(b); assert len(b)<1_500_000
+          a=json.loads((root/'build-report.json').read_text())['assets']
+          assert a['zwift-ride-tablet-holder']['weight_kg']==0.41
+          assert a['zwift-ride-adjustable-crank-arms']['crank_lengths_mm']==[160,165,170,172.5,175]
+          assert a['zwift-smart-frame-replacement-saddle']['dimensions_mm']==[245,160]
+          assert a['zwift-training-mat']['dimensions_mm']==[2032,914.4,6]
+          print('Zwift accessory QA passed')
+          PY
+      - name: Commit
+        run: |
+          if [ -z "$(git status --porcelain -- assets/zwift-hardware/batch-06-accessories)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/zwift-hardware/batch-06-accessories
+          git add -f assets/zwift-hardware/batch-06-accessories/zwift_hardware_accessories_batch06.blend
+          git commit -m "build: generate Zwift accessory batch 06 [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
