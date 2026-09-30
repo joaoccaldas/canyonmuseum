@@ -38,6 +38,19 @@ body.entry-quest #intro{padding-bottom:calc(24px + var(--safe-b,0px))!important}
 #intro.quest-active #konaQuest .reveal-meta span{color:#aebbc1;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
 #intro.quest-active #konaQuest .reveal-meta b{display:block;color:#f8f5ef;font-size:15px;letter-spacing:0;text-transform:none;margin-top:4px}
 #intro.quest-active #enterKona{width:100%;background:#ff6427;color:#fff;border-color:#ff6427}
+#intro.quest-active .race-id-card{position:relative;margin:18px 0 12px;padding:18px 18px 20px;border:1px solid rgba(255,255,255,.16);border-radius:22px;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.035));box-shadow:0 24px 70px rgba(0,0,0,.24);overflow:hidden}
+#intro.quest-active .race-id-card::after{content:"";position:absolute;width:180px;height:180px;right:-72px;bottom:-84px;border-radius:50%;border:24px solid rgba(255,100,39,.2)}
+#intro.quest-active .race-id-mast{display:flex;align-items:baseline;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:12px}
+#intro.quest-active .race-id-mast span{font:800 12px/1 var(--sans,system-ui);letter-spacing:.22em}
+#intro.quest-active .race-id-mast b{font:400 30px/1 var(--serif,Georgia,serif)}
+#intro.quest-active .race-id-human{margin:18px 0 10px;color:#c9d1d3;font:600 13px/1.35 var(--sans,system-ui)}
+#intro.quest-active .race-id-goal{max-width:82%;font:400 clamp(40px,10vw,64px)/.9 var(--serif,Georgia,serif);letter-spacing:-.04em;color:#f8f5ef}
+#intro.quest-active .race-id-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin:24px 0 0}
+#intro.quest-active .race-id-meta div{min-width:0}
+#intro.quest-active .race-id-meta dt{color:#8fa0a5;font:750 10px/1.2 var(--sans,system-ui);letter-spacing:.14em;text-transform:uppercase}
+#intro.quest-active .race-id-meta dd{margin:5px 0 0;color:#f8f5ef;font:650 14px/1.25 var(--sans,system-ui)}
+#intro.quest-active .race-id-stamp{position:absolute;right:16px;top:58px;transform:rotate(7deg);padding:6px 8px;border:1px solid #ff6427;border-radius:999px;color:#ff7b38;font:800 9px/1 var(--sans,system-ui);letter-spacing:.14em}
+#intro.quest-active .race-id-reward{margin:8px 0 16px;color:#ff7b38;font:800 10px/1.2 var(--sans,system-ui);letter-spacing:.13em;text-transform:uppercase}
 
 @media(max-width:760px),(pointer:coarse){
  #intro.kona-entry{padding:0 20px calc(22px + env(safe-area-inset-bottom))}

@@ -11,6 +11,8 @@ const artifacts = read('brand/artifacts.css');
 const profile = read('web/src/engine/profile.js');
 const settings = read('web/src/ui/settings.js');
 const shell = read('web/src/ui/kona-shell.js');
+const home = read('web/src/ui/home.js');
+const me = read('web/src/ui/me.js');
 const landingTemplate = read('web/landing.template.html');
 const landingBuild = read('web/build_landing.mjs');
 const harden = read('tools/harden_pages.mjs');
@@ -36,8 +38,8 @@ test('Random is a persisted appearance mode with one runtime owner', () => {
 test('semantic brand tokens and artifact grammar are source files', () => {
   for (const token of ['--brand-bg','--brand-surface','--brand-ink','--brand-accent']) assert.match(tokens, new RegExp(token));
   for (const primitive of ['hero','photo','label','spec','bib','map','sticker','film','note']) assert.match(artifacts, new RegExp('artifact--' + primitive));
-  assert.match(shell, /artifact--hero/);
-  assert.match(shell, /artifact--label/);
+  assert.match(home, /artifact--hero/);
+  assert.match(me, /artifact--label/);
 });
 
 test('landing index stays a thin shell with external shared styles', () => {
