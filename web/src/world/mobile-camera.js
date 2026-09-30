@@ -15,7 +15,7 @@ export function mobileGestureMap(){
  });
 }
 
-export function cameraPreferences({mode='elevated-follow',distance=6.5,height=4.2,pitch=-0.38}={}){
+export function cameraPreferences({mode='elevated-follow',distance,height,pitch}={}){
  const safeMode=CAMERA_MODES.includes(mode)?mode:'elevated-follow';
  const defaults=safeMode==='overview'
    ? {distance:9,height:7,pitch:-0.62}
