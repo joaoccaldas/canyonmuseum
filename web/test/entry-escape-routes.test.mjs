@@ -2,8 +2,9 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../landing.template.html',import.meta.url),'utf8');
 
-test('landing always exposes Build, Guest and Sign in',()=>{
-  assert.match(html,/id="buildSelf"/);assert.match(html,/id="entryGuest"/);assert.match(html,/id="entrySignIn"/);
+test('landing always exposes Build, Sign in and Install while Build is the local path',()=>{
+  assert.match(html,/id="buildSelf"/);assert.match(html,/id="entrySignIn"/);
+  assert.match(html,/id="entryInstall"/);
 });
 test('one helper actually leaves intro and opens Home',()=>{
   assert.match(entry,/function enterApp\(\)[\s\S]{0,180}intro\?\.setAttribute\('hidden',''\)[\s\S]{0,100}shell\.now/);
