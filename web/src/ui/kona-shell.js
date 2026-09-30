@@ -3,6 +3,7 @@
 import { readGameState, gameProgress } from '../engine/game-state.js';
 import { ensureProgression } from '../engine/progression.js';
 import { consumeAuthCallback, sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
+import { applyBrandMode } from '../brand/runtime.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = iso => { try { return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00')); } catch (_) { return iso; } };
@@ -133,7 +134,7 @@ export function initKonaShell({ profile, settings, enter }) {
   shell.querySelector('[data-tab=me]').onclick=me;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close();});
 
-  const applyTheme=p=>{ const v=p?.appearance||'auto'; if(v==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme=v; };
+  const applyTheme=p=>applyBrandMode(p?.appearance||'auto');
   applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);
   return { now, plan, me, explore, close };
 }
