@@ -38,8 +38,6 @@ jobs:
         working-directory: web
       - name: Setup domain must remain unchanged
         run: git diff --exit-code 869b5535f07c258b0778396b4f1e1862ebbd7d86 -- web/src/studio/race-setup.js
-      - name: Build test-only intake rooms
-        run: node web/build_product_intake_proof.mjs
       - run: node tools/build_pages.mjs
       - run: node tools/build_app.mjs
       - run: npm test
@@ -59,6 +57,8 @@ jobs:
             console.log(p.id,b.length,'bytes');
           }
           NODE
+      - name: Build test-only intake rooms
+        run: node web/build_product_intake_proof.mjs
       - name: Mobile/browser intake audit
         run: |
           python3 -m http.server 8754 --bind 127.0.0.1 >/tmp/canyon-http.log 2>&1 &
