@@ -21,6 +21,17 @@ export function itemCollection(snapshot = {}) {
     });
   }
 
+  for (const race of Array.isArray(snapshot.race_history) ? snapshot.race_history : []) {
+    push({
+      id:'race:' + race.race_id,
+      entity_id:race.race_id,
+      kind:'race',
+      relationship:race.relationship || 'interested',
+      label:'Race badge',
+      collected:true,
+    });
+  }
+
   const discoveries = Array.isArray(snapshot.progression_engine?.discoveries)
     ? snapshot.progression_engine.discoveries
     : Object.keys(snapshot.progression?.stamps || {});
@@ -43,5 +54,5 @@ export function itemCollection(snapshot = {}) {
 export function collectionSummary(snapshot = {}) {
   const items=itemCollection(snapshot);
   const count=kind=>items.filter(x=>x.kind===kind).length;
-  return { total:items.length, equipment:count('equipment'), bikes:count('bike'), parts:count('part'), finds:count('find'), stories:count('story') };
+  return { total:items.length, equipment:count('equipment'), bikes:count('bike'), parts:count('part'), finds:count('find'), stories:count('story'), races:count('race') };
 }
