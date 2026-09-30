@@ -1,0 +1,21 @@
+name: Integration contract
+
+on:
+  push:
+    branches:
+      - feat/integration-contract-v0-20260930
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate integration contract
+        run: node tools/validate_integration_contract.mjs
