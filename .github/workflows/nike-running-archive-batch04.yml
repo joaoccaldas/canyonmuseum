@@ -1,0 +1,67 @@
+name: Build Nike running archive batch 04
+
+on:
+  push:
+    branches:
+      - assets/kona-environment-pack-20260930
+    paths:
+      - blender/nike_running_archive_batch04.py
+      - museum/catalog/nike-running-master-catalog.json
+      - museum/catalog/nike-running-cc0-textures.json
+      - museum/instructions/nike-running-museum.json
+      - .github/workflows/nike-running-archive-batch04.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nike-running-archive-batch04-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install Blender module
+        run: python -m pip install --upgrade pip bpy
+      - name: Build archive assets
+        run: python blender/nike_running_archive_batch04.py
+      - name: Validate archive
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('assets/nike-running-museum/batch-04-heritage')
+          glbs=sorted(root.glob('*.glb'))
+          assert len(glbs)==9, f'expected 9 GLBs, got {len(glbs)}'
+          for p in glbs:
+              b=p.read_bytes()
+              assert b[:4]==b'glTF', p
+              assert int.from_bytes(b[8:12],'little')==len(b), p
+              assert len(b)<1_200_000, f'{p} over mobile asset budget: {len(b)}'
+              print(p,len(b))
+          report=json.loads((root/'build-report.json').read_text())
+          assert set(report['assets'])=={
+            'nike-cortez-1972','nike-oregon-waffle-1973','nike-waffle-trainer-1975',
+            'nike-pre-montreal-1975','nike-tailwind-1978','nike-sting-1978',
+            'nike-pegasus-1-1983','nike-air-max-1-1987','nike-flyknit-racer-2012'
+          }
+          assert (root/'previews/heritage-lineup.jpg').exists()
+          print('nike running archive batch 04 QA passed')
+          PY
+      - name: Commit generated archive
+        run: |
+          if [ -z "$(git status --porcelain -- assets/nike-running-museum/batch-04-heritage)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/nike-running-museum/batch-04-heritage
+          git add -f assets/nike-running-museum/batch-04-heritage/nike_running_archive_batch04.blend
+          git commit -m "build: generate Nike Running heritage archive batch 04 [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
