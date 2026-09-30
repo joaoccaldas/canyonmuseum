@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/common.schema.json",
+  "title": "KONA Common Types V1",
+  "$defs": {
+    "EntityId": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160,
+      "pattern": "^[a-z0-9][a-z0-9:_-]*$"
+    },
+    "IsoDateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "SourceRef": {
+      "type": "object",
+      "required": [
+        "source_type",
+        "ref"
+      ],
+      "properties": {
+        "source_type": {
+          "enum": [
+            "official",
+            "user",
+            "strava",
+            "manual",
+            "partner",
+            "open-data",
+            "derived"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retrieved_at": {
+          "$ref": "#/$defs/IsoDateTime"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "Visibility": {
+      "enum": [
+        "private",
+        "friends",
+        "public",
+        "aggregate-only"
+      ]
+    },
+    "OwnershipState": {
+      "enum": [
+        "owned",
+        "dream",
+        "try",
+        "former",
+        "borrowed",
+        "favorite"
+      ]
+    },
+    "Measurement": {
+      "type": "object",
+      "required": [
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
