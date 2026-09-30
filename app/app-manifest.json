@@ -1,5 +1,5 @@
 {
- "version": "6bf834b6c1bb",
+ "version": "e1ce27882f70",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -13,7 +13,7 @@
  ],
  "files": {
   "index.html": "OI7zhH8+GYtkCNvGXtKXNoGLaohPLPzrIrzqtVMc6IM=",
-  "app/kona-core.js": "ozwG98438tH5M1WDQSvBvHftASbBcZhrirl40k39V24=",
+  "app/kona-core.js": "cTzKf2pQV5wiUwdIG7cIXWGPK6uXemrnuvGFFenZbd0=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
   "manifest.webmanifest": "iMwobAXUqZuO4QiehlvXSScLu2l5YYEgZE5HthcHKlc=",
   "assets/pwa/icon-v3.svg": "kX7Wf3uv1TGV8QngLT59Ot0XX50qljLbo7CNgFQm1ws=",
