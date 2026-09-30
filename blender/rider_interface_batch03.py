@@ -87,7 +87,7 @@ def rod(name,a,b,r,material,parent,verts=12):
     return o
 
 def ellipsoid(name,loc,scale,material,parent):
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=64,ring_count=32,location=loc)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=48,ring_count=24,location=loc)
     o=bpy.context.object; o.name=name; o.scale=scale
     bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
     o.data.materials.append(material); o.parent=parent
@@ -99,7 +99,9 @@ def duplicate_tree(root,suffix):
             dst=empty(src.name+suffix,parent)
         else:
             dst=src.copy()
-            if src.data: dst.data=src.data.copy()
+            # assembled/exploded states share immutable mesh data; transforms differ.
+            # This preserves detail while allowing glTF to reuse geometry buffers.
+            if src.data: dst.data=src.data
             scene.collection.objects.link(dst); dst.parent=parent; dst.name=src.name+suffix
         for ch in src.children: rec(ch,dst)
         return dst
