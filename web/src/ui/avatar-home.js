@@ -54,14 +54,18 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
         '<div class="hub-stage-copy"><small>'+esc(intent)+'</small><h2>'+esc(goal)+'</h2><p>'+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
       '</div>'+
       '<section class="hub-launcher" aria-label="KONA hub">'+
-        tile('world','3D World','Enter the island',{accent:'ocean',image:'assets/share/museum.jpg',featured:true,badge:'EXPLORE'})+
-        tile('bike','Bike Studio','Build your machine',{href:studioHref,accent:'lava',image:'assets/kona-years/cfr-2019.jpg',featured:true,badge:'CREATE'})+
-        tile('garage','Garage','Bikes & gear',{accent:'lime',image:'assets/share/collection.jpg',badge:'YOURS'})+
-        tile('collection','Collection','Cards & finds',{accent:'lilac',image:'assets/kona-years/queen-k.jpg',badge:itemCount+' ITEMS'})+
-        tile('races','Races','Badges & history',{accent:'hibiscus',image:'assets/kona-years/lange-2024.jpg',badge:raceCount+' RACES'})+
-        tile('discover','Discover','Kona & stories',{accent:'ocean',image:'assets/kona-years/kailua-bay.jpg',badge:'NEW'})+
-        tile('games','Games','Challenges & experiences',{href:'Experiences.html',accent:'lava',image:'assets/kona-years/matthews-2025.jpg',badge:'PLAY'})+
-        tile('self','Customize','Avatar & kit',{accent:'lime',image:'assets/kona-years/queen-k.jpg',badge:'SELF'})+
+        '<div class="hub-featured">'+
+          tile('world','3D World','Enter the island',{accent:'ocean',image:'assets/share/museum.jpg',featured:true,badge:'EXPLORE'})+
+          tile('bike','Bike Studio','Build your machine',{href:studioHref,accent:'lava',image:'assets/kona-years/cfr-2019.jpg',featured:true,badge:'CREATE'})+
+        '</div>'+
+        '<div class="hub-quick" aria-label="More destinations">'+
+          tile('garage','Garage','Bikes & gear',{accent:'lime',image:'assets/share/collection.jpg',badge:'YOURS'})+
+          tile('collection','Collection','Cards & finds',{accent:'lilac',image:'assets/kona-years/queen-k.jpg',badge:itemCount+' ITEMS'})+
+          tile('races','Races','Badges & history',{accent:'hibiscus',image:'assets/kona-years/lange-2024.jpg',badge:raceCount+' RACES'})+
+          tile('discover','Discover','Kona & stories',{accent:'ocean',image:'assets/kona-years/kailua-bay.jpg',badge:'NEW'})+
+          tile('games','Games','Challenges & experiences',{href:'Experiences.html',accent:'lava',image:'assets/kona-years/matthews-2025.jpg',badge:'PLAY'})+
+          tile('self','Customize','Avatar & kit',{accent:'lime',image:'assets/kona-years/queen-k.jpg',badge:'SELF'})+
+        '</div>'+
       '</section>'+
       '<section class="hub-drawer" data-hub-drawer hidden><div class="hub-drawer-head"><div><small data-hub-kicker>SELF</small><h3 data-hub-title>Your Race Self</h3></div><button type="button" data-hub-close aria-label="Close">×</button></div><div data-hub-body></div></section>'+
     '</section>';
