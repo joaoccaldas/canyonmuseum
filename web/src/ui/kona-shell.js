@@ -121,7 +121,7 @@ export function initKonaShell({ profile, settings, enter }) {
 
   function garage(){
     title.textContent='Garage';eyebrow.textContent='KONA · YOUR EQUIPMENT';
-    const products=new Map(allProducts().map(p=>[p.id,p])), groups=groupGarage();
+    const products=new Map(allProducts().map(p=>[p.id,p])), groups=groupGarage(readGarage(), allProducts());
     const render=(relationship,label)=>{const rows=groups[relationship].filter(x=>products.has(x.productId));return '<section class="kona-section"><div class="kona-section-head"><h3>'+label+'</h3><small>'+rows.length+'</small></div><div class="kona-place-grid">'+(rows.length?rows.map(x=>{const p=products.get(x.productId);return '<article data-equipment="'+esc(x.id)+'"><small>'+esc(p.brand||'')+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.type||'artifact')+'</span><button type="button" data-open-product="'+esc(p.id)+'">View</button><button type="button" data-remove="'+esc(x.id)+'">Remove</button></article>';}).join(''):'<article><b>Nothing here yet</b><span>Add an artifact from Discover.</span></article>')+'</div></section>';};
     body.innerHTML='<section class="kona-hero-card"><small>MY GARAGE</small><h3>Your equipment. Your story.</h3><p>Owned, Dream and Try stay separate.</p><button class="kona-primary" type="button" data-discover>Discover equipment <span>→</span></button></section>'+render('owned','Owned')+render('dream','Dream')+render('try','Try');
     body.querySelector('[data-discover]')?.addEventListener('click',explore);
@@ -138,7 +138,7 @@ export function initKonaShell({ profile, settings, enter }) {
   }
   function explore(){
     title.textContent='Discover'; eyebrow.textContent='KONA · MACHINES · PEOPLE · PLACES · STORIES';
-    const products=allProducts().filter(p=>p.museum).slice(0,8);
+    const products=allProducts().filter(p=>p.room || p.asset || p.public).slice(0,8);
     const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
     const brands=window.__BRANDROOMS?.rooms||[];
     const themes=window.__gallery?.rooms||[];
