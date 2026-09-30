@@ -11,8 +11,18 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "type": { "type": ["string", "null"] },
-          "brand": { "type": ["string", "null"] }
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "brand": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
         "additionalProperties": false
       }
@@ -22,9 +32,14 @@
       "description": "Get one public product by stable ID.",
       "input_schema": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "additionalProperties": false
       }
@@ -43,9 +58,14 @@
       "description": "Get one public event by stable ID.",
       "input_schema": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "additionalProperties": false
       }
@@ -55,10 +75,20 @@
       "description": "List sourced public places related to an event, optionally filtered by category.",
       "input_schema": {
         "type": "object",
-        "required": ["event_id"],
+        "required": [
+          "event_id"
+        ],
         "properties": {
-          "event_id": { "type": "string", "minLength": 1 },
-          "category": { "type": ["string", "null"] }
+          "event_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
         "additionalProperties": false
       }
@@ -68,9 +98,51 @@
       "description": "Get one public place by stable ID.",
       "input_schema": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_event_sources",
+      "description": "List official sources for an event, optionally returning only current-year sources.",
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "event_id"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "current_only": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_event_schedule",
+      "description": "Get current verified race-week schedule items for an event.",
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "event_id"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "additionalProperties": false
       }
