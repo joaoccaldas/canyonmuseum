@@ -52,8 +52,8 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
   const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power',alpha:true});
   const dpr=Math.min(devicePixelRatio||1,1.5);renderer.setPixelRatio(dpr);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   const scene=new THREE.Scene(); scene.background=new THREE.Color('#0b1115');
-  const camera=new THREE.PerspectiveCamera(32,1,.05,50); camera.position.set(1.35,1.23,2.55);
-  const controls=new OrbitControls(camera,canvas);controls.target.set(0,1.02,0);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=1.55;controls.maxDistance=5;controls.maxPolarAngle=Math.PI*.55;
+  const camera=new THREE.PerspectiveCamera(35,1,.05,50); camera.position.set(1.55,1.26,3.85);
+  const controls=new OrbitControls(camera,canvas);controls.target.set(.1,.98,0);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=2.6;controls.maxDistance=6.5;controls.maxPolarAngle=Math.PI*.55;
   scene.add(new THREE.HemisphereLight('#ffffff','#22303a',1.5));
   const key=new THREE.DirectionalLight('#ffffff',2.2);key.position.set(3,5,2);scene.add(key);
   const rim=new THREE.DirectionalLight(accent,1.3);rim.position.set(-3,2,-2);scene.add(rim);
@@ -74,7 +74,12 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
 
   function resize(){
     const rect=canvas.getBoundingClientRect();const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
-    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+    renderer.setSize(w,h,false);camera.aspect=w/h;
+    const portrait=w/h<.8;
+    camera.position.set(portrait?1.35:1.7,portrait?1.2:1.25,portrait?4.45:3.65);
+    controls.minDistance=portrait?3.2:2.6;
+    controls.target.set(.1,.98,0);
+    camera.updateProjectionMatrix();
   }
   const ro=new ResizeObserver(resize);ro.observe(canvas);resize();
   renderer.setAnimationLoop(()=>{if(disposed)return;controls.update();renderer.render(scene,camera)});
