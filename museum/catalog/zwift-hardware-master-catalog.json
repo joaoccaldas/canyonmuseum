@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "scope": "Zwift-branded physical hardware lineage. Core products only; partner trainers and small replacement accessories tracked separately.",
+  "current_as_of": "2026-09-30",
+  "current": [
+    {
+      "id": "zwift-ride-v2",
+      "name": "Zwift Ride V2 Smart Frame",
+      "released": "2026-09",
+      "status": "current"
+    },
+    {
+      "id": "zwift-cog-v2",
+      "name": "Zwift Cog V2",
+      "status": "current"
+    },
+    {
+      "id": "zwift-click-v2",
+      "name": "Zwift Click V2",
+      "status": "current"
+    },
+    {
+      "id": "zwift-play",
+      "name": "Zwift Play",
+      "status": "current"
+    }
+  ],
+  "legacy": [
+    {
+      "id": "zwift-ride-v1",
+      "name": "Zwift Ride V1 Smart Frame",
+      "status": "superseded"
+    },
+    {
+      "id": "zwift-cog-v1",
+      "name": "Zwift Cog V1",
+      "status": "superseded"
+    },
+    {
+      "id": "zwift-click-v1",
+      "name": "Zwift Click V1",
+      "status": "superseded"
+    },
+    {
+      "id": "zwift-hub-one",
+      "name": "Zwift Hub One",
+      "released": "2023-10",
+      "status": "discontinued"
+    },
+    {
+      "id": "zwift-hub-classic",
+      "name": "Zwift Hub Classic / original Zwift Hub with cassette",
+      "status": "discontinued"
+    },
+    {
+      "id": "zwift-runpod",
+      "name": "Zwift RunPod",
+      "released": "2018-11",
+      "status": "legacy"
+    }
+  ],
+  "next_accessory_batch": [
+    "Zwift Ride Tablet Holder",
+    "Zwift Ride Adjustable Crank Arms",
+    "Zwift Ride V2 Multi-Rail Saddle Clamp",
+    "Zwift Ride V1 Adjustable Saddle Clamp and Seatpost",
+    "Zwift Smart Frame Replacement Saddle",
+    "Zwift Smart Handlebar Y Cable",
+    "Zwift Click Strap & Bar Mount",
+    "Zwift Training Mat"
+  ],
+  "partner_hardware_separate_collection": [
+    "Wahoo KICKR CORE 2 with Zwift Cog and Click",
+    "Wahoo KICKR CORE Zwift One",
+    "Garmin Tacx NEO 3M with Zwift Cog and Click",
+    "JetBlack Victory with Zwift Cog and Click",
+    "Van Rysel Zwift Ready trainer variants"
+  ]
+}
