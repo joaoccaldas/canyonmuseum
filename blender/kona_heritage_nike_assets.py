@@ -37,6 +37,13 @@ PACK_OUT = OUT / "pack"
 for p in (BIKES_OUT, SHOES_OUT, PACK_OUT):
     p.mkdir(parents=True, exist_ok=True)
 
+# Generated outputs are canonical: remove stale model files from prior asset IDs before rebuilding.
+for p in (BIKES_OUT, SHOES_OUT, PACK_OUT):
+    for old in p.glob("*.glb"):
+        old.unlink()
+for old in (OUT / "previews").glob("*.png") if (OUT / "previews").exists() else []:
+    old.unlink()
+
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 scene.unit_settings.system = "METRIC"
