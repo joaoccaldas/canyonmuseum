@@ -1753,6 +1753,9 @@ addEventListener('resize', resize); resize();
 let last = performance.now(), shift = 0;
 function frame(now) {
   requestAnimationFrame(frame);
+  // Zero visual cost: pause expensive 3D work when it cannot be seen.
+  // Reset the clock while paused so resuming never creates a physics/camera jump.
+  if (document.hidden || document.body.classList.contains('kona-panel-open') || document.body.classList.contains('settings-open')) { last = now; return; }
   const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000;
   // movement: gentle acceleration, slide along obstacles
   let ix = 0, iz = 0;
