@@ -310,9 +310,19 @@ def shoe(asset_id, kind, accent):
     elif kind=="alphafly1":
         sole=[(-.160,.052,.014,.050),(-.118,.061,.012,.070),(-.050,.066,.012,.080),(.020,.068,.015,.086),(.085,.067,.022,.090),(.145,.056,.032,.078),(.182,.033,.038,.056)]
         upper_h=[.132,.150,.148,.132,.105,.078,.048]
+    elif kind=="vaporfly4":
+        # Nike Vaporfly 4: official UK9/US10 reference, 6 mm drop, ZoomX + full-length Flyplate.
+        sole=[(-.158,.048,.010,.038),(-.115,.054,.009,.046),(-.052,.057,.010,.052),(.012,.058,.011,.054),(.074,.056,.013,.050),(.132,.048,.017,.043),(.170,.030,.022,.034)]
+        upper_h=[.112,.126,.121,.107,.086,.064,.040]
     else:
-        sole=[(-.160,.053,.012,.048),(-.120,.061,.010,.067),(-.055,.066,.010,.078),(.015,.068,.013,.085),(.082,.068,.020,.090),(.143,.058,.028,.079),(.182,.034,.035,.058)]
+        # Alphafly 3: official UK9/US10 reference, 8 mm drop, continuous ZoomX + dual Air Zoom.
+        sole=[(-.160,.053,.010,.055),(-.120,.061,.009,.064),(-.055,.066,.009,.071),(.015,.068,.010,.073),(.082,.068,.013,.065),(.143,.058,.020,.057),(.182,.034,.028,.047)]
         upper_h=[.128,.147,.145,.130,.105,.078,.048]
+
+    # Scale the external shell to a realistic men's UK9 / US10 museum reference.
+    # Nike's official size chart gives foot length ~271 mm for this size. The modeled shell
+    # uses a small structural allowance around that foot length, instead of the old 342 mm blockout.
+    sole=[(x*.84,w*.78,z0,z1) for x,w,z0,z1 in sole]
 
     loft_mesh(asset_id+"_MIDSOLE", sole, FOAM, g)
     upper_sections=[]
@@ -349,6 +359,7 @@ ASSETS = {
     "nike-vaporfly-next-study": shoe("nike-vaporfly-next-study", "vaporflynext", BLUE),
     "nike-alphafly-next-study": shoe("nike-alphafly-next-study", "alphafly1", TEAL),
     "nike-alphafly-3-study": shoe("nike-alphafly-3-study", "alphafly3", YELLOW),
+    "nike-vaporfly-4-current": shoe("nike-vaporfly-4-current", "vaporfly4", BLUE),
 }
 
 scene["asset_pack"] = "Kona Heritage Bikes + Nike Running Museum"
@@ -444,7 +455,7 @@ render_preview(
 )
 shoe_ids=[
     "nike-vaporfly-4pct-study","nike-vaporfly-next-study",
-    "nike-alphafly-next-study","nike-alphafly-3-study"
+    "nike-alphafly-next-study","nike-alphafly-3-study","nike-vaporfly-4-current"
 ]
 render_preview(
     "nike-shoes-v0.2.png",
