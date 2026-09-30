@@ -4,7 +4,7 @@ import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
-import { renderRaceBadges } from './race-cards.js';
+import { renderRaceBadges, renderRacePicker } from './race-cards.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -51,8 +51,7 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
           '</div>'+
         '</div>'+
       '</div>'+
-    '</section>'+
-    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Race badges</h3><small>Past & future</small></div><div data-race-badges></div></section>';
+    '</section>';
 
   let stageApi=null;
   const mountStage=()=>window.__mountRaceSelfStage?.(root.querySelector('[data-race-self-stage]'),{accent,bike,shoe}).then?.(api=>{stageApi=api});
@@ -64,8 +63,6 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
     script.onerror=()=>{};
     document.body.append(script);
   }
-
-  await renderRaceBadges(root.querySelector('[data-race-badges]'),{limit:8,empty:true});
 
   const pane=root.querySelector('[data-self-pane]');
   const show=(tab)=>{
@@ -80,7 +77,9 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
     } else if(tab==='kit'){
       pane.innerHTML='<div class="race-self-mini-grid"><article><small>KIT</small><b>Race kit slots</b><span>Helmet, trisuit, watch, wetsuit and nutrition follow the RaceSetup contract.</span></article></div>';
     } else if(tab==='races'){
-      const host=document.createElement('div'); pane.replaceChildren(host); renderRaceBadges(host,{limit:20,empty:true});
+      const host=document.createElement('div');
+      pane.replaceChildren(host);
+      renderRacePicker(host,{onChange:()=>{}});
     } else if(tab==='cards'){
       openCollection?.();
     } else if(tab==='garage'){
