@@ -1,5 +1,5 @@
 {
- "version": "1bfa4d47f3d6",
+ "version": "ee320016bea9",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -14,7 +14,7 @@
  ],
  "files": {
   "index.html": "t9KTQQzZpxNtqA6K+NAIbLfMnJtHfe1jFtHn1Tblu9k=",
-  "app/kona-core.js": "M8P+FLuKVo/agPcZp9J4OEjACBcDz82YpoMEFU/l+KQ=",
+  "app/kona-core.js": "0ZHDmG0LTghLjdaMUAueNpd8wB7+Sjanzip0ywm2k7U=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
@@ -27,7 +27,7 @@
   "app/race-self-stage.js": "j5qWdvY6rnZ8KbYRa40MrnetXQxKpWZobPZafGAlXz4=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
-  "app/hall.js": "M6WqqoaUJ/mFgj+OiFrFwmAbeUFeF74V+13g6Gxd7Pg=",
+  "app/hall.js": "TNpVSE3GPlfejCLfb0owlAFwBFqOJWAECgebxEEyMvw=",
   "app/studio.js": "RhnvP4yYW9/dmcUcyqiI7HrNfr4eGVpcUkbwPb/j9t8=",
   "app/studio-catalog.js": "Qj8rIu7C13w5fDmtGeLtuZmcl2S6tEN+XVDRHPYEZZ8=",
   "Canyon_Collection.html": "weOlH8QsluZ69syQBjJMnn2xMEXTu4ZY7QDYUf1ARb8=",
