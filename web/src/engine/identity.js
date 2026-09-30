@@ -1,10 +1,11 @@
+import { readStorage, writeStorage, storageKey } from './storage.js';
 // Canonical graph for the device. Product, equipment, and race identity stay separate.
 // Race Setup V0 (speedmax.raceSetup.v1) is left in place. This module projects it.
 // An unlabeled setup is relationship "try": it is not owned and it is not dream demand.
 // Nothing here is eligible for vendor analytics. Tokens never live in these records.
 
-export const RACE_IDENTITY_KEY = 'speedmax.raceIdentity.v1';
-export const USER_EQUIPMENT_KEY = 'speedmax.userEquipment.v1';
+export const RACE_IDENTITY_KEY = storageKey('raceIdentity');
+export const USER_EQUIPMENT_KEY = storageKey('userEquipment');
 export const LOCAL_USER_ID = 'user:local';
 
 const RELATIONSHIPS = new Set(['owned', 'dream', 'try', 'former', 'borrowed', 'favorite']);
@@ -168,8 +169,8 @@ export function identityFromQuest(draft, { userId = LOCAL_USER_ID, now = new Dat
 export function saveQuestIdentity(draft, storage = globalThis.localStorage) {
   const graph = identityFromQuest(draft);
   try {
-    storage?.setItem?.(USER_EQUIPMENT_KEY, JSON.stringify(graph.equipment));
-    storage?.setItem?.(RACE_IDENTITY_KEY, JSON.stringify(graph.identity));
+    writeStorage('userEquipment', JSON.stringify(graph.equipment), storage);
+    writeStorage('raceIdentity', JSON.stringify(graph.identity), storage);
   } catch { /* the quest key still holds the answers */ }
   return graph;
 }
@@ -177,8 +178,8 @@ export function saveQuestIdentity(draft, storage = globalThis.localStorage) {
 export function syncIdentityFromSetup(setup, products, storage = globalThis.localStorage, options = {}) {
   const graph = projectSetup(setup, products, options);
   try {
-    storage?.setItem?.(USER_EQUIPMENT_KEY, JSON.stringify(graph.equipment));
-    storage?.setItem?.(RACE_IDENTITY_KEY, JSON.stringify(graph.identity));
+    writeStorage('userEquipment', JSON.stringify(graph.equipment), storage);
+    writeStorage('raceIdentity', JSON.stringify(graph.identity), storage);
   } catch { /* private mode: the race setup key still holds the editable copy */ }
   return graph;
 }
