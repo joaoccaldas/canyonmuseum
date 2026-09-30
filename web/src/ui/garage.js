@@ -1,7 +1,7 @@
 // ui/garage.js — 2D Garage projection over canonical UserEquipment.
 // Studio is optional configuration depth, not the ownership database.
 import { readGarage, groupGarage } from '../engine/garage.js';
-import { getProduct } from '../engine/catalog.js';
+import { getPublicProduct } from '../engine/catalog.js';
 
 const legacyId = id => String(id || '').replace(/^product:/, '');
 
@@ -12,7 +12,7 @@ const node = (tag, cls, text) => {
   return n;
 };
 
-export function renderGarageSurface(root) {
+export async function renderGarageSurface(root) {
   const groups = groupGarage(readGarage());
   root.replaceChildren();
 
@@ -39,12 +39,12 @@ export function renderGarageSurface(root) {
       list.append(empty);
     } else {
       for (const item of groups[relationship]) {
-        const product = getProduct(legacyId(item.product_id));
+        const product = await getPublicProduct(legacyId(item.product_id));
         const row = node('article','');
-        const mark = node('i','', (product?.type || 'gear').slice(0,4));
+        const mark = node('i','', (product?.type || product?.product_type || 'gear').slice(0,4));
         const wrap = node('div','');
         wrap.append(
-          node('b','', [product?.brand, product?.model].filter(Boolean).join(' ') || legacyId(item.product_id)),
+          node('b','', [product?.brand, product?.name || product?.label || product?.model].filter(Boolean).join(' ') || legacyId(item.product_id)),
           node('span','', product?.year ? String(product.year) : relationship)
         );
         const configure = node('a','', 'Configure →');
