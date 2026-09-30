@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/sponsorship.schema.json",
+  "title": "Athlete Sponsorship V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "athlete_id",
+    "brand_id",
+    "relationship",
+    "status",
+    "sources"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^sponsorship:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "sponsorship"
+    },
+    "athlete_id": {
+      "type": "string",
+      "pattern": "^athlete:[a-z0-9:_-]+$"
+    },
+    "brand_id": {
+      "type": "string",
+      "pattern": "^brand:[a-z0-9:_-]+$"
+    },
+    "relationship": {
+      "enum": [
+        "bike",
+        "shoe",
+        "apparel",
+        "helmet",
+        "watch",
+        "nutrition",
+        "wetsuit",
+        "eyewear",
+        "other",
+        "title-partner"
+      ]
+    },
+    "status": {
+      "enum": [
+        "current",
+        "historical",
+        "reported",
+        "unknown"
+      ]
+    },
+    "start_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "end_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "public_claim": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 500
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.schema.json#/$defs/SourceRef"
+      }
+    }
+  },
+  "additionalProperties": false
+}
