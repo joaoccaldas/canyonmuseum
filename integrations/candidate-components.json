@@ -47,7 +47,8 @@
       "blockers": [
         "asset branch release gate not yet green",
         "per-asset close-up visual QA required"
-      ]
+      ],
+      "bytes": 269116
     },
     {
       "id": "dt-swiss-arc1100-db80-rear",
@@ -94,7 +95,8 @@
       "blockers": [
         "asset branch release gate not yet green",
         "per-asset close-up visual QA required"
-      ]
+      ],
+      "bytes": 280548
     },
     {
       "id": "dt-swiss-arc1100-disc-rear",
@@ -139,7 +141,8 @@
       "blockers": [
         "asset branch release gate not yet green",
         "per-asset close-up visual QA required"
-      ]
+      ],
+      "bytes": 149832
     },
     {
       "id": "shimano-fc-r9200-54-40-170",
@@ -185,7 +188,8 @@
       "blockers": [
         "asset branch release gate not yet green",
         "current batch-wide QA framing too wide for visual validation"
-      ]
+      ],
+      "bytes": 130136
     },
     {
       "id": "shimano-cs-r9200-11-30",
@@ -234,7 +238,8 @@
       "blockers": [
         "asset branch release gate not yet green",
         "current batch-wide QA framing too wide for visual validation"
-      ]
+      ],
+      "bytes": 160092
     },
     {
       "id": "profile-design-43asc-400",
@@ -278,7 +283,8 @@
       "blockers": [
         "asset branch release gate not yet green",
         "current batch-wide QA framing too wide for visual validation"
-      ]
+      ],
+      "bytes": 32360
     }
   ]
 }
