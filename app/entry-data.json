@@ -1,0 +1,9 @@
+{
+  "schema": "entry-data-v1",
+  "event": {
+    "id": "kona-2026",
+    "name": "Kona race week",
+    "date": "2026-10-10",
+    "location": "Kailua-Kona, Hawaii"
+  }
+}
