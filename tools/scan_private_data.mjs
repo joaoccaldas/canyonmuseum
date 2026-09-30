@@ -21,10 +21,17 @@ for(const file of files){
   // Embedded data URLs are binary payloads represented as text. Scan the surrounding HTML/JS,
   // but remove the opaque payload itself to avoid random base64 matching credential patterns.
   text=text.replace(/data:[^;,\s]+;base64,[A-Za-z0-9+/=]+/g,'data:embedded-binary-removed');
+  // Some generated standalone museum pages embed GLB bytes as a very long quoted
+  // base64 literal rather than a data: URL. Treat those opaque bytes like binary files;
+  // secrets remain detectable in all surrounding executable/source text.
+  text=text.replace(/(["'`])[A-Za-z0-9+/]{256,}={0,2}\1/g,'$1embedded-binary-removed$1');
   const lines=text.split(/\r?\n/);
   lines.forEach((line,i)=>{
-    if(secretPatterns.some(re=>re.test(line))) findings.push({file,line:i+1,kind:'secret/private-data'});
-    if(localPath.test(line)) findings.push({file,line:i+1,kind:'local-machine-path'});
+    // Deployment leak guards contain the same patterns by definition. Do not flag
+    // that one scanner-definition line as if it were a leaked value.
+    const selfReferentialGuard = file==='.github/workflows/pages.yml' && /grep\s+-rIlE/.test(line);
+    if(!selfReferentialGuard && secretPatterns.some(re=>re.test(line))) findings.push({file,line:i+1,kind:'secret/private-data'});
+    if(!selfReferentialGuard && localPath.test(line)) findings.push({file,line:i+1,kind:'local-machine-path'});
   });
 }
 if(findings.length){

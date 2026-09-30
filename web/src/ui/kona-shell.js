@@ -7,6 +7,7 @@ import { applyBrandMode } from '../brand/runtime.js';
 import { renderGarageSurface } from './garage.js';
 import { renderHomeSurface } from './home.js';
 import { renderDiscoverSurface } from './discover.js';
+import { renderPlanSurface } from './plan.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon = name => {
@@ -23,9 +24,7 @@ const icon = name => {
 export function initKonaShell({ profile, settings, enter }) {
   consumeAuthCallback();
   const facts = () => ({
-    event: window.__ENTRY_EVENT || window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {},
-    week: window.__EVENT?.current_facts?.race_week || [],
-    places: window.__ISLAND?.places || [],
+    event: window.__ENTRY_EVENT || window.__ENTRY_DATA?.event || {},
   });
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
@@ -64,14 +63,8 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   function plan(){
-    const { week, places } = facts();
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
-    const days=week.map(x=>'<article><time>'+esc(fmtDate(x.date))+'</time><div><b>IRONMAN Expo</b><span>'+esc(x.start)+'–'+esc(x.end)+' · '+esc(x.venue)+'</span></div></article>').join('');
-    const cards=places.map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span>'+(p.visit_with_care?'<em>Visit with care</em>':'')+'</article>').join('');
-    body.innerHTML=
-      '<section class="kona-section first artifact artifact--label"><div class="kona-section-head"><h3>Race week</h3><small>2026 verified</small></div><div class="kona-timeline">'+days+'</div></section>'+
-      '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Places worth your time</h3><small>Local-first planning</small></div><div class="kona-place-grid">'+cards+'</div></section>'+
-      '<p class="kona-source-note">Operational race information is shown only from current 2026 official sources. Older athlete guides and course maps remain reference-only.</p>';
+    renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
   }
 

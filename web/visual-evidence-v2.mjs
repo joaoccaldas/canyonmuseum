@@ -5,7 +5,7 @@ const out=process.argv[3]||'visual-evidence-v2';fs.mkdirSync(out,{recursive:true
 const chrome=process.env.CHROME_PATH;if(!chrome)throw new Error('CHROME_PATH required');
 const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader']});
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'desktop',width:1440,height:900}];
-const states=['landing','onboarding','reveal','home','discover','plan','me'];const report=[];
+const states=['landing','onboarding','reveal','home','discover','garage','plan','me'];const report=[];
 async function capture(vp,state,theme){
  const p=await browser.newPage();const requests=[];const errors=[];
  p.on('request',r=>requests.push(r.url()));p.on('pageerror',e=>errors.push(e.message));
@@ -19,7 +19,7 @@ async function capture(vp,state,theme){
    for(const sel of ['[data-set="intent"]','[data-set="bikeId"]','[data-set="shoeId"]','[data-set="goal"]']){await p.waitForSelector(sel,{timeout:5000});await p.click(sel);await new Promise(r=>setTimeout(r,120));}
  } else if(state!=='landing'){
    await p.click('#buildSelf');await p.waitForSelector('[data-quest-skip]',{timeout:5000});await p.click('[data-quest-skip]');await new Promise(r=>setTimeout(r,180));
-   const fn={home:'now',discover:'explore',plan:'plan',me:'me'}[state];
+   const fn={home:'now',discover:'explore',garage:'garage',plan:'plan',me:'me'}[state];
    const switched=await p.evaluate(fn=>{
      const shell=window.__konaShell || window.__app?.konaShell;
      if(!shell || typeof shell[fn] !== 'function') return false;
@@ -43,7 +43,7 @@ async function capture(vp,state,theme){
  report.push({viewport:vp.id,theme,state,metrics,heavyRequests:heavy,errors});
  await p.close();
 }
-for(const vp of viewports)for(const theme of ['light','dark'])for(const state of states)await capture(vp,state,theme);
+for(const vp of viewports)for(const theme of ['light','dark','random'])for(const state of states)await capture(vp,state,theme);
 await browser.close();
 fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
 const violations=[];
@@ -55,6 +55,7 @@ for(const r of report){
  if(r.state==='onboarding' && !/Why are you here/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/onboarding: onboarding question missing`);
  if(r.state==='reveal' && !/This is your Kona|Enter KONA/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/reveal: payoff missing`);
  if(r.state==='home' && !/Home|Now|Kona/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no Home content detected`);
+ if(r.state==='garage' && !/Garage|Your equipment|Mine|Dreaming|Try/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/garage: no Garage content detected`);
  if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);
  if(r.state==='me' && !/Me|Passport|XP|Credits/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: no Me/Passport content detected`);
 }
