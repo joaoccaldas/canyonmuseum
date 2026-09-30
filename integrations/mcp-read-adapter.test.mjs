@@ -25,6 +25,11 @@ assert.equal(event.id,"kona-2026");
 
 const places=invokeReadTool("list_event_places",{event_id:"kona-2026",category:"culture"});
 assert.ok(places.length >= 1);
+const currentSources=invokeReadTool("list_event_sources",{event_id:"kona-2026",current_only:true});
+assert.ok(currentSources.length >= 2);
+assert.ok(currentSources.every(s=>s.status==="current" && s.valid_for_year===2026));
+const eventSchedule=invokeReadTool("get_event_schedule",{event_id:"kona-2026"});
+assert.equal(eventSchedule.length,4);
 
 assert.throws(()=>invokeReadTool("get_product",{id:"canyon-cfr-2027",path:"../../secret"}),/unknown argument/);
 assert.throws(()=>invokeReadTool("delete_product",{id:"canyon-cfr-2027"}),/unknown tool/);
