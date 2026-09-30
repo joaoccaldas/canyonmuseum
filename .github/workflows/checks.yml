@@ -39,5 +39,5 @@ jobs:
       - name: Built pages are up to date
         run: |
           node tools/build_pages.mjs
-          git diff --stat --exit-code -- museum/catalog/products.json docs/ROOMS.md '*.html' 'web/dist/*.html' \
-            || { echo "::error::built pages are stale: run node tools/build_pages.mjs and commit"; exit 1; }
+          git diff --stat --exit-code -- museum/catalog/products.json docs/ROOMS.md '*.html' 'web/dist/*.html' app/kona-core.js app/museum-data.js app/hall.js app/studio.js app/studio-catalog.js \
+            || { echo "::error::built pages/bundles are stale: run node tools/build_pages.mjs and commit all generated outputs"; exit 1; }
