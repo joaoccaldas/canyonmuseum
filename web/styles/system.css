@@ -146,3 +146,64 @@ html[data-theme="dark"]{
 .kona-place-grid b{font:400 22px/1.05 var(--serif);margin:6px 0}.kona-place-grid span{font-size:10.5px;line-height:1.4;color:var(--kona-muted)}
 .kona-place-grid em{font:700 9px var(--sans);color:var(--kona-accent);margin-top:7px;text-transform:uppercase;letter-spacing:.1em}
 .kona-source-note{color:var(--kona-faint);font-size:10.5px;line-height:1.5;padding:0 4px 12px}
+
+
+/* KONA V9 shell acceptance layer.
+   Semantic color/type values live in brand/tokens.css + brand/themes.css. */
+.kona-bottom-nav{
+  left:0;right:0;bottom:0;height:calc(64px + env(safe-area-inset-bottom));
+  padding:5px 10px env(safe-area-inset-bottom);border:0;border-top:1px solid var(--kona-line);
+  border-radius:0;background:color-mix(in srgb,var(--kona-bg) 96%,transparent);
+  box-shadow:none;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.kona-bottom-nav button,.kona-bottom-nav a{border-radius:0;background:transparent!important;font-weight:650}
+.kona-bottom-nav .on{color:var(--kona-accent)}
+.kona-panel{
+  background:var(--kona-bg);
+  padding:max(20px,env(safe-area-inset-top)) 18px calc(86px + env(safe-area-inset-bottom))
+}
+.kona-panel-head{max-width:860px;margin:0 auto 24px;align-items:center}
+.kona-panel-head small{color:var(--kona-muted);letter-spacing:.18em}
+.kona-panel-head h2{font-size:clamp(44px,11vw,76px);letter-spacing:-.035em}
+.kona-panel-head button{border:0;background:transparent}
+.kona-panel-body{max-width:860px;gap:22px}
+.kona-hero-card,.kona-section{border:0;border-radius:0;background:transparent;box-shadow:none}
+.kona-hero-card{
+  min-height:min(62vh,560px);padding:28px;border-radius:22px;color:#fff;
+  background:
+    linear-gradient(180deg,rgba(7,11,13,.08),rgba(7,11,13,.18) 40%,rgba(7,11,13,.82) 100%),
+    url('../../assets/kona-years/kailua-bay.jpg') center/cover no-repeat;
+}
+.kona-hero-card small{color:rgba(255,255,255,.78)}
+.kona-hero-card h3{font-size:clamp(44px,12vw,78px);max-width:620px;color:#fff}
+.kona-hero-card p{color:rgba(255,255,255,.86);font-size:15px}
+.kona-primary{min-height:50px;border-radius:999px;padding:0 22px;background:var(--kona-accent);color:#fff;box-shadow:none;font-weight:750}
+.kona-section{padding:8px 0 22px;border-bottom:1px solid var(--kona-line)}
+.kona-section-head{margin-bottom:16px}
+.kona-section-head h3{font-size:clamp(30px,7vw,42px)}
+.kona-list article,.kona-timeline article{padding:15px 0;border-radius:0;border-bottom:1px solid var(--kona-line);background:transparent}
+.kona-list article:last-child,.kona-timeline article:last-child{border-bottom:0}
+.kona-list i{background:transparent;color:var(--kona-accent);border:1px solid var(--kona-line)}
+.kona-list a,.kona-list article>button{color:var(--kona-text)}
+.kona-place-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kona-place-grid article{
+  min-height:190px;padding:16px;border:0;border-radius:18px;color:#fff;
+  background:
+    linear-gradient(180deg,rgba(8,11,13,.04),rgba(8,11,13,.78)),
+    url('../../assets/kona-years/kailua-bay.jpg') center/cover no-repeat
+}
+.kona-place-grid small,.kona-place-grid span{color:rgba(255,255,255,.78)}
+.kona-place-grid b{font-size:26px}
+.kona-place-grid em{color:#fff}
+.kona-human-note{
+  font:500 clamp(18px,5vw,28px)/1.05 var(--brand-font-hand);
+  transform:rotate(-2deg);max-width:18rem
+}
+@media(max-width:520px){
+  .kona-panel{padding-left:16px;padding-right:16px}
+  .kona-panel-head{margin-bottom:18px}
+  .kona-panel-head h2{font-size:46px}
+  .kona-hero-card{min-height:58dvh;padding:22px}
+  .kona-place-grid{grid-template-columns:1fr}
+  .kona-place-grid article{min-height:180px}
+}
