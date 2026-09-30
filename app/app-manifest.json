@@ -1,5 +1,5 @@
 {
- "version": "93919e2fe40d",
+ "version": "14b5b40969c8",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -36,7 +36,7 @@
   "assets/pwa/icon-v3-maskable-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/apple-touch-icon-v3.png": "R7r+34dBZMxUezo2xBD34dbHtfTyvjdCViUhs3wRamI=",
   "app/world-shell.html": "TTf6z6pUXZoR+AeCTJZkEptRjff7sNgSZzs4ITcluJM=",
-  "web/styles/hall-web.css": "RTu9sdh2fQgoP5Thhhpkis8iYxcLQnEPs9RyrWlPTeI=",
+  "web/styles/hall-web.css": "eYKTo8IIM1MzAzZ0c+9uwuSme7WOnA8SjRk9atporo0=",
   "web/styles/hall-mobile.css": "C8ZplQkaKuAvGYJxcdGk/36KnKHqyBaDpG5fbXvUzsM=",
   "app/race-self-stage.js": "j5qWdvY6rnZ8KbYRa40MrnetXQxKpWZobPZafGAlXz4=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
