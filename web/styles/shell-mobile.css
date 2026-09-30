@@ -15,3 +15,43 @@
   body.touch #intro{padding-bottom:calc(102px + var(--safe-b))}
 }
 @media(max-width:380px){.kona-place-grid{grid-template-columns:1fr}.kona-panel{padding-left:12px;padding-right:12px}.kona-section{padding:14px}}
+
+/* Physical-phone composition: do not squeeze the desktop editorial canvas into a handset. */
+@media(max-width:760px){
+  .kona-panel{
+    padding:max(18px,env(safe-area-inset-top)) 20px calc(104px + env(safe-area-inset-bottom));
+  }
+  .kona-panel-head,.kona-panel-body{max-width:none;width:100%;margin-left:0;margin-right:0}
+  .kona-panel-head{margin-bottom:18px}
+  .kona-panel-head small{font-size:11px;letter-spacing:.18em}
+  .kona-panel-head h2{font-size:clamp(46px,14vw,62px)}
+  .kona-panel-body{gap:16px}
+  .kona-hero-card,.kona-section{border-radius:22px}
+  .kona-hero-card{min-height:280px;padding:22px}
+  .kona-hero-card small{font-size:10px}
+  .kona-hero-card h3{font-size:clamp(42px,12vw,58px);max-width:11ch}
+  .kona-hero-card p{font-size:15px}
+  .kona-primary{width:100%;min-height:54px;justify-content:space-between;padding:0 20px;font-size:15px}
+  .kona-section{padding:18px}
+  .kona-section-head{align-items:center;margin-bottom:15px}
+  .kona-section-head h3{font-size:31px}
+  .kona-section-head small{font-size:9px;text-align:right}
+  .kona-list,.kona-timeline{gap:10px}
+  .kona-list article,.kona-timeline article{min-height:68px;padding:12px 14px;border-radius:17px}
+  .kona-list b,.kona-timeline b{font-size:14px}
+  .kona-list span,.kona-timeline span{font-size:12px}
+  .kona-list a,.kona-list button{font-size:12px;min-height:44px}
+  .kona-place-grid{grid-template-columns:1fr;gap:10px}
+  .kona-place-grid article{min-height:154px;padding:18px}
+  .kona-place-grid small{font-size:10px}
+  .kona-place-grid b{font-size:29px}
+  .kona-place-grid span{font-size:12px}
+  .kona-source-note{font-size:12px}
+  .kona-bottom-nav{left:12px;right:12px;height:72px;padding:6px;bottom:calc(8px + env(safe-area-inset-bottom))}
+  .kona-bottom-nav button,.kona-bottom-nav a{font-size:11px;min-height:56px}
+  .kona-bottom-nav svg{width:24px;height:24px}
+}
+@media(max-width:360px){
+  .kona-panel{padding-left:16px;padding-right:16px}
+  .kona-hero-card{min-height:260px}
+}
