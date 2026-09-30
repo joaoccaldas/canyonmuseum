@@ -151,7 +151,7 @@ function paintQuest(step) {
     } catch (err) {
       console.warn('progression reward unavailable; RaceIdentity remains valid', err);
     }
-    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
+    host.innerHTML = `<p class="eyebrow">This is your Kona</p><div class="reveal-hero" role="img" aria-label="Kona race setup"></div><div class="reveal-meta"><span>Machine<b>${bike}</b></span><span>Run setup<b>${shoe}</b></span><span>Target<b>${draft.goal}</b></span><span>Unlocked<b>+${xp} XP · +${credits} Credits</b></span></div><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Already safe on this device.</p>`;
     host.querySelector('#enterKona')?.addEventListener('click', enterApp);
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
