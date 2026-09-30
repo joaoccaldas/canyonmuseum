@@ -1,0 +1,45 @@
+name: Temporary design PR-A output sync
+
+on:
+  push:
+    branches:
+      - design/kona-brand-architecture-v2-20260930
+    paths-ignore:
+      - '*.html'
+      - 'web/dist/**'
+      - 'docs/ROOMS.md'
+      - 'museum/catalog/products.json'
+      - 'sw.js'
+      - 'app/app-manifest.json'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - 'llms.txt'
+      - 'llms-full.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: design/kona-brand-architecture-v2-20260930
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: web
+      - run: node tools/build_pages.mjs
+      - name: Commit deterministic outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add museum/catalog/products.json docs/ROOMS.md ./*.html web/dist/*.html
+          if git diff --cached --quiet; then echo "outputs current"; exit 0; fi
+          git commit -m "build: sync PR-A generated pages [skip ci]"
+          git push origin HEAD:design/kona-brand-architecture-v2-20260930
