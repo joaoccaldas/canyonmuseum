@@ -7,7 +7,11 @@ const browser=await puppeteer.launch({executablePath:exe,headless:'new',args:['-
 try{
  const page=await browser.newPage();page.setDefaultTimeout(30000);
  await page.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
- const requests=[],pageErrors=[];page.on('request',r=>requests.push(r.url()));page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
+ const requests=[],pageErrors=[];
+ page.on('request',r=>requests.push(r.url()));
+ page.on('pageerror',e=>pageErrors.push('page:'+String(e?.stack||e)));
+ page.on('console',m=>{if(m.type()==='error')pageErrors.push('console:'+m.text())});
+ page.on('requestfailed',r=>pageErrors.push('requestfailed:'+r.url()+':'+(r.failure()?.errorText||'unknown')));
  await page.goto(base,{waitUntil:'domcontentloaded'});
  const museumHeavy=()=>requests.filter(u=>/app\/hall\.js|app\/museum-data\.js|\.hdr(?:\?|$)/i.test(u));
  const personal3D=()=>requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
