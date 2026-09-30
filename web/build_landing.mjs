@@ -21,6 +21,8 @@ const WINGS = readJson('museum/world/wings/index.json').wings.map(f => readJson(
 const ART = { paintings: readJson('museum/art/paintings.json').paintings,
   sculptures: fs.existsSync(path.join(root, 'museum/art/sculptures.json')) ? readJson('museum/art/sculptures.json').sculptures : [] };
 const SKINS = JSON.parse(fs.readFileSync(path.join(root, 'museum/skins/museum.json'), 'utf8'));
+const EVENT = readJson('integrations/sources/kona-2026.ironman.json');
+const ISLAND = readJson('museum/kona/island-guide.json');
 const FINISH = Object.fromEntries(SKINS.skins.filter(s => s.id.startsWith('hall-')).map(s => [s.id.slice(5), s.frame]));
 const GLB = JSON.parse(fs.readFileSync(path.join(root, 'museum/catalog/canyon-assets.json'), 'utf8')).glb;   // one list, shared with the studio catalogue
 
@@ -113,6 +115,8 @@ const html = fs.readFileSync(path.join(here, 'landing.template.html'), 'utf8')
   .replace('__FILMS__', () => fs.readFileSync(path.join(root, 'museum/themes/films.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__WINGS__', () => JSON.stringify(WINGS).replaceAll('<', '\\u003c'))
   .replace('__ART__', () => JSON.stringify(ART).replaceAll('<', '\\u003c'))
+  .replace('__EVENT__', () => JSON.stringify(EVENT).replaceAll('<', '\\u003c'))
+  .replace('__ISLAND__', () => JSON.stringify(ISLAND).replaceAll('<', '\\u003c'))
   .replace('__ATLAS__', () => fs.readFileSync(path.join(root, 'museum/atlas/bikes.json'), 'utf8').replaceAll('<', '\\u003c'))
   .replace('__KONAYEARS__', () => JSON.stringify(JSON.parse(fs.readFileSync(path.join(root, 'museum/kona_years.json'), 'utf8'))).replaceAll('<', '\\u003c'))
   .replace('__APP__', () => app);
