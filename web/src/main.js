@@ -17,6 +17,7 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import * as TX from './tex.js';
 import { BIKE, PROFILE, GEOMETRY, PARTS, GROUPS, PRESETS, SWATCHES, DECALS, VIEWS } from './data.js';
 import { coarse, desktopViewPhone } from './detect.js';
+import { buildAnimatedChain, buildRearDisc, createDimensionOverlay, createWindTunnel } from './engine/viewer-extras.js';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -171,6 +172,11 @@ const parts = {};            // part id -> node
 const meshesOf = {};         // part id -> meshes (nearest part ancestor)
 const explodables = [];      // {node, base, vec, delay}
 let wheelF, wheelR, crankset, chainNode, chain = null, discMesh = null, zippMesh=null;
+const dimensionOverlay = createDimensionOverlay({ scene, profile: PROFILE, query: $ });
+const dims = dimensionOverlay.group, dimLabels = dimensionOverlay.labels;
+const windTunnel = createWindTunnel({ scene, coarse });
+const tunnel = windTunnel.group;
+let tunnelMat = null;
 
 function progress(p, label) { $('#loadbar i').style.width = (p * 100).toFixed(0) + '%'; if (label) $('#loadlabel').textContent = label; }
 
@@ -201,11 +207,12 @@ loader.parse(GLB.buffer, '', gltf => {
   const sorted = [...explodables].sort((a, b) => a.vec.length() - b.vec.length());
   sorted.forEach((x, i) => x.delay = i / sorted.length);
   wheelF = parts.wheel_front; wheelR = parts.wheel_rear; crankset = parts.crankset; chainNode = parts.chain;
-  buildChain();
-  buildDisc();
+  chain = buildAnimatedChain({ chainNode, toThreeVector: B2T, meshesOf });
+  discMesh = buildRearDisc({ wheel: wheelR, material: M.disc, meshesOf });
   zippMesh=makeZipp(wheelR);
-  buildDims();
-  buildTunnel();
+  dimensionOverlay.build();
+  windTunnel.build();
+  tunnelMat = windTunnel.material();
   applyCfg();
   buildUI();
   makeSpecs({profile:PROFILE,parts});
@@ -236,140 +243,6 @@ function mapMaterial(m, mesh) {
     case 'bottle_smoke': return M.bottle;
     default: return tuneStock(m);
   }
-}
-
-// ------------------------------------------------------------------ chain (instanced, animated)
-function buildChain() {
-  // Heritage meshes carry a static modelled chain (no path data): leave it as-is.
-  if (!chainNode || !chainNode.userData.chain_path) return;
-  const pts = JSON.parse(chainNode.userData.chain_path).map(B2T);
-  const pitch = chainNode.userData.chain_pitch, N = chainNode.userData.chain_links;
-  const L = [0];
-  for (let i = 1; i <= pts.length; i++) L.push(L[i - 1] + pts[i % pts.length].distanceTo(pts[i - 1]));
-  const tot = L[L.length - 1];
-  const tpl = {};
-  chainNode.traverse(o => { if (o.isMesh && /chainlink_(outer|inner)/.test(o.name)) { tpl[o.name.includes('outer') ? 'outer' : 'inner'] = o; o.visible = false; } });
-  if (!tpl.outer) return;
-  const inst = ['outer', 'inner'].map(k => {
-    tpl[k].updateMatrix();
-    const geo = tpl[k].geometry.clone().applyMatrix4(tpl[k].matrix);
-    const im = new THREE.InstancedMesh(geo, tpl[k].material, N / 2);
-    im.castShadow = true; im.frustumCulled = false; im.userData.chainKind = k;
-    chainNode.add(im); (meshesOf.chain ||= []).push(im); im.userData.baseMat = im.material;
-    return im;
-  });
-  const P = new THREE.Vector3(), Q = new THREE.Vector3(), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), Z = new THREE.Vector3(0, 0, 1), one = new THREE.Vector3(1, 1, 1);
-  function at(s, out) {
-    s = ((s % tot) + tot) % tot;
-    let lo = 0, hi = L.length - 1;
-    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (L[mid] <= s) lo = mid; else hi = mid; }
-    const t = (s - L[lo]) / (L[lo + 1] - L[lo]);
-    return out.copy(pts[lo]).lerp(pts[(lo + 1) % pts.length], t);
-  }
-  chain = {
-    s: 0, tot, pitch, update() {
-      for (let i = 0; i < N; i++) {
-        const s0 = this.s + i * pitch;
-        at(s0, P); at(s0 + pitch, Q);
-        const ang = Math.atan2(Q.y - P.y, Q.x - P.x);
-        q.setFromAxisAngle(Z, ang);
-        P.add(Q).multiplyScalar(.5);
-        m4.compose(P, q, one);
-        inst[i % 2].setMatrixAt(i >> 1, m4);
-      }
-      inst.forEach(im => im.instanceMatrix.needsUpdate = true);
-    }
-  };
-  chain.update();
-}
-
-// optional rear disc (configurator)
-function buildDisc() {
-  if (!wheelR) return;
-  const prof = [];
-  for (let i = 0; i <= 24; i++) { const r = .018 + (.239 - .018) * i / 24; prof.push(new THREE.Vector2(r, .0115 * Math.cos(i / 24 * Math.PI / 2) + .0035)); }
-  const half = new THREE.LatheGeometry(prof, 128);
-  half.rotateX(Math.PI / 2);
-  const g = new THREE.Group();
-  const a = new THREE.Mesh(half, M.disc), b = new THREE.Mesh(half, M.disc);
-  b.rotation.y = Math.PI;
-  a.castShadow = b.castShadow = true;
-  a.userData.baseMat=b.userData.baseMat=M.disc;
-  g.add(a, b); g.visible = false; g.name = 'disc_option';
-  wheelR.add(g); discMesh = g;
-  (meshesOf.wheel_rear ||= []).push(a, b);
-}
-
-// ------------------------------------------------------------------ dimension overlay
-const dims = new THREE.Group(); dims.visible = false; scene.add(dims);
-const dimLabels = [];
-function buildDims() {
-  // The overlay is drawn from the CFR/SLX size-M geometry; other frames opt out.
-  if (PROFILE.dimsOverlay === false) { const b = $('#dimsBtn'); if (b) b.style.display = 'none'; return; }
-  const BB = new THREE.Vector3(0, .2645, .16), HT = new THREE.Vector3(.44, .7455, .16);
-  const AR = new THREE.Vector3(-.41325, .3395, .16), AF = new THREE.Vector3(.59975, .3395, .16);
-  const mat = new THREE.LineBasicMaterial({ color: 0x19b3ff, transparent: true, opacity: .95, depthTest: false });
-  const dash = new THREE.LineDashedMaterial({ color: 0x19b3ff, dashSize: .012, gapSize: .01, transparent: true, opacity: .7, depthTest: false });
-  const line = (a, b, m = mat) => { const g = new THREE.BufferGeometry().setFromPoints([a, b]); const l = new THREE.Line(g, m); l.computeLineDistances(); l.renderOrder = 10; dims.add(l); };
-  const lab = (p, t) => { const el = document.createElement('div'); el.className = 'dim'; el.innerHTML = t; $('#dimlayer').appendChild(el); dimLabels.push({ p, el }); };
-  const stackTop = new THREE.Vector3(BB.x, HT.y, BB.z);
-  line(BB, stackTop); line(stackTop, HT); line(BB, HT, dash);
-  lab(BB.clone().lerp(stackTop, .5), '<b>481</b> stack');
-  lab(stackTop.clone().lerp(HT, .5).add(new THREE.Vector3(0, .03, 0)), '<b>440</b> reach');
-  const g0 = new THREE.Vector3(AR.x, .02, .16), g1 = new THREE.Vector3(AF.x, .02, .16);
-  line(g0, g1); line(AR, g0, dash); line(AF, g1, dash);
-  lab(g0.clone().lerp(g1, .5).add(new THREE.Vector3(0, .03, 0)), '<b>1013</b> wheelbase');
-  line(BB, AR); lab(BB.clone().lerp(AR, .5).add(new THREE.Vector3(0, -.04, 0)), '<b>420</b> chainstay');
-  // head angle & seat angle guides
-  const steer = new THREE.Vector3(-Math.cos(73 * Math.PI / 180), Math.sin(73 * Math.PI / 180), 0);
-  line(HT.clone().addScaledVector(steer, .12), HT.clone().addScaledVector(steer, -.48), dash);
-  lab(HT.clone().addScaledVector(steer, -.44).add(new THREE.Vector3(.07, 0, 0)), '<b>73°</b> head');
-  const seat = new THREE.Vector3(-Math.cos(81 * Math.PI / 180), Math.sin(81 * Math.PI / 180), 0);
-  line(BB, BB.clone().addScaledVector(seat, .78), dash);
-  lab(BB.clone().addScaledVector(seat, .62).add(new THREE.Vector3(-.07, 0, 0)), '<b>81°</b> seat');
-  lab(new THREE.Vector3(BB.x, .2645 - .06, .16), '<b>75</b> BB drop');
-}
-
-// ------------------------------------------------------------------ wind tunnel streamlines
-const tunnel = new THREE.Group(); tunnel.visible = false; scene.add(tunnel);
-let tunnelMat;
-function buildTunnel() {
-  const obst = [[.47, .72, 0, .09], [.25, .5, 0, .07], [.02, .3, 0, .08], [-.1, .62, 0, .07], [-.16, .99, 0, .1], [.62, .98, 0, .15],
-    [.4, .95, 0, .1], [-.33, 1.05, 0, .1], [.6, .34, 0, .05], [-.41, .34, 0, .06], [.14, .74, 0, .06]];
-  for(const child of [...tunnel.children]){child.geometry?.dispose();child.material?.dispose();tunnel.remove(child);}
-  const lines = coarse ? 32 : 64, seg = 90;
-  const pos = [], along = [], seed = [];
-  for (let k = 0; k < lines; k++) {
-    const rand=n=>((Math.sin(n*127.1+41.7)*43758.5453)%1+1)%1;
-    const y0 = .08 + rand(k+1) * 1.75, z0 = (rand(k+211) - .5) * .85, sd = rand(k+731);
-    for (let i = 0; i < seg; i++) {
-      const x = 2.4 - 4.8 * i / (seg - 1);
-      let y = y0, z = z0;
-      for (const [cx, cy, cz, r] of obst) {
-        const dy = y0 - cy, dz = z0 - cz, q = Math.hypot(dy, dz * 2.2) + 1e-4;
-        if (q < r * 2.2) {
-          const g = Math.exp(-Math.pow((x - cx) / (r * 2.4), 2));
-          const push = (r * 2.2 - q) * .55 * g;
-          y += dy / q * push; z += dz / q * push * 1.4 + Math.sign(dz || .01) * push * .5;
-        }
-      }
-      pos.push(x, y, z); along.push(i / (seg - 1)); seed.push(sd);
-    }
-  }
-  const idx = [];
-  for (let k = 0; k < lines; k++) for (let i = 0; i < seg - 1; i++) idx.push(k * seg + i, k * seg + i + 1);
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  g.setAttribute('along', new THREE.Float32BufferAttribute(along, 1));
-  g.setAttribute('seed', new THREE.Float32BufferAttribute(seed, 1));
-  g.setIndex(idx);
-  tunnelMat = new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    uniforms: { t: { value: 0 }, col: { value: new THREE.Color(0xbfe9ff) } },
-    vertexShader: 'attribute float along; attribute float seed; varying float va; varying float vs; void main(){ va=along; vs=seed; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-    fragmentShader: 'uniform float t; uniform vec3 col; varying float va; varying float vs; void main(){ float p=fract(va*3.0 - t*0.55 + vs*7.0); float a=smoothstep(0.,.25,p)*smoothstep(1.,.55,p); float edge=smoothstep(0.,.08,va)*smoothstep(1.,.9,va); gl_FragColor=vec4(col, a*edge*.075); }',
-  });
-  tunnel.add(new THREE.LineSegments(g, tunnelMat));
 }
 
 // ------------------------------------------------------------------ configurator
