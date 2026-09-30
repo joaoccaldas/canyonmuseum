@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "disclaimer": "Museum/education instructions. For real setup/service, use Zwift's current setup videos, quickstart guides, support articles, and trainer-manufacturer manuals.",
+  "items": [
+    {
+      "id": "zwift-ride-v2",
+      "explode_order": [
+        "frame/front leg",
+        "riser foot",
+        "adjustable crank arms/pedals",
+        "seatpost + multi-rail clamp + saddle",
+        "smart handlebar",
+        "left/right controllers",
+        "Frame Key"
+      ],
+      "setup": [
+        "assemble frame",
+        "set trainer/riser alignment",
+        "fit saddle height/fore-aft",
+        "choose crank length",
+        "set handlebar height",
+        "pair/update controllers"
+      ]
+    },
+    {
+      "id": "zwift-ride-v1",
+      "explode_order": [
+        "frame/front leg",
+        "fixed crank arms/pedals",
+        "seatpost/saddle",
+        "smart handlebar/controllers",
+        "Frame Key"
+      ],
+      "setup": [
+        "assemble frame",
+        "fit saddle",
+        "set handlebar height",
+        "pair/update controllers"
+      ]
+    },
+    {
+      "id": "zwift-cog-v2",
+      "explode_order": [
+        "plastic housing",
+        "14T steel sprocket",
+        "10-position alignment mechanism",
+        "lockring"
+      ],
+      "setup": [
+        "install on compatible Hyperglide freehub",
+        "choose chainline position",
+        "verify chain alignment",
+        "pair Click/controller for virtual shifting"
+      ]
+    },
+    {
+      "id": "zwift-cog-v1",
+      "explode_order": [
+        "housing",
+        "14T steel sprocket",
+        "lockring"
+      ],
+      "setup": [
+        "mount on compatible trainer/freehub",
+        "align chain",
+        "pair controller"
+      ]
+    },
+    {
+      "id": "zwift-click-v2",
+      "explode_order": [
+        "housing",
+        "up/down controls",
+        "CR2032 battery",
+        "bar strap"
+      ],
+      "setup": [
+        "install battery",
+        "strap to handlebar",
+        "pair via Bluetooth",
+        "verify shifting/control"
+      ]
+    },
+    {
+      "id": "zwift-click-v1",
+      "explode_order": [
+        "housing",
+        "controls",
+        "CR2032 battery",
+        "bar strap"
+      ],
+      "setup": [
+        "install battery",
+        "strap to handlebar",
+        "pair via Bluetooth"
+      ]
+    },
+    {
+      "id": "zwift-play",
+      "explode_order": [
+        "left/right controller bodies",
+        "button pads",
+        "battery volumes",
+        "handlebar clamps"
+      ],
+      "setup": [
+        "mount to compatible drop bars",
+        "charge",
+        "pair via Bluetooth",
+        "verify steering/UI controls"
+      ]
+    },
+    {
+      "id": "zwift-hub-one",
+      "explode_order": [
+        "trainer base/legs",
+        "flywheel",
+        "hub body",
+        "freehub body",
+        "Zwift Cog",
+        "drive-side adapter"
+      ],
+      "service_note": "Zwift support documents removal of drive-side adapter, Cog/cassette and freehub body for inspection; internal resistance electronics are not exploded here."
+    },
+    {
+      "id": "zwift-hub-classic",
+      "explode_order": [
+        "trainer base/legs",
+        "flywheel",
+        "hub body",
+        "freehub body",
+        "cassette",
+        "drive-side adapter"
+      ],
+      "service_note": "Zwift support documents cassette/freehub inspection; internal resistance electronics are intentionally not reverse-engineered."
+    },
+    {
+      "id": "zwift-runpod",
+      "explode_order": [
+        "housing",
+        "shoe-lace clip",
+        "CR2032 battery",
+        "electronics proxy"
+      ],
+      "setup": [
+        "clip to shoe laces",
+        "pair as run speed source",
+        "calibrate in Zwift",
+        "use either foot"
+      ]
+    }
+  ]
+}
