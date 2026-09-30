@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/equipment-snapshot.schema.json",
+  "title": "Athlete Equipment Snapshot V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "athlete_id",
+    "event_id",
+    "captured_for",
+    "items",
+    "sources"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^equipment-snapshot:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "athlete-equipment-snapshot"
+    },
+    "athlete_id": {
+      "type": "string",
+      "pattern": "^athlete:[a-z0-9:_-]+$"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^event:[a-z0-9:_-]+$"
+    },
+    "captured_for": {
+      "enum": [
+        "race-day",
+        "pre-race",
+        "training",
+        "season",
+        "historical"
+      ]
+    },
+    "date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "slot",
+          "product_id",
+          "confidence"
+        ],
+        "properties": {
+          "slot": {
+            "enum": [
+              "bike",
+              "wheel_front",
+              "wheel_rear",
+              "helmet",
+              "shoe",
+              "trisuit",
+              "watch",
+              "wetsuit",
+              "nutrition",
+              "hydration",
+              "sunglasses",
+              "component",
+              "other"
+            ]
+          },
+          "product_id": {
+            "type": "string",
+            "pattern": "^product:[a-z0-9:_-]+$"
+          },
+          "configuration": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "evidence_note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.schema.json#/$defs/SourceRef"
+      }
+    }
+  },
+  "additionalProperties": false
+}
