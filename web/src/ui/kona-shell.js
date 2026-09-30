@@ -32,9 +32,9 @@ export function initKonaShell({ profile, settings, enter }) {
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
     '</div>'+
     '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
-      '<button type="button" data-tab="now">'+icon('now')+'<span>Now</span></button>'+
-      '<button type="button" data-tab="explore">'+icon('explore')+'<span>Explore</span></button>'+
-      '<a href="Studio.html#setup" data-tab="setup">'+icon('setup')+'<span>Setup</span></a>'+
+      '<button type="button" data-tab="now">'+icon('now')+'<span>Home</span></button>'+
+      '<button type="button" data-tab="explore">'+icon('explore')+'<span>Discover</span></button>'+
+      '<a href="Studio.html#setup" data-tab="setup">'+icon('setup')+'<span>Garage</span></a>'+
       '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
       '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
     '</nav>';
@@ -49,17 +49,17 @@ export function initKonaShell({ profile, settings, enter }) {
     const { event, week, places } = facts();
     const raceDays=event.date ? daysUntil(event.date) : null;
     const nextExpo=week.find(x=>new Date(x.date+'T23:59:00')>=new Date()) || week[0];
-    title.textContent='Now'; eyebrow.textContent='KONA · RACE WEEK';
+    title.textContent='Home'; eyebrow.textContent='KONA · RACE WEEK';
     const expo=nextExpo ? '<article><i>Expo</i><div><b>'+esc(fmtDate(nextExpo.date))+' · '+esc(nextExpo.start)+'–'+esc(nextExpo.end)+'</b><span>'+esc(nextExpo.venue)+'</span></div></article>' : '';
     const placeCards=places.slice(0,4).map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span></article>').join('');
     body.innerHTML=
       '<section class="kona-hero-card"><small>IRONMAN WORLD CHAMPIONSHIP · '+esc(event.location||'Kailua-Kona, Hawaiʻi')+'</small>'+
       '<h3>'+(raceDays==null?'Kona awaits':raceDays===0?'Race day':raceDays+' days to race day')+'</h3>'+
       '<p>'+(event.date?esc(fmtDate(event.date)):'2026')+' · '+esc(event.venue||'Kailua Pier')+'</p>'+
-      '<button class="kona-primary" data-enter>Explore the coast <span>→</span></button></section>'+
+      '<button class="kona-primary" data-enter>Enter the 3D world <span>→</span></button></section>'+
       '<section class="kona-section"><div class="kona-section-head"><h3>What matters next</h3><small>Official 2026 sources</small></div><div class="kona-list">'+expo+
-      '<article><i>Setup</i><div><b>Build your Kona setup</b><span>Bike today. Wheels, helmet and shoes plug into the same setup.</span></div><a href="Studio.html#setup">Open →</a></article>'+
-      '<article><i>Explore</i><div><b>Walk the collection</b><span>Bikes, engineering, Kona stories and hidden rooms.</span></div></article></div></section>'+
+      '<article><i>Garage</i><div><b>Build your Kona setup</b><span>Your bikes, shoes and race gear in one reusable setup.</span></div><a href="Studio.html#setup">Open →</a></article>'+
+      '<article><i>Discover</i><div><b>Explore people, machines and places</b><span>Stories, engineering, Kona history and hidden rooms.</span></div></article></div></section>'+
       '<section class="kona-section"><div class="kona-section-head"><h3>Start with Kona</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('now');
@@ -111,7 +111,7 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   function explore(){
-    title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
+    title.textContent='Discover'; eyebrow.textContent='KONA · EXPLORE';
     const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
     const brands=window.__BRANDROOMS?.rooms||[];
     const themes=window.__gallery?.rooms||[];
@@ -120,7 +120,7 @@ export function initKonaShell({ profile, settings, enter }) {
       +brands.map(r=>row('Brand room', r.name, (r.products?.[0]?.model)||r.kicker||'', r.id)).join('')
       +themes.map(r=>row('Upper floor', r.name, r.sub||'', 'room-'+r.id)).join('');
     body.innerHTML=
-      '<section class="kona-hero-card"><small>WALK THE COAST</small><h3>Every room, one museum</h3><p>Kona hall, themed rooms, and the studies that have a place of their own.</p><button class="kona-primary" data-enter>Enter where you stand <span>→</span></button></section>'+
+      '<section class="kona-hero-card"><small>PEOPLE · MACHINES · PLACES · STORIES</small><h3>Discover a higher version of Kona</h3><p>Explore collections, athletes, places and immersive rooms. Enter 3D only when you choose.</p><button class="kona-primary" data-enter>Enter where you stand <span>→</span></button></section>'+
       '<section class="kona-section"><div class="kona-section-head"><h3>Rooms</h3><small>Tap to walk</small></div><div class="kona-place-grid">'+rooms+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
     body.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>walkTo(b.dataset.go)));
