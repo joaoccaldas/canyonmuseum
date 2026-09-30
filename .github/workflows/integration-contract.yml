@@ -34,3 +34,6 @@ jobs:
 
       - name: Validate candidate product intake
         run: node integrations/candidate-products.test.mjs
+
+      - name: Validate commerce contracts
+        run: node integrations/commerce-contract.test.mjs
