@@ -25,6 +25,9 @@ jobs:
       - name: Unit tests
         run: npm test
         working-directory: web
+      - name: Performance budgets
+        run: node tools/performance-budget.mjs
+
       - name: Bike asset contract
         run: node tools/validate-bikes.mjs
       - name: Repository hygiene
