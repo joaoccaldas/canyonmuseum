@@ -33,7 +33,7 @@ export function cameraPreferences({mode='elevated-follow',distance=6.5,height=4.
 export function clampMobileLook({yaw=0,pitch=-0.38,deltaYaw=0,deltaPitch=0}={}){
  return {
   yaw:yaw+Math.max(-0.42,Math.min(0.42,deltaYaw)),
-  pitch:Math.max(-0.68,Math.min(0.08,pitch+Math.max(-0.18,Math.min(0.18,deltaPitch))),
+  pitch:Math.max(-0.68,Math.min(0.08,pitch+Math.max(-0.18,Math.min(0.18,deltaPitch)))),
  };
 }
 
