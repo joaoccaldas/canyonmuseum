@@ -19,6 +19,7 @@ import { initMap } from './map.js';
 import { createProfile, renderSettings, QUALITY, AVATARS } from './engine/profile.js';
 import { captureView, shareImage } from './engine/share.js';
 import { initSettings } from './ui/settings.js';
+import { initKonaShell } from './ui/kona-shell.js';
 import { slotsOf, applySkin, skinFromWyld, skinFromFilm } from './engine/skins.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
@@ -1952,7 +1953,8 @@ async function shareView(title) {
 }
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
 $('cardShare')?.addEventListener('click', () => shareView($('cName').textContent));
-window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas };
+const konaShell = initKonaShell({ profile, settings: settingsUI, enter });
+window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas, konaShell };
 window.__atlas = atlas;
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
 initArtWorld(window.__museum).catch(e => console.warn('art world', e));
