@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/athlete.schema.json",
+  "title": "Canonical Athlete V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "name",
+    "status",
+    "sources"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^athlete:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "athlete"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "known_as": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nationality": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "date_of_birth": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "gender_category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "active",
+        "retired",
+        "inactive",
+        "unknown"
+      ]
+    },
+    "discipline": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "triathlon",
+          "ironman",
+          "middle-distance",
+          "short-course",
+          "cycling",
+          "running",
+          "other"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "bio_summary": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 1200
+    },
+    "career": {
+      "type": "object",
+      "properties": {
+        "pro_since": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1900,
+          "maximum": 2100
+        },
+        "retired_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1900,
+          "maximum": 2100
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "career_milestone_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^career-milestone:[a-z0-9:_-]+$"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_profiles": {
+      "type": "object",
+      "properties": {
+        "website": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "instagram": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "youtube": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "strava": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "world_triathlon": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "ironman": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        }
+      },
+      "additionalProperties": true
+    },
+    "contact": {
+      "type": "object",
+      "description": "Public professional contact routes only.",
+      "properties": {
+        "management_email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "email"
+        },
+        "press_email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "email"
+        },
+        "sponsorship_email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "email"
+        },
+        "contact_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    },
+    "performance_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^performance:[a-z0-9:_-]+$"
+      }
+    },
+    "sponsorship_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^sponsorship:[a-z0-9:_-]+$"
+      }
+    },
+    "equipment_snapshot_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^equipment-snapshot:[a-z0-9:_-]+$"
+      }
+    },
+    "media_asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^media-asset:[a-z0-9:_-]+$"
+      }
+    },
+    "room_config_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^room-config:[a-z0-9:_-]+$"
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.schema.json#/$defs/SourceRef"
+      }
+    }
+  },
+  "additionalProperties": false
+}
