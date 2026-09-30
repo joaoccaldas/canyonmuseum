@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "disclaimer": "Museum/education instructions only. For real-world fitting, installation, servicing, torque values, or safety use the manufacturer's current manual.",
+  "items": [
+    {
+      "id": "specialized-sworks-tt5-m",
+      "exploded_order": [
+        "outer shell",
+        "shoulder tail",
+        "Class 1 visor",
+        "aero head sock",
+        "retention straps",
+        "buckle"
+      ],
+      "exhibit_steps": [
+        "Rotate helmet",
+        "Toggle visor transparency",
+        "Explode shell and head sock",
+        "Show shoulder-tail airflow concept"
+      ],
+      "why_it_matters": "Connects rider head position to bike aerodynamics and unlocks the helmet slot in Race Setup."
+    },
+    {
+      "id": "giro-aerohead-mips-ii-m",
+      "exploded_order": [
+        "outer hardshell",
+        "lower polycarbonate wrap",
+        "magnetic eye shield",
+        "EPS liner",
+        "Mips Air Node layer",
+        "Roc Loc fit dial"
+      ],
+      "exhibit_steps": [
+        "Remove magnetic visor",
+        "Separate shell/liner",
+        "Inspect fit dial",
+        "Show 55–59 cm M fit range"
+      ],
+      "why_it_matters": "Strong engineering exhibit: shell, impact liner, rotational-management layer, visor and fit system."
+    },
+    {
+      "id": "poc-procen-air-m",
+      "exploded_order": [
+        "outer shell",
+        "magnetic visor",
+        "left EVA ear cover",
+        "right EVA ear cover",
+        "internal liner"
+      ],
+      "exhibit_steps": [
+        "Remove visor",
+        "Separate ear covers",
+        "Reveal internal liner",
+        "Compare with long-tail TT helmets"
+      ],
+      "why_it_matters": "Shows the newer road-aero/TT crossover philosophy and gives visual diversity to the helmet collection."
+    },
+    {
+      "id": "ism-pn31",
+      "exploded_order": [
+        "left PN pad",
+        "right PN pad",
+        "rear bridge",
+        "air-vent chassis",
+        "chromoly rails"
+      ],
+      "exhibit_steps": [
+        "Show official 255 x 120 mm envelope",
+        "Separate twin-nose pads",
+        "Reveal vent chassis and rails",
+        "Mount to a Race Setup saddle slot"
+      ],
+      "why_it_matters": "Saddle choice is a critical rider/bike contact point and highly relevant to triathlon fit."
+    },
+    {
+      "id": "garmin-edge1050",
+      "exploded_order": [
+        "body",
+        "3.5-inch display",
+        "quarter-turn mount",
+        "buttons"
+      ],
+      "exhibit_steps": [
+        "Measure exact outer dimensions",
+        "Separate display/body",
+        "Reveal quarter-turn mount",
+        "Mount to cockpit"
+      ],
+      "why_it_matters": "Unlocks electronics in Race Setup and adds data/telemetry storytelling to exhibits."
+    },
+    {
+      "id": "shimano-pd-r9100",
+      "exploded_order": [
+        "carbon body",
+        "stainless platform",
+        "axle",
+        "front hook",
+        "rear hook"
+      ],
+      "exhibit_steps": [
+        "Show 14.8 mm stack",
+        "Show 52 mm pedal-center dimension",
+        "Separate axle/body/retention pieces",
+        "Mount to crankset"
+      ],
+      "why_it_matters": "Closes another major bike/rider interface and connects drivetrain to shoe/cleat setup."
+    }
+  ]
+}
