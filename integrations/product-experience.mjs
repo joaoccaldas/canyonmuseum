@@ -7,6 +7,8 @@ import {getRelations,getNeighbors} from "./triathlon-graph.mjs";
 
 const maintenance=JSON.parse(fs.readFileSync(new URL("./maintenance-sources.json", import.meta.url),"utf8"));
 const vendors=JSON.parse(fs.readFileSync(new URL("./vendor-programs.json", import.meta.url),"utf8"));
+const offers=JSON.parse(fs.readFileSync(new URL("./commerce-offers.json", import.meta.url),"utf8"));
+const shimanoStory=JSON.parse(fs.readFileSync(new URL("./stories/shimano-cs-r9200-engineering.json", import.meta.url),"utf8"));
 
 const slug=s=>String(s??"")
   .toLowerCase()
@@ -65,6 +67,14 @@ function vendorOptions(brand){
 function maintenanceFor(id){
   return maintenance.items.filter(x=>x.entity_id===id);
 }
+function offersFor(id){
+  return offers.offers.filter(x=>Array.isArray(x.related_entity_ids)&&x.related_entity_ids.includes(id));
+}
+function storiesFor(id){
+  const out=[];
+  if(shimanoStory.entity_refs?.some(x=>x.id===id)) out.push(shimanoStory);
+  return out;
+}
 
 function partRefs(base){
   const parts=Array.isArray(base?.semantic_parts)?base.semantic_parts:[];
@@ -90,6 +100,8 @@ export function getProductExperience(id){
     product,
     parts:partRefs(product),
     maintenance:maintenanceFor(product.id),
+    offers:offersFor(product.id),
+    stories:storiesFor(product.id),
     vendors:vendorOptions(product.brand),
     graph:graphNode,
     safety:{
