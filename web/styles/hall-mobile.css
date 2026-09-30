@@ -122,3 +122,11 @@ html.phone-fit .credit{display:none}
   #intro .lede:not(.touch-only){display:none}
 }
 @media (max-width:520px){.set-opts{grid-template-columns:1fr}}
+
+/* P0 first journey: onboarding is a state, never appended below the hero. */
+#intro.quest-active{align-items:stretch;background:var(--kona-bg,#f4efe7);overflow:auto}
+#intro.quest-active .intro-inner{max-width:560px;margin:auto;padding:calc(72px + var(--safe-t)) 20px calc(32px + var(--safe-b))}
+#intro.quest-active .intro-inner > :not(#konaQuest){display:none!important}
+#intro.quest-active #konaQuest{display:block!important}
+#intro.quest-active .quest-choice{min-height:52px}
+#intro[hidden]{display:none!important}
