@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "id": "zwift-ride-tablet-holder",
+      "setup": [
+        "attach mount arm to Ride",
+        "fit tablet into holder",
+        "tighten adjustable strap"
+      ],
+      "limits": {
+        "max_device_mm": [
+          326,
+          215,
+          10
+        ],
+        "max_weight_kg": 1
+      }
+    },
+    {
+      "id": "zwift-ride-adjustable-crank-arms",
+      "setup": [
+        "professional installation recommended",
+        "remove stock crank using correct puller",
+        "install both adjustable arms",
+        "set same indexed length left/right",
+        "apply manufacturer torque"
+      ],
+      "tools": [
+        "flathead screwdriver",
+        "8mm hex key",
+        "crank arm puller",
+        "torque wrench"
+      ]
+    },
+    {
+      "id": "zwift-ride-v2-multi-rail-saddle-clamp",
+      "setup": [
+        "install on V2 seatpost",
+        "position saddle rails",
+        "set fore/aft slider",
+        "secure rail clamp"
+      ],
+      "note": "Use official setup video/torque guidance."
+    },
+    {
+      "id": "zwift-ride-v1-adjustable-saddle-clamp-seatpost",
+      "setup": [
+        "remove V1 seatpost",
+        "install upgraded seatpost assembly",
+        "set fore/aft saddle position",
+        "secure saddle"
+      ],
+      "compatibility": "Ride V1 only"
+    },
+    {
+      "id": "zwift-smart-frame-replacement-saddle",
+      "setup": [
+        "mount rails into compatible Ride clamp",
+        "set position",
+        "tighten per current guidance"
+      ]
+    },
+    {
+      "id": "zwift-smart-handlebar-y-cable",
+      "setup": [
+        "route trunk to frame/controller junction",
+        "connect left/right branches",
+        "avoid sharp bends or pinch points"
+      ]
+    },
+    {
+      "id": "zwift-click-strap-bar-mount",
+      "setup": [
+        "place bar mount",
+        "seat Click cradle",
+        "wrap/tension strap",
+        "verify Click is secure"
+      ]
+    },
+    {
+      "id": "zwift-training-mat",
+      "setup": [
+        "unroll flat",
+        "center trainer/bike",
+        "allow mat to lie flat before riding"
+      ]
+    }
+  ]
+}
