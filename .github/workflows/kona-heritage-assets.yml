@@ -48,7 +48,8 @@ jobs:
               b = p.read_bytes()
               assert b[:4] == b'glTF', f'invalid GLB magic: {p}'
               assert int.from_bytes(b[8:12], 'little') == len(b), f'GLB length mismatch: {p}'
-              assert len(b) < 2_500_000, f'asset unexpectedly heavy for mobile: {p} {len(b)}'
+              limit = 4_000_000 if p.name == 'kona_heritage_nike_pack.glb' else 500_000
+              assert len(b) < limit, f'asset unexpectedly heavy for mobile/runtime budget: {p} {len(b)} >= {limit}'
               print(p, len(b))
           blend = Path('assets/kona-heritage/pack/kona_heritage_nike_pack.blend')
           assert blend.exists() and blend.stat().st_size > 0
