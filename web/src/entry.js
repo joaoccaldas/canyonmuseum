@@ -75,10 +75,11 @@ initAppShell();
 const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
 window.__konaShell = shell;
 
-function enterApp() {
+function enterApp(first = 'home') {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
-  shell.now?.();
+  if (first === 'garage') shell.garage?.();
+  else shell.now?.();
 }
 
 function paintIntent() {
@@ -160,8 +161,23 @@ function paintQuest(step) {
     } catch (err) {
       console.warn('progression reward unavailable; RaceIdentity remains valid', err);
     }
-    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
-    host.querySelector('#enterKona')?.addEventListener('click', enterApp);
+    host.innerHTML = `<p class="eyebrow">This is your Kona</p>
+      <section class="race-id-card" aria-label="Your 2026 Kona RaceIdentity">
+        <div class="race-id-mast"><span>KONA</span><b>2026</b></div>
+        <p class="race-id-human">Well. This could get interesting.</p>
+        <div class="race-id-goal">${draft.goal}</div>
+        <dl class="race-id-meta">
+          <div><dt>Bike</dt><dd>${bike}</dd></div>
+          <div><dt>Shoes</dt><dd>${shoe}</dd></div>
+        </dl>
+        <div class="race-id-stamp">RACE SELF</div>
+      </section>
+      <p class="race-id-reward">+${xp} XP · +${credits} KONA CREDITS</p>
+      <button type="button" class="btn primary" id="enterKona">Open your Garage</button>
+      <button type="button" class="btn secondary" id="shareSelf">Share my Kona</button>
+      <button type="button" class="btn text" id="saveSelf">Save across devices</button>
+      <p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
+    host.querySelector('#enterKona')?.addEventListener('click', () => enterApp('garage'));
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
       const result = await shareRaceIdentity(draft);
