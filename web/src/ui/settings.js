@@ -1,3 +1,4 @@
+import { exportAppState, eraseAppState, appStateSummary } from '../engine/app-state.js';
 // ui/settings.js — profile and settings sheet, and the profile chip in the header.
 // Built from engine/profile.js data; the sheet never stores anything itself.
 const el = (tag, attrs = {}, ...kids) => {
@@ -53,9 +54,9 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
           : el('p', { class: 'set-note' }, 'Optional sign-in is on its way. Until then your profile lives on this device, and you can export it below.')),
       el('section', {}, el('h4', {}, 'Your data'),
         el('div', { class: 'set-row' },
-          el('button', { type: 'button', class: 'btn ghost', onclick: () => { const b = new Blob([profile.export()], { type: 'application/json' }); const a = el('a', { href: URL.createObjectURL(b), download: 'speedmax-museum-profile.json' }); document.body.append(a); a.click(); a.remove(); } }, 'Export'),
-          el('button', { type: 'button', class: 'btn ghost danger', onclick: () => { if (confirm('Delete your profile, passport and finds from this device?')) { profile.erase(); reloadNeeded = true; draw(); } } }, 'Delete everything'))),
-      el('p', { class: 'set-foot' }, 'Speedmax Museum · an independent study. No accounts required, no analytics.')));
+          el('button', { type: 'button', class: 'btn ghost', onclick: () => { const b = new Blob([exportAppState()], { type: 'application/json' }); const u=URL.createObjectURL(b); const a = el('a', { href: u, download: 'kona-app-local-data.json' }); document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),0); } }, 'Export everything'),
+          el('button', { type: 'button', class: 'btn ghost danger', onclick: () => { const s=appStateSummary(); if (confirm(`Delete all ${s.records} app records from this device? This includes profile, passport, finds, setup and local preferences.`)) { eraseAppState(); location.reload(); } } }, 'Delete everything'))),
+      el('p', { class: 'set-foot' }, 'KONA · local-first beta. No account required, no analytics. Export and delete cover all app-owned browser data.')));
   }
   function open() { draw(); sheet.hidden = false; document.body.classList.add('settings-open'); sheet.querySelector('input,button')?.focus({ preventScroll: true }); }
   function close() { sheet.hidden = true; document.body.classList.remove('settings-open'); }
