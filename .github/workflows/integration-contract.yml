@@ -31,3 +31,6 @@ jobs:
         run: node tools/build_triathlon_graph.mjs --check
       - name: Validate triathlon graph integrity
         run: node integrations/triathlon-graph.test.mjs
+
+      - name: Validate candidate product intake
+        run: node integrations/candidate-products.test.mjs
