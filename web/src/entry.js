@@ -10,6 +10,8 @@ import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, que
 import { shareRaceIdentity } from './growth/share.js';
 
 const INTENT_KEY = 'speedmax.entryIntent.v1';
+const intro = document.getElementById('intro');
+const setEntryMode = mode => { intro?.classList.toggle('quest-active', mode === 'quest'); intro?.classList.toggle('app-ready', mode === 'app'); };
 const profile = createProfile();
 const settingsBridge = { open() {} };
 window.__konaSettingsBridge = settingsBridge;
@@ -61,6 +63,7 @@ function openMuseum(room) {
 }
 
 initAppShell();
+document.getElementById('entryInstall')?.addEventListener('click',()=>document.getElementById('installBtn')?.click());
 const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
 window.__konaShell = shell;
 
@@ -103,6 +106,7 @@ function questHost() {
 }
 
 function paintQuest(step) {
+  setEntryMode('quest');
   const host = questHost();
   const draft = readQuest();
   if (!host) return;
@@ -112,6 +116,8 @@ function paintQuest(step) {
     const on = draft[key] === id ? ' on' : '';
     return `<button type="button" class="quest-choice${on}" data-set="${key}" data-value="${id}">${label}</button>`;
   }).join('');
+  const stepNo={intent:1,bike:2,shoe:3,goal:4};
+  const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 4"><span>${stepNo[step]} / 4</span><i style="--p:${stepNo[step]}"></i></div>` : '';
   const screens = {
     intent: `<p class="eyebrow">Why are you here?</p><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
     bike: `<p class="eyebrow">Choose your bike</p><div class="kona-intents">${choices(BIKES, 'bikeId')}</div><button type="button" class="quest-choice" data-set="bikeId" data-value="">Choose later</button>`,
@@ -120,14 +126,25 @@ function paintQuest(step) {
     reveal: '',
   };
   if (step === 'reveal' && questReady(draft)) {
+    // Identity and entry are the primary transaction. Progression is a bonus and
+    // must never strand a user on onboarding if reward state is unavailable/corrupt.
     saveQuestIdentity(draft);
-    const granted = applyStoredEvent({ type: 'RACE_IDENTITY_CREATED', subject: 'kona-2026' });
     const labels = questLabels(draft);
     const bike = labels.bike;
     const shoe = labels.shoe;
-    const xp = granted.history?.at?.(-1)?.xp ?? 0;
-    const credits = granted.history?.at?.(-1)?.credits ?? 0;
-    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="shareSelf">Share my Kona</button><button type="button" class="btn primary" id="saveSelf">Save your Kona</button><p class="kona-note" id="saveNote"></p>`;
+    let xp = 0, credits = 0;
+    try {
+      const progression = applyStoredEvent({ type: 'RACE_IDENTITY_CREATED', subject: 'kona-2026' });
+      const reward = progression?.history?.at?.(-1);
+      if (reward?.type === 'RACE_IDENTITY_CREATED') {
+        xp = Number(reward.xp) || 0;
+        credits = Number(reward.credits) || 0;
+      }
+    } catch (err) {
+      console.warn('progression reward unavailable; RaceIdentity remains valid', err);
+    }
+    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
+    host.querySelector('#enterKona')?.addEventListener('click', () => { setEntryMode('app'); intro?.setAttribute('hidden',''); shell.now?.(); });
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
       const result = await shareRaceIdentity(draft);
@@ -154,7 +171,7 @@ function paintQuest(step) {
     return;
   }
   host.hidden = false;
-  host.innerHTML = screens[step] || screens.intent;
+  host.innerHTML = progress + (screens[step] || screens.intent);
   host.querySelectorAll('[data-set]').forEach(button => button.addEventListener('click', () => {
     const next = readQuest();
     next[button.dataset.set] = button.dataset.value || null;
@@ -172,6 +189,8 @@ function existingRaceIdentity() {
     return value?.entity_type === 'race-identity' && value?.event_id ? value : null;
   } catch (_) { return null; }
 }
+
+document.getElementById('entrySignIn')?.addEventListener('click', () => paintQuest('save'));
 
 const existingIdentity = existingRaceIdentity();
 const buildButton = document.getElementById('buildSelf');
