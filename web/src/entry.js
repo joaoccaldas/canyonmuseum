@@ -114,11 +114,14 @@ function paintQuest(step) {
     const on = draft[key] === id ? ' on' : '';
     return `<button type="button" class="quest-choice${on}" data-set="${key}" data-value="${id}">${label}</button>`;
   }).join('');
+  const order = ['intent', 'bike', 'shoe', 'goal', 'reveal'];
+  const stepIndex = Math.max(0, order.indexOf(step));
+  const chrome = step !== 'reveal' ? `<div class="quest-progress"><button type="button" id="questBack" ${stepIndex===0?'disabled':''} aria-label="Previous step">←</button><span>STEP ${stepIndex+1} OF 4</span><i style="--p:${Math.min(100,(stepIndex+1)*25)}%"></i></div>` : '';
   const screens = {
-    intent: `<p class="eyebrow">Why are you here?</p><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
-    bike: `<p class="eyebrow">Choose your bike</p><div class="kona-intents">${choices(BIKES, 'bikeId')}</div><button type="button" class="quest-choice" data-set="bikeId" data-value="">Choose later</button>`,
-    shoe: `<p class="eyebrow">Choose your shoes</p><div class="kona-intents">${choices(SHOES, 'shoeId')}</div><button type="button" class="quest-choice" data-set="shoeId" data-value="">Choose later</button><p class="kona-note">The Alphafly here is an independent study, not a catalog shoe yet.</p>`,
-    goal: `<p class="eyebrow">What would make Kona a win?</p><div class="kona-intents">${choices(GOALS, 'goal')}</div>`,
+    intent: `${chrome}<p class="eyebrow">Why are you here?</p><h2>Make this yours.</h2><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
+    bike: `${chrome}<p class="eyebrow">Your machine</p><h2>What would you ride?</h2><div class="kona-intents">${choices(BIKES, 'bikeId')}</div><button type="button" class="quest-choice quiet" data-set="bikeId" data-value="">Choose later</button>`,
+    shoe: `${chrome}<p class="eyebrow">Run setup</p><h2>What would you wear?</h2><div class="kona-intents">${choices(SHOES, 'shoeId')}</div><button type="button" class="quest-choice quiet" data-set="shoeId" data-value="">Choose later</button><p class="kona-note">Independent product study. No brand affiliation is implied.</p>`,
+    goal: `${chrome}<p class="eyebrow">Your target</p><h2>What makes Kona a win?</h2><div class="kona-intents">${choices(GOALS, 'goal')}</div>`,
     reveal: '',
   };
   if (step === 'reveal' && questReady(draft)) {
@@ -158,13 +161,12 @@ function paintQuest(step) {
   }
   host.hidden = false;
   host.innerHTML = screens[step] || screens.intent;
+  host.querySelector('#questBack')?.addEventListener('click',()=>paintQuest(order[Math.max(0,stepIndex-1)]));
   host.querySelectorAll('[data-set]').forEach(button => button.addEventListener('click', () => {
     const next = readQuest();
     next[button.dataset.set] = button.dataset.value || null;
     writeQuest(next);
-    const order = ['intent', 'bike', 'shoe', 'goal', 'reveal'];
-    const i = order.indexOf(step);
-    paintQuest(order[i + 1] || 'reveal');
+    paintQuest(order[stepIndex + 1] || 'reveal');
   }));
 }
 
