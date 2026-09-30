@@ -86,7 +86,7 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
   const rim=new THREE.DirectionalLight(accent,1.55);rim.position.set(-3,2.5,-2);scene.add(rim);
   const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.62,.055,64),mat('#20272c',.52));platform.position.y=.025;scene.add(platform);
   const ground=new THREE.Mesh(new THREE.CircleGeometry(2.8,64),new THREE.MeshStandardMaterial({color:'#0e1519',roughness:.95,metalness:0}));ground.rotation.x=-Math.PI/2;ground.position.y=-.005;scene.add(ground);
-  let avatar=proceduralAvatar({...avatarStyle,accent});avatar.scale.setScalar(1.16);avatar.position.set(bike?-.42:0,.04,.12);scene.add(avatar);
+  let avatar=proceduralAvatar({...avatarStyle,accent});avatar.scale.setScalar(.88);avatar.position.set(bike?-.36:0,.03,.06);scene.add(avatar);
 
   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
   const load=async(product,pos,scale=1.5)=>{
@@ -103,8 +103,8 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
     const rect=canvas.getBoundingClientRect();const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
     renderer.setSize(w,h,false);camera.aspect=w/h;
     const portrait=w/h<.8;
-    camera.position.set(portrait?.45:1.28,portrait?1.12:1.24,portrait?5.25:4.35);
-    controls.minDistance=portrait?4.0:3.1;
+    camera.position.set(portrait?.35:1.2,portrait?1.02:1.2,portrait?7.15:5.35);
+    controls.minDistance=portrait?5.6:3.8;
     controls.target.set(0,1.0,0);
     camera.updateProjectionMatrix();
   }
