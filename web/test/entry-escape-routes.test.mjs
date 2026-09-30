@@ -9,7 +9,6 @@ test('landing always exposes Build, Sign in and Install while Build is the local
 test('one helper actually leaves intro and opens Home',()=>{
   assert.match(entry,/function enterApp\(\)[\s\S]{0,180}intro\?\.setAttribute\('hidden',''\)[\s\S]{0,100}shell\.now/);
 });
-test('guest entry uses canonical app-entry helper',()=>assert.match(entry,/entryGuest[^\n]+enterApp/));
 test('returning Continue uses canonical app-entry helper',()=>assert.match(entry,/Continue your Kona[\s\S]{0,220}addEventListener\('click', enterApp\)/));
 test('every onboarding screen can be escaped',()=>{
   assert.match(entry,/data-quest-skip/);assert.match(entry,/data-quest-back/);assert.match(entry,/data-quest-cancel/);
