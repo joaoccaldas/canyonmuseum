@@ -8,13 +8,15 @@ export function initMap({ areas, pose, go, button }) {
   const floors = [...new Set(areas.map(a => a.floor))];
   const root = document.createElement('div');
   root.id = 'map'; root.hidden = true; root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', 'Museum map');
+  const floorName=f=>({ground:'Ground floor',upper:'Upper floor',future:'Future levels'}[f]||f);
   root.innerHTML = `<div class="map-card">
-    <div class="map-head"><div><small>Speedmax Museum · Kona</small><h3>Map</h3></div>
-      <div class="map-tabs" role="tablist">${floors.map(f => `<button role="tab" data-floor="${f}">${f === 'ground' ? 'Ground floor' : 'Upper floor'}</button>`).join('')}</div>
+    <div class="map-head"><div><small>KONA · WORLD MAP</small><h3>Explore the museum</h3><p>Rooms now. Future levels next.</p></div>
+      <div class="map-tabs" role="tablist">${floors.map(f => `<button role="tab" data-floor="${f}">${floorName(f)}</button>`).join('')}</div>
       <button class="map-close" aria-label="Close map">×</button></div>
+    <div class="map-legend"><span><i class="live"></i>Open now</span><span><i class="future"></i>Future level</span><span><i class="you"></i>You are here</span></div>
     <div class="map-plan"><svg aria-hidden="true"></svg></div>
     <ul class="map-list"></ul>
-    <p class="map-foot">Tap a room to walk there. <kbd>M</kbd> opens this map.</p></div>`;
+    <p class="map-foot">Tap an open room for its full-room overview. Future districts are intentionally locked. <kbd>M</kbd> opens this map.</p></div>`;
   document.body.appendChild(root);
   const svg = root.querySelector('svg'), list = root.querySelector('.map-list');
   let floor = floors[0], raf = 0;
@@ -27,10 +29,10 @@ export function initMap({ areas, pose, go, button }) {
     svg.innerHTML = '';
     const unit = Math.max(maxX - minX, maxZ - minZ) / 60;
     for (const a of on.sort((p, q) => (p.layer || 0) - (q.layer || 0))) {
-      const g = document.createElementNS(NS, 'g'); g.setAttribute('class', `map-area ${a.kind || ''}`); g.dataset.id = a.id;
+      const g = document.createElementNS(NS, 'g'); g.setAttribute('class', `map-area ${a.kind || ''} ${a.status === 'future' ? 'future' : 'live'}`.trim()); g.dataset.id = a.id;
       const r = document.createElementNS(NS, 'rect');
       r.setAttribute('x', Math.min(a.x0, a.x1)); r.setAttribute('y', -Math.max(a.z0, a.z1)); r.setAttribute('width', Math.abs(a.x1 - a.x0)); r.setAttribute('height', Math.abs(a.z1 - a.z0));
-      r.setAttribute('rx', unit * .6); r.setAttribute('fill', a.color || '#e9e2d6'); g.appendChild(r);
+      r.setAttribute('rx', unit * .6); r.setAttribute('fill', a.color || '#e9e2d6'); if(a.status==='future'){r.setAttribute('stroke-dasharray',`${unit*1.2} ${unit*.8}`);r.setAttribute('opacity','.72');} g.appendChild(r);
       if (a.label !== false) {
         const t = document.createElementNS(NS, 'text'); const cx = (a.x0 + a.x1) / 2, cz = (a.z0 + a.z1) / 2;
         const w = Math.abs(a.x1 - a.x0), h = Math.abs(a.z1 - a.z0), tall = h > w * 1.6;
@@ -38,7 +40,7 @@ export function initMap({ areas, pose, go, button }) {
         t.setAttribute('x', cx); t.setAttribute('y', -cz); t.setAttribute('font-size', size); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'middle');
         t.setAttribute('fill', a.ink || '#12181d');
         if (tall) t.setAttribute('transform', `rotate(-90 ${cx} ${-cz})`);
-        t.textContent = a.name; g.appendChild(t);
+        t.textContent = a.status==='future' ? `FUTURE · ${a.name}` : a.name; g.appendChild(t);
       }
       if (a.go !== false) { g.style.cursor = 'pointer'; g.addEventListener('click', () => pick(a)); }
       svg.appendChild(g);
@@ -48,7 +50,7 @@ export function initMap({ areas, pose, go, button }) {
     const arrow = document.createElementNS(NS, 'path'); arrow.setAttribute('d', `M0 ${-unit * 1.9} L${unit * 1.2} ${unit * 1.2} L0 ${unit * .5} L${-unit * 1.2} ${unit * 1.2}Z`); me.appendChild(arrow);
     svg.appendChild(me);
     root.querySelectorAll('.map-tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.floor === floor));
-    list.innerHTML = on.filter(a => a.go !== false).map(a => `<li><button data-id="${a.id}"><i style="background:${a.color || '#e9e2d6'}"></i><span><b>${a.name}</b>${a.sub ? `<small>${a.sub}</small>` : ''}</span></button></li>`).join('');
+    list.innerHTML = on.map(a => a.go === false ? `<li class="future"><div><i style="background:${a.color || '#5d6870'}"></i><span><b>${a.name}</b><small>${a.sub || 'Future level · locked'}</small></span></div></li>` : `<li><button data-id="${a.id}"><i style="background:${a.color || '#e9e2d6'}"></i><span><b>${a.name}</b>${a.sub ? `<small>${a.sub}</small>` : ''}</span></button></li>`).join('');
     list.querySelectorAll('button').forEach(b => b.addEventListener('click', () => pick(areas.find(a => a.id === b.dataset.id))));
   }
   const inside = (a, p) => a.floor === p.floor && a.go !== false && p.x >= Math.min(a.x0, a.x1) && p.x <= Math.max(a.x0, a.x1) && p.z >= Math.min(a.z0, a.z1) && p.z <= Math.max(a.z0, a.z1);
