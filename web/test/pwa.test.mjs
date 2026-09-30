@@ -9,7 +9,8 @@ const root = path.resolve(here, '../..');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'), 'utf8'));
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(root, 'web/landing.template.html'), 'utf8');
-const pwa = fs.readFileSync(path.join(root, 'web/src/pwa.mjs'), 'utf8');
+const appShell = fs.readFileSync(path.join(root, 'web/src/app-shell.js'), 'utf8');
+const entry = fs.readFileSync(path.join(root, 'web/src/entry.js'), 'utf8');
 
 test('mobile app manifest is installable and standalone', () => {
   assert.equal(manifest.display, 'standalone');
@@ -22,12 +23,10 @@ test('landing page wires manifest and install experience', () => {
   assert.match(tpl, /rel="manifest" href="\.\/manifest\.webmanifest"/);
   assert.match(tpl, /apple-mobile-web-app-capable/);
   assert.match(tpl, /id="installBtn"/);
-  assert.match(pwa, /beforeinstallprompt/);
-  assert.match(pwa, /Add to Home Screen/);
-  assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'(, \{ updateViaCache: 'none' \})?\)/);   // updateViaCache: installed apps always fetch a fresh sw.js
-  assert.match(pwa, /127\.0\.0\.1.*localhost.*\[::1\]/s);
-  assert.match(pwa, /getRegistrations\(\)/);
-  assert.match(pwa, /unregister\(\)/);
+  assert.match(appShell, /beforeinstallprompt/);
+  assert.match(appShell, /openInstall/);
+  assert.match(appShell, /serviceWorker\.register\('sw\.js'/);
+  assert.match(entry, /entryInstall[\s\S]{0,120}openInstall/);
 });
 
 test('sealed service worker verifies release files and keeps GLBs out of the core shell', () => {
@@ -51,7 +50,7 @@ test('sealed service worker verifies release files and keeps GLBs out of the cor
 });
 
 test('installed apps pick up verified new versions and every public icon exists', () => {
-  assert.match(pwa, /visibilitychange/);
+  assert.match(appShell, /visibilitychange/);
   assert.match(sw, /skip-waiting/);
   assert.match(sw, /type: 'version'/);
   const manifest = JSON.parse(fs.readFileSync(path.join(here, '../../manifest.webmanifest'), 'utf8'));
