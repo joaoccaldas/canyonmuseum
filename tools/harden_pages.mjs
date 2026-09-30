@@ -128,6 +128,27 @@ ${BRANDS.length ? `- Brand-room studies: ${BRANDS.join('; ')}.` : ''}
 ## Privacy
 No accounts, no analytics, no cookies, no tracking by default. The Passport and settings stay in the visitor's own browser (localStorage). An optional email sign-in can back that data up only when the visitor asks.
 `);
+fs.writeFileSync(path.join(root, 'llms-pt-br.txt'), `# KONA — guia em português do Brasil
+
+> Crie sua identidade de prova, explore equipamentos, atletas, lugares e histórias do triathlon e entre no mundo 3D quando quiser.
+
+KONA é um projeto independente de experiência digital para triathlon. O Canyon Museum é uma coleção dentro da plataforma, não a marca proprietária do aplicativo.
+
+## Páginas
+- [KONA em português](${SITE}pt-br.html)
+- [KONA em inglês](${SITE})
+
+## Conceitos
+- RaceIdentity: configuração real ou dos sonhos para uma prova.
+- Garage: equipamentos próprios, desejados ou que o atleta quer experimentar.
+- Passport: progresso, coleções, desafios e história confirmada.
+- Discover: máquinas, atletas, lugares e histórias.
+- 3D: carregado apenas quando a pessoa escolhe explorar o mundo imersivo.
+
+## Privacidade
+A experiência é local-first. Conta é opcional. Resultados públicos de prova só viram parte do perfil depois de confirmação explícita do usuário.
+`);
+
 const roomsMd = fs.existsSync(path.join(root, 'docs/ROOMS.md')) ? fs.readFileSync(path.join(root, 'docs/ROOMS.md'), 'utf8') : '';
 const islandGuide = fs.existsSync(path.join(root, 'museum/kona/island-guide.json')) ? JSON.parse(fs.readFileSync(path.join(root, 'museum/kona/island-guide.json'), 'utf8')) : null;
 const guideLines = islandGuide ? [
