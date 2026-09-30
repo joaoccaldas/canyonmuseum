@@ -69,14 +69,20 @@ const adapter={
   }
 };
 
-let loaded=false,loadStart=0,loadEnd=0;
+let loaded=false,loadError=null,loadStart=0,loadEnd=0;
 document.getElementById('loadCandidates').onclick=async()=>{
-  if(loaded)return;
+  if(loaded||loadError)return;
   loadStart=performance.now();
-  await atlas.load(adapter);
-  loadEnd=performance.now(); loaded=true;
-  document.body.classList.add('loaded');
-  document.getElementById('loadCandidates').textContent='Candidates loaded';
+  try {
+    await atlas.load(adapter);
+    loadEnd=performance.now(); loaded=true;
+    document.body.classList.add('loaded');
+    document.getElementById('loadCandidates').textContent='Candidates loaded';
+  } catch(e) {
+    loadEnd=performance.now(); loadError=String(e?.stack||e);
+    document.getElementById('loadCandidates').textContent='Candidate load failed';
+    console.error('intake candidate load',e);
+  }
   window.dispatchEvent(new CustomEvent('intake-proof-loaded'));
 };
 
@@ -121,12 +127,12 @@ function loop(now){
 
 window.__intakeProof={
   DATA,atlas,requested,
-  get loaded(){return loaded;},
+  get loaded(){return loaded;},get loadError(){return loadError;},
   inspectById(id){const inst=atlas.bikes.find(x=>x.data.key===id);if(inst)inspect(inst);return !!inst;},
   metrics(){
     const avg=fpsWindow.length?fpsWindow.reduce((a,b)=>a+b,0)/fpsWindow.length:0;
     return {
-      loaded,requested:[...requested],load_ms:loadEnd&&loadStart?Math.round(loadEnd-loadStart):null,
+      loaded,load_error:loadError,requested:[...requested],load_ms:loadEnd&&loadStart?Math.round(loadEnd-loadStart):null,
       draw_calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,
       fps_observed:avg?+(1/avg).toFixed(1):null,
       js_heap_bytes:performance.memory?.usedJSHeapSize??null
