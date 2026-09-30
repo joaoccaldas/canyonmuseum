@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "interaction_contract": {
+    "states": [
+      "assembled",
+      "exploded"
+    ],
+    "default": "assembled",
+    "actions": [
+      "rotate",
+      "explode",
+      "reassemble",
+      "inspect_part",
+      "show_year",
+      "show_technology",
+      "compare"
+    ]
+  },
+  "museum_story_order": [
+    "Cortez: cushioning becomes a system",
+    "Oregon/Waffle Trainer: traction becomes engineered geometry",
+    "Pre Montreal/Sting: lightweight racing specialization",
+    "Tailwind: Air enters running",
+    "Pegasus: Air becomes an everyday platform",
+    "Air Max 1: cushioning becomes visible",
+    "Flyknit Racer: upper construction becomes digitally engineered",
+    "Vaporfly/Alphafly: foam + plate + Air become an integrated propulsion system"
+  ]
+}
