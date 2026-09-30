@@ -1,0 +1,52 @@
+/* Entry Visual V2 — one action, one image, no app chrome before entry. */
+body.entry-landing .kona-bottom-nav,
+body.entry-quest .kona-bottom-nav{display:none!important}
+body.entry-landing #intro,
+body.entry-quest #intro{padding-bottom:calc(24px + var(--safe-b,0px))!important}
+#intro.kona-entry{isolation:isolate;overflow:hidden;background:#071116;color:#f8f5ef}
+#intro.kona-entry .entry-media{position:absolute;inset:0;z-index:-3}
+#intro.kona-entry .entry-media img{width:100%;height:100%;object-fit:cover;object-position:58% center;display:block}
+#intro.kona-entry::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,rgba(7,17,22,.08),rgba(7,17,22,.18) 34%,rgba(7,17,22,.76) 72%,rgba(7,17,22,.96))}
+#intro.kona-entry::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(7,17,22,.30),transparent 65%)}
+#intro.kona-entry .intro-inner{width:min(100%,620px);margin-right:auto}
+#intro.kona-entry .eyebrow{color:#72d3d6}
+#intro.kona-entry h1{color:#f8f5ef;text-shadow:0 4px 30px rgba(0,0,0,.25);text-wrap:balance}
+#intro.kona-entry h1 em{background:none;color:#ff6427;-webkit-text-fill-color:#ff6427}
+#intro.kona-entry .lede{color:#f4f2ed;max-width:34rem;font-weight:500}
+#intro.kona-entry .kona-count{color:#ff7b38;font-weight:800;letter-spacing:.12em}
+#intro.kona-entry .cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#intro.kona-entry .btn.primary{background:#f8f5ef;color:#11171c;border-color:#f8f5ef;box-shadow:0 16px 44px rgba(0,0,0,.2)}
+#intro.kona-entry .btn.text{color:#f8f5ef;border-color:rgba(255,255,255,.22);background:rgba(7,17,22,.24);backdrop-filter:blur(10px)}
+#intro.kona-entry .entry-utilities{display:flex;align-items:center;gap:14px;margin-top:12px;color:#d8e0e2;font:600 12px/1.4 var(--sans,system-ui)}
+#intro.kona-entry .entry-utilities #entryInstall{min-height:44px;padding:0 2px;border:0;border-bottom:1px solid rgba(255,255,255,.5);border-radius:0;background:transparent}
+
+/* Onboarding is a full state, not content appended beneath the hero. */
+#intro.quest-active .entry-media{filter:saturate(.75) brightness(.42)}
+#intro.quest-active::before{background:linear-gradient(180deg,rgba(7,17,22,.72),rgba(7,17,22,.96))}
+#intro.quest-active .intro-inner{width:min(100%,600px)}
+#intro.quest-active .intro-inner> :not(#konaQuest){display:none!important}
+#intro.quest-active #konaQuest{display:block}
+#intro.quest-active .eyebrow{font:400 clamp(38px,7vw,58px)/.98 var(--serif,Georgia,serif);letter-spacing:-.02em;text-transform:none;color:#f8f5ef}
+#intro.quest-active .quest-progress{color:#aebbc1}
+#intro.quest-active .kona-intents{display:grid;gap:10px;margin:22px 0 12px}
+#intro.quest-active .quest-choice{width:100%;min-height:58px;text-align:left;padding:0 18px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.055);color:#f8f5ef;font:650 15px/1.2 var(--sans,system-ui)}
+#intro.quest-active .quest-choice:is(:hover,:focus-visible,.on){border-color:#ff6427;background:rgba(255,100,39,.13)}
+#intro.quest-active .quest-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
+#intro.quest-active .btn.text{color:#dbe2e5;border-color:transparent;background:transparent}
+#intro.quest-active #konaQuest .reveal-hero{aspect-ratio:16/9;border-radius:22px;margin:18px 0;background:linear-gradient(180deg,transparent,rgba(7,17,22,.55)),url('assets/share/collection.jpg') center/cover no-repeat;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+#intro.quest-active #konaQuest .reveal-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin:16px 0 22px}
+#intro.quest-active #konaQuest .reveal-meta span{color:#aebbc1;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
+#intro.quest-active #konaQuest .reveal-meta b{display:block;color:#f8f5ef;font-size:15px;letter-spacing:0;text-transform:none;margin-top:4px}
+#intro.quest-active #enterKona{width:100%;background:#ff6427;color:#fff;border-color:#ff6427}
+
+@media(max-width:760px),(pointer:coarse){
+ #intro.kona-entry{padding:0 20px calc(22px + env(safe-area-inset-bottom))}
+ #intro.kona-entry .entry-media img{object-position:62% center}
+ #intro.kona-entry h1{font-size:clamp(48px,14vw,68px);line-height:.9;margin:12px 0 18px}
+ #intro.kona-entry .lede{font-size:15px;line-height:1.45}
+ #intro.kona-entry .cta{display:grid;grid-template-columns:1fr auto;width:100%;gap:8px}
+ #intro.kona-entry .cta .btn.primary{min-height:58px}
+ #intro.kona-entry .cta .btn.text{min-height:46px;padding-inline:16px}
+ #intro.kona-entry .entry-utilities{justify-content:space-between}
+ #intro.quest-active .intro-inner{padding:calc(42px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom))}
+}
