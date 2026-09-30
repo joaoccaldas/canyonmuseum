@@ -16,7 +16,7 @@ const rel = f => path.relative(root, f).split(path.sep).join('/');
 const walk = d => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]) : [];
 
 // core: needed to open the app offline. Everything else is verified and cached on first use.
-const core = ['index.html', 'app/kona-core.js', 'app/museum-data.js', 'manifest.webmanifest', 'assets/pwa/icon-v3.svg', 'assets/pwa/icon-v3-192.png', 'assets/pwa/icon-v3-512.png', 'assets/pwa/icon-v3-maskable-512.png', 'assets/pwa/apple-touch-icon-v3.png'];
+const core = ['index.html', 'app/kona-core.js', 'manifest.webmanifest', 'assets/pwa/icon-v3.svg', 'assets/pwa/icon-v3-192.png', 'assets/pwa/icon-v3-512.png', 'assets/pwa/icon-v3-maskable-512.png', 'assets/pwa/apple-touch-icon-v3.png'];
 const lazy = [
   'app/hall.js', 'app/studio.js', 'app/studio-catalog.js',
   ...fs.readdirSync(root).filter(f => f.endsWith('.html') && f !== 'index.html'),
