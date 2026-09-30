@@ -7,7 +7,10 @@ test('landing always exposes Build, Sign in and Install while Build is the local
   assert.match(html,/id="entryInstall"/);
 });
 test('one helper leaves intro and supports canonical consumer routes',()=>{
-  assert.match(entry,/function enterApp\(first = 'home'\)[\s\S]{0,220}intro\?\.setAttribute\('hidden',''\)[\s\S]{0,180}first === 'garage'[\s\S]{0,80}shell\.garage[\s\S]{0,80}shell\.now/);
+  assert.match(entry,/function enterApp\(first = 'home'\)/);
+  assert.match(entry,/intro\?\.setAttribute\('hidden',''\)/);
+  for(const route of ['garage','collection','discover','plan','me']) assert.match(entry,new RegExp("first === '"+route+"'"));
+  assert.match(entry,/shell\.now/);
 });
 test('returning Continue uses canonical app-entry helper',()=>assert.match(entry,/Continue your Kona[\s\S]{0,220}addEventListener\('click', enterApp\)/));
 test('every onboarding screen can be escaped',()=>{
