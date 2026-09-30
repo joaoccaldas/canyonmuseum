@@ -18,6 +18,7 @@ import * as TX from './tex.js';
 import { BIKE, PROFILE, GEOMETRY, PARTS, GROUPS, PRESETS, SWATCHES, DECALS, VIEWS } from './data.js';
 import { coarse, desktopViewPhone } from './detect.js';
 import { buildAnimatedChain, buildRearDisc, createDimensionOverlay, createWindTunnel } from './engine/viewer-extras.js';
+import { createViewerInteraction } from './engine/viewer-interaction.js';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -285,109 +286,14 @@ function applyCfg() {
   syncUI();
 }
 
-// ------------------------------------------------------------------ selection
-const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-function partOf(o) {
-  while (o && !(o.userData && o.userData.part)) o = o.parent;
-  if (!o) return null;
-  let id = o.userData.part;
-  if (PARTS[id]?.alias) id = PARTS[id].alias;
-  return id;
-}
-function pick(ev) {
-  const r = canvas.getBoundingClientRect();
-  ndc.set((ev.clientX - r.left) / r.width * 2 - 1, -(ev.clientY - r.top) / r.height * 2 + 1);
-  ray.setFromCamera(ndc, camera);
-  const hits = ray.intersectObject(bike, true).filter(h => h.object.visible && isShown(h.object));
-  return hits.length ? partOf(hits[0].object) : null;
-}
-function isShown(o) { while (o) { if (!o.visible) return false; o = o.parent; } return true; }
-const hiCache = new Map();
-function highlight(id, on, strength = .22) {
-  for (const m of meshesOf[id] || []) {
-    if (on) {
-      const base = m.userData.baseMat;
-      const clone = (mt) => { const c = mt.clone(); c.onBeforeCompile=mt.onBeforeCompile;c.customProgramCacheKey=mt.customProgramCacheKey; if (c.emissive) { c.emissive = new THREE.Color(0x2aa8ff); c.emissiveIntensity = strength; } return c; };
-      m.material = Array.isArray(base) ? base.map(clone) : clone(base);
-    } else m.material = m.userData.baseMat;
-  }
-}
-function applyGhost() {
-  const ghostAll = S.isolate && S.sel;
-  const keep = new Set(S.sel ? [S.sel, ...Object.keys(PARTS).filter(k => PARTS[k].alias === S.sel)] : []);
-  for (const [id, ms] of Object.entries(meshesOf)) {
-    const shown = keep.has(id);
-    for (const m of ms) {
-      if (S.xray && !(id === 'frame' || id === 'fork' || id === 'frame_decals' || id === 'fork_decals')) { m.material = m.userData.baseMat; continue; }
-      if (S.xray) { m.material = M.xray; continue; }
-      if (ghostAll && !shown) m.material = M.ghost;
-      else if (!(S.sel && shown)) m.material = m.userData.baseMat;
-    }
-  }
-  if (S.sel && !S.xray) highlight(S.sel, true, .12);
-  if (S.hover && S.hover !== S.sel && !ghostAll && !S.xray) highlight(S.hover, true, .18);
-}
-let downAt = null;
-canvas.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY, performance.now()]; document.body.classList.add('engaged'); });
-canvas.addEventListener('pointerup', e => {
-  if (!downAt) return;
-  const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]);
-  if (moved < 6 && performance.now() - downAt[2] < 500) select(pick(e));
-  downAt = null;
+// ------------------------------------------------------------------ selection + camera interaction
+const interaction = createViewerInteraction({
+  canvas, camera, controls, bike, meshesOf, partsMeta: PARTS, groupLabels: GROUPS,
+  state: S, materials: M, coarse, reduced, views: VIEWS,
+  specialViews: { lab:{p:[2.55,1.8,3.7],t:[.15,.87,0]} },
+  query: $, queryAll: $$,
 });
-let hoverRaf = 0;
-canvas.addEventListener('pointermove', e => {
-  if (coarse || e.buttons) return;
-  if (hoverRaf) return;
-  hoverRaf = requestAnimationFrame(() => {
-    hoverRaf = 0;
-    const id = pick(e);
-    if (id !== S.hover) { const prev = S.hover; S.hover = id; if (prev && prev !== S.sel) highlight(prev, false); applyGhost(); }
-    const tip = $('#tip');
-    if (id && PARTS[id]) { tip.textContent = PARTS[id].name; tip.style.transform = `translate(${e.clientX + 14}px,${e.clientY + 14}px)`; tip.classList.add('on'); canvas.style.cursor = 'pointer'; }
-    else { tip.classList.remove('on'); canvas.style.cursor = ''; }
-  });
-});
-canvas.addEventListener('pointerleave', () => { $('#tip').classList.remove('on'); if (S.hover && S.hover !== S.sel) highlight(S.hover, false); S.hover = null; });
-
-function select(id) {
-  if (S.sel && S.sel !== id) highlight(S.sel, false);
-  S.sel = id;
-  if (!id) { S.isolate = false; $('#card').classList.remove('open'); applyGhost(); syncList(); return; }
-  const P = PARTS[id] || { name: id, spec: '' };
-  $('#cardGroup').textContent = GROUPS[P.group] || '';
-  $('#cardName').textContent = P.name;
-  $('#cardSpec').textContent = P.spec || '';
-  $('#cardNote').textContent = P.note || '';
-  $('#cardWeight').textContent = P.weight ? P.weight + ' g' : '—';
-  $('#card').classList.add('open');
-  applyGhost(); syncList();
-}
-function focusPart(id) {
-  const box = new THREE.Box3();
-  for (const m of meshesOf[id] || []) if (isShown(m)) box.expandByObject(m);
-  if (box.isEmpty()) return;
-  const c = box.getCenter(new THREE.Vector3()), r = Math.max(.08, box.getSize(new THREE.Vector3()).length() * .5);
-  const dir = camera.position.clone().sub(controls.target).normalize();
-  tween(camera.position.clone(), controls.target.clone(), c.clone().addScaledVector(dir, r * 3.2 / Math.tan(camera.fov * Math.PI / 360) * .55), c, 1.1);
-}
-
-// ------------------------------------------------------------------ camera tween
-let tw = null;
-function tween(p0, t0, p1, t1, dur = 1.4) { if(reduced){ camera.position.copy(p1);controls.target.copy(t1);tw=null;return; } tw = { p0, t0, p1, t1, t: 0, dur }; }
-function flyTo(name, dur = 1.4) {
-  const v = name==='lab'?{p:[2.55,1.8,3.7],t:[.15,.87,0]}:VIEWS[name]; if (!v) return;
-  const p1 = new THREE.Vector3(...v.p), t1 = new THREE.Vector3(...v.t);
-  if (coarse && name === 'hero') p1.multiplyScalar(1.25);
-  // Desktop view keeps a wide layout, so the portrait pull-back never ran and
-  // the bike sat in the corner. phone-fit is that case; pull exploded further
-  // so the parts clear the bottom dock.
-  const fit = document.documentElement.classList.contains('phone-fit');
-  if (innerWidth < innerHeight || fit) p1.sub(t1).multiplyScalar(fit && name === 'exploded' ? 1.75 : 1.55).add(t1);
-  if (!dur) { camera.position.copy(p1); controls.target.copy(t1); return; }
-  tween(camera.position.clone(), controls.target.clone(), p1, t1, dur);
-  $$('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === name));
-}
+const { select, focusPart, flyTo, applyGhost } = interaction;
 
 // ------------------------------------------------------------------ environments
 const ENVS = {
@@ -591,7 +497,6 @@ function buildUI() {
   setEnv(S.env); syncUI(); applyQuality();
 }
 function paintRange(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
-function syncList() { $$('[data-part]').forEach(b => b.classList.toggle('active', b.dataset.part === S.sel)); }
 function toggleDrawer(id) { const d = $('#' + id), open = !d.classList.contains('open'); closeDrawers(); d.classList.toggle('open', open); $$(`[data-drawer="${id}"]`).forEach(b => b.classList.toggle('active', open)); applyShift(); }
 function closeDrawers() { $$('.drawer').forEach(d => d.classList.remove('open')); $$('[data-drawer]').forEach(b => b.classList.remove('active')); applyShift(); }
 function setMode(m, fromSlider) {
@@ -672,14 +577,8 @@ function tick(now) {
   if(S.env==='tunnel'&&!S.ride&&!flowState.paused&&!reduced){const wr=(lab?.state.env.speed||40)/3.6/R_WHEEL*dt;if(wheelR)wheelR.rotation.z-=wr;if(wheelF)wheelF.rotation.z-=wr;}
   if(!flowState.paused&&!reduced)flowClock+=dt*flowState.air/(40/3.6);
   if (tunnelMat) tunnelMat.uniforms.t.value = flowClock;
-  // camera tween
-  if (tw) {
-    tw.t += dt / tw.dur; const k = ease(clamp(tw.t));
-    camera.position.lerpVectors(tw.p0, tw.p1, k); controls.target.lerpVectors(tw.t0, tw.t1, k);
-    if (tw.t >= 1) tw = null;
-  }
-  const fitPhone = document.documentElement.classList.contains('phone-fit');
-  shiftT = fitPhone ? 0 : (innerWidth>900&&$('.drawer.open'))?-.14:(!document.body.classList.contains('engaged') && innerWidth > 900) ? .13 : 0;
+  interaction.updateTween(dt, ease);
+  shiftT = (innerWidth>900&&$('.drawer.open'))?-.14:(!document.body.classList.contains('engaged') && innerWidth > 900) ? .13 : 0;
   if (Math.abs(shiftT - shift) > 1e-4) { shift += (shiftT - shift) * (1 - Math.exp(-dt * 3)); applyShift(); camera.updateProjectionMatrix(); }
   if(innerWidth<760)applyShift();
   controls.update();
