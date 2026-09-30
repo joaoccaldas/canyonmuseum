@@ -135,7 +135,7 @@ def export_asset(aid,asm,exp):
         for o in descendants(r):o.select_set(True)
     bpy.ops.export_scene.gltf(filepath=str(OUT/f"{aid}.glb"),export_format="GLB",use_selection=True,export_apply=True)
 
-def waffle_lugs(aid,parent,length=.285,width=.095,rows=5,cols=9,z=.003):
+def waffle_lugs(aid,parent,length=.285,width=.095,rows=4,cols=8,z=.003):
     # raised square/diamond lugs inspired by historical waffle traction, not copied scan geometry.
     for i in range(cols):
         x=-length/2 + (i+.5)*length/cols
@@ -177,7 +177,7 @@ def make_shoe(aid,profile,upper_mat,overlay_mat,outsole_kind="flat",tech=None,ye
     outsole=loft(aid+"_OUTSOLE",[(x,w*.96,max(.001,z0-.006),z0+.004) for x,w,z0,z1 in sole],
                  RUBBER_BLACK if outsole_kind!="waffle" else RUBBER_GUM,asm,.004)
     if outsole_kind=="waffle":
-        waffle_lugs(aid,asm,L*.92,fore*1.65,5,9,.001)
+        waffle_lugs(aid,asm,L*.92,fore*1.65,4,8,.001)
     elif outsole_kind=="herringbone":
         for i in range(10):
             x=-L*.40+i*(L*.08)
