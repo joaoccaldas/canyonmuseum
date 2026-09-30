@@ -25,7 +25,7 @@ async function nativeUpdateCheck() {
     if (!res.ok) return;
     const v = await res.json();
     if ((v.versionCode | 0) > mine && typeof v.apk === 'string' && !/^[a-z]+:/i.test(v.apk))   // only a path on our own site
-      pill(`Speedmax Museum ${v.versionName} is available`, 'Download', SITE + v.apk);
+      pill(`KONA ${v.versionName} is available`, 'Download', SITE + v.apk);
   } catch (_) { /* offline: try next launch */ }
 }
 
