@@ -38,7 +38,7 @@ export function initAppShell() {
   if (standalone) document.body.classList.add('installed');
 
   // --- install
-  const btn = $('installBtn'), sheet = $('appSheet');
+  const btn = $('installBtn'), entryBtn = $('entryInstall'), sheet = $('appSheet');
   let deferred = null;
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const android = /android/i.test(navigator.userAgent);
@@ -48,6 +48,7 @@ export function initAppShell() {
   function syncInstallUI() {
     const s = state();
     if (btn) btn.hidden = !s.show;
+    if (entryBtn) { entryBtn.hidden = !s.show; entryBtn.dataset.installKind = s.kind; }
     return s;
   }
   syncInstallUI();
@@ -64,7 +65,7 @@ export function initAppShell() {
     document.body.classList.add('installed');
   });
 
-  btn?.addEventListener('click', async () => {
+  async function beginInstall() {
     const s = state();
     if (s.action === 'prompt' && deferred) {
       deferred.prompt();
@@ -90,7 +91,9 @@ export function initAppShell() {
     }
     if (apk) apk.hidden = true;
     sheet.hidden = false;
-  });
+  }
+  btn?.addEventListener('click', beginInstall);
+  entryBtn?.addEventListener('click', beginInstall);
 
   sheet?.querySelector('.close')?.addEventListener('click', () => { sheet.hidden = true; });
   sheet?.addEventListener('click', e => { if (e.target === sheet) sheet.hidden = true; });
