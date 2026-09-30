@@ -1,0 +1,60 @@
+/* KONA semantic design tokens.
+   Brand-neutral global chrome. Partner/collection rooms may override room tokens only. */
+:root{
+  --font-display:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --font-ui:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+
+  --color-bg:#f5f1ea;
+  --color-surface:#fbf9f5;
+  --color-surface-elevated:#fff;
+  --color-ink:#12181d;
+  --color-muted:#5f6a72;
+  --color-faint:#8e979d;
+  --color-line:rgba(18,24,29,.12);
+  --color-accent:#e85a22;
+  --color-accent-strong:#d94b17;
+  --color-info:#138a8f;
+  --color-success:#2bbf88;
+  --color-warning:#d89024;
+  --color-danger:#c5483b;
+
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
+  --space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;
+  --edge-mobile:20px;--edge-mobile-compact:16px;
+  --content-max:1280px;--text-max:620px;
+
+  --radius-control:12px;--radius-compact:16px;--radius-card:20px;--radius-hero:24px;--radius-pill:999px;
+  --touch-min:44px;
+
+  --type-display-1:clamp(52px,8vw,108px);
+  --type-display-2:clamp(38px,6vw,72px);
+  --type-h1-mobile:46px;--type-h2:32px;--type-h3:22px;
+  --type-body-lg:17px;--type-body:15px;--type-small:13px;--type-label:11px;--type-micro:10px;
+
+  --motion-control:180ms;--motion-surface:300ms;--motion-cinematic:560ms;
+  --ease-standard:cubic-bezier(.2,.8,.2,1);
+}
+html[data-theme='dark']{
+  --color-bg:#071116;
+  --color-surface:#0d1920;
+  --color-surface-elevated:#13222a;
+  --color-ink:#f5f3ee;
+  --color-muted:#b4c0c8;
+  --color-faint:#7f929e;
+  --color-line:rgba(245,243,238,.12);
+  --color-accent:#ff6a22;
+  --color-accent-strong:#ff7b38;
+  --color-info:#39c8ef;
+  --color-success:#55d6a0;
+  --color-warning:#e4a14a;
+  --color-danger:#f06e63;
+}
+@media (prefers-color-scheme:dark){
+  html:not([data-theme]){
+    --color-bg:#071116;--color-surface:#0d1920;--color-surface-elevated:#13222a;
+    --color-ink:#f5f3ee;--color-muted:#b4c0c8;--color-faint:#7f929e;
+    --color-line:rgba(245,243,238,.12);--color-accent:#ff6a22;--color-accent-strong:#ff7b38;
+    --color-info:#39c8ef;--color-success:#55d6a0;--color-warning:#e4a14a;--color-danger:#f06e63;
+  }
+}
