@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "bikes": {
+    "cervelo-p5-disc-mk2-size54": {
+      "expected_wheelbase_m": 0.995,
+      "actual_wheelbase_m": 0.995,
+      "expected_chainstay_m": 0.405,
+      "actual_chainstay_m": 0.405,
+      "expected_bb_drop_m": 0.075,
+      "actual_bb_drop_m": 0.075,
+      "wheel_outer_diameter_m": 0.674,
+      "source": "https://www.cervelo.com/en-US/support/P5%20DISC%20MK2",
+      "evidence_class": "manufacturer-geometry",
+      "expected_stack_m": 0.503,
+      "actual_stack_m": 0.503,
+      "expected_reach_m": 0.418,
+      "actual_reach_m": 0.418
+    },
+    "specialized-shiv-disc-size-m": {
+      "expected_wheelbase_m": 1.001,
+      "actual_wheelbase_m": 1.001,
+      "expected_chainstay_m": 0.415,
+      "actual_chainstay_m": 0.415,
+      "expected_bb_drop_m": 0.072,
+      "actual_bb_drop_m": 0.072,
+      "wheel_outer_diameter_m": 0.674,
+      "source": "https://www.specialized.com/se/sv/s-works-shiv-disc-module/p/175306",
+      "evidence_class": "manufacturer-geometry",
+      "expected_stack_m": 0.514,
+      "actual_stack_m": 0.514,
+      "expected_reach_m": 0.401,
+      "actual_reach_m": 0.401
+    },
+    "felt-ia-2015-size54": {
+      "expected_wheelbase_m": 0.991,
+      "actual_wheelbase_m": 0.991,
+      "expected_chainstay_m": 0.4,
+      "actual_chainstay_m": 0.4,
+      "expected_bb_drop_m": 0.072,
+      "actual_bb_drop_m": 0.072,
+      "wheel_outer_diameter_m": 0.668,
+      "source": "https://www.feltbicycles.com/documents/archive/2015_FELT_Catalog.pdf",
+      "evidence_class": "manufacturer-geometry",
+      "expected_stack_m": 0.522,
+      "actual_stack_m": 0.522,
+      "expected_reach_m": 0.404,
+      "actual_reach_m": 0.404
+    },
+    "scott-plasma-rc-provisional": {
+      "expected_wheelbase_m": 0.99,
+      "actual_wheelbase_m": 0.99,
+      "expected_chainstay_m": 0.405,
+      "actual_chainstay_m": 0.405,
+      "expected_bb_drop_m": 0.072,
+      "actual_bb_drop_m": 0.072,
+      "wheel_outer_diameter_m": 0.678,
+      "source": "https://www.scott-sports.com/us/en/product/scott-plasma-rc-ultimate-bike",
+      "evidence_class": "provisional-geometry",
+      "expected_stack_m": 0.518,
+      "actual_stack_m": 0.518,
+      "expected_reach_m": 0.398,
+      "actual_reach_m": 0.398
+    },
+    "bmc-speedmachine-01-size-m": {
+      "expected_wheelbase_m": 1.0,
+      "actual_wheelbase_m": 1.0,
+      "expected_chainstay_m": 0.405,
+      "actual_chainstay_m": 0.405,
+      "expected_bb_drop_m": 0.072,
+      "actual_bb_drop_m": 0.072,
+      "wheel_outer_diameter_m": 0.678,
+      "source": "https://us.bmc-switzerland.com/products/speedmachine-01-four-bikes-bmc-26a-000005",
+      "evidence_class": "manufacturer-geometry"
+    },
+    "orbea-ordu-current-sm": {
+      "expected_wheelbase_m": 1.007,
+      "actual_wheelbase_m": 1.007,
+      "expected_chainstay_m": 0.405,
+      "actual_chainstay_m": 0.405,
+      "expected_bb_drop_m": 0.075,
+      "actual_bb_drop_m": 0.075,
+      "wheel_outer_diameter_m": 0.674,
+      "source": "https://www.orbea.com/us-en/bicycles/ordu-m10iltd/pdf",
+      "evidence_class": "manufacturer-geometry"
+    }
+  },
+  "shoes": {
+    "nike-vaporfly-4pct-study": {
+      "shell_x_span_m": 0.2772,
+      "kind": "vaporfly4pct",
+      "status": "prototype-not-cad-exact"
+    },
+    "nike-vaporfly-next-study": {
+      "shell_x_span_m": 0.28224,
+      "kind": "vaporflynext",
+      "status": "prototype-not-cad-exact"
+    },
+    "nike-alphafly-next-study": {
+      "shell_x_span_m": 0.28728,
+      "kind": "alphafly1",
+      "status": "prototype-not-cad-exact"
+    },
+    "nike-alphafly-3-study": {
+      "shell_x_span_m": 0.28728,
+      "kind": "alphafly3",
+      "status": "prototype-not-cad-exact",
+      "official_drop_mm": 8
+    },
+    "nike-vaporfly-4-current": {
+      "shell_x_span_m": 0.27552,
+      "kind": "vaporfly4",
+      "status": "prototype-not-cad-exact",
+      "official_drop_mm": 6
+    }
+  }
+}
