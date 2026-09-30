@@ -1,0 +1,751 @@
+{
+  "schema_version": 1,
+  "project": "Caldas Studio / KONA",
+  "updated_at": "2026-09-30",
+  "principles": {
+    "local_first": true,
+    "source_first": true,
+    "human_approval_for_external_writes": true,
+    "fail_closed_on_rights_security_or_provenance_uncertainty": true,
+    "canonical_objects_before_derivatives": true
+  },
+  "agents": [
+    {
+      "id": "program-orchestrator",
+      "role": "Priorities, dependencies, weekly operating decisions"
+    },
+    {
+      "id": "product-qa",
+      "role": "UX, releases, browser evidence, mobile/performance regression"
+    },
+    {
+      "id": "research-evidence",
+      "role": "Official sources, science, specs, results, confidence classes"
+    },
+    {
+      "id": "assets-3d",
+      "role": "Asset intake, Blender/GLB, LODs, provenance, visual QA"
+    },
+    {
+      "id": "content-growth",
+      "role": "Canonical stories, Shorts/Reels/LinkedIn, distribution"
+    },
+    {
+      "id": "partnerships-crm",
+      "role": "Targeting, outreach drafts, follow-ups, proposal generation"
+    },
+    {
+      "id": "commerce",
+      "role": "Affiliate mapping, offers, disclosures, link health"
+    },
+    {
+      "id": "trust-legal-security",
+      "role": "Rights, privacy, secrets, security, ship/no-ship"
+    },
+    {
+      "id": "data-kpi",
+      "role": "Funnels, content metrics, commercial pipeline, experiments"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "WF-001",
+      "name": "Product Intake",
+      "owner": "assets-3d",
+      "trigger": "new product candidate or approved backlog item",
+      "inputs": [
+        "official product URL",
+        "reference media",
+        "category",
+        "target setup slot"
+      ],
+      "steps": [
+        "research official specs",
+        "create candidate metadata",
+        "rights/provenance check",
+        "create or ingest GLB",
+        "geometry + silhouette QA",
+        "mobile render proof",
+        "catalog contract validation",
+        "human approval",
+        "promote to canonical catalog"
+      ],
+      "unattended": [
+        "source collection from approved domains",
+        "schema validation",
+        "asset metrics",
+        "test rendering"
+      ],
+      "approval": [
+        "rights/provenance acceptance",
+        "production promotion"
+      ],
+      "outputs": [
+        "canonical Product object",
+        "GLB/LOD assets",
+        "source records",
+        "QA evidence",
+        "room eligibility"
+      ],
+      "stop_conditions": [
+        "unclear asset rights",
+        "missing source provenance",
+        "visual QA below threshold",
+        "security scan failure"
+      ],
+      "kpis": [
+        "hours candidate→canonical",
+        "first-pass QA rate",
+        "asset reuse count"
+      ]
+    },
+    {
+      "id": "WF-002",
+      "name": "Brand Room Factory",
+      "owner": "product-qa",
+      "trigger": "approved canonical product + campaign brief",
+      "inputs": [
+        "Product ids",
+        "brand-room theme config",
+        "copy",
+        "approved brand assets"
+      ],
+      "steps": [
+        "validate theme config",
+        "layout room",
+        "bind canonical products",
+        "generate nav/map/card metadata",
+        "render desktop/mobile light/dark",
+        "performance check",
+        "rights review",
+        "human approval",
+        "publish"
+      ],
+      "unattended": [
+        "layout",
+        "build",
+        "browser screenshots",
+        "performance budget check"
+      ],
+      "approval": [
+        "brand styling/copy",
+        "public publish"
+      ],
+      "outputs": [
+        "room config",
+        "rendered room",
+        "share URL",
+        "visual proof"
+      ],
+      "stop_conditions": [
+        "room overlap",
+        "missing canonical product",
+        "mobile budget breach",
+        "unapproved brand marks"
+      ],
+      "kpis": [
+        "hours canonical asset→room",
+        "room FPS/draw calls",
+        "share conversion"
+      ]
+    },
+    {
+      "id": "WF-003",
+      "name": "Athlete Room Factory",
+      "owner": "content-growth",
+      "trigger": "approved athlete target or inbound partner",
+      "inputs": [
+        "athlete",
+        "public sources",
+        "results",
+        "equipment links",
+        "approved media"
+      ],
+      "steps": [
+        "build athlete evidence pack",
+        "create narrative timeline",
+        "map equipment/products",
+        "generate room/story config",
+        "rights/likeness review",
+        "visual proof",
+        "outreach draft",
+        "human approval",
+        "publish only with approved rights"
+      ],
+      "unattended": [
+        "public-source research",
+        "timeline draft",
+        "equipment graph links",
+        "prototype generation"
+      ],
+      "approval": [
+        "external outreach",
+        "likeness/media use",
+        "public publishing"
+      ],
+      "outputs": [
+        "private prototype",
+        "athlete room",
+        "one-sheet",
+        "outreach draft",
+        "social teaser"
+      ],
+      "stop_conditions": [
+        "unclear image/likeness rights",
+        "material factual conflict",
+        "sponsor conflict unresolved"
+      ],
+      "kpis": [
+        "prototype turnaround",
+        "reply rate",
+        "intro rate",
+        "partner adoption"
+      ]
+    },
+    {
+      "id": "WF-004",
+      "name": "Event Room / Race Week",
+      "owner": "research-evidence",
+      "trigger": "new target event or race-week milestone",
+      "inputs": [
+        "event id",
+        "official schedule",
+        "course",
+        "venues",
+        "partner briefs"
+      ],
+      "steps": [
+        "ingest official schedule/course",
+        "evidence-class uncertain details",
+        "generate Now/Plan items",
+        "build event room/course story",
+        "create notification candidates",
+        "rights check",
+        "human approval",
+        "publish"
+      ],
+      "unattended": [
+        "schedule diffing",
+        "course/source validation",
+        "content draft"
+      ],
+      "approval": [
+        "notifications to users",
+        "rights-sensitive maps/media",
+        "partner claims"
+      ],
+      "outputs": [
+        "event graph",
+        "Plan timeline",
+        "Now cards",
+        "room/course experience",
+        "notification queue"
+      ],
+      "stop_conditions": [
+        "official sources conflict",
+        "licensed map/media unavailable"
+      ],
+      "kpis": [
+        "schedule freshness",
+        "event task completion",
+        "race-week return visits"
+      ]
+    },
+    {
+      "id": "WF-005",
+      "name": "TRI//SIGNAL Daily Intelligence",
+      "owner": "content-growth",
+      "trigger": "daily scheduled run",
+      "inputs": [
+        "approved RSS feeds",
+        "official newsrooms",
+        "YouTube channels",
+        "research watchlist"
+      ],
+      "steps": [
+        "ingest",
+        "dedupe",
+        "classify racing/gear/science/business/culture",
+        "source-rank",
+        "score visual potential",
+        "select top signals",
+        "draft canonical story",
+        "queue derivatives",
+        "human editorial approval"
+      ],
+      "unattended": [
+        "ingest",
+        "dedupe",
+        "classification",
+        "source ranking",
+        "drafting"
+      ],
+      "approval": [
+        "publication",
+        "claims with uncertainty",
+        "sponsored/editorial mixing"
+      ],
+      "outputs": [
+        "daily signal brief",
+        "canonical story drafts",
+        "content opportunities"
+      ],
+      "stop_conditions": [
+        "no reliable primary source",
+        "copyright/embargo concern"
+      ],
+      "kpis": [
+        "signals→published ratio",
+        "time-to-publish",
+        "content-assisted visits",
+        "qualified inbound"
+      ]
+    },
+    {
+      "id": "WF-006",
+      "name": "YouTube Watchlist",
+      "owner": "research-evidence",
+      "trigger": "daily or channel upload webhook/poll",
+      "inputs": [
+        "approved channel ids",
+        "YouTube API"
+      ],
+      "steps": [
+        "fetch new uploads",
+        "store metadata only",
+        "classify relevance",
+        "extract allowed metadata/transcript if permitted",
+        "link to athlete/product/event entities",
+        "recommend derivative idea",
+        "editor approval"
+      ],
+      "unattended": [
+        "metadata ingest",
+        "classification",
+        "entity linking"
+      ],
+      "approval": [
+        "reuse beyond embeds/links",
+        "derivative publishing"
+      ],
+      "outputs": [
+        "video registry",
+        "entity links",
+        "story candidates"
+      ],
+      "stop_conditions": [
+        "API policy/rights uncertainty"
+      ],
+      "kpis": [
+        "relevant videos found",
+        "entity coverage",
+        "story conversion"
+      ]
+    },
+    {
+      "id": "WF-007",
+      "name": "Social Asset Factory",
+      "owner": "content-growth",
+      "trigger": "canonical story/product/event marked social-ready",
+      "inputs": [
+        "canonical object/story",
+        "approved images/3D",
+        "platform targets"
+      ],
+      "steps": [
+        "generate 9:16/1:1/16:9 storyboard",
+        "render visual",
+        "write hook/caption",
+        "generate deep link",
+        "platform QA",
+        "human approval",
+        "publish manually or via approved connector"
+      ],
+      "unattended": [
+        "storyboarding",
+        "render variants",
+        "caption drafts",
+        "deep links"
+      ],
+      "approval": [
+        "all external publishing"
+      ],
+      "outputs": [
+        "Short/Reel asset",
+        "LinkedIn asset",
+        "thumbnail",
+        "caption",
+        "UTM/deep link"
+      ],
+      "stop_conditions": [
+        "rights not cleared",
+        "visual/text factual mismatch"
+      ],
+      "kpis": [
+        "view-through",
+        "avg % viewed",
+        "shares",
+        "saves",
+        "deep-link CTR"
+      ]
+    },
+    {
+      "id": "WF-008",
+      "name": "Partnership Prospecting",
+      "owner": "partnerships-crm",
+      "trigger": "weekly target refresh or strategic sprint",
+      "inputs": [
+        "CRM",
+        "athlete/brand/event graph",
+        "current campaigns",
+        "warm-intro graph"
+      ],
+      "steps": [
+        "score opportunity",
+        "research public contact path",
+        "generate personalized angle",
+        "choose prototype",
+        "draft message",
+        "human approval",
+        "log outreach",
+        "schedule follow-up"
+      ],
+      "unattended": [
+        "scoring",
+        "research",
+        "drafting",
+        "follow-up reminders"
+      ],
+      "approval": [
+        "every outbound message",
+        "proposal pricing"
+      ],
+      "outputs": [
+        "ranked target list",
+        "drafts",
+        "next actions",
+        "CRM updates"
+      ],
+      "stop_conditions": [
+        "no legitimate public contact route",
+        "conflict/rights concern"
+      ],
+      "kpis": [
+        "reply rate",
+        "meeting rate",
+        "intro rate",
+        "proposal rate",
+        "pilot conversion"
+      ]
+    },
+    {
+      "id": "WF-009",
+      "name": "Proposal Generator",
+      "owner": "partnerships-crm",
+      "trigger": "qualified conversation or explicit request",
+      "inputs": [
+        "partner needs",
+        "scope",
+        "assets already available",
+        "commercial guardrails"
+      ],
+      "steps": [
+        "map needs to reusable modules",
+        "estimate reuse/new work",
+        "create 3 package options",
+        "define rights/data assumptions",
+        "define acceptance criteria",
+        "human commercial review",
+        "send"
+      ],
+      "unattended": [
+        "scope mapping",
+        "draft",
+        "cost model"
+      ],
+      "approval": [
+        "price",
+        "legal terms",
+        "send"
+      ],
+      "outputs": [
+        "proposal",
+        "SOW outline",
+        "delivery roadmap"
+      ],
+      "stop_conditions": [
+        "rights/data dependencies unknown",
+        "custom work overwhelms reusable core"
+      ],
+      "kpis": [
+        "proposal cycle time",
+        "win rate",
+        "gross margin",
+        "reuse ratio"
+      ]
+    },
+    {
+      "id": "WF-010",
+      "name": "Affiliate & Commerce Audit",
+      "owner": "commerce",
+      "trigger": "weekly and on catalog change",
+      "inputs": [
+        "canonical products",
+        "approved affiliate programs",
+        "merchant links"
+      ],
+      "steps": [
+        "check link health",
+        "map products to programs",
+        "verify commission/cookie terms",
+        "generate disclosures",
+        "flag unavailable products",
+        "rank by relevance not commission",
+        "human review"
+      ],
+      "unattended": [
+        "link checking",
+        "term-change detection",
+        "mapping"
+      ],
+      "approval": [
+        "new program enrollment",
+        "commercial placements"
+      ],
+      "outputs": [
+        "commerce map",
+        "healthy links",
+        "disclosure status",
+        "opportunity report"
+      ],
+      "stop_conditions": [
+        "unclear disclosure requirement",
+        "product mismatch"
+      ],
+      "kpis": [
+        "affiliate CTR",
+        "conversion",
+        "revenue/1k visits",
+        "broken-link rate"
+      ]
+    },
+    {
+      "id": "WF-011",
+      "name": "Release Train",
+      "owner": "product-qa",
+      "trigger": "merge candidate",
+      "inputs": [
+        "branch SHA",
+        "test matrix",
+        "release manifest"
+      ],
+      "steps": [
+        "unit/contract tests",
+        "build canonical pages",
+        "PWA seal",
+        "secret/privacy scan",
+        "dependency audits",
+        "mobile visual matrix",
+        "Android emulator smoke",
+        "diff/deletion check",
+        "human ship approval",
+        "merge",
+        "live smoke",
+        "release evidence"
+      ],
+      "unattended": [
+        "all tests/scans/builds/screenshots"
+      ],
+      "approval": [
+        "merge/deploy if destructive or public behavior changes"
+      ],
+      "outputs": [
+        "release receipt",
+        "screenshots",
+        "live verification",
+        "rollback point"
+      ],
+      "stop_conditions": [
+        "any red gate",
+        "unexpected deletion",
+        "privacy/security finding"
+      ],
+      "kpis": [
+        "change failure rate",
+        "release lead time",
+        "regression escape rate"
+      ]
+    },
+    {
+      "id": "WF-012",
+      "name": "Rights / Provenance Audit",
+      "owner": "trust-legal-security",
+      "trigger": "new asset/source, weekly audit, pre-campaign",
+      "inputs": [
+        "asset registry",
+        "source records",
+        "licenses",
+        "brand/athlete usage"
+      ],
+      "steps": [
+        "classify source/license",
+        "verify attribution",
+        "check trademark/likeness flags",
+        "check map/data license",
+        "generate required notices",
+        "human legal review when ambiguous"
+      ],
+      "unattended": [
+        "metadata completeness",
+        "attribution checks",
+        "license-rule matching"
+      ],
+      "approval": [
+        "ambiguous commercial use",
+        "athlete likeness",
+        "brand marks",
+        "restricted event media"
+      ],
+      "outputs": [
+        "rights status",
+        "attribution manifest",
+        "blockers"
+      ],
+      "stop_conditions": [
+        "unknown license",
+        "no permission for required commercial use"
+      ],
+      "kpis": [
+        "% assets rights-cleared",
+        "unresolved blocker age"
+      ]
+    },
+    {
+      "id": "WF-013",
+      "name": "Feedback Triage",
+      "owner": "product-qa",
+      "trigger": "daily during beta, weekly after stabilization",
+      "inputs": [
+        "user feedback",
+        "errors",
+        "support notes",
+        "session diagnostics if consented"
+      ],
+      "steps": [
+        "dedupe",
+        "classify bug/UX/content/request",
+        "reproduce",
+        "severity score",
+        "link to roadmap",
+        "create issue draft",
+        "human prioritize"
+      ],
+      "unattended": [
+        "dedupe",
+        "classification",
+        "issue drafting"
+      ],
+      "approval": [
+        "roadmap priority changes"
+      ],
+      "outputs": [
+        "triage queue",
+        "repro evidence",
+        "issue candidates"
+      ],
+      "stop_conditions": [],
+      "kpis": [
+        "time-to-triage",
+        "repro rate",
+        "time-to-fix P0/P1"
+      ]
+    },
+    {
+      "id": "WF-014",
+      "name": "Weekly KPI / Portfolio Review",
+      "owner": "data-kpi",
+      "trigger": "weekly",
+      "inputs": [
+        "product funnel",
+        "content metrics",
+        "commercial pipeline",
+        "asset throughput",
+        "release health"
+      ],
+      "steps": [
+        "validate data freshness",
+        "compute KPI tree",
+        "compare to previous week",
+        "identify anomalies",
+        "attribute likely drivers",
+        "generate stop/start/continue",
+        "orchestrator review"
+      ],
+      "unattended": [
+        "data pull",
+        "calculations",
+        "draft analysis"
+      ],
+      "approval": [
+        "strategy changes",
+        "budget changes"
+      ],
+      "outputs": [
+        "weekly operating brief",
+        "top 5 decisions",
+        "experiment backlog"
+      ],
+      "stop_conditions": [
+        "data quality insufficient"
+      ],
+      "kpis": [
+        "decision closure rate",
+        "experiments completed",
+        "metric freshness"
+      ]
+    },
+    {
+      "id": "WF-015",
+      "name": "Notification Queue",
+      "owner": "product-qa",
+      "trigger": "event/user-state rule fires",
+      "inputs": [
+        "notification candidates",
+        "user preferences",
+        "quiet hours",
+        "consent"
+      ],
+      "steps": [
+        "validate user opt-in",
+        "dedupe",
+        "apply priority and quiet hours",
+        "compose concise notification",
+        "deep-link target validation",
+        "send only through approved channel"
+      ],
+      "unattended": [
+        "eligibility",
+        "dedupe",
+        "scheduling"
+      ],
+      "approval": [
+        "new notification category or commercial push"
+      ],
+      "outputs": [
+        "notification",
+        "delivery log"
+      ],
+      "stop_conditions": [
+        "no opt-in",
+        "no valid deep link",
+        "commercial category disabled"
+      ],
+      "kpis": [
+        "open rate",
+        "disable rate",
+        "action completion",
+        "complaint rate"
+      ]
+    }
+  ]
+}
