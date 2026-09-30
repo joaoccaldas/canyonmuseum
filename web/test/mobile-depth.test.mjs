@@ -11,7 +11,7 @@ const src = [
 ].join('\n');
 
 test('walkable floor overlays are depth-separated on mobile', () => {
-  assert.ok(src.includes('polygonOffsetFactor: -2'));
+  assert.match(src,/polygonOffsetFactor\s*:\s*-2/);
   assert.ok(src.includes('setPosition(0, .014, z)'));
   assert.ok(src.includes('e.position.set(x, .014, -16.5)'));
   assert.ok(src.includes('cs.position.y = .024'));              // WYLD float: shadow above the 20 mm obsidian pad
@@ -19,10 +19,10 @@ test('walkable floor overlays are depth-separated on mobile', () => {
 });
 
 test('decorative floor overlays do not write depth', () => {
-  const line = src.match(/line: new THREE\.MeshBasicMaterial\(\{[^\n]+/u)?.[0] || '';
-  const edge = src.match(/edge: new THREE\.MeshBasicMaterial\(\{[^\n]+/u)?.[0] || '';
-  assert.match(line, /depthWrite: false/);
-  assert.match(edge, /depthWrite: false/);
+  const line = src.match(/line\s*:\s*new THREE\.MeshBasicMaterial\(\{[^\n]+/u)?.[0] || '';
+  const edge = src.match(/edge\s*:\s*new THREE\.MeshBasicMaterial\(\{[^\n]+/u)?.[0] || '';
+  assert.match(line, /depthWrite\s*:\s*false/);
+  assert.match(edge, /depthWrite\s*:\s*false/);
 });
 
 test('no coplanar floors or walls: the shaking fix stays fixed', () => {
