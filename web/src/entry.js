@@ -35,9 +35,18 @@ function loadScript(src) {
   return pending;
 }
 
-const entryDataReady = fetch('app/entry-data.json',{cache:'no-store',credentials:'same-origin'})
-  .then(r=>r.ok?r.json():Promise.reject(new Error('entry data')))
-  .catch(()=>({event:{date:'2026-10-10'}}));
+const readJson = url => fetch(url,{cache:'no-store',credentials:'same-origin'})
+  .then(r=>r.ok?r.json():Promise.reject(new Error(url)));
+const entryDataReady = Promise.all([
+  readJson('app/entry-data.json').catch(()=>({event:{date:'2026-10-10'}})),
+  readJson('integrations/sources/kona-2026.ironman.json').catch(()=>({current_facts:{}})),
+  readJson('museum/places/kona-v1.json').catch(()=>({places:[]}))
+]).then(([entry,eventSource,placeSource])=>({
+  ...entry,
+  event:eventSource?.current_facts?.event || entry.event || {date:'2026-10-10'},
+  week:eventSource?.current_facts?.race_week || [],
+  places:placeSource?.places || []
+}));
 let museumDataReady = null;
 const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js'));
 
@@ -232,7 +241,7 @@ if (existingIdentity) {
   buildButton?.addEventListener('click', () => paintQuest('intent'));
 }
 paintIntent();
-entryDataReady.then(data=>{ window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
+entryDataReady.then(data=>{ window.__ENTRY_DATA=data||{}; window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
 
 function paintShared(draft){
   const host=questHost(); if(!host) return;

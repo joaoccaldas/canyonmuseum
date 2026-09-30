@@ -12,8 +12,11 @@ test('entry source itself never imports Three.js',()=>{assert.equal(/from ['"]th
 
 test('generated core bundle carries the P0 continuation contract',()=>{const bundle=fs.readFileSync(new URL('../../app/kona-core.js',import.meta.url),'utf8');assert.match(bundle,/Enter KONA/);});
 
-test('entry uses tiny entry-data and defers museum-data until explicit 3D entry',()=>{
-  assert.match(entry,/fetch\('app\/entry-data\.json'/);
+test('entry uses lightweight 2D facts and defers museum-data until explicit 3D entry',()=>{
+  assert.match(entry,/app\/entry-data\.json/);
+  assert.match(entry,/integrations\/sources\/kona-2026\.ironman\.json/);
+  assert.match(entry,/museum\/places\/kona-v1\.json/);
   assert.match(entry,/ensureMuseumData/);
   assert.equal(/const dataReady = loadScript\('app\/museum-data\.js'\)/.test(entry),false);
+  assert.equal(/import .*from ['"]three/.test(entry),false);
 });

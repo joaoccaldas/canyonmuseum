@@ -25,18 +25,18 @@ async function shot(theme,view){
     await new Promise(r=>setTimeout(r,4500));
   }else{
     await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});
-    await p.waitForFunction(()=>window.__app?.konaShell&&window.__museum?.renderer,{timeout:180000});
+    await p.waitForFunction(()=>window.__konaShell,{timeout:30000});
     if(view==='explore'){
-      await p.evaluate(()=>window.__museum.enter());
-      await new Promise(r=>setTimeout(r,5000));
+      await p.evaluate(()=>window.__konaShell.explore());
+      await new Promise(r=>setTimeout(r,900));
     }else if(view==='now'){
-      await p.evaluate(()=>window.__app.konaShell.now());
+      await p.evaluate(()=>window.__konaShell.now());
       await new Promise(r=>setTimeout(r,900));
     }else if(view==='plan'){
-      await p.evaluate(()=>window.__app.konaShell.plan());
+      await p.evaluate(()=>window.__konaShell.plan());
       await new Promise(r=>setTimeout(r,900));
     }else if(view==='me'){
-      await p.evaluate(()=>window.__app.konaShell.me());
+      await p.evaluate(()=>window.__konaShell.me());
       await new Promise(r=>setTimeout(r,700));
     }
   }
@@ -44,11 +44,7 @@ async function shot(theme,view){
   await p.screenshot({path:path.join(out,name+'.png'),fullPage:false});
   const metrics=await p.evaluate(()=>({
     theme:document.documentElement.dataset.theme||'auto',
-    renderer:window.__museum?.renderer?{
-      calls:window.__museum.renderer.info.render.calls,
-      triangles:window.__museum.renderer.info.render.triangles,
-      dpr:window.__museum.renderer.getPixelRatio()
-    }:null,
+    rendererLoaded:Boolean(window.__museum?.renderer),
     panelOpen:document.body.classList.contains('kona-panel-open')
   }));
   rows.push({theme,view,errors,metrics});
