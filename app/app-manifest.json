@@ -1,5 +1,5 @@
 {
- "version": "7aa251c4a2cb",
+ "version": "1bfa4d47f3d6",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -24,7 +24,7 @@
   "assets/pwa/icon-v3-maskable-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/apple-touch-icon-v3.png": "R7r+34dBZMxUezo2xBD34dbHtfTyvjdCViUhs3wRamI=",
   "app/world-shell.html": "QuYnswz4I2bd1Ia426+RB7lfDb+Ey2xrrbNYkWzBr7M=",
-  "app/race-self-stage.js": "Wm8ajdIDvC9WbsGOZ88iIaOZhAiBtIozgGbpSXfxAUY=",
+  "app/race-self-stage.js": "j5qWdvY6rnZ8KbYRa40MrnetXQxKpWZobPZafGAlXz4=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
   "app/hall.js": "M6WqqoaUJ/mFgj+OiFrFwmAbeUFeF74V+13g6Gxd7Pg=",
