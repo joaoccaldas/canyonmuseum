@@ -23,9 +23,9 @@ const icon = name => {
 export function initKonaShell({ profile, settings, enter }) {
   consumeAuthCallback();
   const facts = () => ({
-    event: window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {},
-    week: window.__EVENT?.current_facts?.race_week || [],
-    places: window.__ISLAND?.places || [],
+    event: window.__EVENT?.current_facts?.event || window.__ENTRY_DATA?.event || window.__ISLAND?.race_2026 || {},
+    week: window.__EVENT?.current_facts?.race_week || window.__ENTRY_DATA?.week || [],
+    places: window.__ISLAND?.places || window.__ENTRY_DATA?.places || [],
   });
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
