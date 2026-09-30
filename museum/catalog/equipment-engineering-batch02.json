@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "batch": "engineering-02",
+  "purpose": "Reusable engineering components with assembled and exploded states for museum, My Race Setup, and engineering exhibits.",
+  "assets": [
+    {
+      "id": "dt-swiss-arc1100-db80-front",
+      "category": "wheel",
+      "brand": "DT Swiss",
+      "model": "ARC 1100 DICUT DB 80 front",
+      "status": "official-spec-driven",
+      "states": [
+        "assembled",
+        "exploded"
+      ]
+    },
+    {
+      "id": "dt-swiss-arc1100-db80-rear",
+      "category": "wheel",
+      "brand": "DT Swiss",
+      "model": "ARC 1100 DICUT DB 80 rear",
+      "status": "official-spec-driven",
+      "states": [
+        "assembled",
+        "exploded"
+      ]
+    },
+    {
+      "id": "dt-swiss-arc1100-disc-rear",
+      "category": "wheel",
+      "brand": "DT Swiss",
+      "model": "ARC 1100 DICUT Disc rear",
+      "status": "official-spec-driven",
+      "states": [
+        "assembled",
+        "exploded"
+      ]
+    },
+    {
+      "id": "shimano-fc-r9200-54-40-170",
+      "category": "drivetrain",
+      "brand": "Shimano",
+      "model": "Dura-Ace FC-R9200 54-40T 170 mm",
+      "status": "official-spec-driven",
+      "states": [
+        "assembled",
+        "exploded"
+      ]
+    },
+    {
+      "id": "shimano-cs-r9200-11-30",
+      "category": "drivetrain",
+      "brand": "Shimano",
+      "model": "Dura-Ace CS-R9200 11-30T",
+      "status": "official-spec-driven",
+      "states": [
+        "assembled",
+        "exploded"
+      ]
+    },
+    {
+      "id": "profile-design-43asc-400",
+      "category": "cockpit",
+      "brand": "Profile Design",
+      "model": "43 ASC Carbon Extensions 400 mm",
+      "status": "official-spec-driven",
+      "states": [
+        "assembled",
+        "exploded"
+      ]
+    }
+  ]
+}
