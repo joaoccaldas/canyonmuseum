@@ -163,15 +163,18 @@ def make_shoe(aid,profile,upper_mat,overlay_mat,outsole_kind="flat",tech=None,ye
         sole.append((x,w,z0,z1))
     mid=loft(aid+"_MIDSOLE",sole,FOAM_WHITE,asm,.006)
     upper=[]
-    heights=[.095,.112,.105,.088,.062,.037,.018]
+    heights=profile.get("upper_heights",[.095,.112,.105,.088,.062,.037,.018])
     for (x,w,z0,z1),h in zip(sole,heights):
         upper.append((x,w*.82,z1-.003,z1+h))
     loft(aid+"_UPPER",upper,upper_mat,asm,.006)
 
     # historical overlays/heel counter
     cube(aid+"_HEEL_COUNTER",(sole[0][0]+.015,0,upper[0][3]-.030),(.025,heel*.72,.030),overlay_mat,asm,.010)
-    # side overlay panel, not a copied logo
     cube(aid+"_SIDE_REINFORCEMENT",(.010,-fore*.72,upper[3][2]+.025),(.090,.003,.010),overlay_mat,asm,.004)
+    if profile.get("toe_overlay",False):
+        cube(aid+"_TOE_OVERLAY",(sole[-2][0],0,upper[-2][2]+.018),(.045,fore*.68,.014),overlay_mat,asm,.012)
+    if profile.get("eyestay",False):
+        cube(aid+"_EYESTAY",(-.020,0,upper[3][2]+.060),(.070,fore*.50,.010),overlay_mat,asm,.008)
 
     # outsole
     outsole=loft(aid+"_OUTSOLE",[(x,w*.96,max(.001,z0-.006),z0+.004) for x,w,z0,z1 in sole],
@@ -199,7 +202,9 @@ def make_shoe(aid,profile,upper_mat,overlay_mat,outsole_kind="flat",tech=None,ye
     elif tech=="pegasus-air":
         cyl(aid+"_HEEL_AIR",(-L*.29,0,.030),.021,.060,AIR,asm,rot=(math.pi/2,0,0),verts=32)
     elif tech=="visible-air":
+        # Air Max 1 museum cutaway: visible heel Air capsule and window frame.
         cyl(aid+"_VISIBLE_AIR",(-L*.28,-fore*.64,.030),.020,.050,AIR,asm,rot=(math.pi/2,0,0),verts=32)
+        cube(aid+"_AIR_WINDOW_FRAME",(-L*.28,-fore*.68,.030),(.030,.005,.018),overlay_mat,asm,.006)
     elif tech=="flyknit":
         # thin heel cup and minimalist outsole segmentation
         cube(aid+"_HEEL_CUP",(-L*.34,0,upper[0][2]+.040),(.030,heel*.78,.040),overlay_mat,asm,.012)
@@ -223,15 +228,24 @@ def make_shoe(aid,profile,upper_mat,overlay_mat,outsole_kind="flat",tech=None,ye
     return asm,exp
 
 profiles={
-"cortez":dict(length=.285,heel=.055,fore=.060,stack=.026,toe=.020),
-"oregon":dict(length=.283,heel=.052,fore=.058,stack=.022,toe=.014),
-"waffle":dict(length=.286,heel=.056,fore=.061,stack=.027,toe=.016),
-"premontreal":dict(length=.280,heel=.050,fore=.056,stack=.020,toe=.012),
-"tailwind":dict(length=.289,heel=.058,fore=.063,stack=.032,toe=.018),
-"sting":dict(length=.278,heel=.049,fore=.055,stack=.019,toe=.011),
-"pegasus":dict(length=.290,heel=.060,fore=.064,stack=.032,toe=.020),
-"airmax1":dict(length=.292,heel=.061,fore=.065,stack=.036,toe=.021),
-"flyknit":dict(length=.286,heel=.054,fore=.060,stack=.025,toe=.023),
+"cortez":dict(length=.285,heel=.055,fore=.060,stack=.028,toe=.018,
+    upper_heights=[.100,.114,.108,.090,.060,.032,.014],toe_overlay=True,eyestay=True),
+"oregon":dict(length=.283,heel=.052,fore=.058,stack=.021,toe=.012,
+    upper_heights=[.090,.101,.094,.076,.050,.028,.012],toe_overlay=True,eyestay=True),
+"waffle":dict(length=.286,heel=.056,fore=.061,stack=.027,toe=.015,
+    upper_heights=[.098,.110,.102,.083,.055,.031,.013],toe_overlay=True,eyestay=True),
+"premontreal":dict(length=.280,heel=.050,fore=.056,stack=.018,toe=.009,
+    upper_heights=[.082,.090,.083,.066,.043,.022,.008],toe_overlay=True,eyestay=True),
+"tailwind":dict(length=.289,heel=.058,fore=.063,stack=.033,toe=.017,
+    upper_heights=[.105,.117,.110,.091,.061,.033,.014],toe_overlay=True,eyestay=True),
+"sting":dict(length=.278,heel=.049,fore=.055,stack=.018,toe=.008,
+    upper_heights=[.080,.087,.080,.063,.040,.020,.007],toe_overlay=True,eyestay=True),
+"pegasus":dict(length=.290,heel=.060,fore=.064,stack=.034,toe=.019,
+    upper_heights=[.107,.120,.114,.094,.063,.035,.015],toe_overlay=True,eyestay=True),
+"airmax1":dict(length=.292,heel=.061,fore=.065,stack=.039,toe=.020,
+    upper_heights=[.112,.125,.118,.098,.066,.037,.016],toe_overlay=True,eyestay=True),
+"flyknit":dict(length=.286,heel=.054,fore=.060,stack=.024,toe=.022,
+    upper_heights=[.088,.097,.091,.073,.048,.027,.010],toe_overlay=False,eyestay=False),
 }
 
 roots=[]
@@ -258,7 +272,7 @@ bpy.ops.wm.save_as_mainfile(filepath=str(OUT/"nike_running_archive_batch04.blend
 
 # QA scene
 scene.render.engine="CYCLES";scene.cycles.device="CPU";scene.cycles.samples=8
-scene.render.resolution_x=1000;scene.render.resolution_y=560;scene.render.resolution_percentage=100
+scene.render.resolution_x=1200;scene.render.resolution_y=620;scene.render.resolution_percentage=100
 scene.render.image_settings.file_format="JPEG";scene.render.image_settings.quality=82
 qa=empty("QA_ROOT")
 cube("QA_FLOOR",(0,0,-.22),(3.8,1.1,.025),mat("MAT_FLOOR",(.065,.065,.070),.80),qa,.003)
@@ -272,7 +286,7 @@ def hide_tree(root,v):
 
 pairs=[(roots[i],roots[i+1]) for i in range(0,len(roots),2)]
 for _,exp in pairs:hide_tree(exp,True)
-for i,(asm,_) in enumerate(pairs):asm.location=(-3.0+i*.75,0,0)
+for i,(asm,_) in enumerate(pairs):asm.location=(-3.2+i*.80,0,0)
 scene.render.filepath=str(PREV/"heritage-lineup.jpg");bpy.ops.render.render(write_still=True)
 
 # per asset
