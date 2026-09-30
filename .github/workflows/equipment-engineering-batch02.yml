@@ -1,0 +1,75 @@
+name: Build engineering asset batch 02
+
+on:
+  push:
+    branches:
+      - assets/kona-environment-pack-20260930
+    paths:
+      - blender/equipment_engineering_batch02.py
+      - museum/catalog/equipment-engineering-batch02.json
+      - museum/instructions/equipment-engineering-batch02.json
+      - .github/workflows/equipment-engineering-batch02.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: engineering-batch02-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install Blender module
+        run: python -m pip install --upgrade pip bpy
+      - name: Build assets
+        run: python blender/equipment_engineering_batch02.py
+      - name: Validate outputs
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('assets/equipment-engineering/batch-02')
+          glbs=sorted(root.glob('*.glb'))
+          assert len(glbs)==6, f'expected 6 GLBs, got {len(glbs)}'
+          for p in glbs:
+              b=p.read_bytes()
+              assert b[:4]==b'glTF'
+              assert int.from_bytes(b[8:12],'little')==len(b)
+              assert len(b)<1_500_000, f'{p} too heavy: {len(b)}'
+              print(p,len(b))
+          report=json.loads((root/'build-report.json').read_text())
+          assert len(report['assets'])==6
+          # hard dimensional checks from official published data
+          a=report['assets']
+          assert a['dt-swiss-arc1100-db80-front']['rim_height_mm']==80
+          assert a['dt-swiss-arc1100-db80-front']['inner_width_mm']==20
+          assert a['dt-swiss-arc1100-db80-front']['outer_width_mm']==32
+          assert a['dt-swiss-arc1100-disc-rear']['outer_width_mm']==27
+          assert a['shimano-fc-r9200-54-40-170']['pcd_mm']==110
+          assert a['shimano-fc-r9200-54-40-170']['q_factor_mm']==148
+          assert a['shimano-fc-r9200-54-40-170']['crank_length_mm']==170
+          assert a['shimano-cs-r9200-11-30']['teeth']==[11,12,13,14,15,16,17,19,21,24,27,30]
+          assert a['profile-design-43asc-400']['extension_length_mm']==400
+          assert a['profile-design-43asc-400']['angle_deg']==43
+          assert (root/'previews/assembled-qa.jpg').exists()
+          assert (root/'previews/exploded-qa.jpg').exists()
+          print('engineering batch 02 QA passed')
+          PY
+      - name: Commit generated artifacts
+        run: |
+          if [ -z "$(git status --porcelain -- assets/equipment-engineering/batch-02)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/equipment-engineering/batch-02
+          git add -f assets/equipment-engineering/batch-02/engineering_batch02.blend
+          git commit -m "build: generate engineering asset batch 02 [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
