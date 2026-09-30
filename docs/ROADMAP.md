@@ -61,6 +61,17 @@ The 2026 IRONMAN World Championship is in Kailua-Kona on **10 October 2026**, so
 - Browser sanity crawl every map area, guided-tour stop and Studio deep link.
 - Performance budget: progressive room loading, no new heavy model in the launch path without a measured frame/load budget.
 
+### P0.5 — My Kona Setup V0
+
+Purpose: connect customization, ownership, sharing and future equipment into one small composable object before adding more branded worlds.
+
+- Existing Studio bike can be saved/updated in **My Kona Setup**.
+- Setup persists locally and shares through a validated deep link.
+- V0 slots: bike, inherited wheels, helmet placeholder, shoes placeholder.
+- No brand-specific logic, account, backend or new 3D dependency.
+- New assets may fill a slot only after the asset/capability contract and mobile budget pass.
+- Next proof: one high-quality non-Canyon bike should enter the same bike slot with no setup-code change; then one validated shoe should fill the shoe slot.
+
 ### P1 — Kona discovery and return loop
 - One canonical Passport state model; retire duplicate legacy discovery state only after migration tests.
 - Nine real hidden finds with rarity that unlocks **experiences**, not arbitrary currency.

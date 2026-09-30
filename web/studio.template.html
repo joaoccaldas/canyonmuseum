@@ -36,14 +36,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}a{colo
 .hero p{font-size:13px;opacity:.85;margin-top:8px}
 body.light-scene .hero{color:var(--ink);text-shadow:none}
 /* dock: tabs + sheet (mobile first: a bottom sheet) */
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;flex-direction:column;max-height:var(--sheet);background:var(--paper);border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.25);padding-bottom:var(--safe-b);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;flex-direction:column;max-height:var(--sheet);overflow:hidden;background:var(--paper);border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.25);padding-bottom:var(--safe-b);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
 .dock.min{transform:translateY(calc(100% - 64px - var(--safe-b)))}
 .grab{align-self:center;width:44px;height:5px;border-radius:3px;background:rgba(18,24,29,.18);margin:8px 0 2px}
 .tabs{display:flex;gap:4px;padding:6px 10px 8px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tabs button{flex:0 0 auto;height:38px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted)}
+.tabs button{flex:0 0 auto;height:44px;min-width:44px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted);scroll-margin-inline:12px}
 .tabs button[aria-selected=true]{background:var(--ink);color:var(--paper)}
-.panel{overflow:auto;padding:4px 14px 16px;overscroll-behavior:contain}
+.panel{flex:1;min-height:0;overflow:auto;padding:4px 14px 16px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 /* product grid */
 .filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}
 .filters button{flex:0 0 auto;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:600}
@@ -113,6 +113,10 @@ body.dreaming #dreamTitle.on{opacity:1}
 .card-facts b.P{background:#d5ecea}.card-facts b.F{background:#f6e6c8}.card-facts b.I{background:#ece6f6}.card-facts b.G{background:#fde2ec}
 .card-note{margin-top:10px;font-size:12px;color:var(--muted)}.card-note summary{font-weight:600;color:var(--ink);cursor:pointer}.card-note p{margin-top:6px;line-height:1.6}
 .src{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.7}.src a{color:var(--reef);font-weight:600}
+/* My Kona Setup V0 */
+.setup-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 14px}.setup-head small{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--reef);font-weight:700}.setup-head h3{font:400 30px/1 var(--serif);margin-top:4px}.setup-score{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.setup-grid{display:grid;gap:8px}.setup-slot{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px;min-height:62px;padding:10px 12px;border:1px solid var(--line);border-radius:15px;background:#fff}.setup-slot i{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--sand);font-style:normal;font-size:17px}.setup-slot b{display:block;font-size:12.5px}.setup-slot small{display:block;font-size:10.5px;color:var(--faint);margin-top:2px}.setup-slot .status{font-size:11px;font-weight:700;color:var(--reef)}.setup-slot.soon{opacity:.68}.setup-slot.soon .status{color:var(--faint)}
+.setup-actions{position:sticky;bottom:0;z-index:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px -4px -4px;padding:10px 4px 6px;background:linear-gradient(180deg,rgba(251,249,245,0),var(--paper) 22%,var(--paper) 100%)}.setup-actions .btn{min-height:48px;width:100%;padding:0 10px;background:var(--paper);white-space:nowrap}.setup-actions .btn:only-child{grid-column:1/-1}.setup-actions .btn.primary{background:var(--ink)}.setup-note{font-size:11px;line-height:1.55;color:var(--faint);margin-top:12px;padding-bottom:2px}
 /* desktop: the sheet becomes a side panel */
 @media (min-width:900px){
   :root{--sheet:100dvh}
@@ -148,6 +152,7 @@ body.dreaming #dreamTitle.on{opacity:1}
   <div class="grab" aria-hidden="true"></div>
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="bikes" aria-selected="true">Bikes</button>
+    <button role="tab" data-tab="setup">Setup</button>
     <button role="tab" data-tab="paint">Paint</button>
     <button role="tab" data-tab="themes">Themes</button>
     <button role="tab" data-tab="scene">Scene</button>
