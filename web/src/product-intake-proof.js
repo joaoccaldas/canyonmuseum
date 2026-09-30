@@ -133,12 +133,38 @@ canvas.addEventListener('pointerup',e=>{
   const hit=ray.intersectObjects(pickables,true).find(h=>h.object.userData.wingBike);
   if(hit)inspect(hit.object.userData.wingBike);
 });
-document.querySelectorAll('[data-room]').forEach(b=>b.onclick=()=>{
-  const room=atlas.rooms.find(r=>r.id===b.dataset.room); if(!room)return;
-  controls.target.copy(room.center).add(new THREE.Vector3(0,1.2,0));
-  camera.position.copy(room.view).add(new THREE.Vector3(0,2.2,4.5));
+function focusRoom(room){
+  if(!room)return false;
+  camera.position.copy(room.view).add(new THREE.Vector3(0,1.6,0));
+  controls.target.copy(room.look);
   controls.update();
-});
+  return true;
+}
+function focusProduct(id){
+  const inst=atlas.bikes.find(x=>x.data.key===id);
+  if(!inst?.bike)return false;
+  scene.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(inst.bike);
+  const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+  const maxDim=Math.max(size.x,size.y,size.z,.1);
+  const dir=new THREE.Vector3(inst.view.x-inst.face.x,0,inst.view.z-inst.face.z);
+  if(dir.lengthSq()<.01)dir.set(0,0,1); else dir.normalize();
+  const dist=THREE.MathUtils.clamp(maxDim*2.2,1.5,4.8);
+  camera.position.copy(center).addScaledVector(dir,dist).add(new THREE.Vector3(0,Math.max(.55,maxDim*.28),0));
+  controls.target.copy(center);
+  controls.update();
+  camera.updateMatrixWorld(true);
+  return true;
+}
+function modelStatus(id){
+  const inst=atlas.bikes.find(x=>x.data.key===id);
+  if(!inst?.bike)return {exists:!!inst,loaded:false};
+  scene.updateMatrixWorld(true); camera.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(inst.bike),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
+  const ndc=center.clone().project(camera);
+  return {exists:true,loaded:true,size:{x:size.x,y:size.y,z:size.z},center:{x:center.x,y:center.y,z:center.z},ndc:{x:ndc.x,y:ndc.y,z:ndc.z},onscreen:Math.abs(ndc.x)<=1&&Math.abs(ndc.y)<=1&&ndc.z>=-1&&ndc.z<=1};
+}
+document.querySelectorAll('[data-room]').forEach(b=>b.onclick=()=>focusRoom(atlas.rooms.find(r=>r.id===b.dataset.room)));
 
 function focusProduct(id){
   const inst=atlas.bikes.find(x=>x.data.key===id);
@@ -182,6 +208,8 @@ window.__intakeProof={
   DATA,mode,atlas,requested,diagnostics:window.__intakeProofDiagnostics,
   get loaded(){return loaded;},get loadError(){return loadError;},
   inspectById(id){const inst=atlas.bikes.find(x=>x.data.key===id);if(inst)inspect(inst);return !!inst;},
+  focusById:focusProduct,
+  modelStatus,
   focusById(id){return focusProduct(id);},
   metrics(){
     const avg=fpsWindow.length?fpsWindow.reduce((a,b)=>a+b,0)/fpsWindow.length:0;
