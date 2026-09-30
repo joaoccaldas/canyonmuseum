@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const steps = [['catalogue', 'tools/build_catalog.mjs'], ['registry', 'tools/build_registry.mjs'], ['museum', 'web/build_landing.mjs'], ['studio', 'web/build_studio.mjs'],
+const steps = [['entry-data', 'tools/build_entry_data.mjs'], ['catalogue', 'tools/build_catalog.mjs'], ['registry', 'tools/build_registry.mjs'], ['museum', 'web/build_landing.mjs'], ['studio', 'web/build_studio.mjs'],
   ['collection', 'tools/build_collection.mjs'], ['experiences', 'web/build_experience.mjs'], ['hardening', 'tools/harden_pages.mjs']];
 for (const [name, file] of steps) {
   const t = Date.now();
