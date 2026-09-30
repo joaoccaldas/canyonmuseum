@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/external-account.schema.json",
+  "title": "External Account V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "user_id",
+    "provider",
+    "provider_user_id",
+    "scopes",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^external-account:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "external-account"
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^user:[a-z0-9:_-]+$"
+    },
+    "provider": {
+      "enum": [
+        "strava",
+        "garmin",
+        "samsung-health",
+        "zwift",
+        "other"
+      ]
+    },
+    "provider_user_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "status": {
+      "enum": [
+        "connected",
+        "expired",
+        "revoked",
+        "error"
+      ]
+    },
+    "connected_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "last_sync_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "sync_cursor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "token_storage": {
+      "const": "server-side-only",
+      "description": "OAuth tokens are never serialized into this client-visible object."
+    }
+  },
+  "additionalProperties": false
+}
