@@ -49,10 +49,12 @@ export function initKonaShell({ profile, settings, enter }) {
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
     await renderAvatarHome(body,{
       profile,
+      settings,
       openMuseum:()=>{ close(); enter?.(); },
       openGarage:garage,
       openPlan:plan,
       openCollection:collection,
+      openDiscover:explore,
     });
   }
 
