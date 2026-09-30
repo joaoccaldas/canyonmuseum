@@ -15,3 +15,6 @@ Scope:
 - mobile map uses a full-screen map-first presentation
 
 This evidence-only commit triggers deterministic generation and visual proof.
+
+Synchronized generated head: `997115d7af2b131e3879bfd49c85876c3973050a`.
+This evidence-only follow-up triggers the full pull-request release gates against the synchronized tree.
