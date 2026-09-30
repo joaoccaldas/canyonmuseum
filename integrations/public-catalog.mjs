@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalog = JSON.parse(fs.readFileSync(path.join(root, "integrations/public-catalog.json"), "utf8"));
+const konaSources = JSON.parse(fs.readFileSync(path.join(root, "integrations/sources/kona-2026.ironman.json"), "utf8"));
 
 function norm(v) {
   return typeof v === "string" ? v.trim().toLowerCase() : null;
@@ -40,6 +41,16 @@ export function listEventPlaces(eventId, { category=null } = {}) {
 export function getPlace(id) {
   if (typeof id !== "string") return null;
   return catalog.places.find(p => p.id === id) ?? null;
+}
+
+export function listEventSources(eventId, { currentOnly = false } = {}) {
+  if (eventId !== konaSources.event_id) return [];
+  return konaSources.sources.filter(s => !currentOnly || s.status === "current");
+}
+
+export function getEventSchedule(eventId) {
+  if (eventId !== konaSources.event_id) return [];
+  return Array.isArray(konaSources.current_facts?.race_week) ? [...konaSources.current_facts.race_week] : [];
 }
 
 export function getPublicCatalogMeta() {
