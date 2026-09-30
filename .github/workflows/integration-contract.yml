@@ -51,3 +51,6 @@ jobs:
 
       - name: Validate rider-interface candidate intake
         run: node integrations/candidate-rider-interface.test.mjs
+
+      - name: Validate product experience aggregation
+        run: node integrations/product-experience.test.mjs
