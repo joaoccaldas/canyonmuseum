@@ -140,22 +140,6 @@ function focusRoom(room){
   controls.update();
   return true;
 }
-function focusProduct(id){
-  const inst=atlas.bikes.find(x=>x.data.key===id);
-  if(!inst?.bike)return false;
-  scene.updateMatrixWorld(true);
-  const box=new THREE.Box3().setFromObject(inst.bike);
-  const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
-  const maxDim=Math.max(size.x,size.y,size.z,.1);
-  const dir=new THREE.Vector3(inst.view.x-inst.face.x,0,inst.view.z-inst.face.z);
-  if(dir.lengthSq()<.01)dir.set(0,0,1); else dir.normalize();
-  const dist=THREE.MathUtils.clamp(maxDim*2.2,1.5,4.8);
-  camera.position.copy(center).addScaledVector(dir,dist).add(new THREE.Vector3(0,Math.max(.55,maxDim*.28),0));
-  controls.target.copy(center);
-  controls.update();
-  camera.updateMatrixWorld(true);
-  return true;
-}
 function modelStatus(id){
   const inst=atlas.bikes.find(x=>x.data.key===id);
   if(!inst?.bike)return {exists:!!inst,loaded:false};
@@ -210,7 +194,6 @@ window.__intakeProof={
   inspectById(id){const inst=atlas.bikes.find(x=>x.data.key===id);if(inst)inspect(inst);return !!inst;},
   focusById:focusProduct,
   modelStatus,
-  focusById(id){return focusProduct(id);},
   metrics(){
     const avg=fpsWindow.length?fpsWindow.reduce((a,b)=>a+b,0)/fpsWindow.length:0;
     return {
