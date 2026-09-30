@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { coarse as coarseDetect, small } from './detect.js';
+import {
+  ART_AXIS_FIX, ART_FACE_HALL, assetMeshes, bakedAssetMesh, box,
+  clamp01, cloneBikeForCollection, glow, matte, normalizeAssetGroup,
+  physical, repaintBike, smoothstep01, wireBike,
+} from './engine/artworld-utils.js';
 
 const ASSET_URL = 'assets/artworld/artworld_assets.glb';
 
@@ -53,175 +58,6 @@ const PLACE_DEFS = [
 
 // the secret collection's liveries live in museum/skins/museum.json (group: artworld)
 const HORROR_THEMES = (window.__SKINS?.skins || []).filter(s => s.group === 'artworld').map(s => ({ name: s.name, paint: s.frame, accent: s.accent, note: s.note }));
-
-const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const smooth = t => t * t * (3 - 2 * t);
-
-function physical(color, roughness=.28, metalness=.1, emissive=null) {
-  return new THREE.MeshPhysicalMaterial({
-    color,
-    roughness,
-    metalness,
-    clearcoat: .82,
-    clearcoatRoughness: .07,
-    envMapIntensity: 1.8,
-    emissive: emissive || '#000000',
-    emissiveIntensity: emissive ? .55 : 0,
-  });
-}
-
-function matte(color, roughness=.75, metalness=.02) {
-  return new THREE.MeshStandardMaterial({ color, roughness, metalness, envMapIntensity: .7 });
-}
-
-function glow(color, opacity=.9) {
-  return new THREE.MeshBasicMaterial({
-    color,
-    transparent: opacity < 1,
-    opacity,
-    depthWrite: opacity >= 1,
-    toneMapped: false,
-  });
-}
-
-function box(w, h, d, material) {
-  const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
-  o.castShadow = false;
-  o.receiveShadow = true;
-  return o;
-}
-
-function makeTube(a, b, r, material) {
-  const va = new THREE.Vector3(...a), vb = new THREE.Vector3(...b);
-  const d = vb.clone().sub(va), len = d.length();
-  const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 8), material);
-  o.position.copy(va).add(vb).multiplyScalar(.5);
-  o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d.normalize());
-  return o;
-}
-
-function wireBike(material) {
-  const g = new THREE.Group();
-  const wheelGeo = new THREE.TorusGeometry(.34, .018, 5, 22);
-  for (const x of [-.55, .55]) {
-    const w = new THREE.Mesh(wheelGeo, material);
-    w.rotation.y = Math.PI / 2;
-    w.position.set(x, .38, 0);
-    g.add(w);
-  }
-  const pts = {
-    bb: [-.05,.37,0], seat: [-.12,.84,0], head: [.38,.78,0],
-    rear: [-.55,.38,0], front: [.55,.38,0], cockpit: [.53,.94,0],
-  };
-  for (const [a,b] of [['rear','bb'],['bb','seat'],['seat','head'],['head','bb'],['head','front'],['seat','rear'],['head','cockpit']]) {
-    g.add(makeTube(pts[a], pts[b], .018, material));
-  }
-  return g;
-}
-
-function assetMeshes(asset, prefixes) {
-  const matches = [];
-  asset.traverse(src => {
-    if (src.isMesh && prefixes.some(p => src.name.startsWith(p))) matches.push(src);
-  });
-  return matches;
-}
-
-const ART_AXIS_FIX = new THREE.Matrix4().makeRotationX(Math.PI/2);
-const ART_FACE_HALL = new THREE.Matrix4()
-  .makeRotationY(Math.PI/2)
-  .multiply(ART_AXIS_FIX);
-
-function bakedAssetMesh(src, authoredOrientation=ART_AXIS_FIX) {
-  // The procedural Blender generator intentionally treats its Y coordinate as vertical.
-  // Blender is Z-up, so glTF exports that intended vertical along -Z. Preserve each
-  // node's full authored transform, then bake the runtime axis/orientation correction
-  // into geometry before reparenting. After this, every exhibit is ordinary Three.js Y-up.
-  const c = new THREE.Mesh(src.geometry.clone(), src.material);
-  c.name = src.name;
-  c.geometry.applyMatrix4(src.matrixWorld);
-  if (authoredOrientation) c.geometry.applyMatrix4(authoredOrientation);
-  c.position.set(0,0,0);
-  c.rotation.set(0,0,0);
-  c.scale.set(1,1,1);
-  c.updateMatrix();
-  return c;
-}
-
-function normalizeAssetGroup(g) {
-  // Normalize in authored local space, independent of where the exhibit will live.
-  // Restoring the transform afterwards keeps placement and centering as separate concerns.
-  const pos = g.position.clone(), quat = g.quaternion.clone(), scale = g.scale.clone();
-  g.position.set(0,0,0);
-  g.quaternion.identity();
-  g.scale.set(1,1,1);
-  g.updateMatrixWorld(true);
-  const bounds = new THREE.Box3().setFromObject(g);
-  if (!bounds.isEmpty()) {
-    const center = bounds.getCenter(new THREE.Vector3());
-    const dy = bounds.min.y;
-    g.traverse(o => {
-      if (o.isMesh) o.geometry.translate(-center.x, -dy, -center.z);
-    });
-  }
-  g.position.copy(pos);
-  g.quaternion.copy(quat);
-  g.scale.copy(scale);
-  g.updateMatrixWorld(true);
-  return g;
-}
-
-function cloneBikeForCollection(root) {
-  // Three.js deep-clones userData with JSON serialization. Museum bike meshes carry
-  // a live back-reference to their piece, so sanitize only during the synchronous clone.
-  const saved = [];
-  root.traverse(o => {
-    saved.push([o, o.userData]);
-    o.userData = o.userData?.part ? { part: o.userData.part } : {};
-  });
-  try {
-    return root.clone(true);
-  } finally {
-    for (const [o, userData] of saved) o.userData = userData;
-  }
-}
-
-function repaintBike(root, theme, simplified=false) {
-  root.traverse(o => {
-    if (!o.isMesh) return;
-    if (simplified) {
-      const p = o.userData?.part || '';
-      if (!/frame|fork|wheel_front|wheel_rear|base_bar|basebar|extensions|seatpost|saddle/.test(p)) {
-        o.visible = false;
-        return;
-      }
-    }
-    const source = [].concat(o.material || []);
-    const mats = source.map(m => {
-      const c = m.clone();
-      c.envMapIntensity = 2.3;
-      if (c.name === 'paint_frame' || /paint/i.test(c.name || '')) {
-        c.color?.set(theme.paint);
-        c.roughness = .085;
-        c.metalness = Math.max(c.metalness || 0, .18);
-        if ('clearcoat' in c) {
-          c.clearcoat = 1;
-          c.clearcoatRoughness = .045;
-        }
-      } else if (/decal|logo|graphic/i.test(c.name || '')) {
-        c.color?.set(theme.accent);
-        if (c.emissive) {
-          c.emissive.set(theme.accent);
-          c.emissiveIntensity = .12;
-        }
-      }
-      return c;
-    });
-    o.material = Array.isArray(o.material) ? mats : mats[0];
-    o.castShadow = false;
-    o.receiveShadow = false;
-  });
-}
 
 export async function initArtWorld(museum) {
   const { scene, camera, P, PIECES, pickables, obstacles } = museum;
