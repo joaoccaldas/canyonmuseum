@@ -63,6 +63,7 @@ function openMuseum(room) {
 }
 
 initAppShell();
+document.getElementById('entryInstall')?.addEventListener('click',()=>document.getElementById('installBtn')?.click());
 const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
 window.__konaShell = shell;
 
@@ -115,6 +116,8 @@ function paintQuest(step) {
     const on = draft[key] === id ? ' on' : '';
     return `<button type="button" class="quest-choice${on}" data-set="${key}" data-value="${id}">${label}</button>`;
   }).join('');
+  const stepNo={intent:1,bike:2,shoe:3,goal:4};
+  const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 4"><span>${stepNo[step]} / 4</span><i style="--p:${stepNo[step]}"></i></div>` : '';
   const screens = {
     intent: `<p class="eyebrow">Why are you here?</p><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
     bike: `<p class="eyebrow">Choose your bike</p><div class="kona-intents">${choices(BIKES, 'bikeId')}</div><button type="button" class="quest-choice" data-set="bikeId" data-value="">Choose later</button>`,
@@ -158,7 +161,7 @@ function paintQuest(step) {
     return;
   }
   host.hidden = false;
-  host.innerHTML = screens[step] || screens.intent;
+  host.innerHTML = progress + (screens[step] || screens.intent);
   host.querySelectorAll('[data-set]').forEach(button => button.addEventListener('click', () => {
     const next = readQuest();
     next[button.dataset.set] = button.dataset.value || null;
