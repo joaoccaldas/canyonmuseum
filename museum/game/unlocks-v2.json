@@ -1,0 +1,93 @@
+{
+  "schema": "unlock-registry-v2",
+  "unlocks": [
+    {
+      "id": "unlock:dream-slot-2",
+      "requirements": [
+        {
+          "type": "level",
+          "min": 2
+        }
+      ],
+      "reward": {
+        "type": "equipment-slot",
+        "relationship": "dream",
+        "count": 1
+      }
+    },
+    {
+      "id": "unlock:volcanic-passport-frame",
+      "requirements": [
+        {
+          "type": "collection",
+          "id": "collection:kona-elements",
+          "complete": true
+        }
+      ],
+      "reward": {
+        "type": "cosmetic",
+        "id": "frame:volcanic"
+      }
+    },
+    {
+      "id": "unlock:wind-tunnel-archive",
+      "requirements": [
+        {
+          "type": "collection",
+          "id": "collection:aero-revolution",
+          "complete": true
+        }
+      ],
+      "reward": {
+        "type": "room",
+        "id": "room:wind-tunnel-archive"
+      }
+    },
+    {
+      "id": "unlock:pack-race-day-skin",
+      "requirements": [
+        {
+          "type": "collection",
+          "id": "collection:race-day",
+          "complete": true
+        }
+      ],
+      "reward": {
+        "type": "challenge-cosmetic",
+        "id": "pack:race-day"
+      }
+    },
+    {
+      "id": "unlock:prototype-vault",
+      "requirements": [
+        {
+          "type": "collection",
+          "id": "collection:hidden-engineering",
+          "complete": true
+        },
+        {
+          "type": "level",
+          "min": 7
+        }
+      ],
+      "reward": {
+        "type": "room",
+        "id": "room:prototype-vault"
+      }
+    },
+    {
+      "id": "unlock:dream-slot-3",
+      "requirements": [
+        {
+          "type": "level",
+          "min": 5
+        }
+      ],
+      "reward": {
+        "type": "equipment-slot",
+        "relationship": "dream",
+        "count": 1
+      }
+    }
+  ]
+}
