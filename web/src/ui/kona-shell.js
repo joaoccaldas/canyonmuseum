@@ -2,6 +2,9 @@
 // Navigation/utility only. The 3D renderer remains the existing proven museum runtime.
 import { readGameState, gameProgress } from '../engine/game-state.js';
 import { ensureProgression } from '../engine/progression.js';
+import { allProducts, getProduct } from '../engine/catalog.js';
+import { artifactPrimaryAction, artifactViewModel } from './artifact-model.js';
+import { addToGarage, groupGarage, readGarage, removeFromGarage } from '../engine/garage.js';
 import { consumeAuthCallback, sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -34,7 +37,7 @@ export function initKonaShell({ profile, settings, enter }) {
     '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
       '<button type="button" data-tab="home">'+icon('now')+'<span>Home</span></button>'+
       '<button type="button" data-tab="discover">'+icon('explore')+'<span>Discover</span></button>'+
-      '<a href="Studio.html#setup" data-tab="garage">'+icon('setup')+'<span>Garage</span></a>'+
+      '<button type="button" data-tab="garage">'+icon('setup')+'<span>Garage</span></button>'+
       '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
       '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
     '</nav>';
@@ -104,6 +107,29 @@ export function initKonaShell({ profile, settings, enter }) {
     account.querySelector('[data-signout]')?.addEventListener('click',async()=>{await signOut();me();});
   }
 
+
+  function artifact(productId){
+    const product=getProduct(productId); if(!product)return;
+    const vm=artifactViewModel(product), primary=artifactPrimaryAction(vm);
+    title.textContent=vm.title; eyebrow.textContent=vm.eyebrow;
+    const facts=vm.facts.map(x=>'<li>'+esc(x)+'</li>').join('');
+    body.innerHTML='<section class="kona-artifact"><div class="kona-artifact-media">'+(product.image?'<img src="'+esc(product.image)+'" alt="">':'<div class="kona-artifact-proxy">3D artifact</div>')+'</div><small>'+esc(vm.meta)+'</small><h3>'+esc(vm.title)+'</h3><ul>'+facts+'</ul><div class="kona-artifact-actions">'+(vm.actions.inspect?'<button class="kona-primary" data-inspect>'+esc(primary.label)+' <span>→</span></button>':'')+'<button type="button" data-garage>Add to Garage</button></div><p class="kona-source-note" data-artifact-status>Save it as Dream now. Owned/Try are available in Garage.</p></section>';
+    body.querySelector('[data-garage]')?.addEventListener('click',e=>{const r=addToGarage(productId,{relationship:'dream'});e.currentTarget.textContent=r.added?'Added to Garage':'Already in Garage';const st=body.querySelector('[data-artifact-status]');if(st)st.textContent='Saved as Dream · persists on this device.';});
+    body.querySelector('[data-inspect]')?.addEventListener('click',()=>{close();enter?.(product.where?.[0]?.id||'hall');});
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
+  }
+
+  function garage(){
+    title.textContent='Garage';eyebrow.textContent='KONA · YOUR EQUIPMENT';
+    const products=new Map(allProducts().map(p=>[p.id,p])), groups=groupGarage();
+    const render=(relationship,label)=>{const rows=groups[relationship].filter(x=>products.has(x.productId));return '<section class="kona-section"><div class="kona-section-head"><h3>'+label+'</h3><small>'+rows.length+'</small></div><div class="kona-place-grid">'+(rows.length?rows.map(x=>{const p=products.get(x.productId);return '<article data-equipment="'+esc(x.id)+'"><small>'+esc(p.brand||'')+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.type||'artifact')+'</span><button type="button" data-open-product="'+esc(p.id)+'">View</button><button type="button" data-remove="'+esc(x.id)+'">Remove</button></article>';}).join(''):'<article><b>Nothing here yet</b><span>Add an artifact from Discover.</span></article>')+'</div></section>';};
+    body.innerHTML='<section class="kona-hero-card"><small>MY GARAGE</small><h3>Your equipment. Your story.</h3><p>Owned, Dream and Try stay separate.</p><button class="kona-primary" type="button" data-discover>Discover equipment <span>→</span></button></section>'+render('owned','Owned')+render('dream','Dream')+render('try','Try');
+    body.querySelector('[data-discover]')?.addEventListener('click',explore);
+    body.querySelectorAll('[data-open-product]').forEach(x=>x.addEventListener('click',()=>artifact(x.dataset.openProduct)));
+    body.querySelectorAll('[data-remove]').forEach(x=>x.addEventListener('click',()=>{removeFromGarage(x.dataset.remove);garage();}));
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
+  }
+
   function walkTo(id){
     close();
     const go=window.__museumGo;
@@ -111,7 +137,8 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   function explore(){
-    title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
+    title.textContent='Discover'; eyebrow.textContent='KONA · MACHINES · PEOPLE · PLACES · STORIES';
+    const products=allProducts().filter(p=>p.museum).slice(0,8);
     const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
     const brands=window.__BRANDROOMS?.rooms||[];
     const themes=window.__gallery?.rooms||[];
@@ -119,21 +146,25 @@ export function initKonaShell({ profile, settings, enter }) {
     const rooms=named.map(a=>row(a.floor==='upper'?'Upper floor':'Ground', a.short||a.name, a.sub||'', a.id)).join('')
       +brands.map(r=>row('Brand room', r.name, (r.products?.[0]?.model)||r.kicker||'', r.id)).join('')
       +themes.map(r=>row('Upper floor', r.name, r.sub||'', 'room-'+r.id)).join('');
+    const productCards=products.map(p=>'<button type="button" data-product="'+esc(p.id)+'"><article><small>'+esc((p.brand||'')+' · '+(p.year||''))+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.type||'artifact')+'</span></article></button>').join('');
     body.innerHTML=
-      '<section class="kona-hero-card"><small>WALK THE COAST</small><h3>Every room, one museum</h3><p>Kona hall, themed rooms, and the studies that have a place of their own.</p><button class="kona-primary" data-enter>Enter where you stand <span>→</span></button></section>'+
+      '<section class="kona-hero-card"><small>DISCOVER</small><h3>Machines, people, places and stories.</h3><p>Start with an artifact. Enter 3D only when you want the world.</p><button class="kona-primary" data-enter>Enter 3D world <span>→</span></button></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>Machines</h3><small>Canonical products</small></div><div class="kona-place-grid">'+productCards+'</div></section>'+
       '<section class="kona-section"><div class="kona-section-head"><h3>Rooms</h3><small>Tap to walk</small></div><div class="kona-place-grid">'+rooms+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
+    body.querySelectorAll('[data-product]').forEach(b=>b.addEventListener('click',()=>artifact(b.dataset.product)));
     body.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>walkTo(b.dataset.go)));
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
   }
 
   shell.querySelector('[data-tab=home]').onclick=now;
   shell.querySelector('[data-tab=discover]').onclick=explore;
+  shell.querySelector('[data-tab=garage]').onclick=garage;
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close();});
 
   const applyTheme=p=>{ const v=p?.appearance||'auto'; if(v==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme=v; };
   applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);
-  return { now, plan, me, explore, close };
+  return { now, plan, me, explore, garage, artifact, close };
 }
