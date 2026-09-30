@@ -6,9 +6,11 @@ import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
 import { saveQuestIdentity } from './engine/identity.js';
 import { readStorage } from './engine/storage.js';
+import { applyLocale, resolveLocale, t } from './i18n.js';
 import { BIKES, GOALS, INTENTS, SHOES, emptyQuest, questReady, relationshipFor } from './quest.js';
 
 const INTENT_KEY = 'speedmax.entryIntent.v1';
+const locale = applyLocale(document, resolveLocale({ browser: document.documentElement.lang || navigator.language }));
 const profile = createProfile();
 const settingsBridge = { open() {} };
 window.__konaSettingsBridge = settingsBridge;
@@ -182,7 +184,7 @@ if (existingIdentity) {
     ? `Your Kona is saved. Next: ${existingIdentity.goal.label}.`
     : 'Your Kona is saved. Pick up where you left off.';
   if (buildButton) {
-    buildButton.textContent = 'Continue your Kona';
+    buildButton.textContent = t('entry.continue', locale);
     buildButton.addEventListener('click', () => shell.now?.());
   }
   if (note) note.textContent = 'Your RaceIdentity stays private on this device unless you choose to save or share it.';
