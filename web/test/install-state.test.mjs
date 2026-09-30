@@ -6,5 +6,10 @@ test('iOS gets Add to Home Screen instructions',()=>{const s=installState({ios:t
 test('installed app hides install',()=>assert.equal(installState({standalone:true}).show,false));
 test('native container hides web install',()=>assert.equal(installState({native:true}).show,false));
 test('generic browser prompt is used when available',()=>assert.equal(installState({deferred:true}).action,'prompt'));
+test('generic browser without native prompt still exposes install instructions',()=>{
+  const s=installState({});
+  assert.deepEqual(s,{kind:'browser-instructions',show:true,action:'instructions'});
+  assert.match(installInstructions(s.kind),/browser menu|home screen/i);
+});
 
 // Release receipt: deterministic install state must remain covered by this suite.
