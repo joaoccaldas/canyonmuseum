@@ -10,3 +10,6 @@ Personal-space source changes:
 Deterministic bundle sync completed at `fd5f4a7e2ed557abe4d3a85766f47034ac5caf63`.
 The synchronized `app/kona-core.js` contains the Garage-first continuation and RaceIdentity artifact.
 This evidence-only commit triggers verification against the synchronized tree.
+
+Final Product-projection bundle sync: `02f07cf5839f685d43660968b59f30946eb377c1`.
+Garage and Me now resolve human product presentation through the shared lightweight public Product projection. This commit triggers current-tree verification.
