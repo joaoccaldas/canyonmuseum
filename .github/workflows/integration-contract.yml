@@ -27,3 +27,7 @@ jobs:
         run: node integrations/mcp-read-adapter.test.mjs
       - name: Validate story contract
         run: node integrations/story-contract.test.mjs
+      - name: Verify generated triathlon graph is current
+        run: node tools/build_triathlon_graph.mjs --check
+      - name: Validate triathlon graph integrity
+        run: node integrations/triathlon-graph.test.mjs
