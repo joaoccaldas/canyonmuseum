@@ -13,6 +13,7 @@ export const APP_STATE_KEYS = Object.freeze([
   'speedmax.coach.v1',
   'speedmax.atlas.hint',
   'speedmax.raceSetup.v1',
+  'speedmax.garage.v1',
   'speedmax.exp.tut.v1',
   'speedmax.hist.tut.v1',
 ]);
