@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export function createViewerInteraction({
   canvas, camera, controls, bike, meshesOf, partsMeta, groupLabels,
-  state, materials, coarse, reduced, views, query, queryAll,
+  state, materials, coarse, reduced, views, specialViews={}, query, queryAll,
 }) {
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
@@ -134,7 +134,7 @@ export function createViewerInteraction({
   }
 
   function flyTo(name, duration=1.4) {
-    const view = views[name];
+    const view = specialViews[name] || views[name];
     if (!view) return;
     const p1 = new THREE.Vector3(...view.p), t1 = new THREE.Vector3(...view.t);
     if (coarse && name === 'hero') p1.multiplyScalar(1.25);
