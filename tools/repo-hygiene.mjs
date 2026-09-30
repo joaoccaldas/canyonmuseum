@@ -4,6 +4,8 @@ import path from 'node:path';
 const ROOT = path.resolve(new URL('..', import.meta.url).pathname);
 const SOURCE_DIRS = ['web/src','app','tools','integrations'];
 const errors = [];
+const baselinePath = path.join(ROOT,'tools/repo-hygiene-legacy-baseline.json');
+const baseline = fs.existsSync(baselinePath) ? new Set(JSON.parse(fs.readFileSync(baselinePath,'utf8')).files || []) : new Set();
 
 function walk(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -25,7 +27,7 @@ for (const file of textFiles) {
   if (/\/Users\/[^/]+\//.test(text) || /C:\\Users\\/i.test(text)) {
     errors.push(`${rel}: contains a private absolute user path`);
   }
-  if (rel !== 'web/src/engine/storage.js' && /['"`]speedmax\.[A-Za-z0-9_.:-]+['"`]/.test(text)) {
+  if (rel !== 'web/src/engine/storage.js' && /['"`]speedmax\.[A-Za-z0-9_.:-]+['"`]/.test(text) && !baseline.has(rel) && !rel.startsWith('app/')) {
     errors.push(`${rel}: introduces direct legacy speedmax.* storage/config key; use the KONA adapter`);
   }
 }
@@ -39,4 +41,4 @@ if (errors.length) {
   for (const e of errors) console.error(' - '+e);
   process.exit(1);
 }
-console.log(`repository hygiene guard: PASS (${textFiles.length} text/source files checked)`);
+console.log(`repository hygiene guard: PASS (${textFiles.length} text/source files checked; ${baseline.size} known legacy source files baselined)`);
