@@ -205,6 +205,7 @@ function existingRaceIdentity() {
   } catch (_) { return null; }
 }
 
+document.getElementById('entryGuest')?.addEventListener('click', enterApp);
 document.getElementById('entrySignIn')?.addEventListener('click', () => paintQuest('save'));
 
 const existingIdentity = existingRaceIdentity();
