@@ -1,5 +1,5 @@
 {
- "version": "f1a557af75be",
+ "version": "3458e78d6fa3",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -12,8 +12,8 @@
   "assets/pwa/apple-touch-icon-v3.png"
  ],
  "files": {
-  "index.html": "JDzZt5Cf3oh139OCoGxN7z+RKtg3zTt1+i5Yaz6zyJo=",
-  "app/kona-core.js": "vvJ2rBb0aGnqk1FY3TZI0kTU68Fles2M9eAM/4doqJY=",
+  "index.html": "DzD8uQ/ILK4QmDkBx0HFNOXXvQeTq/mqI2PXfdE3EDA=",
+  "app/kona-core.js": "ozwG98438tH5M1WDQSvBvHftASbBcZhrirl40k39V24=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
   "manifest.webmanifest": "iMwobAXUqZuO4QiehlvXSScLu2l5YYEgZE5HthcHKlc=",
   "assets/pwa/icon-v3.svg": "kX7Wf3uv1TGV8QngLT59Ot0XX50qljLbo7CNgFQm1ws=",
