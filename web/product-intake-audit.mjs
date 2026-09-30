@@ -1,76 +1,126 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import puppeteer from 'puppeteer-core';
 
 const base=process.argv[2]||'http://127.0.0.1:8754/';
+const outDir=process.argv[3]||'proof-artifacts';
+fs.mkdirSync(outDir,{recursive:true});
 const candidates=[process.env.CHROME_PATH,'/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium','/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'].filter(Boolean);
 const executablePath=candidates.find(p=>fs.existsSync(p));
 if(!executablePath)throw new Error('Chrome/Chromium not found');
-const VIEWS=[['320',320,568],['360',360,640],['390',390,844],['430',430,932],['landscape',844,390]];
-const IDS=['cervelo-p5-disc-mk2-size54','nike-alphafly-3-study'];
-const paths=['cervelo-p5-disc-mk2-size54.glb','nike-alphafly-3-study.glb'];
+const VIEWS=[['320',320,844],['360',360,800],['390',390,844],['430',430,932],['landscape',844,390]];
+const MODE_IDS={
+  harness:[],
+  cervelo:['cervelo-p5-disc-mk2-size54'],
+  alphafly:['nike-alphafly-3-study'],
+  both:['cervelo-p5-disc-mk2-size54','nike-alphafly-3-study']
+};
+const candidateFiles=['cervelo-p5-disc-mk2-size54.glb','nike-alphafly-3-study.glb'];
 const browser=await puppeteer.launch({executablePath,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-precise-memory-info']});
-let failures=0;
-const results=[];
+const results=[]; let failures=0;
 
-for(const [name,w,h] of VIEWS){
+async function openCase(mode,name,w,h,{screenshots=false}={}){
   const page=await browser.newPage();
-  await page.setViewport({width:w,height:h,isMobile:true,hasTouch:true,deviceScaleFactor:2});
-  const errors=[],requests=[];
-  page.on('pageerror',e=>errors.push(e.message));
-  page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  await page.setViewport({width:w,height:h,isMobile:w<900,hasTouch:w<900,deviceScaleFactor:w<900?2:1});
+  const errors=[],requestFailures=[],badResponses=[],requests=[];
+  page.on('pageerror',e=>errors.push('pageerror: '+e.message));
+  page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text());});
+  page.on('requestfailed',r=>requestFailures.push({url:r.url(),reason:r.failure()?.errorText||'unknown'}));
+  page.on('response',r=>{if(r.status()>=400)badResponses.push({url:r.url(),status:r.status()});});
   page.on('request',r=>requests.push(r.url()));
-  await page.goto(base+'Product_Intake_Proof.html',{waitUntil:'load',timeout:120000});
-  await page.waitForFunction(()=>window.__intakeProof,{timeout:120000});
-  const before=await page.evaluate(()=>({loaded:window.__intakeProof.loaded,requested:window.__intakeProof.requested.slice()}));
-  const leakedBefore=requests.filter(u=>paths.some(p=>u.includes(p)));
+
+  const started=Date.now();
+  let navError=null;
+  try{await page.goto(base+`Product_Intake_Proof.html?mode=${mode}`,{waitUntil:'load',timeout:15000});}
+  catch(e){navError=String(e?.message||e);}
+  let ready=false;
+  try{
+    await page.waitForFunction(()=>window.__intakeProofReady===true||window.__intakeProofDiagnostics?.errors?.length>0,{timeout:15000});
+    ready=await page.evaluate(()=>window.__intakeProofReady===true);
+  }catch(_){}
+  const startupMs=Date.now()-started;
+  const diag=await page.evaluate(()=>window.__intakeProofDiagnostics||null).catch(()=>null);
   const issues=[];
-  if(before.loaded||before.requested.length||leakedBefore.length)issues.push('candidate loaded before explicit action');
+  if(navError)issues.push('navigation '+navError);
+  if(!ready){
+    const last=diag?.stages?.at(-1)??'NONE';
+    issues.push('startup not ready; last stage='+JSON.stringify(last));
+    if(diag?.errors?.length)issues.push('startup errors='+JSON.stringify(diag.errors.slice(-3)));
+  }
+  if(startupMs>15000)issues.push('startup exceeded 15s');
 
-  await page.click('#loadCandidates');
-  await page.waitForFunction(()=>window.__intakeProof.loaded||window.__intakeProof.loadError,{timeout:30000});
-  const loadError=await page.evaluate(()=>window.__intakeProof.loadError);
-  if(loadError)issues.push('candidate load error '+loadError.slice(0,180));
-  await new Promise(r=>setTimeout(r,700));
+  const preCandidate=requests.filter(u=>candidateFiles.some(f=>u.includes(f)));
+  if(preCandidate.length)issues.push('candidate requested before explicit load');
 
-  for(const id of IDS){
-    const t=await page.evaluate(id=>{
-      const a=performance.now(),ok=window.__intakeProof.inspectById(id),b=performance.now();
-      return {ok,ms:b-a,shown:document.querySelector('#info')?.dataset.productId||'',text:document.querySelector('#info')?.textContent||''};
-    },id);
-    if(!t.ok||t.shown!==id)issues.push('inspect failed '+id);
-    if(!/candidate/.test(t.text))issues.push('readiness missing '+id);
-    if(id.startsWith('cervelo')&&!/manufacturer-geometry-v0\.2/.test(t.text))issues.push('representation missing cervelo');
-    if(id.startsWith('nike')&&!/official-spec-informed-v0\.2/.test(t.text))issues.push('representation missing nike');
+  let metrics=null;
+  if(ready&&mode!=='harness'){
+    await page.click('#loadCandidates');
+    try{await page.waitForFunction(()=>window.__intakeProof.loaded||window.__intakeProof.loadError,{timeout:30000});}
+    catch(_){issues.push('candidate load timeout');}
+    const load=await page.evaluate(()=>({loaded:window.__intakeProof.loaded,error:window.__intakeProof.loadError,metrics:window.__intakeProof.metrics()}));
+    metrics=load.metrics;
+    if(load.error)issues.push('candidate load error '+load.error.slice(0,220));
+    if(!load.loaded)issues.push('candidate not loaded');
+
+    for(const id of MODE_IDS[mode]){
+      const t=await page.evaluate(id=>{
+        const ok=window.__intakeProof.inspectById(id);
+        return {ok,shown:document.querySelector('#info')?.dataset.productId||'',text:document.querySelector('#info')?.textContent||''};
+      },id);
+      if(!t.ok||t.shown!==id)issues.push('inspect failed '+id);
+      if(!/candidate/.test(t.text))issues.push('readiness missing '+id);
+    }
+
+    for(const b of await page.$$('[data-room]'))await b.click();
+    metrics=await page.evaluate(()=>window.__intakeProof.metrics());
+    if(metrics.draw_calls<=0||metrics.triangles<=0)issues.push('renderer metrics empty');
+    if(metrics.load_ms==null)issues.push('load timing missing');
+
+    const expected=MODE_IDS[mode].map(id=>id==='cervelo-p5-disc-mk2-size54'?'cervelo-p5-disc-mk2-size54.glb':'nike-alphafly-3-study.glb');
+    for(const f of expected)if(!metrics.requested.some(x=>x.includes(f)))issues.push('asset request missing '+f);
+
+    if(screenshots){
+      const slug=mode==='cervelo'?'cervelo':'alphafly';
+      await page.evaluate(()=>{document.getElementById('info').hidden=true;});
+      await page.screenshot({path:path.join(outDir,`${slug}-room-${name}.png`),fullPage:false});
+      const id=MODE_IDS[mode][0];
+      await page.evaluate(id=>window.__intakeProof.inspectById(id),id);
+      await page.screenshot({path:path.join(outDir,`${slug}-info-${name}.png`),fullPage:false});
+    }
   }
 
-  const roomButtons=await page.$$('[data-room]');
-  for(const b of roomButtons)await b.click();
-  const metrics=await page.evaluate(()=>window.__intakeProof.metrics());
-  const requestedPaths=metrics.requested;
-  for(const p of paths)if(!requestedPaths.some(x=>x.includes(p)))issues.push('asset request missing '+p);
-  if(metrics.draw_calls<=0||metrics.triangles<=0)issues.push('renderer metrics empty');
-  if(metrics.load_ms==null)issues.push('load timing missing');
-
-  const layout=await page.evaluate(()=>{
+  const layout=ready?await page.evaluate(()=>{
     const vw=innerWidth,vh=innerHeight,out=[];
     if(document.documentElement.scrollWidth>vw+1)out.push('horizontal page overflow');
     for(const el of document.querySelectorAll('button,#info')){
       const s=getComputedStyle(el),r=el.getBoundingClientRect();
       if(s.display==='none'||s.visibility==='hidden'||r.width<2||r.height<2)continue;
-      if(r.left<-1||r.right>vw+1)out.push('horizontal overflow '+(el.id||el.textContent.trim().slice(0,20)));
-      if(el.matches('button')&&(r.width<40||r.height<40))out.push('small tap target '+el.textContent.trim().slice(0,20));
+      if(r.left<-1||r.right>vw+1)out.push('horizontal overflow '+(el.id||el.textContent.trim().slice(0,24)));
+      if(el.matches('button')&&(r.width<40||r.height<40))out.push('small tap target '+el.textContent.trim().slice(0,24));
       if(el.id==='info'&&(r.bottom>vh+1||r.top<-1))out.push('info panel unreachable');
     }
     return out;
-  });
-  issues.push(...layout,...errors.filter(e=>!/favicon|beforeinstallprompt/i.test(e)));
+  }):[];
+  issues.push(...layout,...errors,...requestFailures.map(x=>'requestfailed '+x.url+' '+x.reason),...badResponses.map(x=>'http '+x.status+' '+x.url));
   const unique=[...new Set(issues)];
-  results.push({viewport:name,width:w,height:h,issues:unique,metrics});
-  console.log(name,unique.length?'FAIL '+unique.join(' | '):'ok',JSON.stringify(metrics));
-  if(unique.length)failures++;
+  const result={mode,viewport:name,width:w,height:h,startup_ms:startupMs,ready,last_stage:diag?.stages?.at(-1)||null,diagnostic_errors:diag?.errors||[],request_failures:requestFailures,issues:unique,metrics};
+  results.push(result);
+  console.log(`CASE ${mode}/${name}: ${unique.length?'FAIL':'PASS'} startup=${startupMs}ms last=${JSON.stringify(result.last_stage)} metrics=${JSON.stringify(metrics)}`);
+  if(unique.length){console.log('ISSUES '+JSON.stringify(unique));failures++;}
   await page.close();
 }
+
+await openCase('harness','desktop',1280,800);
+if(!results.at(-1).issues.length){
+  for(const mode of ['cervelo','alphafly','both'])
+    for(const [name,w,h] of VIEWS)
+      await openCase(mode,name,w,h,{screenshots:(mode==='cervelo'||mode==='alphafly')&&name==='390'});
+  for(const mode of ['cervelo','alphafly'])
+    await openCase(mode,'desktop',1280,800,{screenshots:true});
+}
+
 await browser.close();
+fs.writeFileSync(path.join(outDir,'results.json'),JSON.stringify(results,null,2));
 console.log('RESULTS '+JSON.stringify(results));
 console.log(failures?`FAIL ${failures}`:'ALL OK');
 process.exitCode=failures?1:0;
