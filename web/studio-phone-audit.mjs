@@ -28,7 +28,7 @@ for (const [name,w,h] of PHONES) {
   await page.goto(base + 'Studio.html?event=kona-2026', { waitUntil:'load', timeout:120000 });
   await page.waitForFunction(() => window.__studio?.current?.product, { timeout:120000 });
   await page.evaluate(() => window.__studio.saveCurrentToSetup());
-  await wait(250);
+  await wait(700);
 
   const issues = await page.evaluate(() => {
     const out = [], vw=innerWidth, vh=innerHeight;
@@ -65,9 +65,7 @@ for (const [name,w,h] of PHONES) {
         const r=share.getBoundingClientRect();
         if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) {
           const pr=panel.getBoundingClientRect();
-          const de=document.documentElement;
-          const vv=visualViewport;
-          out.push(`share unreachable share=[${[r.left,r.top,r.right,r.bottom].map(Math.round)}] panel=[${[pr.left,pr.top,pr.right,pr.bottom].map(Math.round)}] scroll=${Math.round(panel.scrollTop)}/${panel.scrollHeight}-${panel.clientHeight} inner=${innerWidth}x${innerHeight} client=${de.clientWidth}x${de.clientHeight} visual=${Math.round(vv?.width||0)}x${Math.round(vv?.height||0)}`);
+          out.push('share action not reachable after opening and scrolling');
         }
       }
       panel.scrollTop = 0;
