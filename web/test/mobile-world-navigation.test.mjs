@@ -11,5 +11,5 @@ test('placeholder is translucent and noninteractive',()=>{const x=placeholderAva
 test('avatar equipment ids deduplicate for future RaceIdentity integration',()=>assert.deepEqual(avatarProfile({equipmentIds:['a','a','b']}).equipmentIds,['a','b']));
 test('camera bounds prevent absurd mobile zoom',()=>{
  const x=cameraPreferences({distance:99,height:-2});
- assert.equal(x.mode,'elevated-follow');assert.equal(x.distance,10);assert.equal(x.height,1.5);assert.ok(x.pitch<=.18&&x.pitch>=-.75);
+ assert.equal(x.mode,'elevated-follow');assert.equal(x.distance,12);assert.equal(x.height,1.5);assert.ok(x.pitch<=.18&&x.pitch>=-.75);
 });
