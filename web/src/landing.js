@@ -31,6 +31,7 @@ import { initInstallExperience } from './pwa.mjs';
 import { microNoise } from './tex.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { coarse as dc, small as ds } from './detect.js';
+import { clampMobileLook, defaultCameraMode, followCameraPose } from './world/mobile-camera.js';
 
 const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
@@ -45,6 +46,7 @@ const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7
 const coarse = dc;
 if (coarse) document.body.classList.add('touch');
 const small = ds;
+const mobileCameraMode = defaultCameraMode({ coarsePointer: coarse });
 // the visitor's profile decides render quality before anything is built (engine/profile.js)
 const profile = createProfile();
 const RS = renderSettings(profile.get().quality, { lite: coarse || small, dpr: devicePixelRatio });
@@ -1642,8 +1644,13 @@ canvas.addEventListener('pointerdown', e => {
 canvas.addEventListener('pointermove', e => {
   if (drag && e.pointerId === drag.id) {
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
-    const k = coarse ? .0068 : .0044;
-    P.yaw = drag.yaw + dx * k; P.pitch = clamp(drag.pitch + dy * k * .8, -.9, .7);
+    if (coarse) {
+      const nextLook = clampMobileLook({ yaw: drag.yaw, pitch: drag.pitch, deltaYaw: dx * .0042, deltaPitch: dy * .0026 });
+      P.yaw = nextLook.yaw; P.pitch = nextLook.pitch;
+    } else {
+      const k = .0044;
+      P.yaw = drag.yaw + dx * k; P.pitch = clamp(drag.pitch + dy * k * .8, -.9, .7);
+    }
     if (drag.moved > 6) { if (tour.on) tourEnd(false); path = null; if (drag.moved > 60) coachDid('look'); }
   } else if (started && !coarse) hover = { x: e.clientX, y: e.clientY };
 });
@@ -1806,9 +1813,15 @@ function frame(now) {
   const wantY = atlas.floorY(P.x, P.z) ?? galleryFloorY(P.x, P.z);
   P.y += (wantY - P.y) * (1 - Math.exp(-dt * 8));
   const yaw = P.yaw + idle * Math.sin(t * .13) * .1, pitch = P.pitch + idle * Math.sin(t * .1) * .015;
-  camera.position.set(P.x, P.y + EYE + (reduce ? 0 : Math.sin(bob) * .045 * Math.min(1, moving)), P.z);
-  fwd.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
-  camera.lookAt(look.copy(camera.position).add(fwd));
+  if (coarse) {
+    const pose = followCameraPose({ x:P.x, y:P.y, z:P.z, yaw, pitch, mode:mobileCameraMode });
+    camera.position.set(pose.position.x, pose.position.y, pose.position.z);
+    camera.lookAt(pose.lookAt.x, pose.lookAt.y, pose.lookAt.z);
+  } else {
+    camera.position.set(P.x, P.y + EYE + (reduce ? 0 : Math.sin(bob) * .045 * Math.min(1, moving)), P.z);
+    fwd.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
+    camera.lookAt(look.copy(camera.position).add(fwd));
+  }
   const cardOn = $('card').classList.contains('on'), W = innerWidth, H = innerHeight;
   shift += ((cardOn ? 1 : 0) - shift) * (1 - Math.exp(-dt * 4));
   if (shift > .002) { const dx = small ? 0 : W * .17 * shift, dy = small ? H * .23 * shift : 0; camera.setViewOffset(W + 2 * dx, H + 2 * dy, 2 * dx, 2 * dy, W, H); }
