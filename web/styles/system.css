@@ -146,3 +146,112 @@ html[data-theme="dark"]{
 .kona-place-grid b{font:400 22px/1.05 var(--serif);margin:6px 0}.kona-place-grid span{font-size:10.5px;line-height:1.4;color:var(--kona-muted)}
 .kona-place-grid em{font:700 9px var(--sans);color:var(--kona-accent);margin-top:7px;text-transform:uppercase;letter-spacing:.1em}
 .kona-source-note{color:var(--kona-faint);font-size:10.5px;line-height:1.5;padding:0 4px 12px}
+
+/* KONA V9 visual acceptance layer — distilled from the approved 30 Sep brand boards.
+   Product shell: editorial, human, quiet. Content carries spectacle. */
+:root{
+  --kona-bg:#f8f6f2;
+  --kona-surface:#fffdf9;
+  --kona-surface-strong:#fffdf9;
+  --kona-text:#0b0d10;
+  --kona-muted:#596168;
+  --kona-faint:#858c91;
+  --kona-line:rgba(11,13,16,.11);
+  --kona-accent:#ff5a1f;
+  --kona-cyan:#0c9aa8;
+  --kona-human:#ff2f6d;
+  --kona-sun:#ffd54a;
+  --kona-lilac:#a987f4;
+  --kona-shadow:0 18px 48px -34px rgba(11,13,16,.28);
+  --hand:'Segoe Print','Bradley Hand','Comic Sans MS',cursive;
+}
+html[data-theme="dark"]{
+  --kona-bg:#080b0d;--kona-surface:#101519;--kona-surface-strong:#101519;
+  --kona-text:#f7f4ee;--kona-muted:#b7bec2;--kona-faint:#899297;
+  --kona-line:rgba(247,244,238,.13);--kona-accent:#ff5a1f;--kona-cyan:#0c91a4;
+}
+.kona-bottom-nav{
+  left:0;right:0;bottom:0;height:calc(64px + env(safe-area-inset-bottom));
+  padding:5px 10px env(safe-area-inset-bottom);border:0;border-top:1px solid var(--kona-line);
+  border-radius:0;background:color-mix(in srgb,var(--kona-bg) 96%,transparent);
+  box-shadow:none;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.kona-bottom-nav button,.kona-bottom-nav a{border-radius:0;background:transparent!important;font-weight:650}
+.kona-bottom-nav .on{color:var(--kona-accent)}
+.kona-panel{
+  background:var(--kona-bg);
+  padding:max(20px,env(safe-area-inset-top)) 18px calc(86px + env(safe-area-inset-bottom))
+}
+.kona-panel-head{max-width:860px;margin:0 auto 24px;align-items:center}
+.kona-panel-head small{color:var(--kona-muted);letter-spacing:.18em}
+.kona-panel-head h2{font-size:clamp(44px,11vw,76px);letter-spacing:-.035em}
+.kona-panel-head button{border:0;background:transparent}
+.kona-panel-body{max-width:860px;gap:22px}
+.kona-hero-card,.kona-section{border:0;border-radius:0;background:transparent;box-shadow:none}
+.kona-hero-card{
+  min-height:min(62vh,560px);padding:28px;border-radius:22px;color:#fff;
+  background:
+    linear-gradient(180deg,rgba(7,11,13,.08),rgba(7,11,13,.18) 40%,rgba(7,11,13,.82) 100%),
+    url('assets/kona-years/kailua-bay.jpg') center/cover no-repeat;
+}
+.kona-hero-card small{color:rgba(255,255,255,.78)}
+.kona-hero-card h3{font-size:clamp(44px,12vw,78px);max-width:620px;color:#fff}
+.kona-hero-card p{color:rgba(255,255,255,.86);font-size:15px}
+.kona-primary{
+  min-height:50px;border-radius:999px;padding:0 22px;background:var(--kona-accent);color:#fff;
+  box-shadow:none;font-weight:750
+}
+.kona-section{padding:8px 0 22px;border-bottom:1px solid var(--kona-line)}
+.kona-section-head{margin-bottom:16px}
+.kona-section-head h3{font-size:clamp(30px,7vw,42px)}
+.kona-list article,.kona-timeline article{
+  padding:15px 0;border-radius:0;border-bottom:1px solid var(--kona-line);background:transparent
+}
+.kona-list article:last-child,.kona-timeline article:last-child{border-bottom:0}
+.kona-list i{background:transparent;color:var(--kona-accent);border:1px solid var(--kona-line)}
+.kona-list a{color:var(--kona-text)}
+.kona-place-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kona-place-grid article{
+  min-height:190px;padding:16px;border:0;border-radius:18px;color:#fff;
+  background:
+    linear-gradient(180deg,rgba(8,11,13,.04),rgba(8,11,13,.78)),
+    url('assets/kona-years/kailua-bay.jpg') center/cover no-repeat
+}
+.kona-place-grid small,.kona-place-grid span{color:rgba(255,255,255,.78)}
+.kona-place-grid b{font-size:26px}.kona-place-grid em{color:#fff}
+.kona-human-note{font:500 clamp(18px,5vw,28px)/1.05 var(--hand);transform:rotate(-2deg);max-width:18rem}
+.kona-human-note.accent{color:var(--kona-human)}
+@media(max-width:520px){
+  .kona-panel{padding-left:16px;padding-right:16px}
+  .kona-panel-head{margin-bottom:18px}
+  .kona-panel-head h2{font-size:46px}
+  .kona-hero-card{min-height:58dvh;padding:22px}
+  .kona-place-grid{grid-template-columns:1fr}
+  .kona-place-grid article{min-height:180px}
+}
+
+/* V9 first-journey continuity: landing → onboarding → reveal feels like one product. */
+#intro.kona-entry .intro-inner{width:min(100%,680px)}
+#intro.kona-entry .eyebrow{color:var(--kona-accent);font-weight:800}
+#intro.kona-entry h1{font-family:var(--serif);font-weight:400;letter-spacing:-.04em;line-height:.9;text-wrap:balance}
+#intro.kona-entry .lede{max-width:34rem;color:var(--kona-muted);font-size:clamp(15px,2.5vw,19px)}
+#intro.kona-entry .btn.primary{border-radius:999px;background:var(--kona-accent);color:#fff;border:0}
+#intro.kona-entry .btn.text{color:var(--kona-text);text-decoration:none}
+#intro.quest-active{background:var(--kona-bg)}
+#intro.quest-active #konaQuest{width:min(100%,560px)}
+#konaQuest .eyebrow{color:var(--kona-accent)}
+#konaQuest h2{font-size:clamp(42px,10vw,68px);letter-spacing:-.035em;line-height:.94;text-wrap:balance}
+#konaQuest .quest-choice{
+  width:100%;min-height:58px;margin:6px 0;padding:0 18px;border:1px solid var(--kona-line);
+  border-radius:14px;background:var(--kona-surface);color:var(--kona-text);text-align:left;font-weight:700
+}
+#konaQuest .quest-choice:hover,#konaQuest .quest-choice:focus-visible{border-color:var(--kona-accent);outline:2px solid color-mix(in srgb,var(--kona-accent) 28%,transparent);outline-offset:2px}
+#konaQuest .kona-count{color:var(--kona-accent)}
+#konaQuest #enterKona{width:100%;min-height:56px;font-size:16px}
+#konaQuest #shareSelf,#konaQuest #saveSelf{background:transparent;color:var(--kona-text);border:0;box-shadow:none}
+@media(max-width:760px){
+ #intro.kona-entry{padding-left:20px;padding-right:20px}
+ #intro.kona-entry h1{font-size:clamp(52px,15vw,76px)}
+ #intro.quest-active .intro-inner{padding-left:20px;padding-right:20px}
+ #konaQuest h2{font-size:clamp(42px,12vw,58px)}
+}
