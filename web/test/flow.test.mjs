@@ -19,7 +19,8 @@ test('museum movement is deliberately faster and more responsive', () => {
   assert.match(src, /5\.8 : 3\.35/);
   assert.match(src, /Math\.min\(4\.8, d \* 3\.0 \+ 1\.0\)/);
   assert.match(src, /Math\.exp\(-dt \* 15\)/);
-  assert.match(src, /coarse \? \.0068 : \.0044/);
+  assert.match(src, /clampMobileLook/);
+  assert.match(src, /const k = \.0044/);
 });
 
 test('flow mode lets chrome recede during movement', () => {
