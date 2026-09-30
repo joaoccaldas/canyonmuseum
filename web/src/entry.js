@@ -1,6 +1,7 @@
 // KONA entry. HTML is already on screen. This file does not import Three.js.
 // The museum runtime loads only after the visitor chooses to explore.
-import { createProfile } from './engine/profile.js';
+import { createProfile, QUALITY, AVATARS } from './engine/profile.js';
+import { initSettings } from './ui/settings.js';
 import { desktopViewPhone, coarse } from './detect.js';
 import { consumeAuthCallback } from './cloud/supabase-lite.js';
 import { initKonaShell } from './ui/kona-shell.js';
@@ -33,8 +34,16 @@ const setEntryMode = mode => {
   document.body.dataset.entryMode = mode;
 };
 const profile = createProfile();
-const settingsBridge = { open() {} };
-window.__konaSettingsBridge = settingsBridge;
+window.__konaProfile = profile;
+const settingsUI = initSettings({
+  profile, QUALITY, AVATARS,
+  activeQuality:()=>profile.get().quality,
+  onQuality:id=>window.__konaWorldSettings?.onQuality?.(id) ?? true,
+  onSound:on=>window.__konaWorldSettings?.onSound?.(on),
+  onMotion:()=>window.__konaWorldSettings?.onMotion?.() ?? true,
+  sync:{available:false},
+});
+window.__konaSettingsUI = settingsUI;
 
 const loads = new Map();
 function loadStyle(href) {
@@ -116,7 +125,7 @@ function openMuseum(room) {
 }
 
 initAppShell();
-const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
+const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum });
 window.__konaShell = shell;
 
 function enterApp(first = 'home') {
