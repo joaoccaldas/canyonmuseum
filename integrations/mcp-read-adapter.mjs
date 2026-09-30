@@ -8,6 +8,7 @@ import {
   listEventSources,
   getEventSchedule
 } from "./public-catalog.mjs";
+import {getProductExperience} from "./product-experience.mjs";
 
 const TOOL_NAMES = new Set([
   "list_products",
@@ -17,7 +18,8 @@ const TOOL_NAMES = new Set([
   "list_event_places",
   "get_place",
   "list_event_sources",
-  "get_event_schedule"
+  "get_event_schedule",
+  "get_product_experience"
 ]);
 
 function plainObject(v) {
@@ -69,6 +71,13 @@ export function invokeReadTool(name, args = {}) {
       rejectUnknownArgs(args, new Set(["event_id"]));
       if (typeof args.event_id !== "string" || !args.event_id) throw new Error("event_id required");
       return getEventSchedule(args.event_id);
+    }
+    case "get_product_experience": {
+      rejectUnknownArgs(args, new Set(["id"]));
+      if (typeof args.id !== "string" || !args.id) throw new Error("id required");
+      const publicProduct=getProduct(args.id);
+      if (!publicProduct) return null;
+      return getProductExperience(args.id);
     }
     case "get_place": {
       rejectUnknownArgs(args, new Set(["id"]));
