@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/affiliate-link.schema.json",
+  "title": "Affiliate Link V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "program_id",
+    "destination_url",
+    "placement",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^affiliate-link:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "affiliate-link"
+    },
+    "program_id": {
+      "type": "string",
+      "pattern": "^affiliate-program:[a-z0-9:_-]+$"
+    },
+    "product_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^product:[a-z0-9:_-]+$"
+    },
+    "destination_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "tracking_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "placement": {
+      "enum": [
+        "product-card",
+        "studio",
+        "room",
+        "share-page",
+        "story",
+        "article",
+        "email",
+        "social",
+        "other"
+      ]
+    },
+    "campaign_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "active",
+        "paused",
+        "broken",
+        "expired"
+      ]
+    },
+    "disclosure_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "last_checked_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "clicks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conversions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "revenue_eur": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
