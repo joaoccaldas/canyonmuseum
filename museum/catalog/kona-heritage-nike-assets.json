@@ -1,140 +1,195 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "generated_by": "blender/kona_heritage_nike_assets.py",
-  "purpose": "Reusable 3D museum assets for Kona heritage, multi-brand triathlon expansion, and a Nike running-shoe wing.",
-  "duplicate_policy": {
-    "trek_speed_concept": "REUSE_EXISTING",
-    "reason": "The repository already contains Trek Speed Concept assets; do not regenerate or fork geometry without a measured reason."
-  },
+  "measurement_policy": "Manufacturer-published geometry is the hard constraint. Any dimension not published by the manufacturer is tagged provisional and must not be described as CAD-exact.",
   "assets": [
     {
-      "id": "cervelo-p5x-kona-study",
+      "id": "cervelo-p5-disc-mk2-size54",
       "type": "bike",
       "brand": "Cervelo",
-      "model_family": "P5/P5X",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/bikes/cervelo-p5x-kona-study.glb",
-      "museum_story": "Kona-era superbike / non-double-diamond design",
-      "evidence": [
-        {"class":"P","source":"Slowtwitch 2018 Kona bike gallery","note":"David McNamee raced a Cervelo P5X to third overall in Kona 2018."}
-      ]
+      "model_family": "P5 Disc MK2",
+      "size": "54",
+      "status": "manufacturer-geometry-v0.2",
+      "output": "assets/kona-heritage/bikes/cervelo-p5-disc-mk2-size54.glb",
+      "geometry_mm": {
+        "wheelbase": 995,
+        "chainstay": 405,
+        "bb_drop": 75,
+        "stack": 503,
+        "reach": 418,
+        "head_tube": 98
+      },
+      "geometry_deg": {
+        "head_angle": 72.5,
+        "seat_angle": 79
+      },
+      "source": "https://www.cervelo.com/en-US/support/P5%20DISC%20MK2"
     },
     {
-      "id": "specialized-shiv-disc-kona-study",
+      "id": "specialized-shiv-disc-size-m",
       "type": "bike",
       "brand": "Specialized",
       "model_family": "S-Works Shiv Disc",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/bikes/specialized-shiv-disc-kona-study.glb",
-      "museum_story": "Integrated hydration and storage as part of the aero form",
-      "evidence": [
-        {"class":"P","source":"Slowtwitch 2018 Kona bike gallery","note":"Braden Currie raced the Specialized S-Works Shiv Disc in Kona 2018."}
-      ]
+      "size": "M",
+      "status": "manufacturer-geometry-v0.2",
+      "output": "assets/kona-heritage/bikes/specialized-shiv-disc-size-m.glb",
+      "geometry_mm": {
+        "wheelbase": 1001,
+        "chainstay": 415,
+        "bb_drop": 72,
+        "stack": 514,
+        "reach": 401,
+        "head_tube": 94,
+        "seat_tube": 547,
+        "pad_stack_low": 585,
+        "pad_reach_forward": 556
+      },
+      "geometry_deg": {
+        "head_angle": 72,
+        "seat_angle": 77
+      },
+      "source": "https://www.specialized.com/se/sv/s-works-shiv-disc-module/p/175306"
     },
     {
-      "id": "felt-ia-kona-study",
+      "id": "felt-ia-2015-size54",
       "type": "bike",
       "brand": "Felt",
       "model_family": "IA",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/bikes/felt-ia-kona-study.glb",
-      "museum_story": "One of the defining women's Kona-winning platforms of the 2010s",
-      "evidence": [
-        {"class":"P","source":"Slowtwitch brand history / Kona discussion","note":"Felt IA is associated with Daniela Ryf's Kona-era victories; exact year/build needs exhibit-level source binding before publication."}
-      ]
+      "year": 2015,
+      "size": "54",
+      "status": "manufacturer-geometry-v0.2",
+      "output": "assets/kona-heritage/bikes/felt-ia-2015-size54.glb",
+      "geometry_mm": {
+        "wheelbase": 991,
+        "chainstay": 400,
+        "bb_drop": 72,
+        "stack": 522,
+        "reach": 404,
+        "head_tube": 111,
+        "seat_tube": 546
+      },
+      "geometry_deg": {
+        "head_angle": 72,
+        "seat_angle": 78.5
+      },
+      "source": "https://www.feltbicycles.com/documents/archive/2015_FELT_Catalog.pdf"
     },
     {
-      "id": "scott-plasma-kona-study",
-      "type": "bike",
-      "brand": "Scott",
-      "model_family": "Plasma",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/bikes/scott-plasma-kona-study.glb",
-      "museum_story": "Kona-winning / front-pack aero lineage",
-      "evidence": [
-        {"class":"P","source":"Slowtwitch Kona brand history + 2024 fastest bikes","note":"Scott Plasma appears in Kona winner history and Magnus Ditlev's 2024 Kona setup."}
-      ]
-    },
-    {
-      "id": "bmc-speedmachine-kona-study",
+      "id": "bmc-speedmachine-01-size-m",
       "type": "bike",
       "brand": "BMC",
-      "model_family": "Speedmachine",
-      "priority": "P1",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/bikes/bmc-speedmachine-kona-study.glb",
-      "museum_story": "Modern integrated superbike architecture",
-      "evidence": [
-        {"class":"P","source":"Slowtwitch 2024 fastest Kona bikes","note":"Kristian Hogenhaug raced a BMC Speedmachine 01 ONE in Kona 2024."}
-      ]
+      "model_family": "Speedmachine 01",
+      "size": "M",
+      "status": "manufacturer-geometry-v0.2",
+      "output": "assets/kona-heritage/bikes/bmc-speedmachine-01-size-m.glb",
+      "geometry_mm": {
+        "wheelbase": 1000,
+        "rear_center": 405,
+        "bb_drop": 72,
+        "front_center": 606,
+        "fork_length": 391,
+        "seat_tube": 525,
+        "pad_stack_low": 588,
+        "pad_reach_max": 486
+      },
+      "geometry_deg": {
+        "seat_angle": 80
+      },
+      "source": "https://us.bmc-switzerland.com/products/speedmachine-01-four-bikes-bmc-26a-000005"
     },
     {
-      "id": "orbea-ordu-kona-study",
+      "id": "orbea-ordu-current-sm",
       "type": "bike",
       "brand": "Orbea",
       "model_family": "Ordu",
-      "priority": "P1",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/bikes/orbea-ordu-kona-study.glb",
-      "museum_story": "Kona winning lineage and contemporary race presence",
-      "evidence": [
-        {"class":"P","source":"Slowtwitch Kona brand history + 2024 fastest bikes","note":"Orbea appears in Kona winner history; an Ordu was among the fastest bikes in Kona 2024."}
-      ]
+      "size": "S/M",
+      "status": "manufacturer-geometry-v0.2-partial-frame",
+      "output": "assets/kona-heritage/bikes/orbea-ordu-current-sm.glb",
+      "geometry_mm": {
+        "wheelbase": 1007,
+        "chainstay": 405,
+        "bb_drop": 75,
+        "front_center": 613,
+        "head_tube": 96,
+        "handlebar_stack_high": 516,
+        "handlebar_reach": 665,
+        "armrest_stack_min": 550,
+        "armrest_reach_max": 505
+      },
+      "geometry_deg": {
+        "head_angle": 72,
+        "seat_angle": 78
+      },
+      "source": "https://www.orbea.com/us-en/bicycles/ordu-m10iltd/pdf",
+      "note": "Current Ordu page does not publish conventional frame stack/reach; published axle, BB, head-tube and cockpit dimensions are used as hard constraints."
     },
     {
-      "id": "nike-vaporfly-4pct-study",
-      "type": "shoe",
-      "brand": "Nike",
-      "model_family": "Zoom Vaporfly 4%",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/shoes/nike-vaporfly-4pct-study.glb",
-      "museum_story": "Early carbon-plated super-shoe era"
-    },
-    {
-      "id": "nike-vaporfly-next-study",
-      "type": "shoe",
-      "brand": "Nike",
-      "model_family": "Vaporfly NEXT%",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/shoes/nike-vaporfly-next-study.glb",
-      "museum_story": "Evolution of the Vaporfly silhouette"
-    },
-    {
-      "id": "nike-alphafly-next-study",
-      "type": "shoe",
-      "brand": "Nike",
-      "model_family": "Alphafly NEXT%",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
-      "output": "assets/kona-heritage/shoes/nike-alphafly-next-study.glb",
-      "museum_story": "Air Zoom + carbon plate + high-stack ZoomX system"
+      "id": "scott-plasma-rc-provisional",
+      "type": "bike",
+      "brand": "Scott",
+      "model_family": "Plasma RC",
+      "size": "M",
+      "status": "provisional-not-public-ready",
+      "output": "assets/kona-heritage/bikes/scott-plasma-rc-provisional.glb",
+      "source": "https://www.scott-sports.com/us/en/product/scott-plasma-rc-ultimate-bike",
+      "note": "Official product page confirms 700x28C wheels, integrated hydration/storage and Plasma 6 architecture, but numeric geometry was not exposed in the text endpoint. Do not label this asset dimension-exact yet."
     },
     {
       "id": "nike-alphafly-3-study",
       "type": "shoe",
       "brand": "Nike",
       "model_family": "Alphafly 3",
-      "priority": "P0",
-      "status": "geometry-study-v0.1",
+      "status": "official-spec-informed-v0.2",
       "output": "assets/kona-heritage/shoes/nike-alphafly-3-study.glb",
-      "museum_story": "Continuous bottom, dual Air Zoom, Flyplate and Atomknit 3.0",
-      "evidence": [
-        {"class":"P","source":"Nike official Alphafly 3 newsroom","note":"Nike documents dual Air Zoom units, ZoomX foam, full-length carbon Flyplate and Atomknit 3.0."}
-      ]
+      "official_specs": {
+        "weight_g_approx": 218,
+        "heel_to_toe_drop_mm": 8,
+        "plate": "full-length carbon-fibre Flyplate",
+        "air_units": 2,
+        "foam": "ZoomX",
+        "upper": "Atomknit"
+      },
+      "source": "https://www.nike.com/se/en/t/alphafly-3-mens-road-racing-shoes-KnKE5jwD/FD8311-402"
+    },
+    {
+      "id": "nike-vaporfly-4-current",
+      "type": "shoe",
+      "brand": "Nike",
+      "model_family": "Vaporfly 4",
+      "status": "official-spec-source-added-build-next",
+      "official_specs": {
+        "weight_g_approx": 190,
+        "heel_to_toe_drop_mm": 6,
+        "plate": "full-length carbon-fibre Flyplate",
+        "foam": "ZoomX",
+        "upper": "engineered mesh"
+      },
+      "source": "https://www.nike.com/se/en/t/vaporfly-4-road-racing-shoes-DeKC4kdI/II7203-100",
+      "note": "Distinct current model. Do not overwrite historical Vaporfly 4% or NEXT% museum assets."
+    },
+    {
+      "id": "nike-vaporfly-4pct-study",
+      "type": "shoe",
+      "brand": "Nike",
+      "model_family": "Zoom Vaporfly 4%",
+      "status": "historical-needs-official-archive-source",
+      "output": "assets/kona-heritage/shoes/nike-vaporfly-4pct-study.glb"
+    },
+    {
+      "id": "nike-vaporfly-next-study",
+      "type": "shoe",
+      "brand": "Nike",
+      "model_family": "Vaporfly NEXT%",
+      "status": "historical-needs-official-archive-source",
+      "output": "assets/kona-heritage/shoes/nike-vaporfly-next-study.glb"
+    },
+    {
+      "id": "nike-alphafly-next-study",
+      "type": "shoe",
+      "brand": "Nike",
+      "model_family": "Alphafly NEXT%",
+      "status": "historical-needs-official-archive-source",
+      "output": "assets/kona-heritage/shoes/nike-alphafly-next-study.glb"
     }
-  ],
-  "next_precision_pass": [
-    "Bind each branded bike to a model/year-specific source pack and side-view reference.",
-    "Calibrate wheel diameter / wheelbase and trace silhouette against reference images.",
-    "Replace study tubes/fairings with measured aero sections where evidence exists.",
-    "Add LOD0/LOD1/LOD2 and collision proxies.",
-    "Add decal layer only after source/provenance review; keep geometry independent from logos.",
-    "Build Nike shoe outsole/midsole silhouettes from official side/top/bottom references, not memory."
   ]
 }
