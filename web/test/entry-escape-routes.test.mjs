@@ -16,7 +16,7 @@ test('every onboarding screen can be escaped',()=>{
 test('sign in is optional and exposes Continue without account',()=>{
   assert.match(entry,/Continue without account/);assert.match(entry,/continueLocal[^\n]+enterApp/);
 });
-test('reveal Enter KONA uses same app-entry helper',()=>assert.match(entry,/enterKona[^\n]+enterApp/));
+test('reveal enters Garage through canonical app-entry helper',()=>assert.match(entry,/enterKona[^\n]+enterApp\('garage'\)/));
 
 test('P0 entry uses canonical storage adapter, never raw localStorage',()=>{
   assert.match(entry,/readStorage/);
