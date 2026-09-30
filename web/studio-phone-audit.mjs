@@ -38,7 +38,7 @@ for (const [name,w,h] of PHONES) {
 
     const panel=document.querySelector('#panel');
     const text=panel?.textContent || '';
-    for (const expected of ['My Kona Setup','Bike','Wheels','Helmet','Shoes','2 / 4','Share My Kona Setup'])
+    for (const expected of ['My Kona Setup','Bike','Wheels','Helmet','Shoes','2 / 4','Share setup'])
       if (!text.includes(expected)) out.push('missing '+expected);
 
     if (document.documentElement.scrollWidth > vw + 1) out.push('page scrolls horizontally');
@@ -60,7 +60,7 @@ for (const [name,w,h] of PHONES) {
     }
     if (panel && panel.scrollHeight > panel.clientHeight) {
       panel.scrollTop = panel.scrollHeight;
-      const share=[...panel.querySelectorAll('button')].find(b => /Share My Kona Setup/.test(b.textContent));
+      const share=panel.querySelector('button[aria-label="Share My Kona Setup"]');
       if (share) {
         const r=share.getBoundingClientRect();
         if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) out.push('share action not reachable after scrolling');
