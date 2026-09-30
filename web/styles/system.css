@@ -229,3 +229,29 @@ html[data-theme="dark"]{
   .kona-place-grid{grid-template-columns:1fr}
   .kona-place-grid article{min-height:180px}
 }
+
+/* V9 first-journey continuity: landing → onboarding → reveal feels like one product. */
+#intro.kona-entry .intro-inner{width:min(100%,680px)}
+#intro.kona-entry .eyebrow{color:var(--kona-accent);font-weight:800}
+#intro.kona-entry h1{font-family:var(--serif);font-weight:400;letter-spacing:-.04em;line-height:.9;text-wrap:balance}
+#intro.kona-entry .lede{max-width:34rem;color:var(--kona-muted);font-size:clamp(15px,2.5vw,19px)}
+#intro.kona-entry .btn.primary{border-radius:999px;background:var(--kona-accent);color:#fff;border:0}
+#intro.kona-entry .btn.text{color:var(--kona-text);text-decoration:none}
+#intro.quest-active{background:var(--kona-bg)}
+#intro.quest-active #konaQuest{width:min(100%,560px)}
+#konaQuest .eyebrow{color:var(--kona-accent)}
+#konaQuest h2{font-size:clamp(42px,10vw,68px);letter-spacing:-.035em;line-height:.94;text-wrap:balance}
+#konaQuest .quest-choice{
+  width:100%;min-height:58px;margin:6px 0;padding:0 18px;border:1px solid var(--kona-line);
+  border-radius:14px;background:var(--kona-surface);color:var(--kona-text);text-align:left;font-weight:700
+}
+#konaQuest .quest-choice:hover,#konaQuest .quest-choice:focus-visible{border-color:var(--kona-accent);outline:2px solid color-mix(in srgb,var(--kona-accent) 28%,transparent);outline-offset:2px}
+#konaQuest .kona-count{color:var(--kona-accent)}
+#konaQuest #enterKona{width:100%;min-height:56px;font-size:16px}
+#konaQuest #shareSelf,#konaQuest #saveSelf{background:transparent;color:var(--kona-text);border:0;box-shadow:none}
+@media(max-width:760px){
+ #intro.kona-entry{padding-left:20px;padding-right:20px}
+ #intro.kona-entry h1{font-size:clamp(52px,15vw,76px)}
+ #intro.quest-active .intro-inner{padding-left:20px;padding-right:20px}
+ #konaQuest h2{font-size:clamp(42px,12vw,58px)}
+}
