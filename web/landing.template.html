@@ -22,8 +22,8 @@
   addEventListener('orientationchange', function () { setTimeout(apply, 250); });
 })();
 </script>
-<title>Speedmax Museum — Kona</title>
-<meta name="description" content="Walk the Queen K: every Canyon Speedmax generation from 1999 to 2027, displayed as art in a sunlit museum on the Kona coast. Enter any bike's 3D studio.">
+<title>KONA · Race the version of yourself</title>
+<meta name="description" content="Build your Kona setup, prepare for race week, and explore the sport. The 3D museum opens when you choose to walk the coast.">
 <meta name="theme-color" content="#f4efe7">
 <link rel="icon" href="assets/pwa/icon-v3.svg" type="image/svg+xml"><link rel="icon" href="assets/pwa/icon-v3-192.png" sizes="192x192" type="image/png">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -57,25 +57,17 @@
   </nav>
 </header>
 
-<section id="intro">
+<section id="intro" class="kona-entry">
   <div class="intro-inner">
-    <div class="eyebrow">Canyon Speedmax · 1999 — 2027</div>
-    <h1>Twenty-eight years<br>on the <em>Queen K.</em></h1>
-    <p class="lede">A sunlit gallery on the Kona coast. Every Speedmax generation stands on lava stone along the Ironman bike course — walk the timeline, study each bike as a piece of art, then step inside its 3D studio.</p>
+    <div class="eyebrow">KONA</div>
+    <h1>Race the version<br>of <em>yourself.</em></h1>
+    <p class="lede">What would you race if Kona were tomorrow?</p>
+    <p class="kona-count" id="konaCount">Kona race week</p>
     <div class="cta">
-      <button class="btn primary" id="enterBtn" disabled>Loading the hall…</button>
-      <button class="btn ghost" id="tourBtn"><span aria-hidden="true">▶</span> Guided tour · 4 min</button>
+      <button class="btn primary" id="buildSelf" type="button">Build my Kona self</button>
     </div>
-    <div class="keys" aria-hidden="true">
-      <div><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>Walk</div>
-      <div><span><kbd>Drag</kbd></span>Look around</div>
-      <div><span><kbd>Click</kbd></span>Visit a bike</div>
-      <div><span><kbd>1</kbd>–<kbd>9</kbd></span>Jump to a piece</div>
-      <div><span><kbd>M</kbd></span>Map</div>
-    </div>
-    <p class="touch-only lede" style="margin-top:18px;font-size:12.5px">Walk with the swim·bike·run stick · drag to look · tap a bike. A few things were left on the floor.</p>
+    <p class="kona-note">No account yet. The museum opens only if you choose Explore.</p>
     <div id="loadstate" aria-live="polite"></div>
-    <button type="button" class="intro-profile" id="introProfile"><i aria-hidden="true"></i><span>Create a profile · choose your quality</span></button>
   </div>
 </section>
 
@@ -135,7 +127,6 @@
 
 <p class="credit">Independent study from public references. Not affiliated with or endorsed by Canyon Bicycles. 3D models are visual reconstructions.</p>
 
-<script src="app/museum-data.js"></script>
-<script src="app/hall.js"></script>
+<script src="app/kona-core.js" defer></script>
 </body>
 </html>

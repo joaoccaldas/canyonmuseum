@@ -30,6 +30,8 @@ async function nativeUpdateCheck() {
 }
 
 export function initAppShell() {
+  if (window.__appShell) return;
+  window.__appShell = true;
   if (window.Capacitor?.isNativePlatform?.()) { document.body.classList.add('native'); nativeUpdateCheck(); return; }
   const standalone = matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches || navigator.standalone;
   if (standalone) document.body.classList.add('installed');
