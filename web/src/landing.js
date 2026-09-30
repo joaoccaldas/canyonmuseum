@@ -32,6 +32,7 @@ import { microNoise } from './tex.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { coarse as dc, small as ds } from './detect.js';
 import { buildMuseumArchitecture } from './engine/museum-architecture.js';
+import { createMuseumSession } from './engine/museum-session.js';
 
 const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
@@ -862,44 +863,14 @@ const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 $('nearby')?.addEventListener('click', () => { if (nearbyPiece) { haptic(8); visit(nearbyPiece); } });
 
 // ------------------------------------------------------------------ local-first Museum Passport + visit resume
-// Passport owns collectible/progression state. Resume pose is a separate concern and
-// therefore has a separate key; the old implementation reused speedmax.passport.v1
-// with an incompatible schema and could overwrite Passport stamps.
-const passport = createPassport();
-const SESSION_KEY = 'speedmax.museum-session.v1';
-function readSession() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
-    if (raw?.v === 1) return { v:1, visits:Number(raw.visits)||0, pose:raw.pose||null };
-  } catch (_) { }
-  return { v:1, visits:0, pose:null };
-}
-const session = readSession();
-function writeSession() {
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch (_) { }
-}
-function passportProgress() {
-  const total = modelled.length;
-  const seen = modelled.filter(piece => passport.has('bike:' + piece.key)).length;
-  const count = $('passportCount'); if (count) count.textContent = `${seen}/${total}`;
-  return { seen, total };
-}
-function discover(p) {
-  if (!p?.key || !p.glb || passport.has('bike:' + p.key)) return false;
-  passport.stamp('bike:' + p.key, p.name, 10);
-  passportProgress();
-  return true;
-}
-function savePose() {
-  if (!started) return;
-  const region = roomOf(P.x, P.z);
-  if (region === 'horror') return;
-  session.pose = { x:P.x, z:P.z, yaw:P.yaw, pitch:P.pitch, region };
-  writeSession();
-}
-addEventListener('pagehide', savePose);
-$('passportBtn')?.addEventListener('click', () => passport.open());
-passport.onChange?.(passportProgress);
+const passport=createPassport();
+const museumSession=createMuseumSession({
+  passport,modelled,getPose:()=>P,isStarted:()=>started,roomOf:()=>roomOf(P.x,P.z),
+  onProgress:({seen,total})=>{const count=$('passportCount');if(count)count.textContent=`${seen}/${total}`;},
+});
+const {session,write:writeSession,progress:passportProgress,discover,savePose}=museumSession;
+addEventListener('pagehide',savePose);
+$('passportBtn')?.addEventListener('click',()=>passport.open());
 passportProgress();
 
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
