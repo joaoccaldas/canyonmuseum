@@ -19,6 +19,12 @@ assert.ok(canyon.every(x=>x.brand==="Canyon" && x.product_type==="bike"));
 const product=invokeReadTool("get_product",{id:"canyon-cfr-2027"});
 assert.equal(product.id,"canyon-cfr-2027");
 assert.equal(product.object_type,"product");
+const experience=invokeReadTool("get_product_experience",{id:"canyon-cfr-2027"});
+assert.equal(experience.id,"canyon-cfr-2027");
+assert.ok(experience.maintenance.length>=1);
+assert.ok(experience.vendors.some(v=>v.provider==="Canyon"));
+assert.equal(experience.safety.remote_write,false);
+assert.equal(invokeReadTool("get_product_experience",{id:"shimano-cs-r9200-11-30"}),null);
 
 const event=invokeReadTool("get_event",{id:"kona-2026"});
 assert.equal(event.id,"kona-2026");
