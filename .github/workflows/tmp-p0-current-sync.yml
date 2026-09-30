@@ -4,6 +4,9 @@ on:
     branches: [release/mobile-entry-onboarding-p0-current-20260930]
     paths-ignore: ['*.html','web/dist/**','docs/ROOMS.md','museum/catalog/products.json','sw.js','app/app-manifest.json']
 permissions: { contents: write }
+concurrency:
+  group: p0-current-output-sync
+  cancel-in-progress: true
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -17,6 +20,11 @@ jobs:
       - run: node tools/build_pages.mjs
       - run: node tools/build_app.mjs
       - run: |
+          git fetch origin release/mobile-entry-onboarding-p0-current-20260930
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/release/mobile-entry-onboarding-p0-current-20260930)" ]; then
+            echo "Branch moved during generation; a fresh serialized run will regenerate from the new head."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add museum/catalog/products.json docs/ROOMS.md ./*.html web/dist/*.html sw.js app/app-manifest.json
