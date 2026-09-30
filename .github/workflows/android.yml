@@ -146,6 +146,7 @@ jobs:
           mkdir -p downloads app
           cp "$RUNNER_TEMP/apk/SpeedmaxMuseum.apk" downloads/SpeedmaxMuseum.apk
           cp "$RUNNER_TEMP/apk/android-version.json" app/android-version.json
+          node -e "const fs=require('fs');const p='app/android-version.json';const v=JSON.parse(fs.readFileSync(p,'utf8'));v.published=true;v.apk=v.apk||'downloads/SpeedmaxMuseum.apk';fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n')"
           git add -f downloads/SpeedmaxMuseum.apk app/android-version.json
           if git diff --cached --quiet; then echo "APK unchanged"; exit 0; fi
           git commit -m "build(app): publish Android app [skip ci]"
