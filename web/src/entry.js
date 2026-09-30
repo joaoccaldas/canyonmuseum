@@ -131,6 +131,8 @@ window.__konaShell = shell;
 function enterApp(first = 'home') {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
+  const installSheet=document.getElementById('appSheet');
+  if(installSheet) installSheet.hidden=true;
   if (first === 'garage') shell.garage?.();
   else if (first === 'collection') shell.collection?.();
   else if (first === 'discover') shell.explore?.();
