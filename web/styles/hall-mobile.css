@@ -122,3 +122,28 @@ html.phone-fit .credit{display:none}
   #intro .lede:not(.touch-only){display:none}
 }
 @media (max-width:520px){.set-opts{grid-template-columns:1fr}}
+
+/* Person-first mobile entry: readable before the 3D runtime exists. */
+@media (max-width:760px),(pointer:coarse){
+  #intro.kona-entry{
+    align-items:flex-end;
+    padding:0 22px calc(24px + var(--safe-b));
+    background:
+      linear-gradient(180deg,rgba(7,17,22,.08) 0%,rgba(7,17,22,.22) 34%,rgba(7,17,22,.82) 74%,rgba(7,17,22,.96) 100%),
+      url('assets/kona-years/kailua-bay.jpg') center/cover no-repeat;
+  }
+  #intro.kona-entry .intro-inner{max-width:34rem;width:100%}
+  #intro.kona-entry .eyebrow{color:#7bd9dc}
+  #intro.kona-entry h1{color:#f8f5ef;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.18)}
+  #intro.kona-entry h1 em{background:none;color:#ff6a22;-webkit-text-fill-color:#ff6a22}
+  #intro.kona-entry .lede{color:#eef2ef;font-weight:500}
+  #intro.kona-entry .kona-count{color:#ff7b38;font-weight:800;letter-spacing:.12em}
+  #intro.kona-entry .kona-note{color:#d8e0e2;line-height:1.45;margin-top:12px}
+  #intro.kona-entry .cta{margin-top:18px}
+  #intro.kona-entry .btn.primary{background:#f8f5ef;color:#11171c;border:1px solid rgba(255,255,255,.28)}
+  #intro.kona-entry .install-inline{
+    display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+    margin-top:4px;padding:0;color:#f8f5ef;text-decoration:underline;text-underline-offset:4px;
+    font-weight:700;font-size:.9rem;
+  }
+}
