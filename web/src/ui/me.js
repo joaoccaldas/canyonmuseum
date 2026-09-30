@@ -2,29 +2,28 @@
 // Personal truth comes from canonical game state; this surface owns no persistence.
 import { readGameState, gameProgress } from '../engine/game-state.js';
 import { ensureProgression } from '../engine/progression.js';
-import { getProduct } from '../engine/catalog.js';
+import { getPublicProduct } from '../engine/catalog.js';
 import { sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const legacyId = id => String(id || '').replace(/^product:/,'');
 const titleCase = s => String(s || '').replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 
-function equipmentProduct(snapshot, equipmentId) {
+async function equipmentProduct(snapshot, equipmentId) {
   const row = (snapshot?.user_equipment || []).find(x => x.id === equipmentId);
   if (!row?.product_id) return null;
-  return getProduct(legacyId(row.product_id)) || { id:legacyId(row.product_id), model:legacyId(row.product_id) };
+  return await getPublicProduct(legacyId(row.product_id)) || { id:legacyId(row.product_id), label:legacyId(row.product_id) };
 }
 
-function raceIdentityMarkup(snapshot) {
+async function raceIdentityMarkup(snapshot) {
   const identity = snapshot?.race_identity;
   if (!identity?.event_id) {
     return '<section class="kona-hero-card artifact artifact--hero"><small>YOUR KONA</small><h3>Start with a RaceIdentity.</h3><p>Your intent, goal and equipment become the anchor for Garage, Plan and Passport.</p></section>';
   }
-  const bike = equipmentProduct(snapshot, identity.setup?.bike);
-  const shoe = equipmentProduct(snapshot, identity.setup?.shoe);
+  const [bike, shoe] = await Promise.all([equipmentProduct(snapshot, identity.setup?.bike), equipmentProduct(snapshot, identity.setup?.shoe)]);
   const gear = [
-    bike ? [bike.brand,bike.model||bike.name].filter(Boolean).join(' ') : '',
-    shoe ? [shoe.brand,shoe.model||shoe.name].filter(Boolean).join(' ') : ''
+    bike ? [bike.brand,bike.name||bike.label||bike.model].filter(Boolean).join(' ') : '',
+    shoe ? [shoe.brand,shoe.name||shoe.label||shoe.model].filter(Boolean).join(' ') : ''
   ].filter(Boolean).join(' · ');
   const goal = identity.goal?.label || 'No goal set';
   const intent = identity.intent ? titleCase(identity.intent) : titleCase(identity.mode || 'Kona');
@@ -40,7 +39,7 @@ export async function renderMeSurface(root,{settings}={}) {
   try { ensureProgression(); } catch (_) { /* Passport remains readable without repair */ }
   const snapshot = readGameState();
   const p = gameProgress(snapshot);
-  root.innerHTML = raceIdentityMarkup(snapshot)+
+  root.innerHTML = await raceIdentityMarkup(snapshot)+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Passport</h3><small>'+esc(p.levelName||'Visitor')+'</small></div>'+
       '<div class="kona-list"><article><i>XP</i><div><b>'+p.xp+' XP</b><span>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds</span></div></article>'+
       '<article><i>↗</i><div><b>'+p.streak+' day streak</b><span>Progress follows what you actually explore.</span></div></article>'+
