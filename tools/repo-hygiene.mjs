@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const ROOT = path.resolve(new URL('..', import.meta.url).pathname, '..');
+const ROOT = path.resolve(new URL('..', import.meta.url).pathname);
 const SOURCE_DIRS = ['web/src','app','tools','integrations'];
 const errors = [];
 
@@ -16,7 +16,8 @@ function walk(dir) {
   return out;
 }
 
-const textFiles = SOURCE_DIRS.flatMap(d=>walk(path.join(ROOT,d))).filter(p=>/.(js|mjs|json|md|css|html|yml|yaml|py)$/.test(p));
+const textFiles = SOURCE_DIRS.flatMap(d=>walk(path.join(ROOT,d))).filter(p=>/\.(js|mjs|json|md|css|html|yml|yaml|py)$/.test(p));
+if (textFiles.length < 20) { console.error(`repository hygiene guard misconfigured: only ${textFiles.length} files discovered under ${ROOT}`); process.exit(2); }
 for (const file of textFiles) {
   const rel=path.relative(ROOT,file).replaceAll('\\','/');
   const text=fs.readFileSync(file,'utf8');
