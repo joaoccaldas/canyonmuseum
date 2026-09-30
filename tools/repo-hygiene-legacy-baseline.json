@@ -1,0 +1,18 @@
+{
+  "schema": "repo-hygiene-legacy-baseline-v1",
+  "note": "Known legacy direct speedmax.* references present when the hygiene scanner was repaired. This file freezes debt; CI rejects new files beyond this list. Remove entries as callers migrate to the KONA storage adapter.",
+  "files": [
+    "web/src/engine/app-state.js",
+    "web/src/engine/game-state.js",
+    "web/src/engine/identity.js",
+    "web/src/engine/profile.js",
+    "web/src/engine/progression.js",
+    "web/src/exp/main.js",
+    "web/src/finds.js",
+    "web/src/landing.js",
+    "web/src/main.js",
+    "web/src/passport.js",
+    "web/src/studio/race-setup.js",
+    "tools/harden_pages.mjs"
+  ]
+}
