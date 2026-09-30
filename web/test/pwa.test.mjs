@@ -34,6 +34,13 @@ test('sealed service worker verifies release files and keeps GLBs out of the cor
   const app = JSON.parse(fs.readFileSync(path.join(root, 'app/app-manifest.json'), 'utf8'));
   assert.ok(app.version && app.files && app.core?.length);
   assert.ok(app.core.every(p => !/\.glb$/i.test(p)));
+  assert.ok(app.core.includes('app/museum-data.js') && app.core.includes('app/hall.js'));
+  assert.ok(app.files['app/studio.js'] && app.files['app/studio-catalog.js']);
+  const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  assert.match(index, /src="app\/museum-data\.js"/);
+  assert.match(index, /src="app\/hall\.js"/);
+  assert.doesNotMatch(index, /window\.__PIECES=/);
+  assert.ok(index.length < 250000, `index.html grew back to ${(index.length / 1024).toFixed(0)} kB`);
   assert.match(sw, /fetchVerified/);
   assert.match(sw, /integrity mismatch/);
   assert.match(sw, /speedmax-core-/);

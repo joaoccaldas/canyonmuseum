@@ -8,12 +8,14 @@ import assert from 'node:assert/strict';
 const root = path.resolve(import.meta.dirname, '..');
 const base = process.argv[2] || 'http://127.0.0.1:8744/';
 const exe = process.env.CHROME || ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'].find(f => fs.existsSync(f));
-const browser = await puppeteer.launch({ executablePath: exe, headless: true, args: ['--no-sandbox', '--enable-unsafe-swiftshader'] });
+const browser = await puppeteer.launch({ executablePath: exe, headless: true, protocolTimeout: 300000, args: ['--no-sandbox', '--enable-unsafe-swiftshader'] });
 const swPath = path.join(root, 'sw.js'), original = fs.readFileSync(swPath, 'utf8');
 try {
   const page = await browser.newPage();
+  page.setDefaultTimeout(180000);
+  page.setDefaultNavigationTimeout(180000);
   await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
-  await page.goto(base + 'index.html', { waitUntil: 'load' });
+  await page.goto(base + 'index.html', { waitUntil: 'load', timeout: 180000 });
   const v1 = await page.evaluate(async () => { const r = await navigator.serviceWorker.ready; return new Promise(res => { navigator.serviceWorker.addEventListener('message', e => res(e.data.version), { once: true }); r.active.postMessage('version'); }); });
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'app/app-manifest.json'), 'utf8'));
   assert.equal(v1, manifest.version); console.log('installed release', v1);

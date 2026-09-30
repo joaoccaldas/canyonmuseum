@@ -1,6 +1,8 @@
-/* Speedmax Museum design system — injected into every page by tools/harden_pages.mjs.
-   Typography and shared text components only: colours stay with each page (the engineering studios
-   are dark by design). Canvas lettering uses the same families (web/src/engine/type.js). */
+/* WEB + shared — KONA shell and type, injected into every page by tools/harden_pages.mjs.
+   Desktop shell lives here. Phone shell: shell-mobile.css
+   Hall chrome: hall-web.css (desktop) and hall-mobile.css (phone and phone-fit).
+   Colours stay with each page (the engineering studios are dark by design).
+   Canvas lettering uses the same families (web/src/engine/type.js). */
 :root{
   --sans:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
   --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
@@ -114,22 +116,11 @@ html[data-theme="dark"]{
 .kona-list a{color:var(--kona-cyan);font-size:11.5px;text-decoration:none;font-weight:700}
 .kona-timeline time{width:62px;flex:0 0 62px;color:var(--kona-cyan);font:700 11px var(--sans)}
 .kona-place-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.kona-place-grid>button{display:block;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer}
+.kona-place-grid>button article{width:100%}
 .kona-place-grid article{min-height:128px;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;border-radius:17px;border:1px solid var(--kona-line);
   background:linear-gradient(155deg,color-mix(in srgb,var(--kona-cyan) 7%,var(--kona-surface-strong)),var(--kona-surface-strong))}
 .kona-place-grid small{color:var(--kona-cyan);font:700 9px var(--sans);text-transform:uppercase;letter-spacing:.12em}
 .kona-place-grid b{font:400 22px/1.05 var(--serif);margin:6px 0}.kona-place-grid span{font-size:10.5px;line-height:1.4;color:var(--kona-muted)}
 .kona-place-grid em{font:700 9px var(--sans);color:var(--kona-accent);margin-top:7px;text-transform:uppercase;letter-spacing:.1em}
 .kona-source-note{color:var(--kona-faint);font-size:10.5px;line-height:1.5;padding:0 4px 12px}
-@media(max-width:760px){
-  .kona-bottom-nav{display:grid}
-  body.kona-panel-open{overflow:hidden}
-  body.kona-panel-open>header,body.kona-panel-open>#hall,body.kona-panel-open>#rail,body.kona-panel-open>#joy,body.kona-panel-open>#card,body.kona-panel-open>#intro{visibility:hidden}
-  body.touch.walking #rail{bottom:76px}
-  body.touch #joy{bottom:calc(150px + var(--safe-b))}
-  body.touch #card{bottom:calc(86px + var(--safe-b));max-height:62dvh}
-  body.touch header{padding-bottom:0}
-  body.touch header nav{display:none}
-  body.touch header .logo{background:color-mix(in srgb,var(--kona-surface-strong) 82%,transparent);border-color:var(--kona-line);color:var(--kona-text)}
-  body.touch #intro{padding-bottom:calc(102px + var(--safe-b))}
-}
-@media(max-width:380px){.kona-place-grid{grid-template-columns:1fr}.kona-panel{padding-left:12px;padding-right:12px}.kona-section{padding:14px}}

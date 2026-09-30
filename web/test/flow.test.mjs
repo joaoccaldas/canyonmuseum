@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const src = fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(here, '../landing.template.html'), 'utf8');
+const hallWeb = fs.readFileSync(path.join(here, '../styles/hall-web.css'), 'utf8');
 
 test('museum uses tighter responsive framing', () => {
   assert.match(src, /if \(a < \.78\) return 59/);
@@ -23,8 +24,8 @@ test('museum movement is deliberately faster and more responsive', () => {
 
 test('flow mode lets chrome recede during movement', () => {
   assert.match(src, /classList\.toggle\('flowing', flowing\)/);
-  assert.match(tpl, /body\.flowing:not\(\.card-open\) header/);
-  assert.match(tpl, /body\.flowing:not\(\.card-open\) #rail/);
+  assert.match(hallWeb, /body\.flowing:not\(\.card-open\) header/);
+  assert.match(hallWeb, /body\.flowing:not\(\.card-open\) #rail/);
 });
 
 
