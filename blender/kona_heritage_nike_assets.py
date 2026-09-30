@@ -131,27 +131,77 @@ def disc(name, loc, radius, mat, parent):
     o.parent = parent
     return o
 
-def beam_between(name, a, b, width, depth, mat, parent, bevel=.012):
-    """Aero beam with rectangular/rounded cross-section, aligned between measured points."""
+def beam_between(name, a, b, side_depth, out_width, mat, parent, bevel=.012):
+    """Extruded aero prism between measured nodes.
+
+    side_depth controls the visible X/Z section depth; out_width controls bike width.
+    Unlike a rotated cube, this keeps the side-view silhouette deterministic.
+    """
     a,b=Vector(a),Vector(b)
-    d=b-a
-    bpy.ops.mesh.primitive_cube_add(location=(a+b)/2)
-    o=bpy.context.object
-    o.name=name
-    o.scale=(width/2, depth/2, d.length/2)
-    o.rotation_mode="QUATERNION"
-    o.rotation_quaternion=d.to_track_quat("Z","Y")
-    bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
-    mod=o.modifiers.new("aero_edge","BEVEL"); mod.width=bevel; mod.segments=3
+    dx=b.x-a.x; dz=b.z-a.z
+    L=max(math.hypot(dx,dz),1e-9)
+    px=-dz/L*(side_depth/2); pz=dx/L*(side_depth/2)
+    y=out_width/2
+    side=[(a.x+px,a.z+pz),(a.x-px,a.z-pz),(b.x-px,b.z-pz),(b.x+px,b.z+pz)]
+    verts=[(x,-y,z) for x,z in side]+[(x,y,z) for x,z in side]
+    faces=[
+        (0,1,2,3),(4,7,6,5),
+        (0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0)
+    ]
+    me=bpy.data.meshes.new(name+"_MESH")
+    me.from_pydata(verts,[],faces); me.update()
+    o=bpy.data.objects.new(name,me)
+    scene.collection.objects.link(o)
     o.data.materials.append(mat); o.parent=parent
+    bev=o.modifiers.new("aero_edge","BEVEL"); bev.width=bevel; bev.segments=3
     return o
+
+def rim_ring(name, loc, tire_radius, rim_depth, mat, parent, spokes=True, disc_wheel=False):
+    """Build a realistic tire + carbon rim + hub/spokes or disc wheel."""
+    torus(name+"_TIRE",loc,tire_radius,.014,BLACK,parent)
+    rim_outer=tire_radius-.018
+    if disc_wheel:
+        disc(name+"_DISC",loc,rim_outer,mat,parent)
+    else:
+        rim_inner=max(.11,rim_outer-rim_depth)
+        seg=64
+        verts=[]; faces=[]
+        for yi in (-.010,.010):
+            for r in (rim_outer,rim_inner):
+                for i in range(seg):
+                    a=2*math.pi*i/seg
+                    verts.append((loc[0]+r*math.cos(a),loc[1]+yi,loc[2]+r*math.sin(a)))
+        # index blocks: y-,outer / y-,inner / y+,outer / y+,inner
+        def idx(side,ring,i): return side*(2*seg)+ring*seg+(i%seg)
+        for i in range(seg):
+            j=i+1
+            faces += [
+                (idx(0,0,i),idx(0,0,j),idx(0,1,j),idx(0,1,i)),
+                (idx(1,0,j),idx(1,0,i),idx(1,1,i),idx(1,1,j)),
+                (idx(0,0,i),idx(1,0,i),idx(1,0,j),idx(0,0,j)),
+                (idx(0,1,j),idx(1,1,j),idx(1,1,i),idx(0,1,i)),
+            ]
+        me=bpy.data.meshes.new(name+"_RIM_MESH"); me.from_pydata(verts,[],faces); me.update()
+        o=bpy.data.objects.new(name+"_RIM",me); scene.collection.objects.link(o); o.data.materials.append(mat); o.parent=parent
+        # hub and sparse aero spokes
+        bpy.ops.mesh.primitive_cylinder_add(vertices=24,radius=.020,depth=.085,location=loc,rotation=(math.pi/2,0,0))
+        hub=bpy.context.object; hub.name=name+"_HUB"; hub.data.materials.append(SILVER); hub.parent=parent
+        if spokes:
+            for i in range(16):
+                a=2*math.pi*i/16
+                p=(loc[0]+rim_inner*math.cos(a),loc[1],loc[2]+rim_inner*math.sin(a))
+                cyl_between(f"{name}_SPOKE_{i:02d}",loc,p,.0022,SILVER,parent,8)
+
+def brake_rotor(name, loc, parent):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=48,radius=.070,depth=.004,location=loc,rotation=(math.pi/2,0,0))
+    o=bpy.context.object; o.name=name; o.data.materials.append(SILVER); o.parent=parent
 
 BIKE_GEOMETRY = {
     # Official Cervelo P5 DISC MK2 geometry, size 54.
     "cervelo-p5-disc-mk2-size54": dict(
         style="p5", wheelbase=0.995, chainstay=0.405, bb_drop=0.075,
         stack=0.503, reach=0.418, head_angle=72.5, head_tube=0.098,
-        seat_angle=79.0, seat_tube=0.515, tire_od=0.674,
+        seat_angle=79.0, seat_tube=0.515, tire_od=0.674, front_rim=0.060, rear_rim=0.075,
         source="https://www.cervelo.com/en-US/support/P5%20DISC%20MK2"
     ),
     # Official Specialized S-Works Shiv Disc geometry, size M.
@@ -159,21 +209,21 @@ BIKE_GEOMETRY = {
         style="shiv", wheelbase=1.001, chainstay=0.415, bb_drop=0.072,
         stack=0.514, reach=0.401, head_angle=72.0, head_tube=0.094,
         seat_angle=77.0, seat_tube=0.547, tire_od=0.674,
-        pad_stack=0.585, pad_reach=0.556,
+        pad_stack=0.585, pad_reach=0.556, front_rim=0.064, rear_rim=0.064,
         source="https://www.specialized.com/se/sv/s-works-shiv-disc-module/p/175306"
     ),
     # Official Felt 2015 catalog IA geometry, size 54: historically relevant Kona-era platform.
     "felt-ia-2015-size54": dict(
         style="felt", wheelbase=0.991, chainstay=0.400, bb_drop=0.072,
         stack=0.522, reach=0.404, head_angle=72.0, head_tube=0.111,
-        seat_angle=78.5, seat_tube=0.546, tire_od=0.668,
+        seat_angle=78.5, seat_tube=0.546, tire_od=0.668, front_rim=0.060, rear_rim=0.080,
         source="https://www.feltbicycles.com/documents/archive/2015_FELT_Catalog.pdf"
     ),
     # Official BMC Speedmachine 01 geometry, size M.
     "bmc-speedmachine-01-size-m": dict(
         style="bmc", wheelbase=1.000, chainstay=0.405, bb_drop=0.072,
         front_center=0.606, fork_length=0.391,
-        seat_angle=80.0, seat_tube=0.525, tire_od=0.678,
+        seat_angle=80.0, seat_tube=0.525, tire_od=0.678, front_rim=0.027, rear_rim=0.027,
         pad_stack=0.588, pad_reach=0.486,
         source="https://us.bmc-switzerland.com/products/speedmachine-01-four-bikes-bmc-26a-000005"
     ),
@@ -183,7 +233,7 @@ BIKE_GEOMETRY = {
     "orbea-ordu-current-sm": dict(
         style="ordu", wheelbase=1.007, chainstay=0.405, bb_drop=0.075,
         front_center=0.613, head_tube=0.096, head_angle=72.0,
-        seat_angle=78.0, tire_od=0.674,
+        seat_angle=78.0, tire_od=0.674, front_rim=0.080, rear_rim=0.080,
         bar_stack=0.516, bar_reach=0.665, pad_stack=0.550, pad_reach=0.505,
         source="https://www.orbea.com/us-en/bicycles/ordu-m10iltd/pdf"
     ),
@@ -192,7 +242,7 @@ BIKE_GEOMETRY = {
     "scott-plasma-rc-provisional": dict(
         style="plasma", wheelbase=0.990, chainstay=0.405, bb_drop=0.072,
         stack=0.518, reach=0.398, head_angle=72.5, head_tube=0.115,
-        seat_angle=76.5, seat_tube=0.530, tire_od=0.678,
+        seat_angle=76.5, seat_tube=0.530, tire_od=0.678, front_rim=0.080, rear_rim=0.080,
         source="https://www.scott-sports.com/us/en/product/scott-plasma-rc-ultimate-bike",
         provisional=True
     ),
@@ -213,9 +263,10 @@ def bike(asset_id, frame=CARBON, accent=WHITE):
     bb_x=math.sqrt(max(cs*cs-drop*drop,0))
     bb=(bb_x,0,wr-drop)
 
-    torus(asset_id+"_REAR_WHEEL",rear,wr,.016,BLACK,g)
-    torus(asset_id+"_FRONT_WHEEL",front,wr,.016,BLACK,g)
-    disc(asset_id+"_REAR_DISC",rear,wr-.028,BLACK,g)
+    rim_ring(asset_id+"_REAR_WHEEL",rear,wr,geo.get("rear_rim",.060),CARBON,g,spokes=True,disc_wheel=geo.get("rear_disc",False))
+    rim_ring(asset_id+"_FRONT_WHEEL",front,wr,geo.get("front_rim",.060),CARBON,g,spokes=True,disc_wheel=False)
+    brake_rotor(asset_id+"_REAR_ROTOR",(rear[0],-.014,rear[2]),g)
+    brake_rotor(asset_id+"_FRONT_ROTOR",(front[0],-.014,front[2]),g)
 
     if "stack" in geo and "reach" in geo:
         head_top=(bb[0]+geo["reach"],0,bb[2]+geo["stack"])
@@ -233,13 +284,13 @@ def bike(asset_id, frame=CARBON, accent=WHITE):
     seat_top=(bb[0]-math.cos(sa)*st_len,0,bb[2]+math.sin(sa)*st_len)
 
     # Main frame uses measured nodes and aero-depths tuned by documented product architecture.
-    beam_between(asset_id+"_DOWN_TUBE",head_bottom,bb,.072,.046,frame,g,.014)
-    beam_between(asset_id+"_TOP_TUBE",head_top,seat_top,.048,.038,frame,g,.012)
-    beam_between(asset_id+"_SEAT_TUBE",bb,seat_top,.066,.043,frame,g,.014)
-    beam_between(asset_id+"_CHAIN_STAY",bb,rear,.036,.026,frame,g,.008)
-    beam_between(asset_id+"_SEAT_STAY",seat_top,rear,.030,.022,frame,g,.008)
-    beam_between(asset_id+"_FORK_L",head_bottom,(front[0],-.035,front[2]),.036,.026,frame,g,.008)
-    beam_between(asset_id+"_FORK_R",head_bottom,(front[0],.035,front[2]),.036,.026,frame,g,.008)
+    beam_between(asset_id+"_DOWN_TUBE",head_bottom,bb,.105,.048,frame,g,.014)
+    beam_between(asset_id+"_TOP_TUBE",head_top,seat_top,.055,.040,frame,g,.012)
+    beam_between(asset_id+"_SEAT_TUBE",bb,seat_top,.090,.046,frame,g,.014)
+    beam_between(asset_id+"_CHAIN_STAY",bb,rear,.040,.026,frame,g,.008)
+    beam_between(asset_id+"_SEAT_STAY",seat_top,rear,.034,.022,frame,g,.008)
+    beam_between(asset_id+"_FORK_L",head_bottom,(front[0],-.035,front[2]),.050,.026,frame,g,.008)
+    beam_between(asset_id+"_FORK_R",head_bottom,(front[0],.035,front[2]),.050,.026,frame,g,.008)
 
     # Product-specific architecture, scaled from the measured frame.
     if style=="shiv":
@@ -269,7 +320,12 @@ def bike(asset_id, frame=CARBON, accent=WHITE):
 
     saddle_z=seat_top[2]+.105
     cube(asset_id+"_SADDLE",(seat_top[0]-.020,0,saddle_z),(.120,.045,.025),BLACK,g,.018)
-    disc(asset_id+"_CRANK",bb,.055,SILVER,g)
+    disc(asset_id+"_CHAINRING",bb,.105,BLACK,g)
+    cyl_between(asset_id+"_CRANK_ARM",bb,(bb[0]+.165,0,bb[2]-.020),.010,SILVER,g,12)
+    cube(asset_id+"_PEDAL",(bb[0]+.180,0,bb[2]-.025),(.025,.045,.009),BLACK,g,.005)
+    # rear cassette / derailleur proxy with correct physical scale
+    disc(asset_id+"_CASSETTE",(rear[0],.018,rear[2]),.050,SILVER,g)
+    cube(asset_id+"_REAR_DERAILLEUR",(rear[0]+.045,.020,rear[2]-.060),(.020,.018,.042),BLACK,g,.006)
 
     g["asset_kind"]="bike"
     g["evidence_class"]="manufacturer-geometry" if not geo.get("provisional") else "provisional-geometry"
@@ -461,8 +517,9 @@ def ensure_preview_rig():
 def render_preview(filename, visible_ids, positions, target=(0,0,.72), camera=(0,-8.8,3.3)):
     for aid,obj in ASSETS.items():
         hidden = aid not in visible_ids
-        obj.hide_render = hidden
-        obj.hide_viewport = hidden
+        for part in descendants(obj):
+            part.hide_render = hidden
+            part.hide_viewport = hidden
     for aid,loc in positions.items():
         ASSETS[aid].location=loc
     cam=scene.camera or ensure_preview_rig()
@@ -481,7 +538,7 @@ render_preview(
     bike_ids,
     {aid:((-4.25+i*1.70),0,0) for i,aid in enumerate(bike_ids)},
     target=(0,0,.48),
-    camera=(0,-8.6,3.1),
+    camera=(0,-13.5,3.4),
 )
 shoe_ids=[
     "nike-vaporfly-4pct-study","nike-vaporfly-next-study",
@@ -495,8 +552,9 @@ render_preview(
     camera=(0,-5.1,1.55),
 )
 for obj in ASSETS.values():
-    obj.hide_render=False
-    obj.hide_viewport=False
+    for part in descendants(obj):
+        part.hide_render=False
+        part.hide_viewport=False
 
 (OUT / "build-report.json").write_text(json.dumps(BUILD_REPORT, indent=2) + "\n")
 
