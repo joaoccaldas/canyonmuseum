@@ -596,33 +596,45 @@ if (WROOMDATA) {
   // the four dyes, suspended: one levitating, one hanging upside down from the ceiling, one flat on the wall, one standing on its tail
   const obsidian = new THREE.MeshStandardMaterial({ color: '#0b0b0e', roughness: .06, metalness: .3, envMapIntensity: 1.3 });
   const chrome = new THREE.MeshStandardMaterial({ color: '#e8eaee', metalness: 1, roughness: .12 });
-  const STATIONS = [
-    { kind: 'float', x: CX + 1.6, z: CZ2 - .6, rotY: .55, top: 1.05 },                   // Dye hovers over a black mirror
-    { kind: 'wall', x: CX - 2.2, z: WROOM.z0 - .42, rotY: Math.PI, top: 1.25 },          // Tide flat on the north wall
-    { kind: 'vertical', x: CX + 2.6, z: WROOM.z1 + .42, rotY: 0, top: .32 },             // Sheer stands on its rear wheel against the south wall
-    { kind: 'ceiling', x: CX - 3.6, z: CZ2 + 2.6, rotY: 2.1, top: WROOM.h - .015 },     // Night hangs, wheels up, from the ceiling
+  // Primary WYLD exhibits are data-driven and gallery-readable. Experimental suspended
+  // duplicates may exist elsewhere, but every public livery gets one upright floor-mounted bike.
+  const fallbackStations = [
+    { kind: 'hero', x: CX + .7, z: CZ2 + 1.8, rotY: .22, top: .28 },
+    { kind: 'gallery', x: CX - 3.9, z: CZ2 + 5.3, rotY: 1.18, top: .24 },
+    { kind: 'gallery', x: CX + 4.4, z: CZ2 - 2.4, rotY: -1.18, top: .24 },
+    { kind: 'alcove', x: CX - 3.4, z: CZ2 - 6.1, rotY: 2.2, top: .24 },
   ];
   W.variants.forEach((v, i) => {
-    const st = STATIONS[i], x = st.x, z = st.z, rotY = st.rotY;
+    const st = v.display || fallbackStations[i], x = st.x, z = st.z, rotY = st.rotY;
     const g = new THREE.Group(); g.position.set(x, 0, z); room.add(g);
-    const b = { ...v, index: i, kind: 'wyld', pos: new THREE.Vector3(x, 0, z), rotY, group: g, station: st.kind, top: st.top };
-    if (st.kind === 'float') {                                   // no plinth: a disc of black glass and a soft shadow far below the tyres
-      const pad = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, .02, 96), obsidian); pad.position.y = .01; pad.receiveShadow = true; g.add(pad);
-      g.add(placed(lightPool(3.6, 3.6, '#ffffff', .12), 0, .024, 0));
-      const cs = contactShadow(2.2, .7); cs.position.y = .024; cs.rotation.z = rotY; cs.material.opacity = .45; g.add(cs);
-    } else if (st.kind === 'wall' || st.kind === 'vertical') {   // two chrome pins out of the plaster, nothing else
-      const pins = st.kind === 'wall' ? [[-.42, st.top + .78], [.42, st.top + .78]] : [[0, st.top + 1.62]];
-      for (const [dx, y] of pins) { const pin = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .42, 12), chrome); pin.rotation.x = Math.PI / 2; pin.position.set(dx, y, -.21 * Math.cos(rotY)); g.add(pin); }
-      g.add(placed(lightPool(2.6, 1.4, '#ffffff', .1), 0, .004, .5 * Math.cos(rotY)));
-    }
+    const b = { ...v, index: i, kind: 'wyld', pos: new THREE.Vector3(x, 0, z), rotY, group: g, station: st.kind, top: st.top, display: st };
+
+    // One visual grammar, four personalities: low plinth, clean pool of light, readable bike silhouette.
+    const night = st.kind === 'alcove';
+    const hero = st.kind === 'hero';
+    const plinthMat = night ? obsidian : white;
+    const plinth = hero
+      ? new THREE.Mesh(new THREE.CylinderGeometry(1.34, 1.42, st.top, 64), obsidian)
+      : new THREE.Mesh(new THREE.BoxGeometry(2.45, st.top, 1.18), plinthMat);
+    plinth.position.y = st.top / 2; plinth.rotation.y = rotY; plinth.receiveShadow = true; plinth.castShadow = !lite; g.add(plinth);
+    const pool = lightPool(hero ? 3.8 : 3.0, hero ? 3.8 : 2.2, night ? '#5fd8d3' : hero ? '#ff8fbf' : '#ffffff', night ? .18 : hero ? .17 : .11);
+    pool.position.y = st.top + .008; pool.rotation.z = rotY; g.add(pool);
+    const cs = contactShadow(2.2, .66); cs.position.y = st.top + .012; cs.rotation.z = rotY; cs.material.opacity = night ? .3 : .42; g.add(cs);
+
+    // A small floor plaque makes the installation read as a curated gallery, not loose scene geometry.
+    const plaque = lettering(1.55, .24, gx => {
+      gx.fillStyle = night ? '#f4efe7' : '#12181d'; gx.font = `700 .052px ${FONT}`; gx.fillText(v.name.toUpperCase(), 0, .08);
+      gx.fillStyle = night ? '#8fe7dc' : '#8e979d'; gx.font = `500 .038px ${FONT}`; gx.fillText((st.label || v.sub).toUpperCase().slice(0, 42), 0, .18);
+    }, 768);
+    plaque.rotation.x = -Math.PI / 2; plaque.rotation.z = rotY; plaque.position.set(0, st.top + .016, hero ? 1.55 : .9); g.add(plaque);
+
     b.normal = new THREE.Vector3(Math.sin(rotY), 0, Math.cos(rotY));
-    const dist = st.kind === 'ceiling' ? 3.6 : st.kind === 'vertical' ? 3.3 : 3.0;
-    b.view = b.pos.clone().addScaledVector(b.normal, dist + (coarse && innerHeight > innerWidth ? 1 : 0));
+    if (st.camera) b.view = new THREE.Vector3(st.camera.x, 0, st.camera.z);
+    else b.view = b.pos.clone().addScaledVector(b.normal, 3.1 + (coarse && innerHeight > innerWidth ? 1 : 0));
     b.view.x = clamp(b.view.x, WROOM.x0 + 1.2, WROOM.x1 - .8); b.view.z = clamp(b.view.z, WROOM.z1 + 1, WROOM.z0 - 1);
-    b.face = b.pos.clone().setY({ float: 1.55, wall: st.top + .55, vertical: 1.2, ceiling: WROOM.h - .75 }[st.kind]);
+    b.face = b.pos.clone().setY(1.18);
     g.children.forEach(o => { if (o.isMesh) { o.userData.wyldBike = b; pickables.push(o); } });
-    if (st.kind === 'float') obstacles.push({ c: b.pos, r: 1.35 });
-    else if (st.kind !== 'ceiling') obstacles.push({ c: b.pos, r: .75 });           // walk right under the hanging bike
+    obstacles.push({ c: b.pos, r: hero ? 1.5 : 1.18 });
     wyldBikes.push(b);
   });
   // a dyed disc wheel, two metres across, turning slowly in the air by the door — the WYLD room's calling card
