@@ -606,6 +606,32 @@ for obj in ASSETS.values():
         part.hide_render=False
         part.hide_viewport=False
 
+
+# Lightweight visual QA thumbnails for code review / CI inspection.
+scene.render.resolution_x=800
+scene.render.resolution_y=450
+scene.render.image_settings.file_format="JPEG"
+scene.render.image_settings.color_mode="RGB"
+scene.render.image_settings.quality=80
+render_preview(
+    "bikes-qa.jpg",
+    bike_ids,
+    {aid:((-4.25+i*1.70),0,0) for i,aid in enumerate(bike_ids)},
+    target=(0,0,.48),
+    camera=(0,-13.5,3.4),
+)
+render_preview(
+    "nike-current-qa.jpg",
+    ["nike-alphafly-3-study","nike-vaporfly-4-current"],
+    {
+        "nike-alphafly-3-study":(-.34,0,.04),
+        "nike-vaporfly-4-current":(.34,0,.04),
+    },
+    target=(0,0,.12),
+    camera=(0,-2.45,.82),
+)
+scene.render.image_settings.file_format="PNG"
+
 (OUT / "build-report.json").write_text(json.dumps(BUILD_REPORT, indent=2) + "\n")
 
 pack_blend = PACK_OUT / "kona_heritage_nike_pack.blend"
