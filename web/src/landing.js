@@ -1034,7 +1034,7 @@ function openKona(spot) {
   $('cActions').innerHTML = `<button class="btn primary" id="cOtherGen">${esc(other?.name || 'The other generation')} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back to the hall</button>`;
   $('cOtherGen').onclick = () => visitKona(other);
   $('cHall').onclick = () => { closeCard(); route({ x: 0, z: DZ }, null, null); };
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 async function loadHweenBike() {
   const cfr = PIECES.find(p => p.key === 'cfr'); if (!cfr?.glb || hween.piece.bike) return;
@@ -1166,7 +1166,7 @@ function openChamp(c) {
   $('cActions').innerHTML = `<button class="btn primary" id="cNextChamp">Next: ${esc(String(next.year))} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back to the hall</button>`;
   $('cNextChamp').onclick = () => visitChamp(next);
   $('cHall').onclick = () => { closeCard(); champ = null; route({ x: 0, z: DZ }, null, null); };
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function studioLink(v) {                                            // open the exhibit already dyed
   const cfg = { preset: 'wyld', wyld: true, wyldDark: v.wyld.darkness, wyldSheer: v.wyld.sheer, decal: v.decal };
@@ -1199,7 +1199,7 @@ function openBrand(p) {
   $('cActions').innerHTML = (p.buy ? `<a class="btn primary" href="${esc(p.buy)}" target="_blank" rel="noopener">Where to buy <span aria-hidden="true">→</span></a>` : '')
     + `<button class="btn ghost" id="cBrandOut">Keep walking</button>`;
   $('cBrandOut').onclick = () => closeCard();
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function loadBrand() {
   if (brandLoaded || !brandRooms.length) return; brandLoaded = true;
@@ -1218,7 +1218,7 @@ function openWyld(v) {
   const next = wyldBikes[(v.index + 1) % wyldBikes.length];
   $('cActions').innerHTML = `<a class="btn primary" href="${esc(studioLink(v))}"><span class="long">Open in&nbsp;</span>3D studio <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextDye">Next<span class="long">:&nbsp;${esc(next.name.replace('WYLD ', ''))}</span> <span aria-hidden="true">→</span></button>`;
   $('cNextDye').onclick = () => visitWyld(next);
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function openInfo(n) {
   if (exploded) setExploded(exploded, false);
@@ -1228,7 +1228,7 @@ function openInfo(n) {
   $('cMedia').innerHTML = n.photo ? `<figure class="c-photo"><img src="${esc(n.photo.src)}" alt="${esc(n.photo.caption)}" referrerpolicy="no-referrer"><figcaption>${esc(n.photo.caption)}<br><a href="${esc(n.photo.page)}" target="_blank" rel="noopener">© ${esc(n.photo.author)} · ${esc(n.photo.license)} ↗</a></figcaption></figure>` : '';
   $('cActions').innerHTML = `<button class="btn ghost" id="cInfoClose">Keep walking</button>`;
   $('cInfoClose').onclick = () => closeCard();
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 // ------------------------------------------------------------------ the pier: a year, a machine, the finish
 let yearSel = null;
@@ -1256,7 +1256,7 @@ function openYear(s) {
   $('cActions').innerHTML = `<button class="btn primary" id="cNextYear">${next ? `Next: ${next.year}` : 'To the finish'} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back<span class="long"> to the hall</span></button>`;
   $('cNextYear').onclick = () => visitPier(next || pier.finale);
   $('cHall').onclick = () => { closeCard(); yearSel = null; route({ x: 0, z: -37.2 }, null, null); };
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function openEra(e) {
   current = null; champ = null;
@@ -1265,7 +1265,7 @@ function openEra(e) {
   $('cMedia').innerHTML = paintingFig(e.canvas);
   $('cActions').innerHTML = `<button class="btn primary" id="cWalk">Walk the years <span aria-hidden="true">→</span></button>`;
   $('cWalk').onclick = () => visitPier(pier.stations[0]);
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function openFinale() {
   current = null; champ = null; yearSel = null;
@@ -1277,7 +1277,7 @@ function openFinale() {
   $('cMedia').innerHTML = '';
   $('cActions').innerHTML = (cfr?.viewer ? `<a class="btn primary" href="${esc(cfr.viewer)}"><span class="long">Enter </span>3D studio <span aria-hidden="true">→</span></a>` : '') + `<button class="btn ghost" id="cBackYears">Back to 2014</button>`;
   $('cBackYears').onclick = () => visitPier(pier.stations[0]);
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 
 // ------------------------------------------------------------------ Lava Night
@@ -1297,7 +1297,7 @@ function openHween() {
   $('cMedia').innerHTML = '';
   $('cActions').innerHTML = (cfr?.viewer ? `<a class="btn primary" href="${esc(cfr.viewer)}"><span class="long">Enter </span>3D studio <span aria-hidden="true">→</span></a>` : '') + `<button class="btn ghost" id="cHweenOut">Back<span class="long"> to the hall</span></button>`;
   $('cHweenOut').onclick = () => { closeCard(); route({ x: -1, z: 2.5 }, null, null); };
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 
 function visitSanctuary(film) {
@@ -1319,7 +1319,7 @@ function openSanctuary(film) {
   const next = sanctuary.films[(film.index + 1) % sanctuary.films.length];
   $('cActions').innerHTML = `<a class="btn primary" href="https://joaoccaldas.github.io/ai/studio/wyld-store/bike-porn/#${esc(film.id)}">Watch the film <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextFilm">Next<span class="long">: ${esc(next.name)}</span></button>`;
   $('cNextFilm').onclick = () => visitSanctuary(next);
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function visitGallery(spot) {
   if (!spot) return;
@@ -1556,7 +1556,7 @@ function openCard(p) {
   $('cNext').onclick = () => visit(next);
   if (p.glb && p.key) $('cActions').insertAdjacentHTML('beforeend', `<a class="btn ghost" href="Studio.html?p=canyon-${p.key === 'cfr' || p.key === 'slx' ? p.key + '-2027' : esc(p.key)}">Paint it<span class="long"> in the studio</span></a>`);
   if ($('cExplode')) $('cExplode').onclick = () => setExploded(p, !(p.exT > 0));
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function closeCard(keepCurrent) {
   $('card').classList.remove('on'); document.body.classList.remove('card-open');
@@ -1617,7 +1617,7 @@ function openPart(p, id) {
     + (nxt && nxt !== id ? `<button class="btn primary" id="cNextPart">Next part <span aria-hidden="true">→</span></button>` : '');
   $('cBack').onclick = () => openCard(p);
   if ($('cNextPart')) $('cNextPart').onclick = () => openPart(p, nxt);
-  $('card').classList.add('on'); document.body.classList.add('card-open');
+  $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 $('labels').addEventListener('click', e => { const b = e.target.closest('.plabel'); if (b && exploded) { current = exploded; openPart(exploded, b.dataset.part); } });
 function partOf(p, obj) { for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id] && labelled(p).includes(id)) return id; } for (let o = obj; o; o = o.parent) { const id = o.userData?.part; if (id && p.parts?.[id]) return id; } return null; }
