@@ -10,7 +10,13 @@ import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, que
 import { shareRaceIdentity } from './growth/share.js';
 
 const intro = document.getElementById('intro');
-const setEntryMode = mode => { intro?.classList.toggle('quest-active', mode === 'quest'); intro?.classList.toggle('app-ready', mode === 'app'); };
+const setEntryMode = mode => {
+  intro?.classList.toggle('quest-active', mode === 'quest');
+  intro?.classList.toggle('app-ready', mode === 'app');
+  document.body.classList.remove('entry-landing','entry-quest','entry-app');
+  document.body.classList.add('entry-' + mode);
+  document.body.dataset.entryMode = mode;
+};
 const profile = createProfile();
 const settingsBridge = { open() {} };
 window.__konaSettingsBridge = settingsBridge;
@@ -203,9 +209,9 @@ function existingRaceIdentity() {
   } catch (_) { return null; }
 }
 
-document.getElementById('entryGuest')?.addEventListener('click', enterApp);
 document.getElementById('entrySignIn')?.addEventListener('click', () => paintQuest('save'));
 
+setEntryMode('landing');
 const existingIdentity = existingRaceIdentity();
 const buildButton = document.getElementById('buildSelf');
 if (existingIdentity) {
