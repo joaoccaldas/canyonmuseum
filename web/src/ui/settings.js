@@ -1,3 +1,4 @@
+import { applyBrandMode } from '../brand/runtime.js';
 import { exportAppState, eraseAppState, appStateSummary } from '../engine/app-state.js';
 // ui/settings.js — profile and settings sheet, and the profile chip in the header.
 // Built from engine/profile.js data; the sheet never stores anything itself.
@@ -45,7 +46,7 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
         reloadNeeded ? el('div', { class: 'set-reload' }, el('span', {}, 'Some changes apply after a reload.'), el('button', { type: 'button', class: 'btn primary', onclick: () => location.reload() }, 'Reload now')) : null,
         el('p', { class: 'set-note' }, `Now rendering: ${QUALITY[activeQuality()]?.label || 'Auto'}. Low keeps phones cool and saves data.`)),
       el('section', {}, el('h4', {}, 'Appearance'),
-        el('div', { class: 'set-row' }, el('span', {}, 'Theme'), seg('Appearance', p.appearance, [['auto','Auto'],['light','Light'],['dark','Dark']], v => { profile.set({ appearance:v }); document.documentElement.dataset.theme = v === 'auto' ? '' : v; if(v==='auto') document.documentElement.removeAttribute('data-theme'); }))),
+        el('div', { class: 'set-row' }, el('span', {}, 'Theme'), seg('Appearance', p.appearance, [['auto','Auto'],['light','Light'],['dark','Dark'],['random','Random']], v => { profile.set({ appearance:v }); applyBrandMode(v); }))),
       el('section', {}, el('h4', {}, 'Sound and motion'),
         el('div', { class: 'set-row' }, el('span', {}, 'Ambient sound'), seg('Sound', p.sound ? 'on' : 'off', [['off', 'Off'], ['on', 'On']], v => { profile.set({ sound: v === 'on' }); onSound(v === 'on'); })),
         el('div', { class: 'set-row' }, el('span', {}, 'Moving between rooms'), seg('Travel', p.travel, [['teleport', 'Teleport'], ['walk', 'Walk']], v => profile.set({ travel: v }))),

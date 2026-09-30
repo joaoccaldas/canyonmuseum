@@ -5,7 +5,7 @@ const out=process.argv[3]||'visual-evidence-v2';fs.mkdirSync(out,{recursive:true
 const chrome=process.env.CHROME_PATH;if(!chrome)throw new Error('CHROME_PATH required');
 const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader']});
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'desktop',width:1440,height:900}];
-const states=['landing','onboarding','reveal','home','discover','plan','me'];const report=[];
+const states=['landing','onboarding','reveal','home','discover','garage','plan','me'];const report=[];
 async function capture(vp,state,theme){
  const p=await browser.newPage();const requests=[];const errors=[];
  p.on('request',r=>requests.push(r.url()));p.on('pageerror',e=>errors.push(e.message));
@@ -16,10 +16,22 @@ async function capture(vp,state,theme){
    await p.click('#buildSelf'); await new Promise(r=>setTimeout(r,250));
  } else if(state==='reveal'){
    await p.click('#buildSelf');
-   for(const sel of ['[data-set="intent"]','[data-set="bikeId"]','[data-set="shoeId"]','[data-set="goal"]']){await p.waitForSelector(sel,{timeout:5000});await p.click(sel);await new Promise(r=>setTimeout(r,120));}
+   await p.waitForSelector('[data-set="intent"]',{timeout:5000});await p.click('[data-set="intent"]');await new Promise(r=>setTimeout(r,120));
+   await p.waitForSelector('[data-race-search]',{timeout:5000});await p.click('[data-race-continue]');await new Promise(r=>setTimeout(r,120));
+   for(const sel of ['[data-set="bikeId"]','[data-set="shoeId"]','[data-set="goal"]']){await p.waitForSelector(sel,{timeout:5000});await p.click(sel);await new Promise(r=>setTimeout(r,120));}
  } else if(state!=='landing'){
    await p.click('#buildSelf');await p.waitForSelector('[data-quest-skip]',{timeout:5000});await p.click('[data-quest-skip]');await new Promise(r=>setTimeout(r,180));
-   const fn={home:'now',discover:'explore',plan:'plan',me:'me'}[state];
+   if(state==='home'||state==='garage'||state==='me'){
+     await p.evaluate(()=>{
+       const equipment={schema_version:1,id:'equipment:visual-fixture:dream:canyon-cfr-2027',entity_type:'user-equipment',user_id:'user:visual-fixture',product_id:'product:canyon-cfr-2027',relationship:'dream',created_at:'2026-09-30T00:00:00.000Z',nickname:null,customization:{provenance:'visual-evidence'},visibility:'private',vendor_analytics_eligible:false};
+       const identity={schema_version:1,id:'race-identity:visual-fixture:kona-2026',entity_type:'race-identity',user_id:'user:visual-fixture',mode:'dream',event_id:'event:kona-2026',goal:{type:'experience',target_seconds:null,label:'Finish'},style:'custom',avatar:{avatar_id:'avatar:visual-fixture',appearance:{}},setup:{bike:equipment.id,wheel_front:null,wheel_rear:null,helmet:null,shoe:null,trisuit:null,watch:null,wetsuit:null,nutrition:null},visibility:'private',share_slug:null,intent:'dreaming'};
+       localStorage.setItem('kona.userEquipment.v1',JSON.stringify([equipment]));
+       const race={race_id:'race:im-kalmar:2024:9ca4223e-fee3-4583-a796-4f360a13cfc4',relationship:'completed',selected_at:'2026-09-30T00:00:00.000Z',result:null};
+       localStorage.setItem('kona.raceIdentity.v1',JSON.stringify(identity));
+       localStorage.setItem('kona.raceHistory.v1',JSON.stringify([race]));
+     });
+   }
+   const fn={home:'now',discover:'explore',garage:'garage',plan:'plan',me:'me'}[state];
    const switched=await p.evaluate(fn=>{
      const shell=window.__konaShell || window.__app?.konaShell;
      if(!shell || typeof shell[fn] !== 'function') return false;
@@ -43,7 +55,7 @@ async function capture(vp,state,theme){
  report.push({viewport:vp.id,theme,state,metrics,heavyRequests:heavy,errors});
  await p.close();
 }
-for(const vp of viewports)for(const theme of ['light','dark'])for(const state of states)await capture(vp,state,theme);
+for(const vp of viewports)for(const theme of ['light','dark','random'])for(const state of states)await capture(vp,state,theme);
 await browser.close();
 fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
 const violations=[];
@@ -54,7 +66,8 @@ for(const r of report){
  if(!['landing','onboarding','reveal'].includes(r.state) && r.metrics.introVisible) violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
  if(r.state==='onboarding' && !/Why are you here/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/onboarding: onboarding question missing`);
  if(r.state==='reveal' && !/This is your Kona|Enter KONA/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/reveal: payoff missing`);
- if(r.state==='home' && !/Home|Now|Kona/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no Home content detected`);
+ if(r.state==='home' && !/Race Self|Self|Gear|Bike|Kit|Races|Cards|Garage|World|Settings/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no Race Self Studio content detected`);
+ if(r.state==='garage' && !/Garage|Your equipment|Mine|Dreaming|Try/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/garage: no Garage content detected`);
  if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);
  if(r.state==='me' && !/Me|Passport|XP|Credits/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: no Me/Passport content detected`);
 }

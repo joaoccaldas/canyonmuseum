@@ -31,7 +31,7 @@ export function normalise(p) {
     quality: o.quality in QUALITY ? o.quality : d.quality,
     sound: !!o.sound,
     motion: ['auto', 'full', 'reduced'].includes(o.motion) ? o.motion : d.motion,
-    appearance: ['auto','light','dark'].includes(o.appearance) ? o.appearance : d.appearance,
+    appearance: ['auto','light','dark','random'].includes(o.appearance) ? o.appearance : d.appearance,
     travel: ['teleport', 'walk'].includes(o.travel) ? o.travel : d.travel,
     units: ['metric', 'imperial'].includes(o.units) ? o.units : d.units,
     favourites: Array.isArray(o.favourites) ? [...new Set(o.favourites.filter(x => typeof x === 'string'))].slice(0, 500) : [],

@@ -44,9 +44,14 @@ for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.t
   PAGES.push({ file: f, type: 'WebPage', image: 'assets/share/museum.jpg', title: t, description: d, keepTitle: true });
 }
 
-const packCss = file => fs.readFileSync(path.join(root, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '');
-const SYSTEM_CSS = packCss('web/styles/system.css') + packCss('web/styles/shell-mobile.css');
-const THEME_BOOTSTRAP = `<script>(function(){try{var p=JSON.parse(localStorage.getItem('speedmax.profile.v1')||'null');var t=p&&p.appearance;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(_){}})();<\/script>`;
+const DESIGN_LINKS = [
+  'web/styles/system.css',
+  'web/styles/shell-mobile.css',
+  'brand/tokens.css',
+  'brand/themes.css',
+  'brand/artifacts.css',
+].map(href => `<link rel="stylesheet" href="${href}">`).join('');
+const THEME_BOOTSTRAP = `<script>(function(){try{var p=JSON.parse(localStorage.getItem('speedmax.profile.v1')||'null');var t=p&&p.appearance;if(t==='light'||t==='dark'||t==='random')document.documentElement.dataset.theme=t;}catch(_){}})();<\/script>`;
 const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
@@ -81,10 +86,10 @@ for (const p of PAGES) {
   else html = html.replace(/<\/title>/, `</title>\n<meta name="description" content="${esc(p.description)}">`);
   html = html.replace(/<meta charset="utf-8">/i, m => `${m}\n${block(p)}`);
   if (!html.includes('<!--harden:start-->')) throw new Error('no <meta charset> in ' + p.file);
-  // one design system on every page (web/styles/system.css), last in <head> so it wins over page defaults
+  // One external design system on every page. Generated HTML never becomes a second CSS source of truth.
   html = html.replace(/<!--design-system:start-->[\s\S]*?<!--design-system:end-->\n?/, '');
   const fonts = /fonts\.googleapis\.com\/css2\?family=Instrument\+Serif[^"]*Manrope/.test(html) ? '' : `<link rel="stylesheet" href="${FONTS}">`;
-  html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}<style id="design-system">${SYSTEM_CSS}</style><!--design-system:end-->\n</head>`);
+  html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}${DESIGN_LINKS}<!--design-system:end-->\n</head>`);
   fs.writeFileSync(f, html);
 }
 

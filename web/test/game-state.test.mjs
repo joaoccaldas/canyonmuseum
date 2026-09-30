@@ -5,3 +5,29 @@ function memory(seed={}){const m=new Map(Object.entries(seed));return{getItem:k=
 test('game state aggregates existing domain stores without deleting them',()=>{const s=memory({'speedmax.profile.v1':JSON.stringify({v:1,name:'Ana'}),'speedmax.passport.v1':JSON.stringify({v:1,stamps:{'bike:a':{at:1}},badges:{collector:1},xp:55,streak:2,best:3}),'speedmax.finds.v1':JSON.stringify({bib:true}),'speedmax.raceSetup.v1':JSON.stringify({v:1,bike:'bike:a'}),'speedmax.garage.v1':JSON.stringify([{id:'g1'}])});const state=readGameState(s);assert.equal(state.schema_version,GAME_STATE_SCHEMA_VERSION);assert.equal(state.profile.name,'Ana');assert.equal(state.progression.xp,55);assert.equal(state.garage.length,1);assert.notEqual(s.getItem('speedmax.passport.v1'),null);});
 test('restore and progress summary are deterministic',()=>{const s=memory();writeGameState({schema_version:1,profile:{v:1,name:'Jo'},progression:{v:1,stamps:{'bike:a':{},'kona:2024':{},'find:bib':{},'part:fork':{}},badges:{first:1},xp:120,streak:4,best:4},finds:{bib:true},race_setup:{v:1,bike:'bike:a'},garage:[{id:'g1'},{id:'g2'}]},s);const p=gameProgress(readGameState(s));assert.deepEqual([p.xp,p.streak,p.stamps,p.badges,p.bikes,p.konaYears,p.hidden,p.parts,p.garage],[120,4,4,1,1,1,1,1,2]);});
 test('unsupported cloud schema is rejected',()=>{assert.throws(()=>writeGameState({schema_version:99}),/Unsupported game state/);});
+
+
+test('modern KONA graph fields round-trip through the canonical storage registry',()=>{
+  const s=memory();
+  const snapshot={
+    schema_version:1,
+    profile:{v:1,name:'Kai'},
+    progression:{v:1,stamps:{},badges:{},xp:0,streak:0,best:0},
+    finds:{},
+    race_setup:null,
+    garage:[],
+    race_identity:{id:'race-identity:local:kona-2026',entity_type:'race-identity'},
+    user_equipment:[{id:'equipment:local:dream:bike-a',product_id:'product:bike-a',relationship:'dream'}],
+    kona_self:{bikeId:'bike-a'},
+    entry_intent:{intent:'dreaming'},
+    race_history:[{event_id:'event:test'}],
+  };
+  writeGameState(snapshot,s);
+  const out=readGameState(s);
+  assert.equal(out.race_identity.id,snapshot.race_identity.id);
+  assert.equal(out.user_equipment[0].product_id,'product:bike-a');
+  assert.equal(out.kona_self.bikeId,'bike-a');
+  assert.equal(out.entry_intent.intent,'dreaming');
+  assert.equal(out.race_history.length,1);
+  assert.notEqual(s.getItem('kona.userEquipment.v1'),null);
+});
