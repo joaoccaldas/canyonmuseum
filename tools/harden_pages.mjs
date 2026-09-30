@@ -46,7 +46,7 @@ for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.t
 
 const packCss = file => fs.readFileSync(path.join(root, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '');
 const SYSTEM_CSS = packCss('web/styles/system.css') + packCss('web/styles/shell-mobile.css');
-const THEME_BOOTSTRAP = `<script>(function(){try{var p=JSON.parse(localStorage.getItem('speedmax.profile.v1')||'null');var t=p&&p.appearance;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(_){}})();<\/script>`;
+const THEME_BOOTSTRAP = `<script>(function(){try{var p=JSON.parse(localStorage.getItem('kona.profile.v1')||'null');var t=p&&p.appearance;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(_){}})();<\/script>`;
 const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
