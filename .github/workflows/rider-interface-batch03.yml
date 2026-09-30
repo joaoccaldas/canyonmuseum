@@ -1,0 +1,79 @@
+name: Build rider interface asset batch 03
+
+on:
+  push:
+    branches:
+      - assets/kona-environment-pack-20260930
+    paths:
+      - blender/rider_interface_batch03.py
+      - museum/catalog/rider-interface-batch03.json
+      - museum/instructions/rider-interface-batch03.json
+      - .github/workflows/rider-interface-batch03.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rider-interface-batch03-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+
+      - name: Install Blender module
+        run: python -m pip install --upgrade pip bpy
+
+      - name: Build assets
+        run: python blender/rider_interface_batch03.py
+
+      - name: Validate outputs
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('assets/rider-interface/batch-03')
+          glbs=sorted(root.glob('*.glb'))
+          assert len(glbs)==6, f'expected 6 GLBs, got {len(glbs)}'
+          for p in glbs:
+              b=p.read_bytes()
+              assert b[:4]==b'glTF', p
+              assert int.from_bytes(b[8:12],'little')==len(b), p
+              assert len(b)<1_500_000, f'{p} too heavy: {len(b)}'
+              print(p,len(b))
+
+          report=json.loads((root/'build-report.json').read_text())
+          assert len(report['assets'])==6
+          a=report['assets']
+          assert a['giro-aerohead-mips-ii-m']['fit_cm']=={'min':55,'max':59}
+          assert a['giro-aerohead-mips-ii-m']['weight_g']==450
+          assert a['ism-pn31']['length_mm']==255
+          assert a['ism-pn31']['width_mm']==120
+          assert a['garmin-edge1050']['dimensions_mm']==[60.2,118.5,16.3]
+          assert a['garmin-edge1050']['weight_g']==161
+          assert a['garmin-edge1050']['display_px']==[480,800]
+          assert a['shimano-pd-r9100']['stack_height_mm']==14.8
+          assert a['shimano-pd-r9100']['pedal_center_mm']==52
+          assert a['shimano-pd-r9100']['pair_weight_g']==237
+          assert (root/'previews/assembled-qa.jpg').exists()
+          assert (root/'previews/exploded-qa.jpg').exists()
+          print('rider interface batch 03 QA passed')
+          PY
+
+      - name: Commit generated artifacts
+        run: |
+          if [ -z "$(git status --porcelain -- assets/rider-interface/batch-03)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/rider-interface/batch-03
+          git add -f assets/rider-interface/batch-03/rider_interface_batch03.blend
+          git commit -m "build: generate rider interface batch 03 [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
