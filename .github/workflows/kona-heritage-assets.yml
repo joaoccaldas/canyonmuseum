@@ -39,7 +39,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           files = sorted(Path('assets/kona-heritage').rglob('*.glb'))
-          assert len(files) == 11, f'expected 11 GLBs (10 assets + pack), got {len(files)}'
+          assert len(files) == 12, f'expected 12 GLBs (11 assets + pack), got {len(files)}'
           for p in files:
               b = p.read_bytes()
               assert b[:4] == b'glTF', f'invalid GLB magic: {p}'
