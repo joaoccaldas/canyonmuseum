@@ -1,217 +1,432 @@
 {
- "schema_version": 1,
- "note": "Every area of the museum, named once. Hand-built rooms are listed here with what they hold; the data-built wings (museum/world/wings) describe themselves. The map, the rail, the registry (docs/ROOMS.md) and the studio's 'where to see it' all read these names. `exhibits` name catalogue products (museum/catalog/products.json) or edition groups.",
- "floors": [
-  {
-   "id": "ground",
-   "name": "Ground floor"
-  },
-  {
-   "id": "upper",
-   "name": "Upper floor"
-  }
- ],
- "areas": [
-  {
-   "id": "hall",
-   "floor": "ground",
-   "name": "The Queen K Hall",
-   "short": "Main hall",
-   "sub": "Every Speedmax generation, 1999–2027",
-   "kind": "timeline",
-   "exhibits": {
-    "products": [
-     "canyon-speedmax-three-2005",
-     "canyon-speedmax-2007",
-     "canyon-speedmax-al-2011",
-     "canyon-speedmax-cf-2011",
-     "canyon-cfr-2027",
-     "canyon-slx-2027"
-    ],
-    "remembered": 3
-   }
-  },
-  {
-   "id": "sanctuary",
-   "floor": "ground",
-   "name": "The Sanctuary",
-   "short": "Sanctuary",
-   "sub": "Eight Bike Porn films, eight bikes",
-   "kind": "chapel",
-   "exhibits": {
-    "editions": "film"
-   }
-  },
-  {
-   "id": "hween",
-   "floor": "ground",
-   "name": "Lava Night",
-   "short": "Lava Night",
-   "sub": "The Halloween room",
-   "kind": "themed",
-   "exhibits": {
-    "editions": "lava-night"
-   }
-  },
-  {
-   "id": "kona",
-   "floor": "ground",
-   "name": "Kona Champions",
-   "short": "Champions",
-   "sub": "The machines under the titles",
-   "kind": "trophy",
-   "exhibits": {
-    "products": [
-     "canyon-kona-cfslx-2015",
-     "canyon-kona-cfr-2019"
-    ]
-   }
-  },
-  {
-   "id": "wyld",
-   "floor": "ground",
-   "name": "The WYLD Room",
-   "short": "WYLD",
-   "sub": "Four hand-dyed liveries",
-   "kind": "themed",
-   "exhibits": {
-    "editions": "wyld"
-   }
-  },
-  {
-   "id": "pier",
-   "floor": "ground",
-   "name": "Kona by Year",
-   "short": "The pier",
-   "sub": "The pier, 2014–2025, and the finish",
-   "kind": "timeline",
-   "exhibits": {
-    "products": [
-     "canyon-cfr-2027"
-    ]
-   }
-  },
-  {
-   "id": "secret",
-   "floor": "ground",
-   "name": "The Secret Collection",
-   "short": "Secret room",
-   "sub": "Found, not signposted",
-   "kind": "hidden",
-   "hidden": true,
-   "exhibits": {
-    "editions": "artworld"
-   }
-  },
-  {
-   "id": "stair",
-   "floor": "upper",
-   "name": "The Glass Stair",
-   "short": "Stair",
-   "sub": "Up to the galleries",
-   "kind": "passage",
-   "exhibits": {}
-  },
-  {
-   "id": "nave",
-   "floor": "upper",
-   "name": "The Gallery Nave",
-   "short": "Galleries",
-   "sub": "Four themed floors, four themed rooms",
-   "kind": "passage",
-   "exhibits": {}
-  },
-  {
-   "id": "bay-st-george",
-   "floor": "upper",
-   "name": "St. George",
-   "short": "St. George",
-   "sub": "Red rock",
-   "kind": "art",
-   "exhibits": {},
-   "text": "One canyon silhouette from the aisle. Up here the floor is the rock itself: terracotta, with a warm seam."
-  },
-  {
-   "id": "bay-las-vegas",
-   "floor": "upper",
-   "name": "Las Vegas",
-   "short": "Las Vegas",
-   "sub": "Neon",
-   "kind": "art",
-   "exhibits": {},
-   "text": "A dark floor that keeps the light. The sculpture in the hall is the same study, seen from the Queen K."
-  },
-  {
-   "id": "bay-nice",
-   "floor": "upper",
-   "name": "Nice",
-   "short": "Nice",
-   "sub": "Sea glass",
-   "kind": "art",
-   "exhibits": {},
-   "text": "Pale glass underfoot, the colour of the bay on a still morning."
-  },
-  {
-   "id": "bay-kona",
-   "floor": "upper",
-   "name": "Kona",
-   "short": "Kona",
-   "sub": "Obsidian",
-   "kind": "art",
-   "exhibits": {},
-   "text": "Basalt, and a line of heat. The same coast as the hall, one storey closer to the weather."
-  },
-  {
-   "id": "room-bio",
-   "floor": "upper",
-   "name": "Bio",
-   "short": "Bio",
-   "sub": "The growth",
-   "kind": "themed",
-   "exhibits": {
-    "editions": "galleries",
-    "edition": "theme-bio"
-   },
-   "text": "A Speedmax taken by the room. Vines have the frame, pods sit on the floor, and the walls are the same green as the growth."
-  },
-  {
-   "id": "room-horror",
-   "floor": "upper",
-   "name": "Horror",
-   "short": "Horror",
-   "sub": "The passage",
-   "kind": "themed",
-   "exhibits": {
-    "editions": "galleries",
-    "edition": "theme-horror"
-   },
-   "text": "One bulb over a Speedmax at the end of the passage. The corridor is narrower than the room. If the eyes blink, you were looking."
-  },
-  {
-   "id": "room-alien",
-   "floor": "upper",
-   "name": "Alien",
-   "short": "Alien",
-   "sub": "The bay",
-   "kind": "themed",
-   "exhibits": {
-    "editions": "galleries",
-    "edition": "theme-alien"
-   },
-   "text": "Four rings over a Speedmax, and a scan that does not care what it passes through. Cold light, no weather."
-  },
-  {
-   "id": "room-zombie",
-   "floor": "upper",
-   "name": "Zombie",
-   "short": "Zombie",
-   "sub": "The yard",
-   "kind": "themed",
-   "exhibits": {
-    "editions": "galleries",
-    "edition": "theme-zombie"
-   },
-   "text": "They keep to the walls. A Speedmax is still on the block in the middle of the yard. The air is the colour of a bruise that has started to heal."
-  }
- ]
+  "schema_version": 1,
+  "note": "Every area of the museum, named once. Hand-built rooms are listed here with what they hold; the data-built wings (museum/world/wings) describe themselves. The map, the rail, the registry (docs/ROOMS.md) and the studio's 'where to see it' all read these names. `exhibits` name catalogue products (museum/catalog/products.json) or edition groups.",
+  "floors": [
+    {
+      "id": "ground",
+      "name": "Ground floor"
+    },
+    {
+      "id": "upper",
+      "name": "Upper floor"
+    }
+  ],
+  "areas": [
+    {
+      "id": "hall",
+      "floor": "ground",
+      "name": "The Queen K Hall",
+      "short": "Main hall",
+      "sub": "Every Speedmax generation, 1999–2027",
+      "kind": "timeline",
+      "exhibits": {
+        "products": [
+          "canyon-speedmax-three-2005",
+          "canyon-speedmax-2007",
+          "canyon-speedmax-al-2011",
+          "canyon-speedmax-cf-2011",
+          "canyon-cfr-2027",
+          "canyon-slx-2027"
+        ],
+        "remembered": 3
+      },
+      "theme": "Sunlit Kona timeline",
+      "dimensions_m": [
+        14,
+        51.5,
+        5.4
+      ],
+      "decorations": [
+        "travertine floor",
+        "lava-stone plinths",
+        "ocean glass wall",
+        "Kona palms",
+        "race paintings",
+        "chainring sculpture"
+      ],
+      "map": {
+        "icon": "timeline",
+        "accent": "#d98c3a",
+        "hero": "Speedmax timeline"
+      }
+    },
+    {
+      "id": "sanctuary",
+      "floor": "ground",
+      "name": "The Sanctuary",
+      "short": "Sanctuary",
+      "sub": "Eight Bike Porn films, eight bikes",
+      "kind": "chapel",
+      "exhibits": {
+        "editions": "film"
+      },
+      "theme": "Film chapel",
+      "dimensions_m": [
+        12.8,
+        16.05,
+        5.4
+      ],
+      "decorations": [
+        "dark nave floor",
+        "gold runner",
+        "stained-glass altar",
+        "eight themed bike plinths"
+      ],
+      "map": {
+        "icon": "chapel",
+        "accent": "#6f4cd9",
+        "hero": "Eight Bike Porn films"
+      }
+    },
+    {
+      "id": "hween",
+      "floor": "ground",
+      "name": "Lava Night",
+      "short": "Lava Night",
+      "sub": "The Halloween room",
+      "kind": "themed",
+      "exhibits": {
+        "editions": "lava-night"
+      },
+      "theme": "Lava Night",
+      "dimensions_m": [
+        11,
+        13.2,
+        4.4
+      ],
+      "decorations": [
+        "cracked emissive basalt",
+        "moon window",
+        "jack-o'-lanterns",
+        "candles",
+        "Lava Night Speedmax"
+      ],
+      "map": {
+        "icon": "moon",
+        "accent": "#ff7a1a",
+        "hero": "Speedmax CFR after dark"
+      }
+    },
+    {
+      "id": "kona",
+      "floor": "ground",
+      "name": "Kona Champions",
+      "short": "Champions",
+      "sub": "The machines under the titles",
+      "kind": "trophy",
+      "exhibits": {
+        "products": [
+          "canyon-kona-cfslx-2015",
+          "canyon-kona-cfr-2019"
+        ]
+      },
+      "theme": "Kona champions",
+      "dimensions_m": [
+        12,
+        16.8,
+        4.6
+      ],
+      "decorations": [
+        "polished basalt floor",
+        "champion steles",
+        "race photography",
+        "2015 and 2019 machines",
+        "Kona-dyed ceiling ribbon"
+      ],
+      "map": {
+        "icon": "trophy",
+        "accent": "#d0672e",
+        "hero": "Six Kona titles"
+      }
+    },
+    {
+      "id": "wyld",
+      "floor": "ground",
+      "name": "The WYLD Room",
+      "short": "WYLD",
+      "sub": "Four hand-dyed liveries",
+      "kind": "themed",
+      "exhibits": {
+        "editions": "wyld"
+      },
+      "theme": "WYLD gallery",
+      "dimensions_m": [
+        16,
+        18.8,
+        5.2
+      ],
+      "decorations": [
+        "pearl gallery floor",
+        "white walls",
+        "Kailua Pier panorama",
+        "pink/aqua light accents",
+        "four dedicated livery stations"
+      ],
+      "map": {
+        "icon": "palette",
+        "accent": "#ff3d8e",
+        "hero": "Four hand-dyed Speedmax liveries"
+      }
+    },
+    {
+      "id": "pier",
+      "floor": "ground",
+      "name": "Kona by Year",
+      "short": "The pier",
+      "sub": "The pier, 2014–2025, and the finish",
+      "kind": "timeline",
+      "exhibits": {
+        "products": [
+          "canyon-cfr-2027"
+        ]
+      },
+      "theme": "Kona by Year",
+      "decorations": [
+        "open-air pier",
+        "year stations",
+        "Kona photography",
+        "finish arch",
+        "current CFR finale"
+      ],
+      "map": {
+        "icon": "pier",
+        "accent": "#138a8f",
+        "hero": "2014–2025 timeline"
+      }
+    },
+    {
+      "id": "secret",
+      "floor": "ground",
+      "name": "The Secret Collection",
+      "short": "Secret room",
+      "sub": "Found, not signposted",
+      "kind": "hidden",
+      "hidden": true,
+      "exhibits": {
+        "editions": "artworld"
+      },
+      "theme": "Hidden art collection",
+      "decorations": [
+        "procedural artworld",
+        "dark material studies",
+        "six secret liveries"
+      ],
+      "map": {
+        "icon": "hidden",
+        "accent": "#8e59c4",
+        "hero": "Discovered only"
+      }
+    },
+    {
+      "id": "stair",
+      "floor": "upper",
+      "name": "The Glass Stair",
+      "short": "Stair",
+      "sub": "Up to the galleries",
+      "kind": "passage",
+      "exhibits": {},
+      "theme": "Glass transition",
+      "decorations": [
+        "glass stair",
+        "upper-floor reveal"
+      ],
+      "map": {
+        "icon": "stairs",
+        "accent": "#8e979d",
+        "hero": "Route to galleries"
+      }
+    },
+    {
+      "id": "nave",
+      "floor": "upper",
+      "name": "The Gallery Nave",
+      "short": "Galleries",
+      "sub": "Four themed floors, four themed rooms",
+      "kind": "passage",
+      "exhibits": {},
+      "theme": "Upper gallery spine",
+      "decorations": [
+        "open gallery nave",
+        "themed bays",
+        "access to data-driven wings"
+      ],
+      "map": {
+        "icon": "gallery",
+        "accent": "#c89b62",
+        "hero": "Upper-floor galleries"
+      }
+    },
+    {
+      "id": "bay-st-george",
+      "floor": "upper",
+      "name": "St. George",
+      "short": "St. George",
+      "sub": "Red rock",
+      "kind": "art",
+      "exhibits": {},
+      "text": "One canyon silhouette from the aisle. Up here the floor is the rock itself: terracotta, with a warm seam.",
+      "theme": "Red rock",
+      "decorations": [
+        "terracotta floor",
+        "warm seam",
+        "canyon silhouette"
+      ],
+      "map": {
+        "icon": "art",
+        "accent": "#c45f3c"
+      }
+    },
+    {
+      "id": "bay-las-vegas",
+      "floor": "upper",
+      "name": "Las Vegas",
+      "short": "Las Vegas",
+      "sub": "Neon",
+      "kind": "art",
+      "exhibits": {},
+      "text": "A dark floor that keeps the light. The sculpture in the hall is the same study, seen from the Queen K.",
+      "theme": "Neon",
+      "decorations": [
+        "dark reflective floor",
+        "neon light study"
+      ],
+      "map": {
+        "icon": "art",
+        "accent": "#d84cff"
+      }
+    },
+    {
+      "id": "bay-nice",
+      "floor": "upper",
+      "name": "Nice",
+      "short": "Nice",
+      "sub": "Sea glass",
+      "kind": "art",
+      "exhibits": {},
+      "text": "Pale glass underfoot, the colour of the bay on a still morning.",
+      "theme": "Sea glass",
+      "decorations": [
+        "pale glass floor",
+        "cool coastal light"
+      ],
+      "map": {
+        "icon": "art",
+        "accent": "#5fd8d3"
+      }
+    },
+    {
+      "id": "bay-kona",
+      "floor": "upper",
+      "name": "Kona",
+      "short": "Kona",
+      "sub": "Obsidian",
+      "kind": "art",
+      "exhibits": {},
+      "text": "Basalt, and a line of heat. The same coast as the hall, one storey closer to the weather.",
+      "theme": "Obsidian",
+      "decorations": [
+        "basalt floor",
+        "heat-line accent"
+      ],
+      "map": {
+        "icon": "art",
+        "accent": "#e8471c"
+      }
+    },
+    {
+      "id": "room-bio",
+      "floor": "upper",
+      "name": "Bio",
+      "short": "Bio",
+      "sub": "The growth",
+      "kind": "themed",
+      "exhibits": {
+        "editions": "galleries",
+        "edition": "theme-bio"
+      },
+      "text": "A Speedmax taken by the room. Vines have the frame, pods sit on the floor, and the walls are the same green as the growth.",
+      "theme": "Organic takeover",
+      "decorations": [
+        "green walls",
+        "vines",
+        "pods",
+        "bio-livery Speedmax"
+      ],
+      "map": {
+        "icon": "bio",
+        "accent": "#1f6b3a"
+      }
+    },
+    {
+      "id": "room-horror",
+      "floor": "upper",
+      "name": "Horror",
+      "short": "Horror",
+      "sub": "The passage",
+      "kind": "themed",
+      "exhibits": {
+        "editions": "galleries",
+        "edition": "theme-horror"
+      },
+      "text": "One bulb over a Speedmax at the end of the passage. The corridor is narrower than the room. If the eyes blink, you were looking.",
+      "theme": "Narrow passage horror",
+      "decorations": [
+        "single bulb",
+        "compressed corridor",
+        "blinking eyes",
+        "horror-livery Speedmax"
+      ],
+      "map": {
+        "icon": "horror",
+        "accent": "#8e2635"
+      }
+    },
+    {
+      "id": "room-alien",
+      "floor": "upper",
+      "name": "Alien",
+      "short": "Alien",
+      "sub": "The bay",
+      "kind": "themed",
+      "exhibits": {
+        "editions": "galleries",
+        "edition": "theme-alien"
+      },
+      "text": "Four rings over a Speedmax, and a scan that does not care what it passes through. Cold light, no weather.",
+      "theme": "Cold scan bay",
+      "decorations": [
+        "four overhead rings",
+        "scan light",
+        "alien-livery Speedmax"
+      ],
+      "map": {
+        "icon": "alien",
+        "accent": "#3dffe0"
+      }
+    },
+    {
+      "id": "room-zombie",
+      "floor": "upper",
+      "name": "Zombie",
+      "short": "Zombie",
+      "sub": "The yard",
+      "kind": "themed",
+      "exhibits": {
+        "editions": "galleries",
+        "edition": "theme-zombie"
+      },
+      "text": "They keep to the walls. A Speedmax is still on the block in the middle of the yard. The air is the colour of a bruise that has started to heal.",
+      "theme": "Abandoned yard",
+      "decorations": [
+        "bruised atmosphere",
+        "figures at walls",
+        "central bike block",
+        "zombie-livery Speedmax"
+      ],
+      "map": {
+        "icon": "zombie",
+        "accent": "#d2e06a"
+      }
+    }
+  ]
 }
