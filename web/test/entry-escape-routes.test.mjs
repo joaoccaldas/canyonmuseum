@@ -6,7 +6,7 @@ test('landing always exposes Build, Sign in and Install while Build is the local
   assert.match(html,/id="buildSelf"/);assert.match(html,/id="entrySignIn"/);
   assert.match(html,/id="entryInstall"/);
 });
-test('one helper leaves intro and supports Home or Garage entry',()=>{
+test('one helper leaves intro and supports canonical consumer routes',()=>{
   assert.match(entry,/function enterApp\(first = 'home'\)[\s\S]{0,220}intro\?\.setAttribute\('hidden',''\)[\s\S]{0,180}first === 'garage'[\s\S]{0,80}shell\.garage[\s\S]{0,80}shell\.now/);
 });
 test('returning Continue uses canonical app-entry helper',()=>assert.match(entry,/Continue your Kona[\s\S]{0,220}addEventListener\('click', enterApp\)/));
@@ -16,7 +16,7 @@ test('every onboarding screen can be escaped',()=>{
 test('sign in is optional and exposes Continue without account',()=>{
   assert.match(entry,/Continue without account/);assert.match(entry,/continueLocal[^\n]+enterApp/);
 });
-test('reveal enters Garage through canonical app-entry helper',()=>assert.match(entry,/enterKona[^\n]+enterApp\('garage'\)/));
+test('reveal enters Race Self Home through canonical app-entry helper',()=>assert.match(entry,/enterKona[^\n]+enterApp\('home'\)/));
 
 test('P0 entry uses canonical storage adapter, never raw localStorage',()=>{
   assert.match(entry,/readStorage/);
