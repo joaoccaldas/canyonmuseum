@@ -106,7 +106,6 @@ export function initAppShell() {
         } else if(apkUnavailable) apkUnavailable.hidden=false;
       }).catch(()=>{if(apkUnavailable) apkUnavailable.hidden=false;});
     }
-    if (iosRow) iosRow.hidden = s.kind !== 'ios-instructions';
     sheet.hidden = false;
   }
   btn?.addEventListener('click', beginInstall);
