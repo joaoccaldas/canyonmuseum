@@ -7,7 +7,7 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
 const SITE = 'https://joaoccaldas.github.io/canyonmuseum/';
-const NAME = 'Canyon Speedmax Museum';
+const NAME = 'KONA';
 const DISCLAIMER = 'An independent, unofficial fan and research project. Not affiliated with, endorsed by or sponsored by Canyon Bicycles GmbH. Canyon and Speedmax are trademarks of their owners.';
 
 // The only third parties the pages load (measured with a request log): Google Fonts and Wikimedia images.
@@ -24,9 +24,9 @@ const CSP = [
 ].join('; ');
 
 const PAGES = [
-  { file: 'index.html', type: 'Museum', image: 'assets/share/museum.jpg',
-    title: 'Canyon Speedmax Museum · Kona — walk 28 years of triathlon bikes in 3D',
-    description: 'A walkable 3D museum on the Kona coast: every Canyon Speedmax generation from 1999 to 2027, the six Ironman World Championship titles won on a Speedmax, the WYLD dye room, and brand studies such as the Nike Alphafly. Works in any browser and installs as an app.' },
+  { file: 'index.html', type: 'SoftwareApplication', image: 'assets/share/museum.jpg',
+    title: 'KONA · Race the version of yourself',
+    description: 'Build your race identity, prepare for race week, explore triathlon machines, people, places and stories, and enter the immersive 3D world when you choose.' },
   { file: 'Canyon_Collection.html', type: 'CollectionPage', image: 'assets/share/collection.jpg',
     title: 'Canyon Triathlon Collection · every Speedmax generation, compared',
     description: 'Every Canyon Speedmax generation on record, 1999–2027: interactive 3D exhibits, side-by-side specifications, an aero calculator and a sourced archive of the bikes that were never modelled.' },
