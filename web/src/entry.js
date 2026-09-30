@@ -177,6 +177,8 @@ function existingRaceIdentity() {
   } catch (_) { return null; }
 }
 
+document.getElementById('entrySignIn')?.addEventListener('click', () => paintQuest('save'));
+
 const existingIdentity = existingRaceIdentity();
 const buildButton = document.getElementById('buildSelf');
 if (existingIdentity) {
