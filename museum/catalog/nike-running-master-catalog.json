@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "scope": "Nike Running performance footwear museum. Model families and historically significant generations, excluding most lifestyle-only reissues and colorways.",
+  "completeness_claim": "NOT exhaustive. This is a versioned coverage catalog. Entries move from research_queue -> verified -> modeled as sources and assets are added.",
+  "tiers": {
+    "museum_core": "Historically or technologically essential",
+    "franchise": "Important recurring running franchise",
+    "specialist": "Racing/trail/special-purpose running",
+    "research_queue": "Known or suspected running models needing stronger source binding"
+  },
+  "modeled_batch04": [
+    "Nike Cortez (1972)",
+    "Nike Oregon Waffle (1973)",
+    "Nike Waffle Trainer (1975)",
+    "Nike Pre Montreal (1975/76)",
+    "Nike Tailwind (1978)",
+    "Nike Sting (1978)",
+    "Nike Pegasus 1 (1983)",
+    "Nike Air Max 1 (1987)",
+    "Nike Flyknit Racer (2012)"
+  ],
+  "existing_3d": [
+    "Nike Zoom Vaporfly 4%",
+    "Nike Vaporfly NEXT%",
+    "Nike Alphafly NEXT%",
+    "Nike Alphafly 3",
+    "Nike Vaporfly 4"
+  ],
+  "verified_or_high_priority_families": [
+    {
+      "family": "Waffle/Moon/Oregon/Waffle Trainer",
+      "era": "1971-1970s",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Cortez",
+      "era": "1970s",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Pre Montreal / Sting / LDV / Elite / Daybreak",
+      "era": "1970s",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Tailwind / Air lineage",
+      "era": "1978+",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Pegasus",
+      "era": "1982/83-present",
+      "tier": "franchise",
+      "note": "many generations; build representative + key milestone generations first"
+    },
+    {
+      "family": "Air Max running lineage",
+      "era": "1987+",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Structure",
+      "era": "1990s-present",
+      "tier": "franchise"
+    },
+    {
+      "family": "Vomero",
+      "era": "2000s-present",
+      "tier": "franchise"
+    },
+    {
+      "family": "Zoom Streak",
+      "era": "1990s-2010s",
+      "tier": "specialist"
+    },
+    {
+      "family": "Free",
+      "era": "2004+",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Lunaracer / Lunarlon",
+      "era": "2008+",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Flyknit Racer / Flyknit Trainer",
+      "era": "2012+",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Zoom Fly",
+      "era": "2017+",
+      "tier": "franchise"
+    },
+    {
+      "family": "Vaporfly",
+      "era": "2017+",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Alphafly",
+      "era": "2020+",
+      "tier": "museum_core"
+    },
+    {
+      "family": "Streakfly",
+      "era": "2022+",
+      "tier": "specialist"
+    },
+    {
+      "family": "Pegasus Turbo",
+      "era": "2018+",
+      "tier": "specialist"
+    },
+    {
+      "family": "React Infinity Run",
+      "era": "2020+",
+      "tier": "franchise"
+    },
+    {
+      "family": "Invincible Run",
+      "era": "2021+",
+      "tier": "franchise"
+    },
+    {
+      "family": "Ultrafly",
+      "era": "2023+",
+      "tier": "specialist"
+    },
+    {
+      "family": "Zegama",
+      "era": "2022+",
+      "tier": "specialist"
+    },
+    {
+      "family": "Wildhorse",
+      "era": "2010s+",
+      "tier": "specialist"
+    },
+    {
+      "family": "Terra Kiger",
+      "era": "2010s+",
+      "tier": "specialist"
+    }
+  ],
+  "research_queue": [
+    "Columbia",
+    "Aurora",
+    "Mariah",
+    "Internationalist",
+    "V-Series/Vortex",
+    "Sock Racer",
+    "Air Mariah",
+    "Skylon",
+    "Air Span",
+    "Air Streak",
+    "Air Zoom Alpha",
+    "Air Zoom Elite",
+    "Mayfly",
+    "Free Run early generations",
+    "LunarGlide",
+    "LunarTempo",
+    "Lunarepic",
+    "Epic React",
+    "Zoom Elite later generations",
+    "Zoom Pegasus Turbo",
+    "Vaporfly NEXT% 2",
+    "Vaporfly 2",
+    "Vaporfly 3",
+    "Alphafly 2",
+    "Streakfly 2",
+    "Pegasus Plus/Turbo modern lineage",
+    "Vomero Plus/Premium modern lineage"
+  ]
+}
