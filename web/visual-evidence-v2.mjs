@@ -14,14 +14,23 @@ async function capture(vp,state,theme){
  await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});await new Promise(r=>setTimeout(r,700));
  if(state!=='landing'){
    const fn={home:'now',discover:'explore',plan:'plan',me:'me'}[state];
-   await p.evaluate(fn=>window.__app?.konaShell?.[fn]?.(),fn);await new Promise(r=>setTimeout(r,500));
+   const switched=await p.evaluate(fn=>{
+     const shell=window.__konaShell || window.__app?.konaShell;
+     if(!shell || typeof shell[fn] !== 'function') return false;
+     shell[fn](); return true;
+   },fn);
+   if(!switched) throw new Error(`visual evidence could not enter requested state: ${state}`);
+   await new Promise(r=>setTimeout(r,500));
  }
  const metrics=await p.evaluate(()=>{
    const visible=el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&+s.opacity>.02&&r.width>0&&r.height>0};
    const els=[...document.querySelectorAll('button,a,[role=button]')].filter(visible);
    const primary=els.filter(x=>x.matches('.primary,[data-primary=true]'));
    const small=els.map(x=>{const r=x.getBoundingClientRect();return{tag:x.tagName,text:(x.textContent||'').trim().slice(0,50),w:r.width,h:r.height};}).filter(x=>x.w<44||x.h<44);
-   return{scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang};
+   const intro=document.getElementById('intro');
+   const activeNav=[...document.querySelectorAll('.kona-bottom-nav .on,.kona-bottom-nav [aria-current="page"]')].map(x=>(x.textContent||'').trim());
+   const visibleText=(document.body.innerText||'').replace(/\s+/g,' ').trim().slice(0,600);
+   return{scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,activeNav,visibleText};
  });
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const name=`${vp.id}-${theme}-${state}`;await p.screenshot({path:path.join(out,name+'.png'),fullPage:false});
@@ -36,6 +45,10 @@ for(const r of report){
  if(r.metrics.overflowX)violations.push(`${r.viewport}/${r.theme}/${r.state}: horizontal overflow`);
  if(r.state==='landing'&&r.heavyRequests.length)violations.push(`${r.viewport}/${r.theme}: heavy 3D requested on landing`);
  if(r.errors.length)violations.push(`${r.viewport}/${r.theme}/${r.state}: JS errors ${r.errors.join('; ')}`);
+ if(r.state!=='landing' && r.metrics.introVisible) violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
+ if(r.state==='home' && !/Home|Now|Kona/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: no Home content detected`);
+ if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);
+ if(r.state==='me' && !/Me|Passport|XP|Credits/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: no Me/Passport content detected`);
 }
 if(violations.length){console.error(violations.join('\n'));process.exitCode=1}
 console.log(`visual evidence: ${report.length} captures, ${violations.length} blocking violations`);
