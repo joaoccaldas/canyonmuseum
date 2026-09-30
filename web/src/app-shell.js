@@ -31,9 +31,12 @@ async function nativeUpdateCheck() {
 }
 
 export function initAppShell() {
-  if (window.__appShell) return;
-  window.__appShell = true;
-  if (window.Capacitor?.isNativePlatform?.()) { document.body.classList.add('native'); nativeUpdateCheck(); return; }
+  if (window.__appShell?.openInstall) return window.__appShell;
+  if (window.Capacitor?.isNativePlatform?.()) {
+    document.body.classList.add('native'); nativeUpdateCheck();
+    const api = { openInstall: async () => false, syncInstallUI: () => ({kind:'native',show:false,action:'none'}), state: () => ({kind:'native',show:false,action:'none'}) };
+    window.__appShell = api; return api;
+  }
   const standalone = matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches || navigator.standalone;
   if (standalone) document.body.classList.add('installed');
 
@@ -50,6 +53,40 @@ export function initAppShell() {
     if (btn) btn.hidden = !s.show;
     return s;
   }
+
+  async function openInstall() {
+    const s = state();
+    if (s.action === 'none') return false;
+    if (s.action === 'prompt' && deferred) {
+      deferred.prompt();
+      await deferred.userChoice.catch(() => {});
+      deferred = null;
+      syncInstallUI();
+      return true;
+    }
+    if (s.action !== 'instructions' || !sheet) return false;
+    const iosRow = sheet.querySelector('[data-ios]');
+    const pwaRow = sheet.querySelector('[data-pwa]');
+    const apk = sheet.querySelector('[data-apk]');
+    if (iosRow) {
+      iosRow.hidden = s.kind !== 'ios-instructions';
+      const small = iosRow.querySelector('small');
+      if (small) small.textContent = installInstructions(s.kind);
+    }
+    if (pwaRow) {
+      pwaRow.hidden = s.kind === 'ios-instructions';
+      pwaRow.disabled = true;
+      const small = pwaRow.querySelector('small');
+      if (small) small.textContent = installInstructions(s.kind);
+    }
+    if (apk) apk.hidden = true;
+    sheet.hidden = false;
+    sheet.querySelector('.close')?.focus({preventScroll:true});
+    return true;
+  }
+
+  const api = { openInstall, syncInstallUI, state };
+  window.__appShell = api;
   syncInstallUI();
 
   addEventListener('beforeinstallprompt', e => {
@@ -64,33 +101,7 @@ export function initAppShell() {
     document.body.classList.add('installed');
   });
 
-  btn?.addEventListener('click', async () => {
-    const s = state();
-    if (s.action === 'prompt' && deferred) {
-      deferred.prompt();
-      await deferred.userChoice.catch(() => {});
-      deferred = null;
-      syncInstallUI();
-      return;
-    }
-    if (s.action !== 'instructions' || !sheet) return;
-    const iosRow = sheet.querySelector('[data-ios]');
-    const pwaRow = sheet.querySelector('[data-pwa]');
-    const apk = sheet.querySelector('[data-apk]');
-    if (iosRow) {
-      iosRow.hidden = s.kind !== 'ios-instructions';
-      const small = iosRow.querySelector('small');
-      if (small) small.textContent = installInstructions(s.kind);
-    }
-    if (pwaRow) {
-      pwaRow.hidden = s.kind !== 'android-instructions';
-      pwaRow.disabled = true;
-      const small = pwaRow.querySelector('small');
-      if (small) small.textContent = installInstructions(s.kind);
-    }
-    if (apk) apk.hidden = true;
-    sheet.hidden = false;
-  });
+  btn?.addEventListener('click', openInstall);
 
   sheet?.querySelector('.close')?.addEventListener('click', () => { sheet.hidden = true; });
   sheet?.addEventListener('click', e => { if (e.target === sheet) sheet.hidden = true; });
@@ -109,4 +120,5 @@ export function initAppShell() {
     const check = () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); };
     setInterval(check, 30 * 60 * 1000); document.addEventListener('visibilitychange', check);
   }).catch(e => console.warn('offline mode unavailable', e));
+  return api;
 }
