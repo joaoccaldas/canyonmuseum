@@ -1,0 +1,48 @@
+{
+  "schema": "artifact-detail-v1",
+  "required": [
+    "id",
+    "type",
+    "name",
+    "subtitle",
+    "summary",
+    "media",
+    "facts",
+    "sections",
+    "actions",
+    "sources"
+  ],
+  "types": [
+    "bike",
+    "shoe",
+    "helmet",
+    "watch",
+    "wheel",
+    "trisuit",
+    "wetsuit",
+    "component",
+    "memorabilia",
+    "artwork"
+  ],
+  "section_types": [
+    "overview",
+    "engineering",
+    "race-history",
+    "gallery",
+    "provenance"
+  ],
+  "action_types": [
+    "inspect-3d",
+    "add-garage",
+    "compare",
+    "share",
+    "official-link",
+    "affiliate-link"
+  ],
+  "rules": {
+    "primary_actions_max": 1,
+    "hero_facts_max": 4,
+    "affiliate_requires_disclosure": true,
+    "source_required_for_factual_claims": true
+  }
+}
