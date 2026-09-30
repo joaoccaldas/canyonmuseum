@@ -23,3 +23,11 @@ test('mobile entry uses ordinary responsive width without zoom',()=>{
  assert.match(mobile,/html,body\{width:100%;max-width:100%;overflow-x:hidden\}/);
  assert.equal(/html\.phone-fit .*zoom:/.test(mobile),false);
 });
+
+test('entry path stays 3D-free until explicit world entry',()=>{
+ const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
+ assert.equal(/from ['"]three|THREE\./.test(entry),false);
+ assert.equal(/\.glb['"]/i.test(entry),false);
+ assert.match(entry,/loadScript\('app\/hall\.js'\)/);
+ assert.match(entry,/function openMuseum|const openMuseum/);
+});
