@@ -45,6 +45,7 @@ for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.t
 }
 
 const SYSTEM_CSS = fs.readFileSync(path.join(root, 'web/styles/system.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '');
+const THEME_BOOTSTRAP = `<script>(function(){try{var p=JSON.parse(localStorage.getItem('speedmax.profile.v1')||'null');var t=p&&p.appearance;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(_){}})();<\/script>`;
 const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
@@ -67,7 +68,7 @@ function block(p) {
 <meta property="og:url" content="${url}"><meta property="og:image" content="${img}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(p.title)}"><meta name="twitter:description" content="${esc(p.description)}"><meta name="twitter:image" content="${img}">
 <link rel="alternate" type="text/plain" href="${SITE}llms.txt" title="LLM summary">
-<script type="application/ld+json">${jsonld(ld)}</script>
+<script type="application/ld+json">${jsonld(ld)}</script>\n${THEME_BOOTSTRAP}
 <!--harden:end-->`;
 }
 
