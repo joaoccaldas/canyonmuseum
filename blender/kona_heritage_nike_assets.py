@@ -278,7 +278,9 @@ def look_at(obj, target):
     obj.rotation_euler = (Vector(target) - obj.location).to_track_quat("-Z", "Y").to_euler()
 
 def ensure_preview_rig():
-    scene.render.engine = "BLENDER_EEVEE"
+    scene.render.engine = "CYCLES"
+    scene.cycles.device = "CPU"
+    scene.cycles.samples = 8
     scene.render.resolution_x = 1400
     scene.render.resolution_y = 820
     scene.render.resolution_percentage = 100
