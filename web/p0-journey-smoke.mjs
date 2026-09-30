@@ -16,7 +16,8 @@ try{
  assert.equal(museumData().length,0,'landing must not request museum catalog data');
  assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
- await page.waitForSelector('#konaQuest');
+ try { await page.waitForSelector('#konaQuest',{timeout:8000}); }
+ catch(err){ throw new Error('Onboarding did not start. Page errors: '+pageErrors.join(' | ')+' Body: '+(await page.$eval('body',e=>e.innerText.slice(0,1200)))); }
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Why are you here/i);
  await page.click('[data-set="intent"][data-value="dreaming"]');
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Your races/i);
