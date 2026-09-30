@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "policy": "All external texture candidates are CC0. GLBs in Batch 04 remain self-contained with procedural materials; these sources are approved for the later high-resolution texture bake pass.",
+  "license_source": "https://polyhaven.com/license",
+  "sources": [
+    {
+      "id": "polyhaven-fabric-pattern-05",
+      "url": "https://polyhaven.com/a/fabric_pattern_05",
+      "license": "CC0",
+      "use_for": [
+        "1970s woven nylon reference",
+        "canvas-like textile microstructure"
+      ]
+    },
+    {
+      "id": "polyhaven-stretch-poplin",
+      "url": "https://polyhaven.com/a/stretch_poplin",
+      "license": "CC0",
+      "use_for": [
+        "synthetic woven upper reference"
+      ]
+    },
+    {
+      "id": "polyhaven-terlenka",
+      "url": "https://polyhaven.com/a/terlenka",
+      "license": "CC0",
+      "use_for": [
+        "polyester weave reference"
+      ]
+    },
+    {
+      "id": "polyhaven-leather-white",
+      "url": "https://polyhaven.com/a/leather_white",
+      "license": "CC0",
+      "use_for": [
+        "leather overlay grain"
+      ]
+    },
+    {
+      "id": "polyhaven-scuba-suede",
+      "url": "https://polyhaven.com/a/scuba_suede",
+      "license": "CC0",
+      "use_for": [
+        "suede-like overlay microtexture"
+      ]
+    },
+    {
+      "id": "polyhaven-jersey-melange",
+      "url": "https://polyhaven.com/a/jersey_melange",
+      "license": "CC0",
+      "use_for": [
+        "modern knit/Flyknit material study"
+      ]
+    }
+  ]
+}
