@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/user-profile.schema.json",
+  "title": "User Profile V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "created_at",
+    "preferences",
+    "privacy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^user:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "user-profile"
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/IsoDateTime"
+    },
+    "display_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 80
+    },
+    "locale": {
+      "type": "string",
+      "default": "en"
+    },
+    "units": {
+      "enum": [
+        "metric",
+        "imperial"
+      ],
+      "default": "metric"
+    },
+    "experience_level": {
+      "enum": [
+        "new",
+        "beginner",
+        "intermediate",
+        "advanced",
+        "elite",
+        "unknown"
+      ]
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "appearance": {
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ]
+        },
+        "notifications": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "favorite_brands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "privacy": {
+      "type": "object",
+      "required": [
+        "analytics_opt_in",
+        "vendor_insights_opt_in"
+      ],
+      "properties": {
+        "analytics_opt_in": {
+          "type": "boolean",
+          "default": false
+        },
+        "vendor_insights_opt_in": {
+          "type": "boolean",
+          "default": false
+        },
+        "cloud_sync_opt_in": {
+          "type": "boolean",
+          "default": false
+        },
+        "default_visibility": {
+          "$ref": "common.schema.json#/$defs/Visibility"
+        }
+      },
+      "additionalProperties": false
+    },
+    "external_accounts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^external-account:[a-z0-9:_-]+$"
+      }
+    }
+  },
+  "additionalProperties": false
+}
