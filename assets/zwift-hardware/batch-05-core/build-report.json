@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "assets": {
+    "zwift-ride-v2": {
+      "type": "smart_frame",
+      "generation": "V2",
+      "geometry_confidence": "official-spec-driven",
+      "exploded_parts": [
+        "frame",
+        "front leg/riser",
+        "seatpost/saddle",
+        "handlebar",
+        "left/right controllers",
+        "cranks",
+        "pedals",
+        "frame key"
+      ],
+      "product_length_mm": 1340,
+      "product_width_mm": 602,
+      "product_weight_kg": 35.5,
+      "rider_fit_cm": [
+        146,
+        198
+      ],
+      "saddle_height_mm": [
+        571,
+        865
+      ],
+      "stepover_mm": 730,
+      "handlebar_width_mm": 420,
+      "handlebar_height_mm": [
+        822,
+        1021
+      ],
+      "crank_lengths_mm": [
+        160,
+        165,
+        170,
+        172.5,
+        175
+      ],
+      "saddle_mm": [
+        245,
+        160
+      ]
+    },
+    "zwift-ride-v1": {
+      "type": "smart_frame",
+      "generation": "V1",
+      "geometry_confidence": "legacy-silhouette-study",
+      "exploded_parts": [
+        "frame",
+        "front leg/riser",
+        "seatpost/saddle",
+        "handlebar",
+        "left/right controllers",
+        "cranks",
+        "pedals",
+        "frame key"
+      ],
+      "known_min_handlebar_stack_mm": 606,
+      "crank_length_mm": 170,
+      "note": "V1 exact product envelope not asserted; support/forum confirmation used for min stack and prior fixed-crank architecture."
+    },
+    "zwift-cog-v2": {
+      "type": "virtual_shift_cog",
+      "generation": "V2",
+      "dimensions_mm": [
+        103,
+        42
+      ],
+      "weight_g": 140,
+      "teeth": 14,
+      "alignment_positions": 10,
+      "materials": [
+        "plastic housing",
+        "plastic lockring",
+        "steel sprocket"
+      ],
+      "accuracy": "official dimensions/specs",
+      "exploded_parts": [
+        "housing",
+        "steel sprocket",
+        "lockring",
+        "10-position alignment mechanism"
+      ]
+    },
+    "zwift-cog-v1": {
+      "type": "virtual_shift_cog",
+      "generation": "V1",
+      "dimensions_mm": null,
+      "weight_g": null,
+      "teeth": 14,
+      "alignment_positions": null,
+      "materials": [
+        "plastic housing",
+        "plastic lockring",
+        "steel sprocket"
+      ],
+      "accuracy": "legacy silhouette study",
+      "exploded_parts": [
+        "housing",
+        "steel sprocket",
+        "lockring"
+      ]
+    },
+    "zwift-click-v2": {
+      "type": "wireless_controller",
+      "generation": "V2",
+      "dimensions_mm": [
+        50,
+        50
+      ],
+      "weight_g": 58.2,
+      "power": "CR2032",
+      "battery_life_hours_gt": 100,
+      "communication": "Bluetooth",
+      "accuracy": "official specs",
+      "exploded_parts": [
+        "body",
+        "up/down controls",
+        "CR2032 battery",
+        "bar strap"
+      ]
+    },
+    "zwift-click-v1": {
+      "type": "wireless_controller",
+      "generation": "V1",
+      "dimensions_mm": [
+        47,
+        47,
+        13
+      ],
+      "weight_g": 51,
+      "power": "CR2032",
+      "battery_life_hours_gt": 100,
+      "communication": "Bluetooth",
+      "accuracy": "official specs",
+      "exploded_parts": [
+        "body",
+        "up/down controls",
+        "CR2032 battery",
+        "bar strap"
+      ]
+    },
+    "zwift-play": {
+      "type": "handlebar_controllers",
+      "dimensions_mm_each": [
+        100,
+        95,
+        95
+      ],
+      "battery_mAh": "1350-1400",
+      "communication": "Bluetooth",
+      "handlebar_diameter_mm": [
+        25,
+        35
+      ],
+      "accuracy": "official dimensions/specs; boxed weight excluded from geometry",
+      "exploded_parts": [
+        "left/right housing",
+        "button pads",
+        "battery volumes",
+        "handlebar clamps"
+      ]
+    },
+    "zwift-hub-one": {
+      "type": "direct_drive_trainer",
+      "generation": "Hub One",
+      "sale_status": "discontinued",
+      "geometry_confidence": "legacy silhouette study",
+      "documented_service_interface": [
+        "drive-side adapter",
+        "cog/cassette",
+        "freehub body"
+      ],
+      "exploded_parts": [
+        "base/legs",
+        "flywheel",
+        "hub body",
+        "freehub body",
+        "Zwift Cog",
+        "drive-side adapter"
+      ]
+    },
+    "zwift-hub-classic": {
+      "type": "direct_drive_trainer",
+      "generation": "Hub Classic",
+      "sale_status": "discontinued",
+      "geometry_confidence": "legacy silhouette study",
+      "documented_service_interface": [
+        "drive-side adapter",
+        "cog/cassette",
+        "freehub body"
+      ],
+      "exploded_parts": [
+        "base/legs",
+        "flywheel",
+        "hub body",
+        "freehub body",
+        "cassette",
+        "drive-side adapter"
+      ]
+    },
+    "zwift-runpod": {
+      "type": "footpod",
+      "release_year": 2018,
+      "weight_g": 13,
+      "power": "CR2032",
+      "communication": "Bluetooth",
+      "measures": [
+        "speed",
+        "cadence",
+        "distance"
+      ],
+      "geometry_confidence": "silhouette study; weight/spec official",
+      "exploded_parts": [
+        "outer pod housing",
+        "shoe-lace clip",
+        "CR2032 battery",
+        "electronics proxy"
+      ],
+      "mount_guidance": "Zwift historical guidance: around 3rd eyelet for low-drop shoes, 2nd for high-drop shoes."
+    }
+  },
+  "sources": {
+    "ride_v2": "https://eu.zwift.com/products/zwift-ride-smart-frame",
+    "ride_setup": "https://eu.zwift.com/pages/zwift-ride-setup",
+    "ride_faq": "https://support.zwift.com/de_eu/zwift-ride-faq-ByTCtW8SA",
+    "cog_click": "https://eu.zwift.com/products/zwift-cog-and-click-upgrade-kit",
+    "play": "https://uk.zwift.com/pages/zwift-play-setup",
+    "hub_service": "https://support.zwift.com/en_us/inspecting-the-cassette-and-freehub-body-on-your-zwift-hub-S1tROG9h1g",
+    "hub_discontinued": "https://support.zwift.com/en_us/zwift-hub-classic-faq-BJGQszTC5",
+    "hub_one_release": "https://news.zwift.com/en-WW/230494-zwift-s-new-hub-one-trainer-makes-it-easier-to-jump-into-zwift/",
+    "runpod": "https://www.zwift.com/eu-it/news/12538-the-zwift-runpod-your-gateway-to-zwift-running"
+  }
+}
