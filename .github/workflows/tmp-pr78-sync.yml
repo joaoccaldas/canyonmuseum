@@ -19,7 +19,7 @@ jobs:
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sw.js app/app-manifest.json ./*.html web/dist/*.html museum/catalog/products.json docs/ROOMS.md
+          git add sw.js app/app-manifest.json app/kona-core.js app/museum-data.js app/hall.js app/studio.js app/studio-catalog.js ./*.html web/dist/*.html museum/catalog/products.json docs/ROOMS.md
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "build: sync PR78 visual release outputs [skip ci]"
           git push origin HEAD:design/landing-onboarding-visual-v1-20260930
