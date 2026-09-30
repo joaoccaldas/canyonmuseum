@@ -43,7 +43,7 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
 .player-hub{position:relative;width:100%;height:100dvh;overflow:hidden;background:#091016;color:#f8f5ef}
 .hub-stage-wrap{position:absolute;inset:0;overflow:hidden;background:
   linear-gradient(180deg,rgba(6,14,19,.44),rgba(6,14,19,.78) 58%,#091016 88%),
-  url('assets/kona-years/kailua-bay.jpg') center 28%/cover no-repeat,
+  url('../../assets/kona-years/kailua-bay.jpg') center 28%/cover no-repeat,
   #091016}
 .hub-stage-wrap::before{content:"";position:absolute;inset:0;z-index:0;background:
   radial-gradient(circle at 50% 28%,rgba(19,138,143,.08),transparent 30%),
