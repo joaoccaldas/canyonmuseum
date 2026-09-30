@@ -1,0 +1,6 @@
+:root{--room-accent:var(--color-accent,#e85a22);--room-ambient:transparent;--room-surface:var(--color-surface,#fbf9f5)}
+[data-room-theme]{--active-accent:var(--room-accent)}
+/* Rooms may own atmosphere. Global interaction semantics remain in the app shell. */
+.room-atmosphere{background-color:var(--room-ambient)}
+.room-exhibit-surface{background:var(--room-surface)}
+.room-accent{color:var(--room-accent)}
