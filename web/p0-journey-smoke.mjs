@@ -10,7 +10,10 @@ try{
  const requests=[],pageErrors=[];page.on('request',r=>requests.push(r.url()));page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
  await page.goto(base,{waitUntil:'domcontentloaded'});
  const heavy=()=>requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
+ const museumData=()=>requests.filter(u=>/app\/museum-data\.js/i.test(u));
  assert.equal(heavy().length,0,'landing must request zero heavy 3D assets');
+ assert.equal(museumData().length,0,'landing must not request museum catalog data');
+ assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
  await page.waitForSelector('#konaQuest');
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Why are you here/i);
@@ -36,6 +39,17 @@ try{
  await page.waitForSelector('#buildSelf');
  assert.match(await page.$eval('#buildSelf',e=>e.textContent),/Continue your Kona/i);
  assert.equal(heavy().length,0,'returning Home must request zero heavy 3D assets');
+ assert.equal(museumData().length,0,'returning Home must not request museum catalog data');
+ // Registration path: prove the browser is allowed to issue the Supabase OTP request.
+ const auth=await browser.newPage();auth.setDefaultTimeout(30000);
+ await auth.setRequestInterception(true);let otpSeen=false;
+ auth.on('request',req=>{if(/mtvpnoqwjpoqaiocrklq\.supabase\.co\/auth\/v1\/otp/.test(req.url())){otpSeen=true;req.respond({status:200,contentType:'application/json',body:'{}'});}else req.continue();});
+ await auth.goto(base,{waitUntil:'domcontentloaded'});
+ await auth.click('#entrySignIn');await auth.waitForSelector('#saveForm');
+ await auth.type('#saveForm input[name="email"]','beta@example.com');
+ await Promise.all([auth.click('#saveForm button[type="submit"]'),auth.waitForFunction(()=>/Check your email/i.test(document.querySelector('#saveNote')?.textContent||''))]);
+ assert.equal(otpSeen,true,'magic-link flow must issue the allowed Supabase OTP request');
+ await auth.close();
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: landing → identity → reveal → Home → reload; zero heavy 3D requests');
+ console.log('P0 browser journey PASS: entry-only data → identity → reveal → Home → reload + magic-link request; zero heavy 3D/catalog requests');
 } finally {await browser.close();}
