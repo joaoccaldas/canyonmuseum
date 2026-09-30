@@ -10,7 +10,10 @@ try{
  const requests=[],pageErrors=[];page.on('request',r=>requests.push(r.url()));page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
  await page.goto(base,{waitUntil:'domcontentloaded'});
  const heavy=()=>requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
+ const museumData=()=>requests.filter(u=>/app\/museum-data\.js/i.test(u));
  assert.equal(heavy().length,0,'landing must request zero heavy 3D assets');
+ assert.equal(museumData().length,0,'landing must not request museum catalog data');
+ assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
  await page.waitForSelector('#konaQuest');
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Why are you here/i);
@@ -23,6 +26,7 @@ try{
  await page.waitForFunction(()=>/What would make Kona a win/i.test(document.querySelector('#konaQuest')?.textContent||''));
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/What would make Kona a win/i);
  await page.click('[data-set="goal"][data-value="Finish"]');
+ await page.waitForFunction(()=>{const q=localStorage.getItem('kona.konaSelf.v1')||localStorage.getItem('speedmax.konaSelf.v1');try{return JSON.parse(q||'{}').goal==='Finish'}catch{return false}}, {timeout:5000}).catch(async()=>{throw new Error('Goal click did not persist. Quest: '+await page.$eval('#konaQuest',e=>e.textContent));});
  try { await page.waitForSelector('#enterKona',{timeout:8000}); }
  catch(err){ throw new Error('Reveal did not render. Page errors: '+pageErrors.join(' | ')+' Quest: '+await page.$eval('#konaQuest',e=>e.textContent)); }
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/This is your Kona/i);
@@ -36,6 +40,26 @@ try{
  await page.waitForSelector('#buildSelf');
  assert.match(await page.$eval('#buildSelf',e=>e.textContent),/Continue your Kona/i);
  assert.equal(heavy().length,0,'returning Home must request zero heavy 3D assets');
+ assert.equal(museumData().length,0,'returning Home must not request museum catalog data');
+ // Registration path: prove the browser is allowed to issue the Supabase OTP request.
+ const auth=await browser.newPage();auth.setDefaultTimeout(30000);
+ await auth.setRequestInterception(true);let otpSeen=false;
+ const authErrors=[];auth.on('pageerror',e=>authErrors.push(String(e?.stack||e)));
+ auth.on('console',m=>{if(m.type()==='error') authErrors.push(m.text());});
+ auth.on('request',req=>{
+   if(!/mtvpnoqwjpoqaiocrklq\.supabase\.co\/auth\/v1\/otp/.test(req.url())) return req.continue();
+   const headers={'access-control-allow-origin':base.replace(/\/$/,''),'access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'apikey, content-type','content-type':'application/json'};
+   if(req.method()==='OPTIONS') return req.respond({status:204,headers,body:''});
+   otpSeen=true;return req.respond({status:200,headers,body:'{}'});
+ });
+ await auth.goto(base,{waitUntil:'domcontentloaded'});
+ await auth.click('#entrySignIn');await auth.waitForSelector('#saveForm');
+ await auth.type('#saveForm input[name="email"]','beta@example.com');
+ await auth.click('#saveForm button[type="submit"]');
+ try { await auth.waitForFunction(()=>/Check your email/i.test(document.querySelector('#saveNote')?.textContent||''),{timeout:8000}); }
+ catch(err){throw new Error('Magic-link confirmation did not render. Errors: '+authErrors.join(' | ')+' Note: '+await auth.$eval('#saveNote',e=>e.textContent));}
+ assert.equal(otpSeen,true,'magic-link flow must issue the allowed Supabase OTP request');
+ await auth.close();
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: landing → identity → reveal → Home → reload; zero heavy 3D requests');
+ console.log('P0 browser journey PASS: entry-only data → identity → reveal → Home → reload + magic-link request; zero heavy 3D/catalog requests');
 } finally {await browser.close();}

@@ -35,7 +35,11 @@ function loadScript(src) {
   return pending;
 }
 
-const dataReady = loadScript('app/museum-data.js');
+const entryDataReady = fetch('app/entry-data.json',{cache:'no-store',credentials:'same-origin'})
+  .then(r=>r.ok?r.json():Promise.reject(new Error('entry data')))
+  .catch(()=>({event:{date:'2026-10-10'}}));
+let museumDataReady = null;
+const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js'));
 
 function daysUntil(iso) {
   const n = Math.ceil((new Date(iso + 'T12:00:00') - Date.now()) / 86400000);
@@ -44,7 +48,7 @@ function daysUntil(iso) {
 
 function paintCount() {
   const el = document.getElementById('konaCount');
-  const event = window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {};
+  const event = window.__ENTRY_EVENT || {};
   if (!el || !event.date) return;
   const days = daysUntil(event.date);
   el.textContent = days === 0 ? 'Race day in Kona' : days === 1 ? 'Kona in 1 day' : `Kona in ${days} days`;
@@ -56,7 +60,7 @@ function openMuseum(room) {
   const btn = document.getElementById('enterBtn');
   if (btn && !window.__museum) btn.innerHTML = 'Opening the coast…';
   if (!opening) {
-    opening = dataReady
+    opening = ensureMuseumData()
       .then(() => loadScript('app/hall.js'))
       .then(() => window.__museum?.enter?.())
       .catch(err => { opening = null; console.warn('museum', err); });
@@ -229,7 +233,7 @@ if (existingIdentity) {
   buildButton?.addEventListener('click', () => paintQuest('intent'));
 }
 paintIntent();
-dataReady.then(paintCount).catch(() => {});
+entryDataReady.then(data=>{ window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
 
 function paintShared(draft){
   const host=questHost(); if(!host) return;
