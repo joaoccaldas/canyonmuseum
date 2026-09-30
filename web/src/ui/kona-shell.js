@@ -1,3 +1,4 @@
+import { resolveLocale, t } from '../i18n.js';
 // ui/kona-shell.js — mobile-first app shell over the existing 3D museum.
 // Navigation/utility only. The 3D renderer remains the existing proven museum runtime.
 import { readGameState, gameProgress } from '../engine/game-state.js';
@@ -32,11 +33,11 @@ export function initKonaShell({ profile, settings, enter }) {
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
     '</div>'+
     '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
-      '<button type="button" data-tab="home">'+icon('now')+'<span>Home</span></button>'+
-      '<button type="button" data-tab="discover">'+icon('explore')+'<span>Discover</span></button>'+
-      '<a href="Studio.html#setup" data-tab="garage">'+icon('setup')+'<span>Garage</span></a>'+
-      '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
-      '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
+      '<button type="button" data-tab="home">'+icon('now')+'<span>${t("nav.home",locale)}</span></button>'+
+      '<button type="button" data-tab="discover">'+icon('explore')+'<span>${t("nav.discover",locale)}</span></button>'+
+      '<a href="Studio.html#setup" data-tab="garage">'+icon('setup')+'<span>${t("nav.garage",locale)}</span></a>'+
+      '<button type="button" data-tab="plan">'+icon('plan')+'<span>${t("nav.plan",locale)}</span></button>'+
+      '<button type="button" data-tab="me">'+icon('me')+'<span>${t("nav.me",locale)}</span></button>'+
     '</nav>';
   document.body.append(shell);
 
