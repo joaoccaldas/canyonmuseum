@@ -233,11 +233,11 @@ function renderRaceSetup(P) {
       slot('◒', 'Helmet', 'Equipment slot ready', 'Soon', null, true),
       slot('⌁', 'Shoes', 'Equipment slot ready', 'Soon', null, true)
     ),
+    h('p', { class:'setup-note' }, 'Stored only on this device. No account, tracking or background location. Helmet and shoe slots are intentionally dormant until validated assets clear the intake contract.'),
     h('div', { class:'setup-actions' },
-      h('button', { type:'button', class:'btn primary', onclick:saveCurrentToSetup }, bikeProduct && current?.product.id === bikeProduct.id ? 'Update current bike' : 'Save current bike to setup'),
-      bikeProduct ? h('button', { type:'button', class:'btn ghost', onclick:shareRaceSetup }, 'Share My Kona Setup') : null
-    ),
-    h('p', { class:'setup-note' }, 'Stored only on this device. No account, tracking or background location. Helmet and shoe slots are intentionally dormant until validated assets clear the intake contract.')
+      h('button', { type:'button', class:'btn primary', onclick:saveCurrentToSetup }, bikeProduct && current?.product.id === bikeProduct.id ? 'Update bike' : 'Save bike'),
+      bikeProduct ? h('button', { type:'button', class:'btn ghost', 'aria-label':'Share My Kona Setup', onclick:shareRaceSetup }, 'Share setup') : null
+    )
   );
 }
 function saveLivery() {
