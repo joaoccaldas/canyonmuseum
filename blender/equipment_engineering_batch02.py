@@ -153,6 +153,7 @@ def make_dt_wheel(asset_id,kind="front",disc_wheel=False):
     # Official ARC 1100 DICUT DB 80: 700C, 80 mm rim height, 20 mm inner, 32 mm outer.
     # Front 12x100; rear 12x142. Disc wheel: 20 mm inner, 27 mm outer, 12x142.
     asm=empty("ASSEMBLED_"+asset_id)
+    asm["state_role"]="assembled"; asm["default_visible"]=True
     rim_outer=.317
     rim_depth=.080 if not disc_wheel else .305
     rim_inner=rim_outer-rim_depth if not disc_wheel else .034
@@ -180,6 +181,7 @@ def make_dt_wheel(asset_id,kind="front",disc_wheel=False):
         cyl(asset_id+"_FREEHUB",(0,hub_width/2+.025,0),.020,.050,ALU,asm,rot=(math.pi/2,0,0),verts=24)
     exp=duplicate_tree(asm,"_EXPLODED")
     exp.name="EXPLODED_"+asset_id
+    exp["state_role"]="exploded"; exp["default_visible"]=False
     # spread by semantic class along Y
     for o in descendants(exp):
         n=o.name.upper()
@@ -202,6 +204,7 @@ def make_dt_wheel(asset_id,kind="front",disc_wheel=False):
 def make_crank():
     aid="shimano-fc-r9200-54-40-170"
     asm=empty("ASSEMBLED_"+aid)
+    asm["state_role"]="assembled"; asm["default_visible"]=True
     crank_len=.170
     q=.148
     axle_len=.110
@@ -225,6 +228,7 @@ def make_crank():
         a=math.radians(45+i*90)
         cyl(f"{aid}_BOLT_{i+1}",(.055*math.cos(a),q/2+.008,.055*math.sin(a)),.004,.012,SILVER,asm,rot=(math.pi/2,0,0),verts=16)
     exp=duplicate_tree(asm,"_EXPLODED");exp.name="EXPLODED_"+aid
+    exp["state_role"]="exploded"; exp["default_visible"]=False
     for o in descendants(exp):
         n=o.name.upper()
         if "LEFT_ARM" in n:o.location.y-=.12
@@ -257,6 +261,7 @@ def make_cassette():
     cyl(aid+"_SPIDER_B",(0,y0+10*.0034,0),.043,.004,ALU,asm,rot=(math.pi/2,0,0),verts=24)
     ring_mesh(aid+"_LOCKRING",(0,y0-.004,0),.022,.014,.004,ALU,asm,48)
     exp=duplicate_tree(asm,"_EXPLODED");exp.name="EXPLODED_"+aid
+    exp["state_role"]="exploded"; exp["default_visible"]=False
     for o in descendants(exp):
         # derive exploded order from sprocket tooth name
         moved=False
@@ -294,6 +299,7 @@ def make_extensions():
     for y in (-.060,.060):
         cyl(aid+("_LEFT_CLAMP" if y<0 else "_RIGHT_CLAMP"),(-.145,y,0),od/2,.100,DARK,asm,rot=(0,math.pi/2,0),verts=24)
     exp=duplicate_tree(asm,"_EXPLODED");exp.name="EXPLODED_"+aid
+    exp["state_role"]="exploded"; exp["default_visible"]=False
     for o in descendants(exp):
         if "LEFT" in o.name:o.location.y-=.09
         elif "RIGHT" in o.name:o.location.y+=.09
@@ -352,6 +358,52 @@ for r in assembled:r.hide_render=True
 for r,pos in zip(exploded,positions):
     r.hide_render=False;r.location=(pos[0],0,0)
 scene.render.filepath=str(PREV/"exploded-qa.jpg");bpy.ops.render.render(write_still=True)
+
+
+# Per-asset QA: render assembled and exploded states at useful inspection scale.
+def set_tree_hidden(root,hidden):
+    for o in descendants(root):
+        o.hide_render=hidden
+
+pairs=[]
+for i in range(0,len(roots),2):
+    pairs.append((roots[i],roots[i+1]))
+
+def root_bounds(root):
+    pts=[]
+    for o in descendants(root):
+        if o.type=="MESH":
+            for co in o.bound_box:
+                pts.append(o.matrix_world @ Vector(co))
+    if not pts:
+        return Vector((-1,-1,-1)),Vector((1,1,1))
+    mn=Vector((min(p.x for p in pts),min(p.y for p in pts),min(p.z for p in pts)))
+    mx=Vector((max(p.x for p in pts),max(p.y for p in pts),max(p.z for p in pts)))
+    return mn,mx
+
+for asm,exp in pairs:
+    aid=asm.name.replace("ASSEMBLED_","")
+    # hide every engineering asset, then show one state only
+    for r in roots:set_tree_hidden(r,True)
+    asm.location=(0,0,0);exp.location=(0,0,0)
+
+    set_tree_hidden(asm,False)
+    mn,mx=root_bounds(asm);center=(mn+mx)/2;span=max(mx.x-mn.x,mx.z-mn.z,.15)
+    cam.location=(center.x,-max(1.2,span*3.0),center.z+span*.45)
+    cam.rotation_euler=(center-cam.location).to_track_quat("-Z","Y").to_euler()
+    scene.render.filepath=str(PREV/f"{aid}-assembled.jpg")
+    bpy.ops.render.render(write_still=True)
+
+    set_tree_hidden(asm,True);set_tree_hidden(exp,False)
+    mn,mx=root_bounds(exp);center=(mn+mx)/2;span=max(mx.x-mn.x,mx.z-mn.z,.15)
+    cam.location=(center.x,-max(1.2,span*3.0),center.z+span*.45)
+    cam.rotation_euler=(center-cam.location).to_track_quat("-Z","Y").to_euler()
+    scene.render.filepath=str(PREV/f"{aid}-exploded.jpg")
+    bpy.ops.render.render(write_still=True)
+
+# restore assembled state only
+for asm,exp in pairs:
+    set_tree_hidden(asm,False);set_tree_hidden(exp,True)
 
 print("built",len(REPORT["assets"]),"engineering assets")
 for p in sorted(OUT.glob("*.glb")): print(p.name,p.stat().st_size)
