@@ -17,3 +17,10 @@ test('sign in is optional and exposes Continue without account',()=>{
   assert.match(entry,/Continue without account/);assert.match(entry,/continueLocal[^\n]+enterApp/);
 });
 test('reveal Enter KONA uses same app-entry helper',()=>assert.match(entry,/enterKona[^\n]+enterApp/));
+
+test('P0 entry uses canonical storage adapter, never raw localStorage',()=>{
+  assert.match(entry,/readStorage/);
+  assert.match(entry,/writeStorage/);
+  assert.equal(/localStorage/.test(entry),false);
+  assert.equal(/speedmax\.(?:entryIntent|konaSelf)/.test(entry),false);
+});
