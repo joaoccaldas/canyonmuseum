@@ -45,3 +45,6 @@ jobs:
 
       - name: Validate affiliate and maintenance contracts
         run: node integrations/affiliate-maintenance.test.mjs
+
+      - name: Validate tech room contract
+        run: node integrations/tech-room.test.mjs
