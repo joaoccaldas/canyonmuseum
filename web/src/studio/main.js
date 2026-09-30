@@ -17,6 +17,7 @@ import { initSettings } from '../ui/settings.js';
 import { SCENES, encodeLook, decodeLook, productsFor } from './model.js';
 import { createRaceSetupStore, encodeRaceSetup, decodeRaceSetup, completedSlots, setSetupSlot, RACE_SETUP_EVENT } from './race-setup.js';
 import { syncIdentityFromSetup } from '../engine/identity.js';
+import { renderRaceBadges } from '../ui/race-cards.js';
 
 const $ = id => document.getElementById(id);
 const CAT = window.__PRODUCTS, FILMS = window.__FILMS?.films || [], MSKINS = window.__SKINS?.skins || [], WYLD = window.__WYLDROOM?.variants || [], EVENTS = window.__EVENTS || [];
@@ -217,6 +218,8 @@ async function shareRaceSetup() {
   toast({ shared:'Shared', link:'Link shared', saved:'Image saved', cancelled:'Not shared' }[r]);
 }
 function renderRaceSetup(P) {
+  const raceBadges=document.createElement('div'); raceBadges.className='studio-race-badges';
+  renderRaceBadges(raceBadges,{limit:8,empty:false});
   const bikeProduct = raceSetup?.slots?.bike ? CAT.products.find(p => p.id === raceSetup.slots.bike.product_id) : null;
   const n = completedSlots(raceSetup);
   const slot = (icon, label, value, state, onclick, soon=false) => h('button', {
@@ -234,7 +237,8 @@ function renderRaceSetup(P) {
         slot('◒', 'Helmet', 'Equipment slot ready', 'Soon', null, true),
         slot('⌁', 'Shoes', 'Alphafly 3 study', 'Museum', () => { location.href = 'index.html?room=nike-running'; })
       ),
-      h('p', { class:'setup-note' }, 'Stored only on this device. The shoe opens the Nike Running Lab, an independent study in the museum. The helmet slot stays closed until a validated asset clears intake.')
+      h('p', { class:'setup-note' }, 'Stored only on this device. The shoe opens the Nike Running Lab, an independent study in the museum. The helmet slot stays closed until a validated asset clears intake.'),
+      raceBadges
     ),
     h('div', { class:'setup-actions' },
       h('button', { type:'button', class:'btn primary', onclick:saveCurrentToSetup }, bikeProduct && current?.product.id === bikeProduct.id ? 'Update bike' : 'Save bike'),

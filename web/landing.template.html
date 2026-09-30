@@ -3,6 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+(function(){
+  function fit(){
+    var html=document.documentElement;
+    var short=Math.min(screen.width||1e5,screen.height||1e5);
+    var landscape=innerWidth>innerHeight;
+    var physical=landscape?Math.max(screen.width||innerWidth,screen.height||innerHeight):short;
+    var ratio=innerWidth/Math.max(1,physical);
+    var on=short<=600&&ratio>1.3;
+    html.classList.toggle('phone-fit',on);
+    html.classList.toggle('physical-phone',short<=600);
+    html.style.setProperty('--fit',on?ratio.toFixed(3):'1');
+  }
+  fit(); addEventListener('resize',fit); addEventListener('orientationchange',function(){setTimeout(fit,200)});
+})();
+</script>
 <title>KONA · Race the version of yourself</title>
 <meta name="description" content="Build your Kona setup, prepare for race week, and explore the sport. The 3D museum opens when you choose to walk the coast.">
 <meta name="theme-color" content="#f4efe7">
@@ -15,9 +31,17 @@
 <meta name="apple-mobile-web-app-title" content="KONA">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<!-- Hall layout source: web/styles/hall-web.css (desktop) and web/styles/hall-mobile.css (phone and phone-fit). -->
-<style id="hall-web">__HALL_WEB_CSS__</style>
-<style id="hall-mobile">__HALL_MOBILE_CSS__</style>
+<!-- Source styles stay external: index.html is a thin generated shell, not a second CSS source of truth. -->
+<link rel="stylesheet" href="web/styles/hall-web.css">
+<link rel="stylesheet" href="web/styles/hall-mobile.css">
+<link rel="stylesheet" href="web/styles/entry-visual-v2.css">
+<!--design-system:start-->
+<link rel="stylesheet" href="web/styles/system.css">
+<link rel="stylesheet" href="web/styles/shell-mobile.css">
+<link rel="stylesheet" href="brand/tokens.css">
+<link rel="stylesheet" href="brand/themes.css">
+<link rel="stylesheet" href="brand/artifacts.css">
+<!--design-system:end-->
 </head>
 <body>
 <canvas id="hall" aria-label="A walkable museum hall with every Canyon Speedmax generation on display" tabindex="0"></canvas>
@@ -42,11 +66,11 @@
   <div class="entry-media" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" decoding="async" fetchpriority="high"></div>
   <div class="intro-inner">
     <div class="eyebrow">KONA</div>
-    <h1>Race the version<br>of <em>yourself.</em></h1>
-    <p class="lede">What would you race if Kona were tomorrow?</p>
+    <h1>Race the version of yourself<br><em>you haven't met yet.</em></h1>
+    <p class="lede">Start with one choice. The deeper world can wait.</p>
     <p class="kona-count" id="konaCount">Kona race week</p>
     <div class="cta">
-      <button class="btn primary" id="buildSelf" type="button">Build my Kona self</button><button class="btn text" id="entrySignIn" type="button">Sign in</button>
+      <button class="btn primary" id="buildSelf" type="button">Start somewhere</button><button class="btn text" id="entrySignIn" type="button">Sign in</button>
     </div>
     <div class="entry-utilities"><span>Your setup stays on this device.</span><button class="btn text" id="entryInstall" type="button">Install app</button></div>
     <div id="loadstate" aria-live="polite"></div>
@@ -88,8 +112,8 @@
   <button class="close" aria-label="Close">×</button>
   <img src="assets/pwa/icon-v3-192.png" alt="">
   <h3 id="appSheetTitle">KONA, on your phone</h3>
-  <p>Full screen, works offline once visited, and updates itself — every update is checked file by file before it goes live.</p>
-  <button class="opt" data-pwa hidden>Add to Home Screen<small>Chrome: menu ⋮ → Add to Home screen / Install app. KONA opens full-screen from your Home screen.</small></button>
+  <p>Install KONA as a lightweight app. The 3D world stays optional and loads only when you enter it.</p>
+  <div class="opt" data-pwa hidden><b>Add to Home Screen</b><small>Chrome: menu ⋮ → Install app / Add to Home screen. KONA then opens full-screen from your Home screen.</small></div>
   <a class="opt" data-apk hidden href="#" download>Android app (APK)<small></small></a>
   <div class="opt" data-ios hidden>On iPhone or iPad<small>Tap the Share button, then “Add to Home Screen”.</small></div>
 </div></div>

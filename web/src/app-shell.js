@@ -47,8 +47,8 @@ export function initAppShell() {
 
   function syncInstallUI() {
     const s = state();
-    if (btn) btn.hidden = !s.show;
-    if (entryBtn) { entryBtn.hidden = !s.show; entryBtn.dataset.installKind = s.kind; }
+    if (btn) { btn.hidden = !s.show; btn.textContent = s.label || 'Install KONA'; }
+    if (entryBtn) { entryBtn.hidden = !s.show; entryBtn.dataset.installKind = s.kind; entryBtn.textContent = s.label || 'Install KONA'; }
     return s;
   }
   syncInstallUI();
@@ -84,12 +84,19 @@ export function initAppShell() {
       if (small) small.textContent = installInstructions(s.kind);
     }
     if (pwaRow) {
-      pwaRow.hidden = s.kind !== 'android-instructions';
-      pwaRow.disabled = true;
+      pwaRow.hidden = !['android-instructions','unavailable'].includes(s.kind);
       const small = pwaRow.querySelector('small');
       if (small) small.textContent = installInstructions(s.kind);
     }
-    if (apk) apk.hidden = true;
+    if (apk) {
+      apk.hidden = true;
+      fetch('app/android-version.json',{cache:'no-store',credentials:'same-origin'}).then(r=>r.ok?r.json():null).then(v=>{
+        if(v?.published && typeof v.apk==='string' && !/^[a-z]+:/i.test(v.apk)){
+          apk.href=v.apk; apk.hidden=false;
+          const small=apk.querySelector('small'); if(small) small.textContent='Optional native Android build · '+(v.versionName||'current');
+        }
+      }).catch(()=>{});
+    }
     sheet.hidden = false;
   }
   btn?.addEventListener('click', beginInstall);

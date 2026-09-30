@@ -25,18 +25,27 @@ async function shot(theme,view){
     await new Promise(r=>setTimeout(r,4500));
   }else{
     await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});
-    await p.waitForFunction(()=>window.__app?.konaShell&&window.__museum?.renderer,{timeout:180000});
-    if(view==='explore'){
-      await p.evaluate(()=>window.__museum.enter());
+    await p.waitForFunction(()=>window.__konaShell || window.__app?.konaShell,{timeout:180000});
+    if(view==='explore3d'){
+      await p.evaluate(()=>window.__museum?.enter?.() || (window.__konaShell || window.__app?.konaShell)?.explore?.());
+      await p.waitForFunction(()=>window.__museum?.renderer,{timeout:180000});
       await new Promise(r=>setTimeout(r,5000));
+    }else if(view==='landing'){
+      await new Promise(r=>setTimeout(r,500));
     }else if(view==='now'){
-      await p.evaluate(()=>window.__app.konaShell.now());
+      await p.evaluate(()=>(window.__konaShell || window.__app?.konaShell)?.now?.());
       await new Promise(r=>setTimeout(r,900));
+    }else if(view==='discover'){
+      await p.evaluate(()=>(window.__konaShell || window.__app?.konaShell)?.explore?.());
+      await new Promise(r=>setTimeout(r,1200));
+    }else if(view==='garage'){
+      await p.evaluate(()=>(window.__konaShell || window.__app?.konaShell)?.garage?.());
+      await new Promise(r=>setTimeout(r,700));
     }else if(view==='plan'){
-      await p.evaluate(()=>window.__app.konaShell.plan());
+      await p.evaluate(()=>(window.__konaShell || window.__app?.konaShell)?.plan?.());
       await new Promise(r=>setTimeout(r,900));
     }else if(view==='me'){
-      await p.evaluate(()=>window.__app.konaShell.me());
+      await p.evaluate(()=>(window.__konaShell || window.__app?.konaShell)?.me?.());
       await new Promise(r=>setTimeout(r,700));
     }
   }
@@ -54,7 +63,7 @@ async function shot(theme,view){
   rows.push({theme,view,errors,metrics});
   await p.close();
 }
-for(const theme of ['light','dark']) for(const view of ['now','explore','plan','me','setup']) await shot(theme,view);
+for(const theme of ['light','dark','random']) for(const view of ['landing','now','discover','garage','plan','me']) await shot(theme,view);
 await browser.close();
 fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(rows,null,2)+'\n');
 const bad=rows.flatMap(r=>r.errors.map(e=>r.theme+'/'+r.view+': '+e));

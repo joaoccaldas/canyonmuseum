@@ -1,6 +1,8 @@
 // KONA entry. HTML is already on screen. This file does not import Three.js.
 // The museum runtime loads only after the visitor chooses to explore.
 import { createProfile } from './engine/profile.js';
+import { desktopViewPhone, coarse } from './detect.js';
+import { consumeAuthCallback } from './cloud/supabase-lite.js';
 import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
@@ -8,8 +10,21 @@ import { saveQuestIdentity } from './engine/identity.js';
 import { readStorage, writeStorage } from './engine/storage.js';
 import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, questReady, relationshipFor } from './quest.js';
 import { shareRaceIdentity } from './growth/share.js';
+import { renderRacePicker } from './ui/race-cards.js';
 
 const intro = document.getElementById('intro');
+const physicalPhone = coarse || Math.min(screen.width || 1e5, screen.height || 1e5) <= 600;
+document.documentElement.classList.toggle('physical-phone', physicalPhone);
+document.body.classList.toggle('physical-phone', physicalPhone);
+if (desktopViewPhone) {
+  const short=Math.min(screen.width,screen.height);
+  const landscape=innerWidth>innerHeight;
+  const physical=landscape?Math.max(screen.width,screen.height):short;
+  const ratio=Math.max(1,innerWidth/Math.max(1,physical));
+  document.documentElement.classList.add('phone-fit');
+  document.documentElement.style.setProperty('--fit',ratio.toFixed(3));
+}
+const authReturned = consumeAuthCallback();
 const setEntryMode = mode => {
   intro?.classList.toggle('quest-active', mode === 'quest');
   intro?.classList.toggle('app-ready', mode === 'app');
@@ -75,10 +90,15 @@ initAppShell();
 const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
 window.__konaShell = shell;
 
-function enterApp() {
+function enterApp(first = 'home') {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
-  shell.now?.();
+  if (first === 'garage') shell.garage?.();
+  else if (first === 'collection') shell.collection?.();
+  else if (first === 'discover') shell.explore?.();
+  else if (first === 'plan') shell.plan?.();
+  else if (first === 'me') shell.me?.();
+  else shell.now?.();
 }
 
 function paintIntent() {
@@ -129,14 +149,15 @@ function paintQuest(step) {
     const on = draft[key] === id ? ' on' : '';
     return `<button type="button" class="quest-choice${on}" data-set="${key}" data-value="${id}">${label}</button>`;
   }).join('');
-  const stepNo={intent:1,bike:2,shoe:3,goal:4};
+  const stepNo={intent:1,races:2,bike:3,shoe:4,goal:5};
   const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 4"><span>${stepNo[step]} / 4</span><i style="--p:${stepNo[step]}"></i></div>` : '';
-  const backFor={bike:'intent',shoe:'bike',goal:'shoe'};
+  const backFor={races:'intent',bike:'races',shoe:'bike',goal:'shoe'};
   const questNav = step === 'intent'
     ? '<div class="quest-nav"><button type="button" class="btn text" data-quest-cancel>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>'
     : '<div class="quest-nav"><button type="button" class="btn text" data-quest-back>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>';
   const screens = {
     intent: `<p class="eyebrow">Why are you here?</p><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
+    races: `<p class="eyebrow">Your races</p><p class="kona-note">Search any IRONMAN or IRONMAN 70.3 edition from the last 10 years. These become badges in your Race Self, Garage and Studio.</p><div data-race-picker></div><button type="button" class="btn primary race-picker-continue" data-race-continue>Continue</button>`,
     bike: `<p class="eyebrow">Choose your bike</p><div class="kona-intents">${choices(BIKES, 'bikeId')}</div><button type="button" class="quest-choice" data-set="bikeId" data-value="">Choose later</button>`,
     shoe: `<p class="eyebrow">Choose your shoes</p><div class="kona-intents">${choices(SHOES, 'shoeId')}</div><button type="button" class="quest-choice" data-set="shoeId" data-value="">Choose later</button><p class="kona-note">The Alphafly here is an independent study, not a catalog shoe yet.</p>`,
     goal: `<p class="eyebrow">What would make Kona a win?</p><div class="kona-intents">${choices(GOALS, 'goal')}</div>`,
@@ -160,8 +181,23 @@ function paintQuest(step) {
     } catch (err) {
       console.warn('progression reward unavailable; RaceIdentity remains valid', err);
     }
-    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
-    host.querySelector('#enterKona')?.addEventListener('click', enterApp);
+    host.innerHTML = `<p class="eyebrow">This is your Kona</p>
+      <section class="race-id-card" aria-label="Your 2026 Kona RaceIdentity">
+        <div class="race-id-mast"><span>KONA</span><b>2026</b></div>
+        <p class="race-id-human">Well. This could get interesting.</p>
+        <div class="race-id-goal">${draft.goal}</div>
+        <dl class="race-id-meta">
+          <div><dt>Bike</dt><dd>${bike}</dd></div>
+          <div><dt>Shoes</dt><dd>${shoe}</dd></div>
+        </dl>
+        <div class="race-id-stamp">RACE SELF</div>
+      </section>
+      <p class="race-id-reward">+${xp} XP · +${credits} KONA CREDITS</p>
+      <button type="button" class="btn primary" id="enterKona">Open your Race Self</button>
+      <button type="button" class="btn secondary" id="shareSelf">Share my Kona</button>
+      <button type="button" class="btn text" id="saveSelf">Save across devices</button>
+      <p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
+    host.querySelector('#enterKona')?.addEventListener('click', () => enterApp('home'));
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
       const result = await shareRaceIdentity(draft);
@@ -191,6 +227,10 @@ function paintQuest(step) {
   }
   host.hidden = false;
   host.innerHTML = progress + (screens[step] || screens.intent) + questNav;
+  if (step === 'races') {
+    renderRacePicker(host.querySelector('[data-race-picker]'));
+    host.querySelector('[data-race-continue]')?.addEventListener('click',()=>paintQuest('bike'));
+  }
   host.querySelector('[data-quest-back]')?.addEventListener('click',()=>paintQuest(backFor[step]||'intent'));
   host.querySelector('[data-quest-cancel]')?.addEventListener('click',()=>{ setEntryMode('landing'); host.hidden=true; });
   host.querySelector('[data-quest-skip]')?.addEventListener('click',enterApp);
@@ -198,7 +238,7 @@ function paintQuest(step) {
     const next = readQuest();
     next[button.dataset.set] = button.dataset.value || null;
     writeQuest(next);
-    const order = ['intent', 'bike', 'shoe', 'goal', 'reveal'];
+    const order = ['intent', 'races', 'bike', 'shoe', 'goal', 'reveal'];
     const i = order.indexOf(step);
     paintQuest(order[i + 1] || 'reveal');
   }));
@@ -232,7 +272,7 @@ if (existingIdentity) {
   buildButton?.addEventListener('click', () => paintQuest('intent'));
 }
 paintIntent();
-entryDataReady.then(data=>{ window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
+entryDataReady.then(data=>{ window.__ENTRY_DATA=data||{}; window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
 
 function paintShared(draft){
   const host=questHost(); if(!host) return;
@@ -244,3 +284,5 @@ const q = new URLSearchParams(location.search);
 const shared=decodeShare(q.get('kona'));
 if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
+else if (authReturned) enterApp('home');
+else if (['home','garage','collection','discover','plan','me'].includes(q.get('view'))) enterApp(q.get('view'));

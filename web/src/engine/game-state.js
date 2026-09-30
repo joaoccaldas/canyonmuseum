@@ -1,18 +1,10 @@
-// engine/game-state.js — canonical serialization boundary for the Kona app.
+// engine/game-state.js — canonical serialization boundary for the KONA app.
 //
-// Existing domain modules remain the runtime owners of validation and behavior. This facade makes
-// profile, Passport/progression, finds, RaceSetup and Garage one versioned object for cloud sync,
-// privacy export and future migration without breaking the proven museum.
-export const GAME_STATE_SCHEMA_VERSION = 1;
+// Domain modules own validation and behavior. storage.js owns physical browser keys.
+// This facade creates one backward-compatible snapshot for cloud sync and restore.
+import { readStorage, writeStorage } from './storage.js';
 
-export const STATE_KEYS = Object.freeze({
-  profile: 'speedmax.profile.v1',
-  passport: 'speedmax.passport.v1',
-  finds: 'speedmax.finds.v1',
-  raceSetup: 'speedmax.raceSetup.v1',
-  garage: 'speedmax.garage.v1',
-  progressionEngine: 'speedmax.progression.v1',
-});
+export const GAME_STATE_SCHEMA_VERSION = 1;
 
 const parse = (raw, fallback) => {
   try { const v = JSON.parse(raw); return v && typeof v === 'object' ? v : fallback; }
@@ -20,15 +12,15 @@ const parse = (raw, fallback) => {
 };
 const clone = v => JSON.parse(JSON.stringify(v));
 
+const readJson = (name, fallback, storage) => parse(readStorage(name, storage), fallback);
+const writeJson = (name, value, storage) => writeStorage(name, value == null ? null : JSON.stringify(value), storage);
+
 export function readGameState(storage = globalThis.localStorage) {
-  const get = k => {
-    try { return storage?.getItem?.(k) ?? null; } catch (_) { return null; }
-  };
-  const profile = parse(get(STATE_KEYS.profile), null);
-  const passport = parse(get(STATE_KEYS.passport), { v:1, profile:null, stamps:{}, badges:{}, xp:0, streak:0, best:0, last:null });
-  const finds = parse(get(STATE_KEYS.finds), {});
-  const raceSetup = parse(get(STATE_KEYS.raceSetup), null);
-  const garage = parse(get(STATE_KEYS.garage), []);
+  const profile = readJson('profile', null, storage);
+  const passport = readJson('passport', { v:1, profile:null, stamps:{}, badges:{}, xp:0, streak:0, best:0, last:null }, storage);
+  const finds = readJson('finds', {}, storage);
+  const raceSetup = readJson('raceSetup', null, storage);
+  const garage = readJson('garage', [], storage);
   return {
     schema_version: GAME_STATE_SCHEMA_VERSION,
     exported_at: new Date().toISOString(),
@@ -37,24 +29,32 @@ export function readGameState(storage = globalThis.localStorage) {
     finds: clone(finds),
     race_setup: raceSetup ? clone(raceSetup) : null,
     garage: Array.isArray(garage) ? clone(garage) : [],
-    progression_engine: parse(get(STATE_KEYS.progressionEngine), null),
+    progression_engine: readJson('progression', null, storage),
+    race_identity: readJson('raceIdentity', null, storage),
+    user_equipment: readJson('userEquipment', [], storage),
+    kona_self: readJson('konaSelf', null, storage),
+    entry_intent: readJson('entryIntent', null, storage),
+    race_history: readJson('raceHistory', [], storage),
   };
 }
 
 export function writeGameState(snapshot, storage = globalThis.localStorage) {
   if (!snapshot || snapshot.schema_version !== GAME_STATE_SCHEMA_VERSION) throw new Error('Unsupported game state');
-  const put = (key, value) => {
-    try {
-      if (value == null) storage?.removeItem?.(key);
-      else storage?.setItem?.(key, JSON.stringify(value));
-    } catch (e) { throw new Error('Unable to persist game state'); }
-  };
-  put(STATE_KEYS.profile, snapshot.profile);
-  put(STATE_KEYS.passport, snapshot.progression);
-  put(STATE_KEYS.finds, snapshot.finds || {});
-  put(STATE_KEYS.raceSetup, snapshot.race_setup);
-  put(STATE_KEYS.garage, Array.isArray(snapshot.garage) ? snapshot.garage : []);
-  if (snapshot.progression_engine) put(STATE_KEYS.progressionEngine, snapshot.progression_engine);
+  try {
+    writeJson('profile', snapshot.profile, storage);
+    writeJson('passport', snapshot.progression, storage);
+    writeJson('finds', snapshot.finds || {}, storage);
+    writeJson('raceSetup', snapshot.race_setup, storage);
+    writeJson('garage', Array.isArray(snapshot.garage) ? snapshot.garage : [], storage);
+    if ('progression_engine' in snapshot) writeJson('progression', snapshot.progression_engine, storage);
+    if ('race_identity' in snapshot) writeJson('raceIdentity', snapshot.race_identity, storage);
+    if ('user_equipment' in snapshot) writeJson('userEquipment', Array.isArray(snapshot.user_equipment) ? snapshot.user_equipment : [], storage);
+    if ('kona_self' in snapshot) writeJson('konaSelf', snapshot.kona_self, storage);
+    if ('entry_intent' in snapshot) writeJson('entryIntent', snapshot.entry_intent, storage);
+    if ('race_history' in snapshot) writeJson('raceHistory', Array.isArray(snapshot.race_history) ? snapshot.race_history : [], storage);
+  } catch (_) {
+    throw new Error('Unable to persist game state');
+  }
   return readGameState(storage);
 }
 
@@ -73,7 +73,9 @@ export function gameProgress(snapshot = readGameState()) {
       konaYears: count('kona:'),
       hidden: count('find:'),
       parts: count('part:'),
-      garage: Array.isArray(snapshot?.garage) ? snapshot.garage.length : 0,
+      garage: Array.isArray(snapshot?.user_equipment) && snapshot.user_equipment.length
+        ? snapshot.user_equipment.length
+        : Array.isArray(snapshot?.garage) ? snapshot.garage.length : 0,
       level: engine.level || 1,
       levelName: engine.level_name || 'Visitor',
       credits: Math.max(0, Number(engine.credits) || 0),
@@ -94,6 +96,8 @@ export function gameProgress(snapshot = readGameState()) {
     konaYears: count('kona:'),
     hidden: count('find:'),
     parts: count('part:'),
-    garage: Array.isArray(snapshot?.garage) ? snapshot.garage.length : 0,
+    garage: Array.isArray(snapshot?.user_equipment) && snapshot.user_equipment.length
+      ? snapshot.user_equipment.length
+      : Array.isArray(snapshot?.garage) ? snapshot.garage.length : 0,
   };
 }

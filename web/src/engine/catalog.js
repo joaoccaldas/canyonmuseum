@@ -12,6 +12,23 @@ function sources() {
 }
 
 export const getProduct = id => resolveProduct(id, sources());
+
+let publicCatalogPromise = null;
+export function loadPublicCatalog() {
+  if (!publicCatalogPromise) {
+    publicCatalogPromise = fetch('integrations/public-catalog.json',{cache:'force-cache',credentials:'same-origin'})
+      .then(r=>r.ok?r.json():Promise.reject(new Error('catalog unavailable')))
+      .catch(()=>({products:[],places:[],events:[]}));
+  }
+  return publicCatalogPromise;
+}
+export async function getPublicProduct(id) {
+  const local = getProduct(id);
+  if (local) return local;
+  const data = await loadPublicCatalog();
+  return (data.products || []).find(p=>p.id===id) || null;
+}
+
 export const allProducts = () => listProducts(sources());
 export const roomProducts = roomId => allProducts().filter(p => p.room === roomId);
 export const forSlot = slot => productsForSlot(slot, sources());

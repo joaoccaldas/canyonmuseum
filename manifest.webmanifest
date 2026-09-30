@@ -49,7 +49,7 @@
     {
       "name": "Home",
       "short_name": "Home",
-      "url": "./",
+      "url": "./?view=home",
       "icons": [
         {
           "src": "assets/pwa/icon-v3-192.png",
@@ -71,7 +71,7 @@
     {
       "name": "Garage",
       "short_name": "Garage",
-      "url": "./Studio.html#setup",
+      "url": "./?view=garage",
       "icons": [
         {
           "src": "assets/pwa/icon-v3-192.png",

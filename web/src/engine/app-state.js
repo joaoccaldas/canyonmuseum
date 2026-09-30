@@ -1,3 +1,4 @@
+import { storageKeys } from './storage.js';
 // engine/app-state.js — one registry for all local-only app state.
 //
 // Domain modules keep owning validation and business rules. This layer owns privacy operations:
@@ -7,14 +8,9 @@
 export const APP_STATE_SCHEMA_VERSION = 1;
 
 export const APP_STATE_KEYS = Object.freeze([
-  'speedmax.profile.v1',
-  'speedmax.passport.v1',
-  'speedmax.finds.v1',
+  ...storageKeys({ includeLegacy:true }),
   'speedmax.coach.v1',
   'speedmax.atlas.hint',
-  'speedmax.raceSetup.v1',
-  'speedmax.garage.v1',
-  'speedmax.progression.v1',
   'speedmax.exp.tut.v1',
   'speedmax.hist.tut.v1',
 ]);

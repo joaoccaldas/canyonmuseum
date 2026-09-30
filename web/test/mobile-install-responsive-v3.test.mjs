@@ -8,20 +8,22 @@ test('manifest is linked and viewport uses device width',()=>{
  assert.match(tpl,/name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/);
  assert.match(tpl,/rel="manifest" href="\.\/manifest\.webmanifest"/);
 });
-test('landing no longer injects phone-fit layout zoom bootstrap',()=>assert.equal(/classList\.toggle\('phone-fit'/.test(tpl),false));
+test('landing applies guarded physical-phone fit before first paint',()=>{assert.match(tpl,/classList\.toggle\('phone-fit'/);assert.match(tpl,/short<=600&&ratio>1\.3/);});
 test('hero install action is visible in source and owned by app shell',()=>{
- assert.match(tpl,/id="entryInstall"[^>]*>Install app</);
+ assert.match(tpl,/id="entryInstall"/);
  assert.match(shell,/entryBtn = \$\('entryInstall'\)/);
  assert.match(shell,/entryBtn\?\.addEventListener\('click', beginInstall\)/);
 });
 test('Android always has an install route even before browser prompt event',()=>{
- assert.deepEqual(installState({android:true,deferred:false}),{kind:'android-instructions',show:true,action:'instructions'});
- assert.deepEqual(installState({android:true,deferred:true}),{kind:'android-prompt',show:true,action:'prompt'});
+ const manual=installState({android:true,deferred:false}),prompt=installState({android:true,deferred:true});
+ assert.equal(manual.kind,'android-instructions');assert.equal(manual.action,'instructions');assert.equal(manual.show,true);
+ assert.equal(prompt.kind,'android-prompt');assert.equal(prompt.action,'prompt');assert.equal(prompt.show,true);
 });
 test('installed standalone hides install affordance',()=>assert.equal(installState({standalone:true}).show,false));
-test('mobile entry uses ordinary responsive width without zoom',()=>{
+test('mobile entry uses responsive width plus guarded desktop-view phone scaling',()=>{
  assert.match(mobile,/html,body\{width:100%;max-width:100%;overflow-x:hidden\}/);
- assert.equal(/html\.phone-fit .*zoom:/.test(mobile),false);
+ assert.match(mobile,/html\.phone-fit/);
+ assert.match(mobile,/zoom:var\(--fit\)/);
 });
 
 test('entry path stays 3D-free until explicit world entry',()=>{
