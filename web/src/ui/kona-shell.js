@@ -1,6 +1,5 @@
 // ui/kona-shell.js — mobile-first app shell over the existing 3D museum.
 // Navigation/utility only. The 3D renderer remains the existing proven museum runtime.
-import { consumeAuthCallback } from '../cloud/supabase-lite.js';
 import { applyBrandMode } from '../brand/runtime.js';
 import { renderGarageSurface } from './garage.js';
 import { renderAvatarHome } from './avatar-home.js';
@@ -22,7 +21,6 @@ const icon = name => {
 };
 
 export function initKonaShell({ profile, settings, enter }) {
-  consumeAuthCallback();
   const facts = () => ({
     event: window.__ENTRY_EVENT || window.__ENTRY_DATA?.event || {},
   });
