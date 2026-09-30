@@ -1,5 +1,5 @@
 {
- "version": "e1ce27882f70",
+ "version": "9acc90eaebe7",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -12,8 +12,8 @@
   "assets/pwa/apple-touch-icon-v3.png"
  ],
  "files": {
-  "index.html": "OI7zhH8+GYtkCNvGXtKXNoGLaohPLPzrIrzqtVMc6IM=",
-  "app/kona-core.js": "cTzKf2pQV5wiUwdIG7cIXWGPK6uXemrnuvGFFenZbd0=",
+  "index.html": "v+CtUDYAwxfTD7Sv56n5ZBba6TRNQtX3V9cVK7aqNFs=",
+  "app/kona-core.js": "99rprn+6Fx04NkuGL97YJBqPrldd9GxdS2+ZsyO77ZU=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
   "manifest.webmanifest": "iMwobAXUqZuO4QiehlvXSScLu2l5YYEgZE5HthcHKlc=",
   "assets/pwa/icon-v3.svg": "kX7Wf3uv1TGV8QngLT59Ot0XX50qljLbo7CNgFQm1ws=",
@@ -21,7 +21,7 @@
   "assets/pwa/icon-v3-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/icon-v3-maskable-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/apple-touch-icon-v3.png": "R7r+34dBZMxUezo2xBD34dbHtfTyvjdCViUhs3wRamI=",
-  "app/hall.js": "Ebs6DUMmsd7k0CuPrL9Nuao9mCPYsPmwVCITWHwZL70=",
+  "app/hall.js": "HsREWdtpAjo5Gmw2gDueMT9TEHXW8Sk+M+98oNoiXz4=",
   "app/studio.js": "TiYSgzwcPZXGsbG42FvnqP3qeAHb5zncVNNNqZpRKjw=",
   "app/studio-catalog.js": "Qj8rIu7C13w5fDmtGeLtuZmcl2S6tEN+XVDRHPYEZZ8=",
   "Canyon_Collection.html": "WllW1Z43XwK7z4uAFSkN/CfMvEcfFkQ60M7z8Qw48hQ=",
