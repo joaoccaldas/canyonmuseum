@@ -8,12 +8,34 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { buildWings } from './engine/wing.js';
 import { FONT, SERIF } from './engine/type.js';
 
+window.__intakeStage('SCRIPT_START');
+window.__intakeStage('THREE_READY',{revision:THREE.REVISION});
 const DATA=window.__INTAKE_PROOF;
-const products=DATA.products;
+const params=new URLSearchParams(location.search);
+const mode=params.get('mode')||'both';
+const allProducts=DATA.products;
+const idsByMode={
+  harness:[],
+  cervelo:['cervelo-p5-disc-mk2-size54'],
+  alphafly:['nike-alphafly-3-study'],
+  both:allProducts.map(p=>p.id)
+};
+window.__intakeStage('PROOF_API_READY');
+requestAnimationFrame(loop);
+const allowed=new Set(idsByMode[mode]||idsByMode.both);
+const products=allProducts.filter(p=>allowed.has(p.id));
+window.__intakeStage('MODE_READY',{mode,productIds:products.map(p=>p.id)});
 const productById=Object.fromEntries(products.map(p=>[p.id,p]));
 const roomByProduct=new Map(DATA.rooms.flatMap(r=>r.products.map(id=>[id,r.id])));
 const canvas=document.getElementById('proof');
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+let renderer;
+try{
+  renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+  window.__intakeStage('RENDERER_READY',{webgl:renderer.capabilities.isWebGL2?'webgl2':'webgl1'});
+}catch(e){
+  window.__intakeError('renderer',e);
+  throw e;
+}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -54,8 +76,15 @@ const exhibits=products.map(p=>({
   key:p.id,name:`${p.brand} ${p.model}`,era:p.representation,kind:'named',
   room:roomByProduct.get(p.id),skins:[]
 }));
-const atlas=buildWings({scene,lettering,FONT,SERIF,lite:false,pickables,obstacles,contactShadow:null},
-  {wings:[wing],bikes:exhibits,paintings:[],sculptures:[],extraRefs:[]});
+let atlas;
+try{
+  atlas=buildWings({scene,lettering,FONT,SERIF,lite:false,pickables,obstacles,contactShadow:null},
+    {wings:[wing],bikes:exhibits,paintings:[],sculptures:[],extraRefs:[]});
+  window.__intakeStage('WING_BUILT',{rooms:atlas.rooms.length,exhibits:atlas.bikes.length});
+}catch(e){
+  window.__intakeError('buildWings',e);
+  throw e;
+}
 
 const gltf=new GLTFLoader(); gltf.setMeshoptDecoder(MeshoptDecoder);
 const requested=[];
@@ -72,14 +101,17 @@ const adapter={
 let loaded=false,loadError=null,loadStart=0,loadEnd=0;
 document.getElementById('loadCandidates').onclick=async()=>{
   if(loaded||loadError)return;
+  window.__intakeStage('CANDIDATE_LOAD_START',{mode});
   loadStart=performance.now();
   try {
     await atlas.load(adapter);
     loadEnd=performance.now(); loaded=true;
+    window.__intakeStage('CANDIDATE_LOAD_COMPLETE',{mode,ms:Math.round(loadEnd-loadStart),requested:[...requested]});
     document.body.classList.add('loaded');
     document.getElementById('loadCandidates').textContent='Candidates loaded';
   } catch(e) {
     loadEnd=performance.now(); loadError=String(e?.stack||e);
+    window.__intakeError('candidate-load',e);
     document.getElementById('loadCandidates').textContent='Candidate load failed';
     console.error('intake candidate load',e);
   }
@@ -121,12 +153,17 @@ function loop(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;controls.update();
   atlas.update(now/1000,dt,controls.target,true,true);
   renderer.render(scene,camera);frames++;
+  if(frames===1){
+    window.__intakeStage('FIRST_RENDER');
+    window.__intakeProofReady=true;
+    window.__intakeStage('PROOF_READY');
+  }
   if(loaded){fpsWindow.push(dt);if(fpsWindow.length>180)fpsWindow.shift();}
   requestAnimationFrame(loop);
-} requestAnimationFrame(loop);
+}
 
 window.__intakeProof={
-  DATA,atlas,requested,
+  DATA,mode,atlas,requested,diagnostics:window.__intakeProofDiagnostics,
   get loaded(){return loaded;},get loadError(){return loadError;},
   inspectById(id){const inst=atlas.bikes.find(x=>x.data.key===id);if(inst)inspect(inst);return !!inst;},
   metrics(){
