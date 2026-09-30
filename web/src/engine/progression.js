@@ -1,8 +1,9 @@
+import { readStorage, writeStorage, storageKey } from './storage.js';
 // Progression V1. Access, XP, collection and Kona Credits stay separate.
 // Rewards come from events. UI code does not add XP itself.
 // Rarity is fixed on the collectible. Nothing here is random or paid.
 
-export const PROGRESSION_KEY = 'speedmax.progression.v1';
+export const PROGRESSION_KEY = storageKey('progression');
 
 export const TIERS = ['visitor', 'passport', 'athlete'];
 
@@ -217,14 +218,14 @@ export function migratePassport({ passport = null, finds = [] } = {}) {
 
 export function readProgression(storage = globalThis.localStorage) {
   try {
-    const raw = JSON.parse(storage?.getItem?.(PROGRESSION_KEY) || 'null');
+    const raw = JSON.parse(readStorage('progression',storage) || 'null');
     if (raw?.schema === 'progression-v1') return withLevel(raw);
   } catch (_) { /* keep going into migration */ }
   return null;
 }
 
 export function writeProgression(state, storage = globalThis.localStorage) {
-  try { storage?.setItem?.(PROGRESSION_KEY, JSON.stringify(state)); } catch (_) { /* private mode */ }
+  try { writeStorage('progression',JSON.stringify(state),storage); } catch (_) { /* private mode */ }
   return state;
 }
 
@@ -233,8 +234,8 @@ export function ensureProgression(storage = globalThis.localStorage) {
   if (existing) return existing;
   let passport = null;
   let finds = [];
-  try { passport = JSON.parse(storage?.getItem?.('speedmax.passport.v1') || 'null'); } catch (_) {}
-  try { finds = JSON.parse(storage?.getItem?.('speedmax.finds.v1') || '[]'); } catch (_) {}
+  try { passport = JSON.parse(readStorage('passport',storage) || 'null'); } catch (_) {}
+  try { finds = JSON.parse(readStorage('finds',storage) || '[]'); } catch (_) {}
   return writeProgression(migratePassport({ passport, finds }), storage);
 }
 

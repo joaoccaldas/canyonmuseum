@@ -6,8 +6,6 @@ import { defaultAvatarStyle, normaliseAvatarStyle } from './avatar.js';
 // is optional and plugs in as another store with the same two methods (load/save); see
 // docs/APP.md § Accounts. Everything the app remembers about a visitor lives here, so "export" and
 // "delete everything" are one call each.
-const LEGACY = ['speedmax.passport.v1', 'speedmax.finds.v1', 'speedmax.coach.v1', 'speedmax.atlas.hint'];
-
 // Render presets. `lite` trims geometry at build time (a reload applies it); DPR and shadows apply live.
 export const QUALITY = {
   auto: { label: 'Auto', note: 'Chosen for this device' },
@@ -59,7 +57,7 @@ export function renderSettings(quality, device) {
 export const localStore = {
   load() { try { return JSON.parse(readStorage('profile') || 'null'); } catch (_) { return null; } },
   save(p) { try { writeStorage('profile',JSON.stringify(p)); return true; } catch (_) { return false; } },
-  clear() { try { removeStorage('profile'); for (const k of LEGACY) localStorage.removeItem(k); } catch (_) { } },
+  clear() { try { removeStorage('profile'); } catch (_) { } },
 };
 
 export function createProfile(store = localStore) {
@@ -73,9 +71,8 @@ export function createProfile(store = localStore) {
     set(patch) { p = normalise({ ...p, ...patch }); store.save(p); emit(); return p; },
     toggleFavourite(id) { const f = new Set(p.favourites); f.has(id) ? f.delete(id) : f.add(id); return this.set({ favourites: [...f] }); },
     subscribe(f) { subs.add(f); return () => subs.delete(f); },
-    export() {                                                        // everything the app stores about you, as one file
-      const extra = {}; try { for (const k of LEGACY) extra[k] = localStorage.getItem(k); } catch (_) { }
-      return JSON.stringify({ profile: p, stored: extra, exported: new Date().toISOString() }, null, 1);
+    export() {
+      return JSON.stringify({ profile: p, exported: new Date().toISOString() }, null, 1);
     },
     erase() { store.clear(); p = normalise(null); emit(); },
   };

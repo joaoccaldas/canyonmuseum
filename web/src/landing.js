@@ -17,10 +17,8 @@ import { buildWings } from './engine/wing.js';
 import { renderCard, bikeCard, paintingCard, sculptureCard, photoCard, roomCard } from './engine/card.js';
 import { initMap } from './map.js';
 import { roomOverview, withFutureLevels } from './world/map-model.js';
-import { createProfile, renderSettings, QUALITY, AVATARS } from './engine/profile.js';
+import { renderSettings } from './engine/profile.js';
 import { captureView, shareImage } from './engine/share.js';
-import { initSettings } from './ui/settings.js';
-import { initKonaShell } from './ui/kona-shell.js';
 import { buildBrandRoom, loadBrandRoom, makeBrandLoader } from './engine/roomscene.js';
 import { $, esc, clamp } from './engine/dom.js';
 import { canvasTex, wallWash, contactShadow, lettering, onFontsReady } from './engine/textures.js';
@@ -46,7 +44,8 @@ const coarse = dc;
 if (coarse) document.body.classList.add('touch');
 const small = ds;
 // the visitor's profile decides render quality before anything is built (engine/profile.js)
-const profile = createProfile();
+const profile = window.__konaProfile;
+if (!profile) throw new Error('KONA consumer Profile authority missing');
 const RS = renderSettings(profile.get().quality, { lite: coarse || small, dpr: devicePixelRatio });
 const lite = RS.lite;
 const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -1931,18 +1930,20 @@ initAppShell();
 }
 window.__gallery = galleries;
 // ------------------------------------------------------------------ profile, settings and sharing
-const settingsUI = initSettings({
-  profile, QUALITY, AVATARS, activeQuality: () => profile.get().quality,
-  onQuality: id => {                                                  // DPR and shadows now; geometry detail on the next load
+const settingsUI = window.__konaSettingsUI;
+window.__konaWorldSettings = {
+  onQuality:id=>{
     const n = renderSettings(id, { lite: coarse || small, dpr: devicePixelRatio });
     qualityDpr = n.dpr; flowDpr = n.flowDpr; activeDpr = -1;
-    if (renderer.shadowMap.enabled !== n.shadows) { renderer.shadowMap.enabled = n.shadows; scene.traverse(o => { for (const m of [].concat(o.material || [])) m.needsUpdate = true; }); }
+    if (renderer.shadowMap.enabled !== n.shadows) {
+      renderer.shadowMap.enabled = n.shadows;
+      scene.traverse(o => { for (const m of [].concat(o.material || [])) m.needsUpdate = true; });
+    }
     return n.lite !== lite;
   },
-  onSound: on => { if (($('soundBtn').getAttribute('aria-pressed') === 'true') !== on) $('soundBtn').click(); },
-  onMotion: () => true,
-  sync: { available: false },
-});
+  onSound:on=>{ if (($('soundBtn')?.getAttribute('aria-pressed') === 'true') !== on) $('soundBtn')?.click(); },
+  onMotion:()=>true,
+};
 { const p = profile.get(), ip = $('introProfile');
   if (ip) { ip.querySelector('i').style.background = p.avatar; ip.querySelector('span').textContent = p.name ? `Welcome back, ${p.name} · settings` : 'Create a profile · choose your quality'; } }
 async function shareView(title) {
@@ -1956,8 +1957,8 @@ async function shareView(title) {
 }
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
 $('cardShare')?.addEventListener('click', () => shareView($('cName').textContent));
-const konaShell = document.getElementById('konaShell') ? window.__konaShell : initKonaShell({ profile, settings: settingsUI, enter });
-if (window.__konaSettingsBridge) window.__konaSettingsBridge.open = () => settingsUI.open();
+const konaShell = window.__konaShell;
+if (!konaShell) throw new Error('KONA consumer Shell authority missing');
 window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas, konaShell };
 window.__atlas = atlas;
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };

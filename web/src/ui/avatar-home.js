@@ -17,10 +17,14 @@ async function equipped(snapshot,equipmentId){
   return getPublicProduct(productId(row.product_id));
 }
 
-const tile=(id,icon,title,note,{href='',accent='ocean'}={})=>
-  href
-    ? '<a class="hub-tile '+accent+'" href="'+href+'" data-hub="'+id+'"><i>'+icon+'</i><b>'+title+'</b><span>'+note+'</span></a>'
-    : '<button type="button" class="hub-tile '+accent+'" data-hub="'+id+'"><i>'+icon+'</i><b>'+title+'</b><span>'+note+'</span></button>';
+const tile=(id,title,note,{href='',accent='ocean',image='',featured=false,badge=''}={})=>{
+  const cls='hub-tile '+accent+(featured?' featured':'');
+  const media=image?'<span class="hub-tile-media"><img src="'+image+'" alt="" loading="lazy" decoding="async"></span>':'';
+  const copy='<span class="hub-tile-copy">'+(badge?'<small>'+badge+'</small>':'')+'<b>'+title+'</b><em>'+note+'</em></span>';
+  return href
+    ? '<a class="'+cls+'" href="'+href+'" data-hub="'+id+'">'+media+copy+'</a>'
+    : '<button type="button" class="'+cls+'" data-hub="'+id+'">'+media+copy+'</button>';
+};
 
 export async function renderAvatarHome(root,{profile,settings,openMuseum,openGarage,openPlan,openCollection,openDiscover}={}){
   const snapshot=readGameState();
@@ -41,7 +45,7 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
   root.innerHTML=
     '<section class="player-hub">'+
       '<header class="hub-topbar">'+
-        '<div class="hub-player"><i style="--avatar:'+esc(accent)+'"></i><div><small>RACE SELF</small><b>'+esc(p.name||'Player')+'</b></div></div>'+
+        '<button type="button" class="hub-player" data-hub="self" aria-label="Customize Race Self"><i style="--avatar:'+esc(accent)+'"></i><span><small>RACE SELF</small><b>'+esc(p.name||'Player')+'</b></span></button>'+
         '<div class="hub-stats"><span><small>ITEMS</small><b>'+itemCount+'</b></span><span><small>RACES</small><b>'+raceCount+'</b></span></div>'+
         '<button type="button" class="hub-settings" data-hub="settings" aria-label="Settings">⚙</button>'+
       '</header>'+
@@ -50,14 +54,18 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
         '<div class="hub-stage-copy"><small>'+esc(intent)+'</small><h2>'+esc(goal)+'</h2><p>'+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
       '</div>'+
       '<section class="hub-launcher" aria-label="KONA hub">'+
-        tile('world','◎','3D World','Enter the Canyon Museum',{accent:'ocean'})+
-        tile('bike','△','Bike Studio','Customize bike and setup',{href:studioHref,accent:'lava'})+
-        tile('garage','▣','Garage','Your bikes and gear',{accent:'lime'})+
-        tile('collection','✦','Collection','Items, cards and finds',{accent:'lilac'})+
-        tile('races','◉','Races','Past and future badges',{accent:'hibiscus'})+
-        tile('discover','⌁','Discover','Machines, people, stories',{accent:'ocean'})+
-        tile('games','▶','Games','Experiences and challenges',{href:'Experiences.html',accent:'lava'})+
-        tile('self','●','Self','Avatar and kit',{accent:'lime'})+
+        '<div class="hub-featured">'+
+          tile('world','3D World','Enter the island',{accent:'ocean',image:'assets/share/museum.jpg',featured:true,badge:'EXPLORE'})+
+          tile('bike','Bike Studio','Build your machine',{href:studioHref,accent:'lava',image:'assets/kona-years/cfr-2019.jpg',featured:true,badge:'CREATE'})+
+        '</div>'+
+        '<div class="hub-quick" aria-label="More destinations">'+
+          tile('garage','Garage','Bikes & gear',{accent:'lime',image:'assets/share/collection.jpg',badge:'YOURS'})+
+          tile('collection','Collection','Cards & finds',{accent:'lilac',image:'assets/kona-years/queen-k.jpg',badge:itemCount+' ITEMS'})+
+          tile('games','Games','Challenges & experiences',{href:'Experiences.html',accent:'lava',image:'assets/kona-years/matthews-2025.jpg',badge:'PLAY'})+
+          tile('self','Customize','Avatar & kit',{accent:'lime',image:'assets/kona-years/queen-k.jpg',badge:'SELF'})+
+          tile('races','Races','Badges & history',{accent:'hibiscus',image:'assets/kona-years/lange-2024.jpg',badge:raceCount+' RACES'})+
+          tile('discover','Discover','Kona & stories',{accent:'ocean',image:'assets/kona-years/kailua-bay.jpg',badge:'NEW'})+
+        '</div>'+
       '</section>'+
       '<section class="hub-drawer" data-hub-drawer hidden><div class="hub-drawer-head"><div><small data-hub-kicker>SELF</small><h3 data-hub-title>Your Race Self</h3></div><button type="button" data-hub-close aria-label="Close">×</button></div><div data-hub-body></div></section>'+
     '</section>';

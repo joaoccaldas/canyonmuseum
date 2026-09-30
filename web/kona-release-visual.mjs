@@ -58,8 +58,10 @@ async function shot(theme,view){
       triangles:window.__museum.renderer.info.render.triangles,
       dpr:window.__museum.renderer.getPixelRatio()
     }:null,
-    panelOpen:document.body.classList.contains('kona-panel-open')
+    panelOpen:document.body.classList.contains('kona-panel-open'),
+    installSheetVisible:Boolean(document.querySelector('#appSheet') && !document.querySelector('#appSheet').hidden)
   }));
+  if(metrics.installSheetVisible) errors.push('install sheet visible without explicit user action');
   rows.push({theme,view,errors,metrics});
   await p.close();
 }
