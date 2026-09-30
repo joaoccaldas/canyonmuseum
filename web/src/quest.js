@@ -33,3 +33,43 @@ export function relationshipFor(intent) {
 export function questReady(draft) {
   return !!(draft?.intent && draft?.goal);
 }
+
+const GOAL_SLUG = {
+  Finish: 'finish',
+  'Personal best': 'pb',
+  'Sub-12': 'sub-12',
+  'Sub-10': 'sub-10',
+  Podium: 'podium',
+  Someday: 'someday',
+};
+const GOAL_FROM_SLUG = Object.fromEntries(Object.entries(GOAL_SLUG).map(([label, slug]) => [slug, label]));
+
+export function questLabels(draft) {
+  return {
+    bike: BIKES.find(bike => bike.id === draft?.bikeId)?.label || 'Bike later',
+    shoe: SHOES.find(shoe => shoe.id === draft?.shoeId)?.label || 'Shoes later',
+    goal: draft?.goal || '',
+  };
+}
+
+/** A share token names only a known intent, bike, shoe and goal. */
+export function encodeShare(draft) {
+  if (!questReady(draft)) return null;
+  if (!INTENTS.some(item => item.id === draft.intent)) return null;
+  const goal = GOAL_SLUG[draft.goal];
+  if (!goal) return null;
+  if (draft.bikeId && !BIKES.some(bike => bike.id === draft.bikeId)) return null;
+  if (draft.shoeId && !SHOES.some(shoe => shoe.id === draft.shoeId)) return null;
+  return [draft.intent, draft.bikeId || '', draft.shoeId || '', goal].join('.');
+}
+
+export function decodeShare(token) {
+  const parts = String(token || '').split('.');
+  if (parts.length !== 4) return null;
+  const [intent, bikeId, shoeId, goalSlug] = parts;
+  const goal = GOAL_FROM_SLUG[goalSlug];
+  if (!INTENTS.some(item => item.id === intent) || !goal) return null;
+  if (bikeId && !BIKES.some(bike => bike.id === bikeId)) return null;
+  if (shoeId && !SHOES.some(shoe => shoe.id === shoeId)) return null;
+  return { intent, bikeId: bikeId || null, shoeId: shoeId || null, goal };
+}

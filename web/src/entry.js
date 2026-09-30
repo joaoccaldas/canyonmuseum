@@ -5,7 +5,7 @@ import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
 import { saveQuestIdentity } from './engine/identity.js';
-import { BIKES, GOALS, INTENTS, SHOES, emptyQuest, questReady, relationshipFor } from './quest.js';
+import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, encodeShare, questLabels, questReady } from './quest.js';
 
 const INTENT_KEY = 'speedmax.entryIntent.v1';
 const profile = createProfile();
@@ -120,18 +120,21 @@ function paintQuest(step) {
   if (step === 'reveal' && questReady(draft)) {
     saveQuestIdentity(draft);
     const granted = applyStoredEvent({ type: 'RACE_IDENTITY_CREATED', subject: 'kona-2026' });
-    const bike = BIKES.find(b => b.id === draft.bikeId)?.label || 'Bike later';
-    const shoe = SHOES.find(s => s.id === draft.shoeId)?.label || 'Shoes later';
+    const labels = questLabels(draft);
     const xp = granted.history?.at?.(-1)?.xp ?? 0;
     const credits = granted.history?.at?.(-1)?.credits ?? 0;
-    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="shareSelf">Share my Kona</button><button type="button" class="btn primary" id="saveSelf">Save your Kona</button><p class="kona-note" id="saveNote"></p>`;
+    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${labels.bike}</h2><p>${labels.shoe}</p><p>${labels.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="shareSelf">Share my Kona</button><button type="button" class="btn primary" id="saveSelf">Save your Kona</button><p class="kona-note" id="saveNote"></p>`;
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
-      const text = `${bike}. ${shoe}. ${draft.goal}.`;
+      const token = encodeShare(draft);
+      const url = new URL(location.origin + location.pathname);
+      if (token) url.searchParams.set('kona', token);
+      const note = host.querySelector('#saveNote');
       try {
-        if (navigator.share) await navigator.share({ title: 'My Kona', text });
-        else await navigator.clipboard.writeText(text);
+        if (navigator.share) await navigator.share({ title: 'My Kona', text: `${labels.bike}. ${labels.shoe}. ${labels.goal}.`, url: url.toString() });
+        else await navigator.clipboard.writeText(url.toString());
+        applyStoredEvent({ type: 'SETUP_SHARED', subject: 'kona-self' });
+        if (note && !navigator.share) note.textContent = 'Link copied. It opens this setup, not the museum.';
       } catch (_) {}
-      applyStoredEvent({ type: 'SETUP_SHARED', subject: 'kona-self' });
     });
     host.querySelector('#saveSelf')?.addEventListener('click', () => paintQuest('save'));
     return;
@@ -164,9 +167,18 @@ function paintQuest(step) {
   }));
 }
 
+function paintShared(draft) {
+  const host = questHost();
+  if (!host) return;
+  const labels = questLabels(draft);
+  host.innerHTML = `<p class="eyebrow">A Kona</p><h2>${labels.bike}</h2><p>${labels.shoe}</p><p>${labels.goal}</p><p class="kona-note">Someone built this. Yours starts with the button above. The museum stays closed.</p>`;
+}
+
 document.getElementById('buildSelf')?.addEventListener('click', () => paintQuest('intent'));
 paintIntent();
 dataReady.then(paintCount).catch(() => {});
 
 const q = new URLSearchParams(location.search);
-if (q.get('room') || q.get('map')) openMuseum();
+const shared = decodeShare(q.get('kona'));
+if (shared) paintShared(shared);
+else if (q.get('room') || q.get('map')) openMuseum();
