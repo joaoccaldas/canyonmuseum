@@ -5,11 +5,10 @@ import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
 import { saveQuestIdentity } from './engine/identity.js';
-import { readStorage } from './engine/storage.js';
+import { readStorage, writeStorage } from './engine/storage.js';
 import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, questReady, relationshipFor } from './quest.js';
 import { shareRaceIdentity } from './growth/share.js';
 
-const INTENT_KEY = 'speedmax.entryIntent.v1';
 const intro = document.getElementById('intro');
 const setEntryMode = mode => { intro?.classList.toggle('quest-active', mode === 'quest'); intro?.classList.toggle('app-ready', mode === 'app'); };
 const profile = createProfile();
@@ -75,7 +74,7 @@ function enterApp() {
 
 function paintIntent() {
   let cur = '';
-  try { cur = localStorage.getItem(INTENT_KEY) || ''; } catch (_) {}
+  try { cur = readStorage('entryIntent') || ''; } catch (_) {}
   document.querySelectorAll('[data-intent]').forEach(b => {
     const on = b.dataset.intent === cur;
     b.classList.toggle('on', on);
@@ -89,14 +88,13 @@ document.querySelectorAll('#intro [data-go]').forEach(b => b.addEventListener('c
   else shell[id]?.();
 }));
 
-const QUEST_KEY = 'speedmax.konaSelf.v1';
 function readQuest() {
-  try { return { ...emptyQuest(), ...JSON.parse(localStorage.getItem(QUEST_KEY) || '{}') }; }
+  try { return { ...emptyQuest(), ...JSON.parse(readStorage('konaSelf') || '{}') }; }
   catch (_) { return emptyQuest(); }
 }
 function writeQuest(draft) {
-  try { localStorage.setItem(QUEST_KEY, JSON.stringify(draft)); } catch (_) {}
-  try { if (draft.intent) localStorage.setItem(INTENT_KEY, draft.intent); } catch (_) {}
+  try { writeStorage('konaSelf', JSON.stringify(draft)); } catch (_) {}
+  try { if (draft.intent) writeStorage('entryIntent', draft.intent); } catch (_) {}
 }
 
 function questHost() {
