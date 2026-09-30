@@ -4,6 +4,7 @@ import { readGameState, gameProgress } from '../engine/game-state.js';
 import { ensureProgression } from '../engine/progression.js';
 import { consumeAuthCallback, sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 import { applyBrandMode } from '../brand/runtime.js';
+import { renderGarageSurface } from './garage.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = iso => { try { return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00')); } catch (_) { return iso; } };
@@ -35,7 +36,7 @@ export function initKonaShell({ profile, settings, enter }) {
     '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
       '<button type="button" data-tab="home">'+icon('now')+'<span>Home</span></button>'+
       '<button type="button" data-tab="discover">'+icon('explore')+'<span>Discover</span></button>'+
-      '<a href="Studio.html#setup" data-tab="garage">'+icon('setup')+'<span>Garage</span></a>'+
+      '<button type="button" data-tab="garage">'+icon('setup')+'<span>Garage</span></button>'+
       '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
       '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
     '</nav>';
@@ -64,6 +65,12 @@ export function initKonaShell({ profile, settings, enter }) {
       '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Start with Kona</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
+  }
+
+  function garage(){
+    title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
+    renderGarageSurface(body);
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
   }
 
   function plan(){
@@ -130,11 +137,12 @@ export function initKonaShell({ profile, settings, enter }) {
 
   shell.querySelector('[data-tab=home]').onclick=now;
   shell.querySelector('[data-tab=discover]').onclick=explore;
+  shell.querySelector('[data-tab=garage]').onclick=garage;
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close();});
 
   const applyTheme=p=>applyBrandMode(p?.appearance||'auto');
   applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);
-  return { now, plan, me, explore, close };
+  return { now, garage, plan, me, explore, close };
 }
