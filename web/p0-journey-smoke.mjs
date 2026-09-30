@@ -9,15 +9,21 @@ try{
  await page.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
  const requests=[],pageErrors=[];page.on('request',r=>requests.push(r.url()));page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
  await page.goto(base,{waitUntil:'domcontentloaded'});
- const heavy=()=>requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
+ const museumHeavy=()=>requests.filter(u=>/app\/hall\.js|app\/museum-data\.js|\.hdr(?:\?|$)/i.test(u));
+ const personal3D=()=>requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
  const museumData=()=>requests.filter(u=>/app\/museum-data\.js/i.test(u));
- assert.equal(heavy().length,0,'landing must request zero heavy 3D assets');
+ assert.equal(museumHeavy().length,0,'landing must request zero museum/world assets');
  assert.equal(museumData().length,0,'landing must not request museum catalog data');
  assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
  await page.waitForSelector('#konaQuest');
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Why are you here/i);
  await page.click('[data-set="intent"][data-value="dreaming"]');
+ assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Your races/i);
+ await page.waitForSelector('[data-race-search]');
+ assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Search IRONMAN races/i);
+ await page.click('[data-race-continue]');
+ await page.waitForFunction(()=>/Choose your bike/i.test(document.querySelector('#konaQuest')?.textContent||''));
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Choose your bike/i);
  await page.click('[data-set="bikeId"]:not([data-value=""])');
  await page.waitForFunction(()=>/Choose your shoes/i.test(document.querySelector('#konaQuest')?.textContent||''));
@@ -30,18 +36,21 @@ try{
  try { await page.waitForSelector('#enterKona',{timeout:8000}); }
  catch(err){ throw new Error('Reveal did not render. Page errors: '+pageErrors.join(' | ')+' Quest: '+await page.$eval('#konaQuest',e=>e.textContent)); }
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/This is your Kona/i);
- assert.equal(heavy().length,0,'onboarding/reveal must request zero heavy 3D assets');
+ assert.equal(museumHeavy().length,0,'onboarding/reveal must request zero museum/world assets');
  await page.click('#enterKona');
  await page.waitForFunction(()=>document.querySelector('#intro')?.hasAttribute('hidden'));
- assert.equal(heavy().length,0,'Garage must request zero heavy 3D assets');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR EQUIPMENT|Mine|Dreaming|Try/i,'post-onboarding state should be Garage');
- assert.ok(await page.$eval('[data-tab="garage"]',e=>e.classList.contains('on')),'Garage nav should be active after reveal');
+ assert.equal(museumHeavy().length,0,'Race Self home must not request museum/world assets');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Self|Gear|Bike|Kit|Races|Cards|Garage|World|Settings/i,'post-onboarding state should be Race Self Studio');
+ assert.ok(await page.$eval('[data-tab="home"]',e=>e.classList.contains('on')),'Home nav should be active after reveal');
+ await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]'),{timeout:5000});
+ await new Promise(r=>setTimeout(r,500));
+ assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load progressively');
  const identity=await page.evaluate(()=>localStorage.getItem('kona.raceIdentity.v1')||localStorage.getItem('speedmax.raceIdentity.v1'));
  assert.ok(identity,'RaceIdentity must persist locally before registration');
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForSelector('#buildSelf');
  assert.match(await page.$eval('#buildSelf',e=>e.textContent),/Continue your Kona/i);
- assert.equal(heavy().length,0,'returning shell must request zero heavy 3D assets');
+ assert.equal(museumHeavy().length,0,'returning shell must request zero museum/world assets');
  assert.equal(museumData().length,0,'returning Home must not request museum catalog data');
  // Registration path: prove the browser is allowed to issue the Supabase OTP request.
  const auth=await browser.newPage();auth.setDefaultTimeout(30000);
@@ -63,5 +72,5 @@ try{
  assert.equal(otpSeen,true,'magic-link flow must issue the allowed Supabase OTP request');
  await auth.close();
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → identity → reveal → Garage → reload + magic-link request; zero heavy 3D/catalog requests');
+ console.log('P0 browser journey PASS: entry-only data → race search → identity → Race Self Studio → reload + magic-link request; museum/world stays lazy');
 } finally {await browser.close();}
