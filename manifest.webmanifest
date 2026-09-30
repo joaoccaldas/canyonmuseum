@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Canyon Speedmax Museum",
-  "short_name": "Canyon Museum",
-  "description": "Walk every Canyon Speedmax generation in a sunlit museum on the Kona coast, then the chapel, the upper rooms, the time-trial wing and the pier.",
+  "name": "KONA",
+  "short_name": "KONA",
+  "description": "Build your race identity, prepare for race week, explore triathlon machines, people, places and stories, and enter the immersive 3D world when you choose.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -13,7 +13,7 @@
   ],
   "orientation": "any",
   "background_color": "#f4efe7",
-  "theme_color": "#1b1411",
+  "theme_color": "#12181d",
   "categories": [
     "sports",
     "education",
@@ -47,9 +47,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Museum map",
-      "short_name": "Map",
-      "url": "./?map=1",
+      "name": "Home",
+      "short_name": "Home",
+      "url": "./",
       "icons": [
         {
           "src": "assets/pwa/icon-v3-192.png",
@@ -58,9 +58,9 @@
       ]
     },
     {
-      "name": "Against the Clock",
-      "short_name": "Time trial",
-      "url": "./?room=atlas",
+      "name": "Discover",
+      "short_name": "Discover",
+      "url": "./?view=discover",
       "icons": [
         {
           "src": "assets/pwa/icon-v3-192.png",
@@ -69,19 +69,9 @@
       ]
     },
     {
-      "name": "Kona by Year",
-      "short_name": "The pier",
-      "url": "./?room=pier",
-      "icons": [
-        {
-          "src": "assets/pwa/icon-v3-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Collection",
-      "url": "./Canyon_Collection.html",
+      "name": "Garage",
+      "short_name": "Garage",
+      "url": "./Studio.html#setup",
       "icons": [
         {
           "src": "assets/pwa/icon-v3-192.png",
