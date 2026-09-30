@@ -82,3 +82,16 @@ export function migrateStorage(storage = globalThis.localStorage) {
 export function storageRegistry() {
   return JSON.parse(JSON.stringify(MAP));
 }
+
+export function storageNames() {
+  return Object.keys(MAP);
+}
+
+export function storageKeys({ includeLegacy = false } = {}) {
+  const keys = [];
+  for (const row of Object.values(MAP)) {
+    keys.push(row.current);
+    if (includeLegacy) keys.push(...row.legacy);
+  }
+  return [...new Set(keys)];
+}
