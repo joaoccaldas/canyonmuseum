@@ -2,6 +2,7 @@
 // Navigation/utility only. The 3D renderer remains the existing proven museum runtime.
 import { applyBrandMode } from '../brand/runtime.js';
 import { renderGarageSurface } from './garage.js';
+import { renderHomeSurface } from './home.js';
 import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
@@ -45,8 +46,21 @@ export function initKonaShell({ profile, settings, enter }) {
   const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=close;
 
-  async function now(){
-    title.textContent='Race Self'; eyebrow.textContent='KONA · YOUR WORLD';
+  function now(){
+    leaveRaceSelf();
+    title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
+    renderHomeSurface(body,{
+      event:facts().event,
+      profile,
+      openRaceSelf:raceSelf,
+      openGarage:garage,
+      openDiscover:explore,
+    });
+  }
+
+  async function raceSelf(){
+    title.textContent='Race Self'; eyebrow.textContent='KONA · PERSONAL SPACE';
     panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('home');
     await renderAvatarHome(body,{
       profile,
@@ -109,5 +123,5 @@ export function initKonaShell({ profile, settings, enter }) {
 
   const applyTheme=p=>applyBrandMode(p?.appearance||'auto');
   applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);
-  return { now, garage, plan, me, explore, collection, close };
+  return { now, raceSelf, garage, plan, me, explore, collection, close };
 }

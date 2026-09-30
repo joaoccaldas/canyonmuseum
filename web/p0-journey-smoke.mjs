@@ -7,7 +7,11 @@ const browser=await puppeteer.launch({executablePath:exe,headless:'new',args:['-
 try{
  const page=await browser.newPage();page.setDefaultTimeout(30000);
  await page.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
- const requests=[],pageErrors=[];page.on('request',r=>requests.push(r.url()));page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
+ const requests=[],pageErrors=[];
+ page.on('request',r=>requests.push(r.url()));
+ page.on('pageerror',e=>pageErrors.push('page:'+String(e?.stack||e)));
+ page.on('console',m=>{if(m.type()==='error')pageErrors.push('console:'+m.text())});
+ page.on('requestfailed',r=>pageErrors.push('requestfailed:'+r.url()+':'+(r.failure()?.errorText||'unknown')));
  await page.goto(base,{waitUntil:'domcontentloaded'});
  const museumHeavy=()=>requests.filter(u=>/app\/hall\.js|app\/museum-data\.js|\.hdr(?:\?|$)/i.test(u));
  const personal3D=()=>requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
@@ -16,7 +20,8 @@ try{
  assert.equal(museumData().length,0,'landing must not request museum catalog data');
  assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
- await page.waitForSelector('#konaQuest');
+ try { await page.waitForSelector('#konaQuest',{timeout:8000}); }
+ catch(err){ throw new Error('Onboarding did not start. Page errors: '+pageErrors.join(' | ')+' Body: '+(await page.$eval('body',e=>e.innerText.slice(0,1200)))); }
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Why are you here/i);
  await page.click('[data-set="intent"][data-value="dreaming"]');
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Your races/i);
@@ -39,13 +44,16 @@ try{
  assert.equal(museumHeavy().length,0,'onboarding/reveal must request zero museum/world assets');
  await page.click('#enterKona');
  await page.waitForFunction(()=>document.querySelector('#intro')?.hasAttribute('hidden'));
- await page.waitForSelector('.player-hub',{timeout:8000});
- assert.equal(museumHeavy().length,0,'Race Self home must not request museum/world assets');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/RACE SELF|3D World|Bike Studio|Garage|Collection|Races|Discover|Games|Self/i,'post-onboarding state should be Race Self game hub');
+ await page.waitForSelector('[data-home-race-self]',{timeout:8000});
+ assert.equal(museumHeavy().length,0,'Home must not request museum/world assets');
+ assert.equal(personal3D().length,0,'Home must not request Race Self 3D before explicit intent');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/What matters today|Your Race Self|Discover something/i,'post-onboarding state should be calm Home');
  assert.ok(await page.$eval('[data-tab="home"]',e=>e.classList.contains('on')),'Home nav should be active after reveal');
+ await page.click('[data-home-race-self]');
+ await page.waitForSelector('.player-hub',{timeout:8000});
  await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]'),{timeout:5000});
  await new Promise(r=>setTimeout(r,500));
- assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load progressively');
+ assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load only after explicit Open Race Self action');
  const identity=await page.evaluate(()=>localStorage.getItem('kona.raceIdentity.v1')||localStorage.getItem('speedmax.raceIdentity.v1'));
  assert.ok(identity,'RaceIdentity must persist locally before registration');
  await page.reload({waitUntil:'domcontentloaded'});
@@ -94,5 +102,5 @@ try{
  await installPage.close();
 
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → race search → identity → Race Self Studio → reload + magic-link request; museum/world stays lazy');
+ console.log('P0 browser journey PASS: entry-only data → race search → identity → calm Home → explicit Race Self → reload + magic-link request; world stays lazy');
 } finally {await browser.close();}

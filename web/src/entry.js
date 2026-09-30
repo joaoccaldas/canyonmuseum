@@ -1,6 +1,7 @@
 // KONA entry. HTML is already on screen. This file does not import Three.js.
 // The museum runtime loads only after the visitor chooses to explore.
-import { createProfile } from './engine/profile.js';
+import { createProfile, QUALITY, AVATARS } from './engine/profile.js';
+import { initSettings } from './ui/settings.js';
 import { desktopViewPhone, coarse } from './detect.js';
 import { consumeAuthCallback } from './cloud/supabase-lite.js';
 import { initKonaShell } from './ui/kona-shell.js';
@@ -33,10 +34,30 @@ const setEntryMode = mode => {
   document.body.dataset.entryMode = mode;
 };
 const profile = createProfile();
-const settingsBridge = { open() {} };
-window.__konaSettingsBridge = settingsBridge;
+window.__konaProfile = profile;
+const settingsUI = initSettings({
+  profile, QUALITY, AVATARS,
+  activeQuality:()=>profile.get().quality,
+  onQuality:id=>window.__konaWorldSettings?.onQuality?.(id) ?? true,
+  onSound:on=>window.__konaWorldSettings?.onSound?.(on),
+  onMotion:()=>window.__konaWorldSettings?.onMotion?.() ?? true,
+  sync:{available:false},
+});
+window.__konaSettingsUI = settingsUI;
 
 const loads = new Map();
+function loadStyle(href) {
+  const key='css:'+href;
+  if (loads.has(key)) return loads.get(key);
+  const pending = new Promise((resolve,reject)=>{
+    const link=document.createElement('link');
+    link.rel='stylesheet'; link.href=href;
+    link.onload=()=>resolve(); link.onerror=()=>reject(new Error(href));
+    document.head.append(link);
+  });
+  loads.set(key,pending);
+  return pending;
+}
 function loadScript(src) {
   if (loads.has(src)) return loads.get(src);
   const pending = new Promise((resolve, reject) => {
@@ -57,7 +78,10 @@ let worldShellReady = null;
 const ensureWorldShell = () => {
   if (document.getElementById('hall')) return Promise.resolve();
   if (worldShellReady) return worldShellReady;
-  worldShellReady = fetch('app/world-shell.html',{cache:'no-store',credentials:'same-origin'})
+  worldShellReady = Promise.all([
+    loadStyle('web/styles/hall-web.css'),
+    loadStyle('web/styles/hall-mobile.css'),
+  ]).then(()=>fetch('app/world-shell.html',{cache:'no-store',credentials:'same-origin'}))
     .then(r=>r.ok?r.text():Promise.reject(new Error('world shell unavailable')))
     .then(html=>{
       const t=document.createElement('template'); t.innerHTML=html.trim();
@@ -101,7 +125,7 @@ function openMuseum(room) {
 }
 
 initAppShell();
-const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
+const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum });
 window.__konaShell = shell;
 
 function enterApp(first = 'home') {

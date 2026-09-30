@@ -160,3 +160,33 @@ html[data-theme="dark"]{
 .kona-discover-feed{display:grid}
 .kona-discover-feed article{display:grid;gap:5px;padding:14px 0;border-bottom:1px solid var(--kona-line)}
 .kona-discover-feed b{font-size:14px}.kona-discover-feed span{font-size:11.5px;color:var(--kona-muted)}
+
+/* app: install button, install sheet, update pill */
+#installBtn{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+#installBtn:hover{background:var(--reef);border-color:var(--reef)}
+#appSheet{position:fixed;inset:0;z-index:50;background:rgba(18,24,29,.42);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(16px + var(--safe-b))}
+#appSheet>div{position:relative;width:min(420px,100%);background:var(--paper);border-radius:26px;padding:24px 22px 20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:cin .35s cubic-bezier(.2,.8,.2,1)}
+#appSheet img{width:64px;height:64px;border-radius:16px;display:block;margin-bottom:12px}
+#appSheet h3{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.05}
+#appSheet p{font-size:13.5px;line-height:1.6;color:var(--muted);margin:8px 0 14px}
+#appSheet .opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--line);margin-top:8px;font-weight:700;font-size:14px}
+#appSheet .opt:hover{border-color:var(--ink)}
+#appSheet .opt small{font-weight:500;font-size:11.5px;color:var(--faint)}
+#appSheet .close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);font-size:18px}
+#updateBar{position:fixed;left:50%;top:calc(76px + env(safe-area-inset-top));transform:translateX(-50%);z-index:45;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 16px;border-radius:999px;
+  background:rgba(18,24,29,.92);color:#fbf9f5;font-size:12.5px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 14px 30px -12px rgba(0,0,0,.5);max-width:calc(100vw - 24px);animation:cin .4s cubic-bezier(.2,.8,.2,1)}
+#updateBar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#updateBar button,#updateBar a.go{background:linear-gradient(100deg,#ff3d8e,#5fd8d3);color:#12181d;font-weight:700;border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center}
+#updateBar .later{background:rgba(255,255,255,.12);color:#fbf9f5;width:36px;padding:0;justify-content:center}
+
+/* Home → Race Self preview. The shell remains navigation authority; no 3D loads here. */
+.home-race-self{overflow:hidden}
+.race-self-preview{width:100%;display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:14px;align-items:center;min-height:92px;padding:12px 0;border:0;background:transparent;color:inherit;text-align:left}
+.race-self-preview-avatar{position:relative;width:64px;height:72px;border-radius:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--avatar) 12%,var(--kona-surface-strong)),var(--kona-surface-strong));border:1px solid var(--kona-line);overflow:hidden}
+.race-self-preview-avatar i{position:absolute;display:block;background:var(--avatar)}
+.race-self-preview-avatar .head{width:20px;height:20px;left:22px;top:10px}
+.race-self-preview-avatar .body{width:28px;height:25px;left:18px;top:32px}
+.race-self-preview-avatar .leg{width:10px;height:19px;top:55px}.race-self-preview-avatar .leg.l{left:20px}.race-self-preview-avatar .leg.r{right:20px}
+.race-self-preview-copy{display:grid;gap:4px;min-width:0}.race-self-preview-copy b{font:400 24px/1 var(--serif)}.race-self-preview-copy small{font:500 11.5px/1.4 var(--sans);color:var(--kona-muted)}
+.race-self-preview-go{font:750 11px/1 var(--sans);color:var(--kona-accent);white-space:nowrap}
+@media(max-width:420px){.race-self-preview{grid-template-columns:62px minmax(0,1fr);}.race-self-preview-go{grid-column:2}.race-self-preview-copy b{font-size:22px}}
