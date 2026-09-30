@@ -1,0 +1,124 @@
+/* MOBILE layout — museum hall (index.html).
+   Edit phone width, coarse pointer, short landscape and html.phone-fit here.
+   Desktop hall chrome: hall-web.css
+   html.phone-fit is required: a phone in Desktop view reports ~980px, so max-width queries never run. */
+@media (max-width:760px){#tourPill{font-size:12px;gap:6px;padding-left:12px}#tourPill b{display:none}body.touring header .logo,body.touring header nav{opacity:0;pointer-events:none}}
+@media (max-width:760px){
+  .c-years{font-size:11.5px;letter-spacing:.2em}.c-mat{font-size:12px}.c-note{font-size:15px!important;line-height:1.65}
+  .c-stats b{font-size:19px}.c-stats small{font-size:11px}
+  #card{padding:14px 20px 18px!important;border-radius:26px}
+  #card::before{content:"";display:block;width:42px;height:4px;border-radius:2px;background:rgba(18,24,29,.18);margin:0 auto 12px}
+  #card .close{width:44px;height:44px;top:12px;right:12px;font-size:20px}
+  #card h2{padding-right:44px}
+  .c-actions .btn{height:52px;font-size:14px}
+  .chip{min-height:52px}.chip b{font-size:12.5px}.chip small{font-size:10px}.chip .n{width:36px;height:36px}
+  .plabel i{width:30px;height:30px;font-size:12px}
+  #toast{font-size:13px;padding:11px 18px;white-space:normal;text-align:center;max-width:calc(100vw - 40px)}
+  #nearby{top:calc(66px + env(safe-area-inset-top));max-width:calc(100vw - 28px);padding:8px 11px}
+  #nearby b{overflow:hidden;text-overflow:ellipsis;max-width:190px}
+  header{padding:max(10px,env(safe-area-inset-top)) 10px 0;gap:8px;align-items:flex-start}
+  .logo{padding:8px 10px;margin:-4px 0 0 -2px;border-radius:12px;max-width:132px}
+  .logo b{font-size:12px;letter-spacing:.28em}.logo small{font-size:8.5px;line-height:1.25;letter-spacing:.18em}
+  nav{gap:5px}
+  nav a,nav button{padding:9px 11px;font-size:11.5px;min-height:40px}
+  #passportBtn{gap:5px}
+  #passportCount{min-width:30px;height:20px;padding:0 6px;font-size:9.5px}
+  nav .wide{display:none}
+  nav .long{display:none}
+  #installBtn{text-transform:capitalize}
+  #intro{align-items:flex-end;padding:0 22px calc(28px + var(--safe-b));
+    background:linear-gradient(0deg,rgba(244,239,231,.97) 0%,rgba(244,239,231,.9) 48%,rgba(244,239,231,.1) 78%,transparent 100%)}
+  h1{font-size:clamp(44px,13vw,64px);margin:16px 0}
+  .lede{font-size:14.5px}
+  .cta{margin-top:22px}.btn{height:50px}
+  .cta .btn{flex:1 1 auto;justify-content:center}
+  .keys{display:none}.touch-only{display:block}
+  .credit{display:none}
+  #card{left:10px;right:10px;top:auto;bottom:calc(88px + var(--safe-b));width:auto;padding:22px 20px 18px;max-height:56dvh;transform:translateY(calc(100% + 120px))}
+  #card h2{font-size:32px}
+  .c-note{font-size:13px;margin-top:12px}
+  .c-stats{margin-top:14px;padding:12px 0}
+  .c-actions{flex-wrap:nowrap}.c-actions .btn{flex:1 1 0;justify-content:center;padding:0 10px;white-space:nowrap}
+  .c-actions .long{display:none}
+  #card{max-height:48dvh}
+  .plabel span{display:none}.plabel{padding:3px}
+  .c-photo img{max-height:150px}
+  .chip{padding:6px 10px 6px 6px;min-height:48px}.chip .n{width:34px;height:34px}.chip b{font-size:12px}
+  #rail{padding:0 6px calc(6px + var(--safe-b))}
+  .rail-inner{padding:4px;border-radius:18px}
+  #toast{bottom:calc(78px + var(--safe-b))}
+}
+@media (pointer:coarse){.keys{display:none}.touch-only{display:block}}
+@media (pointer:coarse),(max-width:1024px){#card .close{width:44px;height:44px}}
+@media (max-width:760px),(pointer:coarse){
+  html{font-size:clamp(15px,3.9vw,18px)}
+  .logo b{font-size:.86rem}.logo small{font-size:.72rem;letter-spacing:.14em}
+  .logo{max-width:none;padding:9px 12px}
+  nav a,nav button{font-size:.86rem;min-height:44px;padding:0 14px;display:inline-flex;align-items:center}
+  #passportCount{font-size:.72rem;height:1.45rem;min-width:2rem}
+  .eyebrow{font-size:.75rem;letter-spacing:.22em}
+  .lede{font-size:1rem;line-height:1.6}.touch-only.lede{font-size:.9rem!important}
+  #loadstate{font-size:.78rem}
+  .btn{height:3.4rem;font-size:.95rem}
+  .chip{min-height:3.6rem;padding:6px 14px 6px 6px}.chip .n{width:2.6rem;height:2.6rem;font-size:.9rem}
+  .chip small{font-size:.72rem}.chip b{font-size:.92rem}
+  .c-years{font-size:.78rem}.c-mat{font-size:.8rem}
+  #card h2{font-size:2.1rem}
+  .c-note{font-size:1rem!important;line-height:1.6}
+  .c-stats b{font-size:1.25rem}.c-stats small{font-size:.72rem}
+  .c-actions .btn{height:3.2rem;font-size:.95rem}
+  .c-parts small{font-size:.72rem}.c-parts button{font-size:.86rem;min-height:44px;padding:6px 12px 6px 6px}.c-parts i{width:1.6rem;height:1.6rem;font-size:.75rem}
+  .c-photo figcaption,.c-view,.c-unc,.c-src{font-size:.82rem}
+  #card{bottom:calc(100px + var(--safe-b));max-height:min(58dvh,calc(100dvh - 200px - var(--safe-b)));overscroll-behavior:contain}
+  #card .close{width:44px;height:44px}
+  #nearby{min-height:44px}
+  body.card-open #joy{opacity:0;pointer-events:none;transition:opacity .2s}
+  #nearby small{font-size:.7rem}#nearby b{font-size:.92rem;max-width:62vw}
+  #toast{font-size:.9rem}
+  #tourPill{font-size:.9rem}#tourPill button{min-height:44px;font-size:.86rem;padding:0 14px}
+  #coach b{font-size:1.05rem}#coach small{font-size:.82rem}#coachOk{min-height:44px;font-size:.9rem;padding:0 18px}
+  #tag{font-size:.86rem}.plabel{font-size:.86rem}
+}
+/* phones on their side: give the 3D view the room, keep controls reachable */
+/* Desktop view on a phone: the 760px rules never fire. Mirror the phone shell
+   and zoom the chrome. Part labels stay unzoomed so they track the 3D points. */
+html.phone-fit :is(header,#intro,#rail,#card,#joy,#tourPill,#nearby,#toast,#coach>div,#updateBar){zoom:var(--fit)}
+html.phone-fit header{left:0;right:auto;width:calc(100vw / var(--fit));padding:max(10px,env(safe-area-inset-top)) 10px 0;gap:8px;align-items:flex-start}
+html.phone-fit .logo{max-width:none;padding:8px 10px}
+html.phone-fit .logo b{font-size:12px;letter-spacing:.22em}
+html.phone-fit .logo small{font-size:9px}
+html.phone-fit nav{gap:5px}
+html.phone-fit nav .wide,html.phone-fit nav .long{display:none}
+html.phone-fit nav a,html.phone-fit nav button{min-height:40px;padding:8px 10px;font-size:12px}
+html.phone-fit #intro{left:0;top:0;right:auto;bottom:auto;width:calc(100vw / var(--fit));height:calc(100vh / var(--fit));align-items:flex-end;padding:0 18px calc(24px + var(--safe-b));
+  background:linear-gradient(0deg,rgba(244,239,231,.97) 0%,rgba(244,239,231,.9) 48%,rgba(244,239,231,.1) 78%,transparent 100%)}
+html.phone-fit h1{font-size:44px;margin:12px 0}
+html.phone-fit .lede{font-size:15px}
+html.phone-fit .keys{display:none}
+html.phone-fit .touch-only{display:block}
+html.phone-fit .cta .btn{flex:1 1 auto;justify-content:center}
+html.phone-fit #card{left:8px;right:auto;top:auto;width:calc((100vw - 16px) / var(--fit));bottom:calc(88px + var(--safe-b));max-height:calc(52dvh / var(--fit));padding:18px 16px 16px;transform:translateY(calc(100% + 120px))}
+html.phone-fit #card.on{transform:none}
+html.phone-fit #card h2{font-size:32px}
+html.phone-fit #card::before{content:"";display:block;width:42px;height:4px;border-radius:2px;background:rgba(18,24,29,.18);margin:0 auto 12px}
+html.phone-fit #rail{left:0;right:auto;width:calc(100vw / var(--fit));padding:0 6px calc(6px + var(--safe-b))}
+html.phone-fit .plabel span{display:none}
+html.phone-fit .plabel{padding:3px}
+html.phone-fit .plabel i{width:28px;height:28px;font-size:12px}
+html.phone-fit .credit{display:none}
+@media (max-height:500px) and (orientation:landscape){
+  html{font-size:15px}
+  header{padding-top:max(6px,env(safe-area-inset-top))}
+  .logo small{display:none}.logo{padding:8px 12px}
+  nav a,nav button{min-height:40px}
+  #rail{padding-bottom:max(4px,var(--safe-b))}
+  .chip{min-height:2.9rem}.chip small{display:none}.chip .n{width:2.2rem;height:2.2rem}
+  #card{left:auto;right:max(10px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));bottom:auto;width:min(380px,48vw);max-height:calc(100dvh - 16px);
+    transform:translateX(calc(100% + 40px))}
+  #card.on{transform:none}
+  #card h2{font-size:1.7rem}
+  #joy{bottom:calc(70px + var(--safe-b))}
+  h1{font-size:clamp(34px,7vh,48px)!important;margin:8px 0}
+  #intro .lede:not(.touch-only){display:none}
+}
+@media (max-width:520px){.set-opts{grid-template-columns:1fr}}

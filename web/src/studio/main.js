@@ -16,6 +16,7 @@ import { captureView, shareImage } from '../engine/share.js';
 import { initSettings } from '../ui/settings.js';
 import { SCENES, encodeLook, decodeLook, productsFor } from './model.js';
 import { createRaceSetupStore, encodeRaceSetup, decodeRaceSetup, completedSlots, setSetupSlot, RACE_SETUP_EVENT } from './race-setup.js';
+import { syncIdentityFromSetup } from '../engine/identity.js';
 
 const $ = id => document.getElementById(id);
 const CAT = window.__PRODUCTS, FILMS = window.__FILMS?.films || [], MSKINS = window.__SKINS?.skins || [], WYLD = window.__WYLDROOM?.variants || [], EVENTS = window.__EVENTS || [];
@@ -28,6 +29,7 @@ const sharedSetup = decodeRaceSetup(q.get('setup'), CAT.products);
 const raceSetupStore = createRaceSetupStore();
 const event = EVENTS.find(e => e.id === (q.get('event') || sharedSetup?.event_id)) || null;
 let raceSetup = sharedSetup || raceSetupStore.load(CAT.products);
+syncIdentityFromSetup(raceSetup, CAT.products);
 
 // ---------------------------------------------------------------- renderer, camera, stage
 const canvas = $('stage');
@@ -197,6 +199,7 @@ function saveCurrentToSetup() {
   if (!current) return;
   raceSetup = setSetupSlot(raceSetup, 'bike', current.product, { look:encodeLook(look), scene:sceneId }, CAT.products);
   raceSetup = raceSetupStore.save(raceSetup, CAT.products);
+  syncIdentityFromSetup(raceSetup, CAT.products);
   toast('Saved to My Kona Setup');
   tab = 'setup'; dock(false); drawPanel();
 }
@@ -229,9 +232,9 @@ function renderRaceSetup(P) {
         slot('△', 'Bike', bikeProduct ? `${bikeProduct.brand} · ${bikeProduct.name}` : 'Choose your race bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
         slot('◉', 'Wheels', bikeProduct ? 'Current bike wheels' : 'Comes with your bike', bikeProduct ? '✓' : '○', () => { tab='bikes'; drawPanel(); }),
         slot('◒', 'Helmet', 'Equipment slot ready', 'Soon', null, true),
-        slot('⌁', 'Shoes', 'Equipment slot ready', 'Soon', null, true)
+        slot('⌁', 'Shoes', 'Alphafly 3 study', 'Museum', () => { location.href = 'index.html?room=nike-running'; })
       ),
-      h('p', { class:'setup-note' }, 'Stored only on this device. No account, tracking or background location. Helmet and shoe slots are intentionally dormant until validated assets clear the intake contract.')
+      h('p', { class:'setup-note' }, 'Stored only on this device. The shoe opens the Nike Running Lab, an independent study in the museum. The helmet slot stays closed until a validated asset clears intake.')
     ),
     h('div', { class:'setup-actions' },
       h('button', { type:'button', class:'btn primary', onclick:saveCurrentToSetup }, bikeProduct && current?.product.id === bikeProduct.id ? 'Update bike' : 'Save bike'),

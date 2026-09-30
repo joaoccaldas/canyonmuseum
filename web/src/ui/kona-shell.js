@@ -98,8 +98,32 @@ export function initKonaShell({ profile, settings, enter }) {
     account.querySelector('[data-signout]')?.addEventListener('click',async()=>{await signOut();me();});
   }
 
+  function walkTo(id){
+    close();
+    const go=window.__museumGo;
+    if(go){ go(id); return; }
+    enter?.();
+    document.querySelector(`.chip[data-room="${CSS.escape(id)}"]`)?.click();
+  }
+  function explore(){
+    title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
+    const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
+    const brands=window.__BRANDROOMS?.rooms||[];
+    const themes=window.__gallery?.rooms||[];
+    const row=(kicker,name,sub,id)=>'<button type="button" data-go="'+esc(id)+'"><article><small>'+esc(kicker)+'</small><b>'+esc(name)+'</b><span>'+esc(sub)+'</span></article></button>';
+    const rooms=named.map(a=>row(a.floor==='upper'?'Upper floor':'Ground', a.short||a.name, a.sub||'', a.id)).join('')
+      +brands.map(r=>row('Brand room', r.name, (r.products?.[0]?.model)||r.kicker||'', r.id)).join('')
+      +themes.map(r=>row('Upper floor', r.name, r.sub||'', 'room-'+r.id)).join('');
+    body.innerHTML=
+      '<section class="kona-hero-card"><small>WALK THE COAST</small><h3>Every room, one museum</h3><p>Kona hall, themed rooms, and the studies that have a place of their own.</p><button class="kona-primary" data-enter>Enter where you stand <span>→</span></button></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>Rooms</h3><small>Tap to walk</small></div><div class="kona-place-grid">'+rooms+'</div></section>';
+    body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
+    body.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>walkTo(b.dataset.go)));
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('explore');
+  }
+
   shell.querySelector('[data-tab=now]').onclick=now;
-  shell.querySelector('[data-tab=explore]').onclick=()=>{close();enter?.();};
+  shell.querySelector('[data-tab=explore]').onclick=explore;
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close();});
@@ -107,5 +131,5 @@ export function initKonaShell({ profile, settings, enter }) {
 
   const applyTheme=p=>{ const v=p?.appearance||'auto'; if(v==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme=v; };
   applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);
-  return { now, plan, me, close };
+  return { now, plan, me, explore, close };
 }

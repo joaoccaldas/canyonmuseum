@@ -13,7 +13,7 @@ const DISCLAIMER = 'An independent, unofficial fan and research project. Not aff
 // The only third parties the pages load (measured with a request log): Google Fonts and Wikimedia images.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",       // bundles are inlined; meshopt decoder is WebAssembly
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",       // hall and studio load app/*.js; meshopt decoder is WebAssembly
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org",
@@ -26,7 +26,7 @@ const CSP = [
 const PAGES = [
   { file: 'index.html', type: 'Museum', image: 'assets/share/museum.jpg',
     title: 'Canyon Speedmax Museum · Kona — walk 28 years of triathlon bikes in 3D',
-    description: 'A walkable 3D museum on the Kona coast: every Canyon Speedmax generation from 1999 to 2027, the six Ironman World Championship titles won on a Speedmax, and the WYLD dye room. Works in any browser and installs as an app.' },
+    description: 'A walkable 3D museum on the Kona coast: every Canyon Speedmax generation from 1999 to 2027, the six Ironman World Championship titles won on a Speedmax, the WYLD dye room, and brand studies such as the Nike Alphafly. Works in any browser and installs as an app.' },
   { file: 'Canyon_Collection.html', type: 'CollectionPage', image: 'assets/share/collection.jpg',
     title: 'Canyon Triathlon Collection · every Speedmax generation, compared',
     description: 'Every Canyon Speedmax generation on record, 1999–2027: interactive 3D exhibits, side-by-side specifications, an aero calculator and a sourced archive of the bikes that were never modelled.' },
@@ -44,7 +44,8 @@ for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.t
   PAGES.push({ file: f, type: 'WebPage', image: 'assets/share/museum.jpg', title: t, description: d, keepTitle: true });
 }
 
-const SYSTEM_CSS = fs.readFileSync(path.join(root, 'web/styles/system.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '');
+const packCss = file => fs.readFileSync(path.join(root, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '');
+const SYSTEM_CSS = packCss('web/styles/system.css') + packCss('web/styles/shell-mobile.css');
 const THEME_BOOTSTRAP = `<script>(function(){try{var p=JSON.parse(localStorage.getItem('speedmax.profile.v1')||'null');var t=p&&p.appearance;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(_){}})();<\/script>`;
 const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -88,6 +89,8 @@ for (const p of PAGES) {
 }
 
 const CHAMPS = JSON.parse(fs.readFileSync(path.join(root, 'museum/kona_champions.json'), 'utf8')).titles.map(t => `${t.year} ${t.athlete} (${t.bike})`).join('; ');
+const brandFile = path.join(root, 'museum/world/brand_rooms.json');
+const BRANDS = fs.existsSync(brandFile) ? JSON.parse(fs.readFileSync(brandFile, 'utf8')).rooms.flatMap(r => (r.products || []).map(p => `${p.brand} ${p.model} in ${r.name} (${p.legal || 'independent study'})`)) : [];
 const today = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(path.join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -113,10 +116,11 @@ ${PAGES.map(p => `- [${p.title}](${SITE}${p.file === 'index.html' ? '' : p.file}
 ## Facts and sources
 - Bikes are unofficial procedural Blender reconstructions calibrated against published photographs and geometry; each exhibit lists its sources and known uncertainties.
 - Kona titles on a Speedmax (from museum/kona_champions.json): ${CHAMPS}.
+${BRANDS.length ? `- Brand-room studies: ${BRANDS.join('; ')}.` : ''}
 - Photographs are openly licensed (Wikimedia Commons, CC BY / CC BY-SA); authors and licences are shown beside every image.
 
 ## Privacy
-No accounts, no analytics, no cookies, no tracking. The Passport and settings stay in the visitor's own browser (localStorage) and are never sent anywhere.
+No accounts, no analytics, no cookies, no tracking by default. The Passport and settings stay in the visitor's own browser (localStorage). An optional email sign-in can back that data up only when the visitor asks.
 `);
 const roomsMd = fs.existsSync(path.join(root, 'docs/ROOMS.md')) ? fs.readFileSync(path.join(root, 'docs/ROOMS.md'), 'utf8') : '';
 const islandGuide = fs.existsSync(path.join(root, 'museum/kona/island-guide.json')) ? JSON.parse(fs.readFileSync(path.join(root, 'museum/kona/island-guide.json'), 'utf8')) : null;

@@ -20,6 +20,10 @@ import { createProfile, renderSettings, QUALITY, AVATARS } from './engine/profil
 import { captureView, shareImage } from './engine/share.js';
 import { initSettings } from './ui/settings.js';
 import { initKonaShell } from './ui/kona-shell.js';
+import { buildBrandRoom, loadBrandRoom, makeBrandLoader } from './engine/roomscene.js';
+import { $, esc, clamp } from './engine/dom.js';
+import { canvasTex, wallWash, contactShadow, lettering, onFontsReady } from './engine/textures.js';
+import { planRoute, noteProgress } from './engine/route.js';
 import { slotsOf, applySkin, skinFromWyld, skinFromFilm } from './engine/skins.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
@@ -33,11 +37,9 @@ const sway = [];                                                     // palm cro
 const spinners = [];                                                 // slowly turning sculptures and hung bikes
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
 const WROOMDATA = window.__WYLDROOM || null;
+const BRANDROOMS = window.__BRANDROOMS?.rooms || [];
 const KY = window.__KONAYEARS || null;                                // Kona by Year: the pier
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 // Phone detection must survive a browser's "Desktop view", where pointer and
 // viewport width both lie; detect.js adds the physical-screen signal.
 const coarse = dc;
@@ -93,7 +95,8 @@ function walkable(x, z) {
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
   const inDoor2 = x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
   const inWyld = x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
-  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z) && !atlas.walkable(x, z)) return false;
+  const inBrand = brandRooms.some(r => r.walkable(x, z));
+  if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !inBrand && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z) && !atlas.walkable(x, z)) return false;
   for (const o of obstacles) {
     if (o.c && Math.hypot(x - o.c.x, z - o.c.z) < o.r) return false;
     if (o.box && x > o.box[0] && x < o.box[1] && z > o.box[2] && z < o.box[3]) return false;
@@ -137,31 +140,8 @@ scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 scene.environmentIntensity = .55;
 
 // ------------------------------------------------------------------ canvas textures (plaster, travertine, basalt, lettering)
-const lettered = [];                                                 // redrawn once web fonts arrive
-let washTex = null;
-function wallWash(w, h, strength = .5) {                              // a picture light's cone, painted on (no real light: keeps 60 fps)
-  washTex ||= (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 512; const g = c.getContext('2d');
-    const r = g.createRadialGradient(128, 0, 10, 128, 60, 470); r.addColorStop(0, 'rgba(255,238,210,1)'); r.addColorStop(.45, 'rgba(255,232,200,.45)'); r.addColorStop(1, 'rgba(255,232,200,0)');
-    g.fillStyle = r; g.fillRect(0, 0, 256, 512); return new THREE.CanvasTexture(c); })();
-  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: washTex, transparent: true, opacity: strength, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 }));
-}
-let contactTex = null;
-function contactShadow(len, wid) {                                   // soft dark footprint where the tyres meet the plinth
-  contactTex ||= (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d');
-    const r = g.createRadialGradient(128, 64, 4, 128, 64, 124); r.addColorStop(0, 'rgba(0,0,0,.55)'); r.addColorStop(.55, 'rgba(0,0,0,.2)'); r.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = r; g.scale(1, 1); g.fillRect(0, 0, 256, 128); return new THREE.CanvasTexture(c); })();
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(len, wid), new THREE.MeshBasicMaterial({ map: contactTex, transparent: true, depthWrite: false, fog: false }));
-  m.rotation.x = -Math.PI / 2; m.renderOrder = 1; return m;
-}
-function canvasTex(w, h, draw, repeat, text) {
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  const paint = () => { const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, w, h); draw(g, w, h); };
-  paint();
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-  if (text) lettered.push(() => { paint(); t.needsUpdate = true; });
-  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...repeat); }
-  return t;
-}
+// Shared painters live in engine/textures.js. This seed stays here so the hall
+// floor, lava, and palms keep one continuous sequence.
 const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
 const travertine = canvasTex(1024, 1024, (g, w, h) => {
   g.fillStyle = '#e2d7c6'; g.fillRect(0, 0, w, h);
@@ -179,12 +159,6 @@ const basaltTex = canvasTex(512, 512, (g, w, h) => {
   for (let i = 0; i < 5000; i++) { const v = 20 + rnd() * 40; g.fillStyle = `rgba(${v},${v},${v + 3},${.4 + rnd() * .5})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 2, 1 + rnd() * 2); }
   for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(8,8,9,${.5 + rnd() * .4})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, .8 + rnd() * 2.2, 0, 7); g.fill(); }   // vesicles
 }, [2, 1]);
-function lettering(w, h, draw, px = 1024) {
-  const tex = canvasTex(px, Math.round(px * h / w), (g, cw, ch) => { g.scale(cw / w, ch / h); draw(g); }, null, true);
-  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
-}
-
-
 // ------------------------------------------------------------------ the hall
 const M = {
   floor: new THREE.MeshStandardMaterial({ map: travertine, roughness: .38, metalness: 0, envMapIntensity: .7 }),
@@ -543,10 +517,14 @@ if (WROOMDATA) {
   const ceil = new THREE.Mesh(new THREE.BoxGeometry(RW, .14, RD), ceilM); ceil.position.set(CX, WROOM.h + .07, CZ2); room.add(ceil);
   const sky = new THREE.Mesh(new THREE.PlaneGeometry(RW - 5, 1.1), new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false, fog: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 }));
   sky.rotation.x = Math.PI / 2; sky.position.set(CX + 1, WROOM.h - .002, CZ2); room.add(sky);
-  // the only colour on the walls: hairlines of dyed light, at the ceiling and at the skirting — the floor seems to float
+  // the walls carry the dye: a soft hand-dyed gradient wash behind the hairlines, so the room reads WYLD at a glance
+  const dyeWash = new THREE.MeshBasicMaterial({ map: dyeTex(4.1, .5, .12), toneMapped: false, fog: false, transparent: true, opacity: .5 });
+  for (const [z, ry] of [[WROOM.z0 - .005, Math.PI], [WROOM.z1 + .005, 0]]) {
+    const wash = new THREE.Mesh(new THREE.PlaneGeometry(RW - .4, WROOM.h - .9), dyeWash); wash.position.set(CX, WROOM.h / 2 - .1, z); wash.rotation.y = ry; room.add(wash);
+  }
   { const dyeLine = new THREE.MeshBasicMaterial({ map: dyeTex(2.9, .05, 0), toneMapped: false, fog: false });
-    for (const [z, ry] of [[WROOM.z0 - .005, Math.PI], [WROOM.z1 + .005, 0]]) for (const [y, hh] of [[WROOM.h - .34, .028], [.07, .02]]) {
-      const ln = new THREE.Mesh(new THREE.PlaneGeometry(RW - .4, hh), dyeLine); ln.position.set(CX, y, z); ln.rotation.y = ry; room.add(ln);
+    for (const [z, ry] of [[WROOM.z0 - .005, Math.PI], [WROOM.z1 + .005, 0]]) for (const [y, hh] of [[WROOM.h - .34, .15], [.07, .1]]) {
+      const ln = new THREE.Mesh(new THREE.PlaneGeometry(RW - .4, hh), dyeLine); ln.position.set(CX, y, z + (ry ? .001 : -.001)); ln.rotation.y = ry; room.add(ln);
     } }
   // the window wall: slim white mullions, a balcony and a glass balustrade
   const mullW = new THREE.MeshStandardMaterial({ color: '#f4efee', roughness: .35, metalness: .2 });
@@ -575,8 +553,8 @@ if (WROOMDATA) {
   screen.position.set(CX + 2, vy, CZ2); screen.renderOrder = -1; room.add(screen);
   const tl2 = new THREE.TextureLoader(); tl2.setCrossOrigin('anonymous');
   tl2.load(lite ? V.srcSmall : V.src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; screen.material.uniforms.map.value = t; screen.material.uniforms.ready.value = 1; });
-  // light: clean white, no coloured washes — the bikes carry the colour
-  const fill = new THREE.PointLight('#ffffff', lite ? 30 : 22, 26, 1.2); fill.position.set(CX, WROOM.h - .6, CZ2); room.add(fill);
+  // light: clean white fill with a faint warm/dyed tint so the wash reads, not a cold white box
+  const fill = new THREE.PointLight('#fdf3f6', lite ? 30 : 22, 26, 1.2); fill.position.set(CX, WROOM.h - .6, CZ2); room.add(fill);
   if (!lite) for (const z of [WROOM.z0 - 4, WROOM.z1 + 4]) { const pl = new THREE.PointLight('#fff6f2', 8, 13, 1.4); pl.position.set(CX + 1, 3.4, z); room.add(pl); }
   // the WYLD wordmark over the doorway (inside) and the sign in the hall
   const mark = lettering(4.4, 1.2, g => {
@@ -912,6 +890,12 @@ galleries.sign.rotation.y = -Math.PI / 2; hall.add(galleries.sign);
 const atlas = buildWings({ scene, lettering, FONT, SERIF, lite, pickables, obstacles, contactShadow },
   { wings: window.__WINGS || [], bikes: window.__ATLAS?.bikes || [], extraRefs: window.__ATLAS?.extra_refs || [], paintings: window.__ART?.paintings || [], sculptures: window.__ART?.sculptures || [] });
 
+// Brand rooms built from data (museum/world/brand_rooms.json) — Nike first, others just add data.
+const brandRooms = BRANDROOMS.map(d => { const r = buildBrandRoom(d, { lite, spinners, obstacles, pickables }); scene.add(r.group); return r; });
+const brandProducts = brandRooms.flatMap(r => r.products);
+let brandLoaded = false;
+window.__brandRooms = brandRooms;
+
 // ------------------------------------------------------------------ bikes (streamed, nearest first)
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 let findsApi = null;
@@ -1123,11 +1107,12 @@ const roomOf = (x, z) => {
   if (atlas.inside(x, z)) return 'gallery';                         // the data-built wings are part of the upper floor
   if (x > 7.15 && z > .6 && z < 28 && x < 26) return galleryFloorY(x, z) > 2.2 ? 'gallery' : 'stair';
   if (z > HALL.z0 - .15 && x > SROOM.x0 && x < SROOM.x1) return 'sanctuary';
-  if (KY && z < -46.3) return 'pier';
+  for (const r of brandRooms) if (r.walkable(x, z)) return r.desc.id;
+  if (KY && pierWalkable(x, z)) return 'pier';
   if (x >= WALK.x0 - .05) return 'hall';
   return z > -8.6 ? 'hween' : z > -26.1 ? 'champ' : 'wyld';
 };
-const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5, hween: (HDOOR.z0 + HDOOR.z1) / 2 };
+const DOORZ = { champ: DZ, wyld: WZ, pier: -46.5, hween: (HDOOR.z0 + HDOOR.z1) / 2, ...Object.fromEntries(brandRooms.map(r => [r.desc.id, r.desc.door ? (r.desc.door.z0 + r.desc.door.z1) / 2 : (r.bounds.z0 + r.bounds.z1) / 2])) };
 const PIER_IN = [{ x: 1.2, z: -38.6 }, { x: 5.6, z: -38.6 }, { x: 5.4, z: -44.6 }, { x: 5.4, z: -48.4 }];   // round the apse plinth, through the glass door
 const NAVE_LANE = 13.6;                                             // upstairs walking lane: east of the bay plinths (x 11.15), west of the room openings
 const fader = document.getElementById('fade');
@@ -1143,37 +1128,11 @@ function teleport(end) {
   setTimeout(() => { land(); requestAnimationFrame(() => requestAnimationFrame(() => fader.classList.remove('on'))); }, 190);
 }
 function route(to, face, piece) {                                   // aisle first, then the doorway — never a diagonal through the plinths
-  const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z), pts = [];
-  const done = () => {
-    path = pts; path.stuck = 0; path.face = face; path.piece = piece || null;
-    // between rooms (or far away) we teleport: a short fade, then you stand at the last waypoint facing the piece
-    const end = pts[pts.length - 1], far = end && (roomOf(end.x, end.z) !== a || Math.hypot(end.x - P.x, end.z - P.z) > 9);
-    if (far && profile.get().travel !== 'walk') teleport(end);
-  };
-  const aisleX = x => clamp(x, -1.2, 1.2);
-  const viaAisle = (from, z) => {
-    pts.push({ x: aisleX(from.x), z: from.z });
-    if (Math.abs(from.z - z) > .6) pts.push({ x: 0, z });
-  };
-  if (a === 'gallery' && b === 'gallery') { pts.push({ x: NAVE_LANE, z: P.z }, { x: NAVE_LANE, z: to.z }, { x: to.x, z: to.z }); return done(); }
-  if (a === 'stair' && b === 'gallery') { pts.push({ x: 10, z: 5.6 }, { x: NAVE_LANE, z: to.z }, { x: to.x, z: to.z }); return done(); }
-  if (a === b && a !== 'hall') { pts.push({ x: to.x, z: to.z }); return done(); }
-  let from = { x: P.x, z: P.z };
-  if (a === 'pier') { pts.push(...[...PIER_IN].reverse()); from = PIER_IN[0]; }
-  else if (a === 'sanctuary') { pts.push({ x: 0, z: 6.2 }, { x: 0, z: 3.2 }); from = { x: 0, z: 3.2 }; }
-  else if (a === 'gallery' || a === 'stair') { pts.push({ x: 10, z: 5.7 }, { x: 10, z: 1.5 }, { x: 8.8, z: 3.2 }, { x: 6.5, z: 3.7 }, { x: 0, z: 3.7 }); from = { x: 0, z: 3.7 }; }
-  else if (a !== 'hall' && DOORZ[a] != null) { pts.push({ x: -9.2, z: DOORZ[a] }, { x: -5.4, z: DOORZ[a] }); from = pts[pts.length - 1]; }
-  if (b === 'pier') { viaAisle(from, -38); pts.push(...PIER_IN, { x: to.x, z: to.z }); return done(); }
-  if (b === 'sanctuary') { viaAisle(from, 3.2); pts.push({ x: 0, z: 6.4 }, { x: to.x, z: to.z }); return done(); }
-  if (b === 'gallery' || b === 'stair') {
-    viaAisle(from, 3.0);
-    pts.push({ x: 4.5, z: 3.7 }, { x: 6.5, z: 3.7 }, { x: 8.8, z: 3.2 }, { x: 10, z: 1.5 }, { x: 10, z: 5.7 }, { x: NAVE_LANE, z: to.z }, { x: to.x, z: to.z });
-    return done();
-  }
-  if (b !== 'hall' && DOORZ[b] != null) { viaAisle(from, DOORZ[b]); pts.push({ x: -5.4, z: DOORZ[b] }, { x: -9.2, z: DOORZ[b] }, { x: to.x, z: to.z }); return done(); }
-  viaAisle(from, to.z);
-  pts.push({ x: to.x, z: to.z });
-  done();
+  const a = roomOf(P.x, P.z), b = roomOf(to.x, to.z);
+  const pts = planRoute({ x: P.x, z: P.z, to, fromRoom: a, toRoom: b, doors: DOORZ, pierIn: PIER_IN, naveLane: NAVE_LANE });
+  path = pts; path.stuck = 0; path.face = face; path.piece = piece || null;
+  const end = pts[pts.length - 1], far = end && (roomOf(end.x, end.z) !== a || Math.hypot(end.x - P.x, end.z - P.z) > 9);
+  if (far && profile.get().travel !== 'walk') teleport(end);
 }
 function visit(p) {
   if (current && current !== p && current.exT > 0) setExploded(current, false);
@@ -1218,6 +1177,35 @@ function visitWyld(v) {
   closeCard(); champ = null;
   route(v.view, v.face, null); path.wyld = v;
   document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === 'wyld'));
+}
+
+// A brand room product (Nike shoe today, any gear tomorrow): walk over, face it, open its card.
+function visitBrand(p) {
+  if (current && current.exT > 0) setExploded(current, false);
+  closeCard(); champ = null;
+  loadBrand();
+  route(p.view, p.face, null); path.brand = p;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.room === p.room));
+}
+function openBrand(p) {
+  $('cYears').textContent = `${p.brand} · ${p.year || ''}`.trim();
+  $('cName').textContent = `${p.brand} ${p.model}`;
+  $('cMat').textContent = p.sub || '';
+  $('cNote').textContent = p.text || '';
+  $('cStats').hidden = !p.stats;
+  if (p.stats) $('cStats').innerHTML = p.stats.map(([b, s]) => `<div><b>${esc(b)}</b><small>${esc(s)}</small></div>`).join('');
+  $('cMedia').innerHTML = (p.legal ? `<p class="c-view" style="opacity:.7">${esc(p.legal)}</p>` : '')
+    + (p.source ? `<a class="c-src" href="${esc(p.source)}" target="_blank" rel="noopener">Official specification ↗</a>` : '');
+  $('cActions').innerHTML = (p.buy ? `<a class="btn primary" href="${esc(p.buy)}" target="_blank" rel="noopener">Where to buy <span aria-hidden="true">→</span></a>` : '')
+    + `<button class="btn ghost" id="cBrandOut">Keep walking</button>`;
+  $('cBrandOut').onclick = () => closeCard();
+  $('card').classList.add('on'); document.body.classList.add('card-open');
+}
+function loadBrand() {
+  if (brandLoaded || !brandRooms.length) return; brandLoaded = true;
+  for (const r of brandRooms) r.spinners = spinners;
+  const bl = makeBrandLoader();
+  Promise.all(brandRooms.map(r => loadBrandRoom(r, bl))).catch(e => console.warn('brandRoom load', e));
 }
 function openWyld(v) {
   const B = WROOMDATA.bike, P2 = WROOMDATA.palette;
@@ -1481,19 +1469,21 @@ if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
+for (const r of [...brandRooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip brand" data-room="${esc(r.desc.id)}" aria-label="${esc(r.desc.name)}"><span class="n" style="background:${esc(r.desc.theme?.accent || '#c9a13b')};-webkit-background-clip:text;background-clip:text;color:transparent">${esc(r.desc.name.slice(0, 1))}</span><span><small>${r.products.length} PRODUCT${r.products.length > 1 ? 'S' : ''}</small><b>${esc(r.desc.name)}</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
 for (const w of [...atlas.wings].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip atlas" data-room="wing-${esc(w.id)}" aria-label="${esc(w.name)}: ${esc(w.sub)}"><span class="n" aria-hidden="true">${w.features?.clock ? '⏱' : '✦'}</span><span><small>UPPER FLOOR · ${atlas.rooms.filter(r => r.wing === w.id).reduce((n, r) => n + r.bikes.length + r.art.length, 0)} WORKS</small><b>${esc(w.name)}</b></span></button>`);
 for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
 // ------------------------------------------------------------------ museum map (map.js): every area, live position, tap to walk
 {
   const WORDS = Object.fromEntries((window.__ROOMS?.areas || []).map(a => [a.id, a]));
-  const AREA_COLOR = { hall: '#eadfca', sanctuary: '#d7c7e6', hween: '#f0a86c', kona: '#e2b27c', wyld: '#ffc4dd', pier: '#cfe4e2', stair: '#dcd6cb', nave: '#ece6da' };
+  const AREA_COLOR = { hall: '#eadfca', sanctuary: '#d7c7e6', hween: '#f0a86c', kona: '#e2b27c', wyld: '#ffc4dd', pier: '#cfe4e2', stair: '#dcd6cb', nave: '#ece6da', ...Object.fromEntries(brandRooms.map(r => [r.desc.id, r.desc.theme?.accent || '#c9a13b'])) };
   const R = (id, name, sub, rect, floor, color, extra = {}) => ({ id, name, sub, x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1, floor, color, ...extra });
   const areas = [
     ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), 'stair', 'nave'].map(id => {       // names from museum/world/rooms.json
       const w = WORDS[id], rect = { hall: HALL, sanctuary: SROOM, hween: HROOM, kona: ROOM, wyld: WROOM, pier: pier && { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, stair: { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, nave: { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 } }[id];
       return R(id, w?.short || id, w?.sub || '', rect, w?.floor || 'ground', AREA_COLOR[id], id === 'stair' || id === 'nave' ? { layer: 0 } : {});
     }),
+    ...brandRooms.map(r => R(r.desc.id, r.desc.name, r.desc.kicker || '', r.bounds, 'ground', r.desc.theme?.accent || '#c9a13b')),
     ...galleries.bays.map(b => R('bay-' + b.id, b.title, b.sub, { x0: 8.4, x1: 14.8, z0: b.z - 1.8, z1: b.z + 1.8 }, 'upper', b.floor, { layer: 1, ink: /^#(1|0)/.test(b.floor) ? '#fbf9f5' : '#12181d', kind: 'bay' })),
     ...galleries.rooms.map(r => R('room-' + r.id, r.name, r.sub, { x0: 16.5, x1: 25.1, z0: r.z1, z1: r.z0 }, 'upper', r.vein, { layer: 1, ink: '#12181d' })),
     ...atlas.wings.map(w => R('wing-' + w.id, w.name, w.sub, w.corridor, w.floor, w.corridor.map_color || '#c89b62', { layer: 0 })),
@@ -1506,6 +1496,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     const up = new THREE.Vector3();
     if (id === 'hall') route({ x: 0, z: -12 }, up.set(0, 1.4, -30), null);
     else if (['sanctuary', 'hween', 'pier', 'kona', 'wyld'].includes(id)) chip(id);
+    else if (brandRooms.some(r => r.desc.id === id)) { const p = brandProducts.find(x => x.room === id) || brandProducts[0]; if (p) visitBrand(p); }
     else if (id === 'stair') route({ x: 9.85, z: 2.2 }, up.set(9.85, 4, 6), null);
     else if (id === 'nave') route({ x: NAVE_LANE, z: 8 }, up.set(NAVE_LANE, UPPER + 1.6, 26), null);
     else if (id === 'atlas') go('wing-' + atlas.wings[0]?.id);
@@ -1538,6 +1529,7 @@ $('railInner').addEventListener('click', e => {
   else if (b.dataset.room === 'pier') visitPier(pier.stations[0]);
   else if (b.dataset.room === 'kona') visitChamp(champs[0]);
   else if (b.dataset.room === 'wyld') visitWyld(wyldBikes[0]);
+  else if (brandProducts.length && brandRooms.some(r => r.desc.id === b.dataset.room)) visitBrand(brandProducts.find(p => p.room === b.dataset.room) || brandProducts[0]);
   else visit(PIECES[+b.dataset.i]);
 });
 function railActive(p) {
@@ -1639,7 +1631,7 @@ function pick(x, y) {
     if (u.artPortal) return { artPortal: u.artPortal }; if (u.hween) return { hween: true }; if (u.year) return { year: u.year }; if (u.era) return { era: u.era }; if (u.finale) return { finale: u.finale };
     if (u.wingBike) return { atlas: u.wingBike }; if (u.wingSwatch) return { swatch: u.wingSwatch }; if (u.wingRef) return { ref: u.wingRef }; if (u.wingArt) return { art: u.wingArt };
     if (u.sanctuary) return { sanctuary: u.sanctuary }; if (u.gallery) return { gallery: u.gallery }; if (u.kona) return { kona: u.kona }; if (u.find) return { find: u.find };
-    if (u.info) return { info: u.info }; if (u.wyldBike) return { wyld: u.wyldBike }; if (u.piece) return { piece: u.piece, obj: h.object }; if (u.champ) return { champ: u.champ }; if (u.floor) return { point: h.point }; }
+    if (u.info) return { info: u.info }; if (u.wyldBike) return { wyld: u.wyldBike }; if (u.brandProduct) { loadBrand(); return { brand: u.brandProduct }; } if (u.piece) return { piece: u.piece, obj: h.object }; if (u.champ) return { champ: u.champ }; if (u.floor) return { point: h.point }; }
   return null;
 }
 canvas.addEventListener('pointerdown', e => {
@@ -1786,7 +1778,7 @@ function frame(now) {
     const want = Math.atan2(-fx, -fz), dyaw = ((want - P.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const wantPitch = Math.atan2(path.face.y - (P.y + EYE), Math.hypot(fx, fz));
     P.yaw += dyaw * (1 - Math.exp(-dt * 5.6)); P.pitch += (wantPitch - P.pitch) * (1 - Math.exp(-dt * 4.8));
-    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween, sa = path.sanctuary, gy = path.gallery, kn = path.kona, ax = path.atlas, ar = path.art; path = null; if (ax) openAtlas(ax); if (ar) openArt(ar); if (hw) openHween(); if (sa) openSanctuary(sa); if (gy) openGallery(gy); if (kn) openKona(kn); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
+    if (!path.length && Math.abs(dyaw) < .02) { const pc = path.piece, ch = path.champ, wy = path.wyld, pr = path.pier, hw = path.hween, sa = path.sanctuary, gy = path.gallery, kn = path.kona, ax = path.atlas, ar = path.art, br = path.brand; path = null; if (ax) openAtlas(ax); if (ar) openArt(ar); if (hw) openHween(); if (sa) openSanctuary(sa); if (gy) openGallery(gy); if (kn) openKona(kn); if (pc) openCard(pc); if (ch) openChamp(ch); if (wy) openWyld(wy); if (br) openBrand(br); if (pr) pr.kind === 'finale' ? openFinale() : openYear(pr); }
   } else if (path && !path.length) path = null;
   const k = 1 - Math.exp(-dt * 15); P.vx += (wx - P.vx) * k; P.vz += (wz - P.vz) * k;
   const nx = P.x + P.vx * dt, nz = P.z + P.vz * dt;
@@ -1796,8 +1788,7 @@ function frame(now) {
   else P.vx = P.vz = 0;
   if (following && path?.length) {                                   // a waypoint is blocked when it stops getting closer, even while we slide along a wall
     const g = path[0], d = Math.hypot(g.x - P.x, g.z - P.z);
-    if (path.goal !== g || d < path.best - .03) { path.goal = g; path.best = d; path.stuck = 0; }
-    else if ((path.stuck = (path.stuck || 0) + dt) > .6) { path.shift(); path.goal = null; path.stuck = 0; }
+    if (noteProgress(path, g, d, dt)) path.shift();
   }
   const moving = Math.hypot(P.vx, P.vz); bob += dt * moving * 3.1;
   const activeKeys = keys.has('w') || keys.has('a') || keys.has('s') || keys.has('d') || keys.has('arrowup') || keys.has('arrowdown');
@@ -1916,11 +1907,11 @@ function frame(now) {
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
-document.fonts?.ready.then(() => lettered.forEach(f => f()));
+onFontsReady();
 initAppShell();
 // progressive loading: the hall first (loadAll), then each room in the background, with a quiet status chip
 {
-  const steps = [['the WYLD Room', loadWyldBikes], ['Lava Night', loadHweenBike], ['the Sanctuary', loadSanctuaryBikes], ['the Champions room', loadKonaMachines], ['the upper floor', loadThemeBikes], ['the wings', () => atlas.load(loader)]];
+  const steps = [['the WYLD Room', loadWyldBikes], ['Lava Night', loadHweenBike], ['the Sanctuary', loadSanctuaryBikes], ['the Champions room', loadKonaMachines], ['the upper floor', loadThemeBikes], ['the wings', () => atlas.load(loader)], ['the brand rooms', loadBrand]];
   const chip = $('bgload'), say = t => { if (chip) { chip.hidden = false; chip.querySelector('span').textContent = t; } };
   let chain = loadAll();
   let offline = false;

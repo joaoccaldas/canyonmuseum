@@ -13,6 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* Studio. MOBILE is the default (bottom sheet). WEB overrides: @media (min-width:900px) at the end of this block.
+   Museum hall: web/styles/hall-web.css and hall-mobile.css. KONA shell phone: web/styles/shell-mobile.css */
 *{box-sizing:border-box;margin:0;padding:0}[hidden]{display:none!important}
 :root{--sand:#f4efe7;--paper:#fbf9f5;--ink:#12181d;--muted:#5f6a72;--faint:#8e979d;--line:rgba(18,24,29,.11);--reef:#138a8f;--lava:#e8471c;
   --serif:'Instrument Serif',Georgia,serif;--sans:'Manrope',system-ui,-apple-system,sans-serif;--safe-b:env(safe-area-inset-bottom);--sheet:46dvh}
@@ -165,7 +167,8 @@ body.dreaming #dreamTitle.on{opacity:1}
     <div class="c-stats" id="cStats"></div><div class="c-actions" id="cActions"></div><div id="cMedia"></div></aside>
 </section>
 <div id="toast" role="status" aria-live="polite"></div>
-<script>window.__PRODUCTS=__PRODUCTS__;window.__SKINS=__SKINS__;window.__FILMS=__FILMS__;window.__ROOMS=__ROOMS__;window.__WYLDROOM=__WYLDROOM__;window.__EVENTS=__EVENTS__;window.__ATLAS_METHOD=__ATLAS_METHOD__;</script>
-<script>__APP__</script>
+<script src="app/museum-data.js"></script>
+<script src="app/studio-catalog.js"></script>
+<script src="app/studio.js"></script>
 </body>
 </html>
