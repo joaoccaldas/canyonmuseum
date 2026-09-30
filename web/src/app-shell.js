@@ -74,6 +74,7 @@ export function initAppShell() {
       return;
     }
     if (s.action !== 'instructions' || !sheet) return;
+    sheet.hidden = false;
     const iosRow = sheet.querySelector('[data-ios]');
     const pwaRow = sheet.querySelector('[data-pwa]');
     const apk = sheet.querySelector('[data-apk]');
@@ -89,7 +90,6 @@ export function initAppShell() {
       if (small) small.textContent = installInstructions(s.kind);
     }
     if (apk) apk.hidden = true;
-    sheet.hidden = false;
   });
 
   sheet?.querySelector('.close')?.addEventListener('click', () => { sheet.hidden = true; });
