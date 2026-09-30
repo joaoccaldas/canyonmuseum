@@ -1,0 +1,57 @@
+name: Build Setup Slot Compatibility V0
+
+on:
+  push:
+    branches: [feat/setup-slot-compatibility-v0-20260930]
+    paths-ignore:
+      - 'sw.js'
+      - 'app/app-manifest.json'
+      - 'index.html'
+      - 'Studio.html'
+      - 'Experiences.html'
+      - 'Canyon_Collection.html'
+      - 'Speedmax_*_Museum.html'
+      - 'web/dist/**'
+      - 'docs/ROOMS.md'
+      - 'llms.txt'
+      - 'llms-full.txt'
+      - 'robots.txt'
+      - 'sitemap.xml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/setup-slot-compatibility-v0-20260930
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: web
+      - run: node tools/build_pages.mjs
+      - run: node tools/build_app.mjs
+      - run: npm test
+        working-directory: web
+      - run: node tools/validate-bikes.mjs
+      - name: Mobile Studio audit
+        run: |
+          python3 -m http.server 8754 --bind 127.0.0.1 >/tmp/canyon-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 2
+          CHROME_PATH="$(which google-chrome || which google-chrome-stable || which chromium)" node web/studio-phone-audit.mjs http://127.0.0.1:8754/
+      - name: Commit deterministic outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add museum/catalog/products.json docs/ROOMS.md ./*.html web/dist/*.html sw.js app/app-manifest.json robots.txt sitemap.xml llms.txt llms-full.txt
+          if git diff --cached --quiet; then echo "outputs current"; exit 0; fi
+          git commit -m "build(app): build and seal Setup Slot Compatibility V0"
+          git push origin HEAD:feat/setup-slot-compatibility-v0-20260930
