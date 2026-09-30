@@ -178,3 +178,15 @@ html[data-theme="dark"]{
 #updateBar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #updateBar button,#updateBar a.go{background:linear-gradient(100deg,#ff3d8e,#5fd8d3);color:#12181d;font-weight:700;border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center}
 #updateBar .later{background:rgba(255,255,255,.12);color:#fbf9f5;width:36px;padding:0;justify-content:center}
+
+/* Home → Race Self preview. The shell remains navigation authority; no 3D loads here. */
+.home-race-self{overflow:hidden}
+.race-self-preview{width:100%;display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:14px;align-items:center;min-height:92px;padding:12px 0;border:0;background:transparent;color:inherit;text-align:left}
+.race-self-preview-avatar{position:relative;width:64px;height:72px;border-radius:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--avatar) 12%,var(--kona-surface-strong)),var(--kona-surface-strong));border:1px solid var(--kona-line);overflow:hidden}
+.race-self-preview-avatar i{position:absolute;display:block;background:var(--avatar)}
+.race-self-preview-avatar .head{width:20px;height:20px;left:22px;top:10px}
+.race-self-preview-avatar .body{width:28px;height:25px;left:18px;top:32px}
+.race-self-preview-avatar .leg{width:10px;height:19px;top:55px}.race-self-preview-avatar .leg.l{left:20px}.race-self-preview-avatar .leg.r{right:20px}
+.race-self-preview-copy{display:grid;gap:4px;min-width:0}.race-self-preview-copy b{font:400 24px/1 var(--serif)}.race-self-preview-copy small{font:500 11.5px/1.4 var(--sans);color:var(--kona-muted)}
+.race-self-preview-go{font:750 11px/1 var(--sans);color:var(--kona-accent);white-space:nowrap}
+@media(max-width:420px){.race-self-preview{grid-template-columns:62px minmax(0,1fr);}.race-self-preview-go{grid-column:2}.race-self-preview-copy b{font-size:22px}}
