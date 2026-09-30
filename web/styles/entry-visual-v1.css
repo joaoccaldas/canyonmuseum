@@ -1,0 +1,69 @@
+/* Landing + onboarding visual implementation V1.
+   This is a real runtime surface, not a concept-board stylesheet. */
+#intro.kona-entry{
+  isolation:isolate;
+  background:
+    linear-gradient(180deg,rgba(5,15,20,.12) 0%,rgba(5,15,20,.18) 28%,rgba(5,15,20,.78) 72%,rgba(5,15,20,.96) 100%),
+    url('assets/kona-years/kailua-bay.jpg') center 48%/cover no-repeat;
+}
+#intro.kona-entry::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,15,20,.28),transparent 58%)}
+#intro.kona-entry .intro-inner{width:min(100%,620px);margin-right:auto}
+#intro.kona-entry .eyebrow{color:#72d3d6}
+#intro.kona-entry h1{color:#f8f5ef;text-shadow:0 4px 28px rgba(0,0,0,.18);text-wrap:balance}
+#intro.kona-entry h1 em{background:none;color:#ff6427;-webkit-text-fill-color:#ff6427}
+#intro.kona-entry .lede{color:#f3f2ed;max-width:34rem;font-weight:500}
+#intro.kona-entry .kona-count{color:#ff7b38}
+#intro.kona-entry .kona-note{color:#d8e0e2;max-width:32rem}
+#intro.kona-entry .cta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#intro.kona-entry .btn.primary{background:#f8f5ef;color:#11171c;border-color:#f8f5ef;box-shadow:0 16px 44px rgba(0,0,0,.18)}
+#intro.kona-entry .btn.text{color:#f8f5ef;border-color:rgba(255,255,255,.26);background:rgba(7,17,22,.24);backdrop-filter:blur(12px)}
+#intro.kona-entry #entryInstall{color:#f8f5ef;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.42);border-radius:0;padding-inline:2px;min-height:44px}
+
+/* Onboarding becomes the same world, not a second flat product. */
+#intro.quest-active{
+  background:
+    linear-gradient(180deg,rgba(7,17,22,.92),rgba(7,17,22,.97)),
+    url('assets/kona-years/kailua-bay.jpg') center/cover no-repeat;
+  color:#f8f5ef;
+}
+#intro.quest-active .intro-inner{width:min(100%,600px)}
+#intro.quest-active .eyebrow{font:400 clamp(38px,7vw,58px)/.98 var(--serif,Georgia,serif);letter-spacing:-.02em;text-transform:none;color:#f8f5ef}
+#intro.quest-active .quest-progress{color:#aebbc1}
+#intro.quest-active .quest-progress i{background:rgba(255,255,255,.16)}
+#intro.quest-active .quest-progress i::after{background:#ff6427}
+#intro.quest-active .kona-intents{display:grid;gap:10px;margin:22px 0 12px}
+#intro.quest-active .quest-choice{
+  width:100%;min-height:58px;text-align:left;padding:0 18px;border-radius:16px;
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.055);color:#f8f5ef;
+  font:650 15px/1.2 var(--sans,system-ui);transition:.18s ease;
+}
+#intro.quest-active .quest-choice:is(:hover,:focus-visible,.on){border-color:#ff6427;background:rgba(255,100,39,.13);transform:translateY(-1px)}
+#intro.quest-active .quest-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
+#intro.quest-active .btn.text{color:#dbe2e5;border-color:transparent;background:transparent}
+
+/* Reveal: one payoff, one dominant action. */
+#intro.quest-active #konaQuest .reveal-hero{
+  aspect-ratio:16/9;border-radius:22px;margin:18px 0;overflow:hidden;
+  background:linear-gradient(180deg,transparent,rgba(7,17,22,.7)),url('assets/share/collection.jpg') center/cover no-repeat;
+  box-shadow:0 24px 70px rgba(0,0,0,.28)
+}
+#intro.quest-active #konaQuest .reveal-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin:16px 0 22px}
+#intro.quest-active #konaQuest .reveal-meta span{color:#aebbc1;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
+#intro.quest-active #konaQuest .reveal-meta b{display:block;color:#f8f5ef;font-size:15px;letter-spacing:0;text-transform:none;margin-top:4px}
+#intro.quest-active #enterKona{width:100%;background:#ff6427;color:#fff;border-color:#ff6427}
+#intro.quest-active #shareSelf,#intro.quest-active #saveSelf{width:auto}
+#intro.quest-active .kona-note{color:#aebbc1}
+
+@media(max-width:760px),(pointer:coarse){
+  #intro.kona-entry{padding:0 20px calc(22px + env(safe-area-inset-bottom));background-position:58% center}
+  #intro.kona-entry::after{background:linear-gradient(180deg,rgba(5,15,20,.05),rgba(5,15,20,.2) 38%,rgba(5,15,20,.92) 78%)}
+  #intro.kona-entry h1{font-size:clamp(50px,14.5vw,70px);line-height:.88;margin:12px 0 18px}
+  #intro.kona-entry .lede{font-size:15px;line-height:1.45}
+  #intro.kona-entry .cta{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:8px}
+  #intro.kona-entry .cta .btn.primary{grid-column:1/-1;min-height:58px}
+  #intro.kona-entry .cta .btn.text{min-height:46px}
+  #intro.kona-entry .kona-note{font-size:12px;line-height:1.45;margin:10px 0 0}
+  #intro.quest-active .intro-inner{padding:calc(54px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom))}
+  #intro.quest-active .eyebrow{font-size:42px}
+  #intro.quest-active .quest-choice{min-height:60px}
+}
