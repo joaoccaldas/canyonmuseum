@@ -146,6 +146,23 @@
         },
         "additionalProperties": false
       }
+    },
+    {
+      "name": "get_product_experience",
+      "description": "Get the public product plus provenance, maintenance, vendor options, stable part references and graph context.",
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
     }
   ],
   "security": {
