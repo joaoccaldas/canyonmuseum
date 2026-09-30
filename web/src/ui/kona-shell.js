@@ -34,11 +34,11 @@ export function initKonaShell({ profile, settings, enter }) {
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
     '</div>'+
     '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
-      '<button type="button" data-tab="home">'+icon('now')+'<span>${t('nav.home',locale)}</span></button>'+
-      '<button type="button" data-tab="discover">'+icon('explore')+'<span>${t('nav.discover',locale)}</span></button>'+
-      '<a href="Studio.html#setup" data-tab="garage">'+icon('setup')+'<span>${t('nav.garage',locale)}</span></a>'+
-      '<button type="button" data-tab="plan">'+icon('plan')+'<span>${t('nav.plan',locale)}</span></button>'+
-      '<button type="button" data-tab="me">'+icon('me')+'<span>${t('nav.me',locale)}</span></button>'+
+      '<button type="button" data-tab="home">'+icon('now')+'<span>'+esc(t('nav.home',locale))+'</span></button>'+
+      '<button type="button" data-tab="discover">'+icon('explore')+'<span>'+esc(t('nav.discover',locale))+'</span></button>'+
+      '<a href="Studio.html#setup" data-tab="garage">'+icon('setup')+'<span>'+esc(t('nav.garage',locale))+'</span></a>'+
+      '<button type="button" data-tab="plan">'+icon('plan')+'<span>'+esc(t('nav.plan',locale))+'</span></button>'+
+      '<button type="button" data-tab="me">'+icon('me')+'<span>'+esc(t('nav.me',locale))+'</span></button>'+
     '</nav>';
   document.body.append(shell);
 
@@ -58,11 +58,11 @@ export function initKonaShell({ profile, settings, enter }) {
       '<section class="kona-hero-card"><small>IRONMAN WORLD CHAMPIONSHIP · '+esc(event.location||'Kailua-Kona, Hawaiʻi')+'</small>'+
       '<h3>'+(raceDays==null?'Kona awaits':raceDays===0?'Race day':raceDays+' days to race day')+'</h3>'+
       '<p>'+(event.date?esc(fmtDate(event.date)):'2026')+' · '+esc(event.venue||'Kailua Pier')+'</p>'+
-      '<button class="kona-primary" data-enter>${t('home.explore',locale)} <span>→</span></button></section>'+
-      '<section class="kona-section"><div class="kona-section-head"><h3>${t('home.next',locale)}</h3><small>Official 2026 sources</small></div><div class="kona-list">'+expo+
+      '<button class="kona-primary" data-enter>'+esc(t('home.explore',locale))+' <span>→</span></button></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>'+esc(t('home.next',locale))+'</h3><small>Official 2026 sources</small></div><div class="kona-list">'+expo+
       '<article><i>Setup</i><div><b>Build your Kona setup</b><span>Bike today. Wheels, helmet and shoes plug into the same setup.</span></div><a href="Studio.html#setup">Open →</a></article>'+
       '<article><i>Explore</i><div><b>Walk the collection</b><span>Bikes, engineering, Kona stories and hidden rooms.</span></div></article></div></section>'+
-      '<section class="kona-section"><div class="kona-section-head"><h3>${t('home.start',locale)}</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
+      '<section class="kona-section"><div class="kona-section-head"><h3>'+esc(t('home.start',locale))+'</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
   }
@@ -73,8 +73,8 @@ export function initKonaShell({ profile, settings, enter }) {
     const days=week.map(x=>'<article><time>'+esc(fmtDate(x.date))+'</time><div><b>IRONMAN Expo</b><span>'+esc(x.start)+'–'+esc(x.end)+' · '+esc(x.venue)+'</span></div></article>').join('');
     const cards=places.map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span>'+(p.visit_with_care?'<em>Visit with care</em>':'')+'</article>').join('');
     body.innerHTML=
-      '<section class="kona-section first"><div class="kona-section-head"><h3>${t('plan.week',locale)}</h3><small>2026 verified</small></div><div class="kona-timeline">'+days+'</div></section>'+
-      '<section class="kona-section"><div class="kona-section-head"><h3>${t('plan.places',locale)}</h3><small>Local-first planning</small></div><div class="kona-place-grid">'+cards+'</div></section>'+
+      '<section class="kona-section first"><div class="kona-section-head"><h3>'+esc(t('plan.week',locale))+'</h3><small>2026 verified</small></div><div class="kona-timeline">'+days+'</div></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>'+esc(t('plan.places',locale))+'</h3><small>Local-first planning</small></div><div class="kona-place-grid">'+cards+'</div></section>'+
       '<p class="kona-source-note">Operational race information is shown only from current 2026 official sources. Older athlete guides and course maps remain reference-only.</p>';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
   }
