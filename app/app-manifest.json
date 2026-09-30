@@ -1,5 +1,5 @@
 {
- "version": "727aad3759af",
+ "version": "4f525aece582",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -20,13 +20,13 @@
  ],
  "files": {
   "index.html": "PVP845v4Qqq5D4HUOHW2BOHGp0NkARsrC+Eid9mcOhg=",
-  "app/kona-core.js": "xI0kE2LrVZtNJBDlVKREmUInfcWyyzbaRIqdUih/nUg=",
+  "app/kona-core.js": "1eAdi3niQfvsJe6zJ8IEPTnqBQdc9TVYc7b11sQ29oQ=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
   "web/styles/entry-visual-v2.css": "psli1G5AtVc+VVkop+LkjFnLmIeEsm551aEE62VdK5g=",
   "web/styles/system.css": "W9nYO0v0i8IKgFuOvc/Z/7cUzmSjI+GTbwTVgkjA7eY=",
-  "web/styles/shell-mobile.css": "yvH+YjRO/pGm051zNGMwdJ6B9Hh6QDANzYgIecRHPrA=",
+  "web/styles/shell-mobile.css": "E1WXhPeAoDWYCvReDJ+hHMY1d932l8r+W2tZgfYih2s=",
   "brand/tokens.css": "IHZqSUIlqEIyr0kMjDBoOQV+N1S9tsUaWMLcryuufkI=",
   "brand/themes.css": "Hhov5kE9vhLxeEzXh8a0Ybe0bdQ3LPnC1sxOpOZvrHo=",
   "brand/artifacts.css": "eFVVXE91n+Pf8sBFwoFhdF13k9k1Adq8NN/gdKfWyUg=",
@@ -38,7 +38,7 @@
   "app/world-shell.html": "TTf6z6pUXZoR+AeCTJZkEptRjff7sNgSZzs4ITcluJM=",
   "web/styles/hall-web.css": "ze43K5WFXGX9wVXMw67RUVNzrEw+3rXLGZMYKtR8+aw=",
   "web/styles/hall-mobile.css": "C8ZplQkaKuAvGYJxcdGk/36KnKHqyBaDpG5fbXvUzsM=",
-  "app/race-self-stage.js": "XO9U0mXF/tQ2hbHt6+7K0LssPr95dqsQ8Dq9moWvYOo=",
+  "app/race-self-stage.js": "XaxHfzvGbpzAOReVk2GOYAtlRWm3iZ/TA5fg3CmN/AA=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
   "app/hall.js": "8rIzvNUW3k0Agezxg3Pl0g6xM064nJOp+xpyRC1GnaY=",
