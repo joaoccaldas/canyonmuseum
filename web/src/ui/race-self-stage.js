@@ -7,9 +7,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
 
 function mat(color,roughness=.72){ return new THREE.MeshStandardMaterial({color,roughness,metalness:.02}); }
-function capsule(radius,length,color){
-  return new THREE.Mesh(new THREE.CapsuleGeometry(radius,length,8,16),mat(color));
-}
 function proceduralAvatar(styleInput={}){
   const style=normaliseAvatarStyle(styleInput);
   const g=new THREE.Group();
