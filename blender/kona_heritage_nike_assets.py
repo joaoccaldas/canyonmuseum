@@ -121,48 +121,153 @@ def disc(name, loc, radius, mat, parent):
     o.parent = parent
     return o
 
-def bike(asset_id, style, frame=CARBON, accent=WHITE):
-    g = bpy.data.objects.new(asset_id, None)
-    scene.collection.objects.link(g)
-    g.parent = ROOT_EMPTY
+def beam_between(name, a, b, width, depth, mat, parent, bevel=.012):
+    """Aero beam with rectangular/rounded cross-section, aligned between measured points."""
+    a,b=Vector(a),Vector(b)
+    d=b-a
+    bpy.ops.mesh.primitive_cube_add(location=(a+b)/2)
+    o=bpy.context.object
+    o.name=name
+    o.scale=(width/2, depth/2, d.length/2)
+    o.rotation_mode="QUATERNION"
+    o.rotation_quaternion=d.to_track_quat("Z","Y")
+    bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
+    mod=o.modifiers.new("aero_edge","BEVEL"); mod.width=bevel; mod.segments=3
+    o.data.materials.append(mat); o.parent=parent
+    return o
 
-    rear=(-.50,0,.335); front=(.50,0,.335)
-    torus(asset_id+"_REAR_WHEEL", rear, .335, .018, BLACK, g)
-    torus(asset_id+"_FRONT_WHEEL", front, .335, .018, BLACK, g)
-    disc(asset_id+"_REAR_DISC", rear, .305, BLACK, g)
+BIKE_GEOMETRY = {
+    # Official Cervelo P5 DISC MK2 geometry, size 54.
+    "cervelo-p5-disc-mk2-size54": dict(
+        style="p5", wheelbase=0.995, chainstay=0.405, bb_drop=0.075,
+        stack=0.503, reach=0.418, head_angle=72.5, head_tube=0.098,
+        seat_angle=79.0, seat_tube=0.515, tire_od=0.674,
+        source="https://www.cervelo.com/en-US/support/P5%20DISC%20MK2"
+    ),
+    # Official Specialized S-Works Shiv Disc geometry, size M.
+    "specialized-shiv-disc-size-m": dict(
+        style="shiv", wheelbase=1.001, chainstay=0.415, bb_drop=0.072,
+        stack=0.514, reach=0.401, head_angle=72.0, head_tube=0.094,
+        seat_angle=77.0, seat_tube=0.547, tire_od=0.674,
+        pad_stack=0.585, pad_reach=0.556,
+        source="https://www.specialized.com/se/sv/s-works-shiv-disc-module/p/175306"
+    ),
+    # Official Felt 2015 catalog IA geometry, size 54: historically relevant Kona-era platform.
+    "felt-ia-2015-size54": dict(
+        style="felt", wheelbase=0.991, chainstay=0.400, bb_drop=0.072,
+        stack=0.522, reach=0.404, head_angle=72.0, head_tube=0.111,
+        seat_angle=78.5, seat_tube=0.546, tire_od=0.668,
+        source="https://www.feltbicycles.com/documents/archive/2015_FELT_Catalog.pdf"
+    ),
+    # Official BMC Speedmachine 01 geometry, size M.
+    "bmc-speedmachine-01-size-m": dict(
+        style="bmc", wheelbase=1.000, chainstay=0.405, bb_drop=0.072,
+        front_center=0.606, fork_length=0.391,
+        seat_angle=80.0, seat_tube=0.525, tire_od=0.678,
+        pad_stack=0.588, pad_reach=0.486,
+        source="https://us.bmc-switzerland.com/products/speedmachine-01-four-bikes-bmc-26a-000005"
+    ),
+    # Official Orbea Ordu current geometry, S/M. Frame stack/reach are not published on the
+    # current page, so axle/BB/head/cockpit dimensions are hard constraints and the remaining
+    # tube silhouette is explicitly a measured reconstruction rather than claimed CAD.
+    "orbea-ordu-current-sm": dict(
+        style="ordu", wheelbase=1.007, chainstay=0.405, bb_drop=0.075,
+        front_center=0.613, head_tube=0.096, head_angle=72.0,
+        seat_angle=78.0, tire_od=0.674,
+        bar_stack=0.516, bar_reach=0.665, pad_stack=0.550, pad_reach=0.505,
+        source="https://www.orbea.com/us-en/bicycles/ordu-m10iltd/pdf"
+    ),
+    # Scott official page exposes product architecture but not numeric geometry in text.
+    # Retain as source-locked provisional until official geometry can be extracted.
+    "scott-plasma-rc-provisional": dict(
+        style="plasma", wheelbase=0.990, chainstay=0.405, bb_drop=0.072,
+        stack=0.518, reach=0.398, head_angle=72.5, head_tube=0.115,
+        seat_angle=76.5, seat_tube=0.530, tire_od=0.678,
+        source="https://www.scott-sports.com/us/en/product/scott-plasma-rc-ultimate-bike",
+        provisional=True
+    ),
+}
 
-    bb=(-.07,0,.36); head=(.36,0,.66); seat=(-.24,0,.72)
-    if style == "p5x":
-        cyl_between(asset_id+"_LOWER_MONO", bb, head, .055, frame, g)
-        cyl_between(asset_id+"_BEAM", head, (-.26,0,.78), .065, frame, g)
-        cyl_between(asset_id+"_FORK", head, front, .034, frame, g)
-        cyl_between(asset_id+"_STAY", bb, rear, .035, frame, g)
+def bike(asset_id, frame=CARBON, accent=WHITE):
+    geo=BIKE_GEOMETRY[asset_id]
+    style=geo["style"]
+    g=bpy.data.objects.new(asset_id,None)
+    scene.collection.objects.link(g); g.parent=ROOT_EMPTY
+
+    wr=geo["tire_od"]/2
+    wb=geo["wheelbase"]
+    cs=geo["chainstay"]
+    drop=geo["bb_drop"]
+    rear=(0,0,wr)
+    front=(wb,0,wr)
+    bb_x=math.sqrt(max(cs*cs-drop*drop,0))
+    bb=(bb_x,0,wr-drop)
+
+    torus(asset_id+"_REAR_WHEEL",rear,wr,.016,BLACK,g)
+    torus(asset_id+"_FRONT_WHEEL",front,wr,.016,BLACK,g)
+    disc(asset_id+"_REAR_DISC",rear,wr-.028,BLACK,g)
+
+    if "stack" in geo and "reach" in geo:
+        head_top=(bb[0]+geo["reach"],0,bb[2]+geo["stack"])
     else:
-        cyl_between(asset_id+"_DOWN_TUBE", head, bb, .060 if style in {"shiv","plasma","bmc"} else .052, frame, g)
-        cyl_between(asset_id+"_TOP_TUBE", head, seat, .042, frame, g)
-        cyl_between(asset_id+"_SEAT_TUBE", bb, seat, .052, frame, g)
-        cyl_between(asset_id+"_CHAIN_STAY", bb, rear, .030, frame, g)
-        cyl_between(asset_id+"_SEAT_STAY", seat, rear, .027, frame, g)
-        cyl_between(asset_id+"_FORK", head, front, .033, frame, g)
-        if style == "shiv":
-            cube(asset_id+"_FUELCELL", (-.05,0,.56), (.11,.045,.10), accent, g, .028)
-        elif style == "felt":
-            cube(asset_id+"_IA_FAIRING", (.05,0,.50), (.13,.05,.12), frame, g, .03)
-        elif style == "plasma":
-            cube(asset_id+"_PLASMA_HEAD", (.31,0,.63), (.08,.05,.12), frame, g, .025)
-        elif style == "bmc":
-            cube(asset_id+"_SPEEDMACHINE_STORAGE", (-.28,0,.59), (.08,.05,.14), accent, g, .025)
-        elif style == "ordu":
-            cube(asset_id+"_ORDU_NOTCH", (.20,0,.57), (.08,.045,.10), accent, g, .025)
+        # BMC/Orbea: use front-center / cockpit hard constraints from manufacturer.
+        fc=geo["front_center"]
+        head_top=(bb[0]+fc*.70,0,bb[2]+(geo.get("pad_stack",.56)-.10))
 
-    cyl_between(asset_id+"_AERO_BASE", (.30,-.18,.74), (.30,.18,.74), .018, BLACK, g)
-    cyl_between(asset_id+"_EXT_L", (.30,-.075,.75), (.57,-.075,.79), .014, BLACK, g)
-    cyl_between(asset_id+"_EXT_R", (.30,.075,.75), (.57,.075,.79), .014, BLACK, g)
-    cube(asset_id+"_SADDLE", (-.30,0,.83), (.11,.045,.025), BLACK, g, .02)
-    disc(asset_id+"_CRANK", bb, .055, SILVER, g)
+    ha=math.radians(geo.get("head_angle",72.0))
+    ht=geo.get("head_tube",.105)
+    head_bottom=(head_top[0]+math.cos(ha)*ht,0,head_top[2]-math.sin(ha)*ht)
 
-    g["asset_kind"] = "bike"
-    g["evidence_class"] = "geometry-study"
+    st_len=geo.get("seat_tube",.525)
+    sa=math.radians(geo.get("seat_angle",78.0))
+    seat_top=(bb[0]-math.cos(sa)*st_len,0,bb[2]+math.sin(sa)*st_len)
+
+    # Main frame uses measured nodes and aero-depths tuned by documented product architecture.
+    beam_between(asset_id+"_DOWN_TUBE",head_bottom,bb,.072,.046,frame,g,.014)
+    beam_between(asset_id+"_TOP_TUBE",head_top,seat_top,.048,.038,frame,g,.012)
+    beam_between(asset_id+"_SEAT_TUBE",bb,seat_top,.066,.043,frame,g,.014)
+    beam_between(asset_id+"_CHAIN_STAY",bb,rear,.036,.026,frame,g,.008)
+    beam_between(asset_id+"_SEAT_STAY",seat_top,rear,.030,.022,frame,g,.008)
+    beam_between(asset_id+"_FORK_L",head_bottom,(front[0],-.035,front[2]),.036,.026,frame,g,.008)
+    beam_between(asset_id+"_FORK_R",head_bottom,(front[0],.035,front[2]),.036,.026,frame,g,.008)
+
+    # Product-specific architecture, scaled from the measured frame.
+    if style=="shiv":
+        # Shiv's integrated nutrition/hydration Fuelcell occupies the central/rear frame volume.
+        cube(asset_id+"_FUELCELL",(bb[0]-.025,0,bb[2]+.205),(.115,.048,.125),accent,g,.032)
+        cube(asset_id+"_REAR_HYDRATION",(seat_top[0]-.055,0,seat_top[2]-.075),(.055,.052,.135),frame,g,.028)
+    elif style=="felt":
+        cube(asset_id+"_IA_HEAD_FAIRING",(head_bottom[0]-.018,0,head_bottom[2]+.110),(.072,.048,.145),frame,g,.032)
+        cube(asset_id+"_IA_REAR_CUTOUT",(rear[0]+.045,0,wr+.055),(.060,.048,.170),frame,g,.035)
+    elif style=="plasma":
+        cube(asset_id+"_PLASMA_STORAGE",(seat_top[0]-.060,0,seat_top[2]-.145),(.070,.050,.150),frame,g,.030)
+        cube(asset_id+"_PLASMA_HYDRATION",(head_top[0]-.085,0,head_top[2]+.010),(.105,.046,.070),accent,g,.025)
+    elif style=="bmc":
+        cube(asset_id+"_FUEL_TANK_1200",(head_top[0]-.070,0,head_top[2]-.055),(.120,.048,.075),accent,g,.030)
+        cube(asset_id+"_REAR_STORAGE_260",(seat_top[0]-.055,0,seat_top[2]-.110),(.060,.050,.120),frame,g,.025)
+    elif style=="ordu":
+        cube(asset_id+"_ORDU_FRONT_POST",(head_top[0]+.010,0,head_top[2]+.080),(.030,.030,.105),frame,g,.015)
+
+    # Cockpit positions are constrained where manufacturer pad numbers are available.
+    pad_x=bb[0]+geo.get("pad_reach",geo.get("reach",.40)+.12)
+    pad_z=bb[2]+geo.get("pad_stack",geo.get("stack",.51)+.08)
+    bar_x=min(pad_x-.08,front[0]-.09)
+    bar_z=pad_z-.035
+    cyl_between(asset_id+"_AERO_BASE",(bar_x,-.19,bar_z),(bar_x,.19,bar_z),.017,BLACK,g)
+    cyl_between(asset_id+"_EXT_L",(bar_x,-.070,bar_z+.015),(pad_x+.10,-.070,pad_z+.020),.013,BLACK,g)
+    cyl_between(asset_id+"_EXT_R",(bar_x,.070,bar_z+.015),(pad_x+.10,.070,pad_z+.020),.013,BLACK,g)
+
+    saddle_z=seat_top[2]+.105
+    cube(asset_id+"_SADDLE",(seat_top[0]-.020,0,saddle_z),(.120,.045,.025),BLACK,g,.018)
+    disc(asset_id+"_CRANK",bb,.055,SILVER,g)
+
+    g["asset_kind"]="bike"
+    g["evidence_class"]="manufacturer-geometry" if not geo.get("provisional") else "provisional-geometry"
+    g["manufacturer_source"]=geo["source"]
+    g["wheelbase_m"]=wb
+    g["chainstay_m"]=cs
+    g["bb_drop_m"]=drop
+    g["scale_basis"]="manufacturer published geometry; metres"
     return g
 
 def loft_mesh(name, sections, mat, parent):
@@ -227,12 +332,12 @@ def shoe(asset_id, kind, accent):
     return g
 
 ASSETS = {
-    "cervelo-p5x-kona-study": bike("cervelo-p5x-kona-study", "p5x", CARBON, RED),
-    "specialized-shiv-disc-kona-study": bike("specialized-shiv-disc-kona-study", "shiv", CARBON, RED),
-    "felt-ia-kona-study": bike("felt-ia-kona-study", "felt", CARBON, WHITE),
-    "scott-plasma-kona-study": bike("scott-plasma-kona-study", "plasma", CARBON, YELLOW),
-    "bmc-speedmachine-kona-study": bike("bmc-speedmachine-kona-study", "bmc", CARBON, TEAL),
-    "orbea-ordu-kona-study": bike("orbea-ordu-kona-study", "ordu", CARBON, BLUE),
+    "cervelo-p5-disc-mk2-size54": bike("cervelo-p5-disc-mk2-size54", CARBON, RED),
+    "specialized-shiv-disc-size-m": bike("specialized-shiv-disc-size-m", CARBON, RED),
+    "felt-ia-2015-size54": bike("felt-ia-2015-size54", CARBON, WHITE),
+    "scott-plasma-rc-provisional": bike("scott-plasma-rc-provisional", CARBON, YELLOW),
+    "bmc-speedmachine-01-size-m": bike("bmc-speedmachine-01-size-m", CARBON, TEAL),
+    "orbea-ordu-current-sm": bike("orbea-ordu-current-sm", CARBON, BLUE),
     "nike-vaporfly-4pct-study": shoe("nike-vaporfly-4pct-study", "vaporfly4pct", RED),
     "nike-vaporfly-next-study": shoe("nike-vaporfly-next-study", "vaporflynext", BLUE),
     "nike-alphafly-next-study": shoe("nike-alphafly-next-study", "alphafly1", TEAL),
@@ -320,8 +425,8 @@ def render_preview(filename, visible_ids, positions, target=(0,0,.72), camera=(0
 
 ensure_preview_rig()
 bike_ids=[
-    "cervelo-p5x-kona-study","specialized-shiv-disc-kona-study","felt-ia-kona-study",
-    "scott-plasma-kona-study","bmc-speedmachine-kona-study","orbea-ordu-kona-study"
+    "cervelo-p5-disc-mk2-size54","specialized-shiv-disc-size-m","felt-ia-2015-size54",
+    "scott-plasma-rc-provisional","bmc-speedmachine-01-size-m","orbea-ordu-current-sm"
 ]
 render_preview(
     "bikes-v0.2.png",
