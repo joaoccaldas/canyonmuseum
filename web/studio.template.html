@@ -113,6 +113,10 @@ body.dreaming #dreamTitle.on{opacity:1}
 .card-facts b.P{background:#d5ecea}.card-facts b.F{background:#f6e6c8}.card-facts b.I{background:#ece6f6}.card-facts b.G{background:#fde2ec}
 .card-note{margin-top:10px;font-size:12px;color:var(--muted)}.card-note summary{font-weight:600;color:var(--ink);cursor:pointer}.card-note p{margin-top:6px;line-height:1.6}
 .src{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.7}.src a{color:var(--reef);font-weight:600}
+/* My Kona Setup V0 */
+.setup-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 14px}.setup-head small{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--reef);font-weight:700}.setup-head h3{font:400 30px/1 var(--serif);margin-top:4px}.setup-score{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.setup-grid{display:grid;gap:8px}.setup-slot{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px;min-height:62px;padding:10px 12px;border:1px solid var(--line);border-radius:15px;background:#fff}.setup-slot i{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--sand);font-style:normal;font-size:17px}.setup-slot b{display:block;font-size:12.5px}.setup-slot small{display:block;font-size:10.5px;color:var(--faint);margin-top:2px}.setup-slot .status{font-size:11px;font-weight:700;color:var(--reef)}.setup-slot.soon{opacity:.68}.setup-slot.soon .status{color:var(--faint)}
+.setup-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:14px}.setup-actions .btn{min-height:48px;width:100%}.setup-note{font-size:11px;line-height:1.55;color:var(--faint);margin-top:12px}
 /* desktop: the sheet becomes a side panel */
 @media (min-width:900px){
   :root{--sheet:100dvh}
@@ -151,6 +155,7 @@ body.dreaming #dreamTitle.on{opacity:1}
     <button role="tab" data-tab="paint">Paint</button>
     <button role="tab" data-tab="themes">Themes</button>
     <button role="tab" data-tab="scene">Scene</button>
+    <button role="tab" data-tab="setup">My Kona Setup</button>
     <button role="tab" data-tab="info">About</button>
   </nav>
   <div class="panel" id="panel" role="tabpanel"></div>
