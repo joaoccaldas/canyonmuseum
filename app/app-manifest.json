@@ -1,5 +1,5 @@
 {
- "version": "fb47e2da83ec",
+ "version": "fa946a1ce75a",
  "core": [
   "index.html",
   "manifest.webmanifest",
@@ -92,6 +92,8 @@
   "assets/history/src/koblenz-panoramio.jpg": "Dcq46e/Y1AYyUBQJAoe1yuGu5JsqVctrlHlzaMcAo78=",
   "assets/history/store-2008.jpg": "pL399GQo9xFnRhY82SuMav0QPcWDyVKPmJYOpKsu15k=",
   "assets/history/store-2008_n.jpg": "PSIEsDNggtKMNR9UM7gqQaGoWWNRriHOddMI1XOxHyI=",
+  "assets/kona-heritage/bikes/cervelo-p5-disc-mk2-size54.glb": "WYREFViB1hNMw+Q6lljKmm0GUrsGBfewMljBlv9iRD8=",
+  "assets/kona-heritage/shoes/nike-alphafly-3-study.glb": "NxjCqGfckBnzWP0tIZ9rPTnoKmOTRvn+G+T2WUz/1Ng=",
   "assets/kona-years/bikes/cfr-2019/build-meta.json": "8hQmJRVotcYsPdpfY3OsH8TSkDRAffUtvzuaGEH8AtY=",
   "assets/kona-years/bikes/cfr-2019/speedmax_web.glb": "ZSXGaiv3vbee6iVOUz007xcCsSsht7irnbi0Uyqw7O0=",
   "assets/kona-years/bikes/cfslx-2015/build-meta.json": "/eImTrkBCeCYw4ScCalTc2UFi8QLrhybagSVmHj1EtM=",
