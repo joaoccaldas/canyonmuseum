@@ -51,7 +51,7 @@ export function initKonaShell({ profile, settings, enter }) {
     const { event, week, places } = facts();
     const raceDays=event.date ? daysUntil(event.date) : null;
     const nextExpo=week.find(x=>new Date(x.date+'T23:59:00')>=new Date()) || week[0];
-    title.textContent='Now'; eyebrow.textContent='KONA · RACE WEEK';
+    title.textContent='Home'; eyebrow.textContent='KONA · RACE WEEK';
     const expo=nextExpo ? '<article><i>Expo</i><div><b>'+esc(fmtDate(nextExpo.date))+' · '+esc(nextExpo.start)+'–'+esc(nextExpo.end)+'</b><span>'+esc(nextExpo.venue)+'</span></div></article>' : '';
     const placeCards=places.slice(0,4).map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span></article>').join('');
     body.innerHTML=
@@ -60,10 +60,11 @@ export function initKonaShell({ profile, settings, enter }) {
       '<p>'+(event.date?esc(fmtDate(event.date)):'2026')+' · '+esc(event.venue||'Kailua Pier')+'</p>'+
       '<button class="kona-primary" data-enter>Explore the coast <span>→</span></button></section>'+
       '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>What matters next</h3><small>Official 2026 sources</small></div><div class="kona-list">'+expo+
-      '<article><i>Setup</i><div><b>Build your Kona setup</b><span>Bike today. Wheels, helmet and shoes plug into the same setup.</span></div><a href="Studio.html#setup">Open →</a></article>'+
+      '<article><i>Setup</i><div><b>Build your Kona setup</b><span>Bike today. Wheels, helmet and shoes plug into the same setup.</span></div><button type="button" data-garage>Open Garage →</button></article>'+
       '<article><i>Explore</i><div><b>Walk the collection</b><span>Bikes, engineering, Kona stories and hidden rooms.</span></div></article></div></section>'+
       '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Start with Kona</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
+    body.querySelector('[data-garage]')?.addEventListener('click',garage);
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
   }
 
@@ -90,10 +91,11 @@ export function initKonaShell({ profile, settings, enter }) {
     try { ensureProgression(); } catch (_) { /* local passport still reads */ }
     const p=gameProgress(readGameState());
     const tier=p.accessTier==='passport'?'Passport':p.accessTier==='athlete'?'Athlete profile':'Visitor';
-    body.innerHTML='<section class="kona-hero-card artifact artifact--hero"><small>'+esc(tier).toUpperCase()+' · '+(esc(p.levelName)||'VISITOR')+'</small><h3>'+p.xp+' XP · '+p.streak+' day streak</h3><p>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds'+(p.credits!=null?' · '+p.credits+' Kona Credits':'')+'</p><a class="kona-primary" href="Studio.html#setup">Open My Kona Setup <span>→</span></a></section>'+
+    body.innerHTML='<section class="kona-hero-card artifact artifact--hero"><small>'+esc(tier).toUpperCase()+' · '+(esc(p.levelName)||'VISITOR')+'</small><h3>'+p.xp+' XP · '+p.streak+' day streak</h3><p>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds'+(p.credits!=null?' · '+p.credits+' Kona Credits':'')+'</p><button class="kona-primary" type="button" data-garage>Open my Garage <span>→</span></button></section>'+
       '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Your collection</h3><small>Exploration unlocks more</small></div><div class="kona-place-grid"><article><small>Bikes</small><b>'+p.bikes+'</b><span>visited</span></article><article><small>Kona years</small><b>'+p.konaYears+'</b><span>discovered</span></article><article><small>Parts</small><b>'+p.parts+'</b><span>inspected</span></article><article><small>Garage</small><b>'+p.garage+'</b><span>saved builds</span></article></div></section>'+
       '<section class="kona-section artifact artifact--label" id="konaAccount"><div class="kona-section-head"><h3>Sync across devices</h3><small>Optional · beta</small></div><p class="kona-source-note" data-status>Checking account…</p></section>'+
       '<section class="kona-section artifact artifact--label"><button class="kona-primary" type="button" data-settings>Profile, privacy & settings <span>→</span></button></section>';
+    body.querySelector('[data-garage]')?.addEventListener('click',garage);
     body.querySelector('[data-settings]')?.addEventListener('click',()=>settings?.open?.());
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
     const account=body.querySelector('#konaAccount'), status=account?.querySelector('[data-status]');
@@ -119,7 +121,7 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   function explore(){
-    title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
+    title.textContent='Discover'; eyebrow.textContent='KONA · THE MUSEUM';
     const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
     const brands=window.__BRANDROOMS?.rooms||[];
     const themes=window.__gallery?.rooms||[];
