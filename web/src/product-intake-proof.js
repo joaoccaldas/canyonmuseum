@@ -140,6 +140,28 @@ document.querySelectorAll('[data-room]').forEach(b=>b.onclick=()=>{
   controls.update();
 });
 
+function focusProduct(id){
+  const inst=atlas.bikes.find(x=>x.data.key===id);
+  if(!inst?.turn)return false;
+  inst.turn.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(inst.turn);
+  if(box.isEmpty())return false;
+  const sphere=box.getBoundingSphere(new THREE.Sphere());
+  const center=sphere.center;
+  const radius=Math.max(sphere.radius,.25);
+  const fov=THREE.MathUtils.degToRad(camera.fov);
+  const dist=Math.max(radius/Math.sin(fov/2)*1.2,radius*3,1.8);
+  const dir=new THREE.Vector3(1.15,.55,1.4).normalize();
+  camera.position.copy(center).addScaledVector(dir,dist);
+  controls.target.copy(center);
+  controls.minDistance=Math.max(.35,radius*.5);
+  controls.maxDistance=Math.max(8,radius*10);
+  camera.near=Math.max(.02,dist-radius*2.5);
+  camera.far=Math.max(50,dist+radius*8);
+  camera.updateProjectionMatrix();
+  controls.update();
+  return true;
+}
 function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
 addEventListener('resize',resize);
 let frames=0,last=performance.now(),fpsWindow=[];
@@ -160,6 +182,7 @@ window.__intakeProof={
   DATA,mode,atlas,requested,diagnostics:window.__intakeProofDiagnostics,
   get loaded(){return loaded;},get loadError(){return loadError;},
   inspectById(id){const inst=atlas.bikes.find(x=>x.data.key===id);if(inst)inspect(inst);return !!inst;},
+  focusById(id){return focusProduct(id);},
   metrics(){
     const avg=fpsWindow.length?fpsWindow.reduce((a,b)=>a+b,0)/fpsWindow.length:0;
     return {
