@@ -4,7 +4,6 @@
    Shared type and the KONA shell: system.css
    KONA shell on a phone: shell-mobile.css */
 *{box-sizing:border-box;margin:0;padding:0}
-[hidden]{display:none!important}
 :root{
   --sand:#f4efe7;--paper:#fbf9f5;--ink:#12181d;--muted:#5f6a72;--faint:#8e979d;--line:rgba(18,24,29,.11);
   --reef:#138a8f;--wyld:#ff3d8e;--wyld-aqua:#5fd8d3;--wyld-lilac:#e9cde8;--reef-soft:#d5ecea;--lava:#e8471c;--basalt:#1c1d20;--sun:#f3b64f;
