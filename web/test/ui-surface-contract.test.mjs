@@ -6,12 +6,15 @@ const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'
 const home=fs.readFileSync(new URL('../src/ui/home.js',import.meta.url),'utf8');
 const discover=fs.readFileSync(new URL('../src/ui/discover.js',import.meta.url),'utf8');
 const plan=fs.readFileSync(new URL('../src/ui/plan.js',import.meta.url),'utf8');
+const me=fs.readFileSync(new URL('../src/ui/me.js',import.meta.url),'utf8');
+const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url),'utf8');
 
-test('shell orchestrates extracted Home, Discover and Plan surfaces',()=>{
+test('shell orchestrates extracted Home, Discover, Plan and Me surfaces',()=>{
   assert.match(shell,/renderHomeSurface/);
   assert.match(shell,/renderDiscoverSurface/);
   assert.match(shell,/renderPlanSurface/);
+  assert.match(shell,/renderMeSurface/);
   assert.doesNotMatch(shell,/Every room, one museum/);
 });
 
@@ -30,6 +33,18 @@ test('Plan is lightweight and independent of museum globals',()=>{
   assert.match(plan,/race_week/);
   assert.doesNotMatch(plan,/__EVENT|__ISLAND|museum-data\.js|hall\.js/);
   assert.doesNotMatch(shell,/__EVENT|__ISLAND/);
+});
+
+test('Me is RaceIdentity-first and owns no independent persistence',()=>{
+  assert.match(me,/race_identity/);
+  assert.match(me,/Passport/);
+  assert.doesNotMatch(me,/localStorage|writeStorage/);
+  assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
+});
+
+test('post-onboarding entry opens canonical Garage',()=>{
+  assert.match(entry,/enterApp\('garage'\)/);
+  assert.match(entry,/Open your Garage/);
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
