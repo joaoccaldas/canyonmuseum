@@ -270,6 +270,79 @@ def export_asset(asset_id, root_obj):
 for asset_id, obj in ASSETS.items():
     export_asset(asset_id, obj)
 
+
+PREVIEW_OUT = OUT / "previews"
+PREVIEW_OUT.mkdir(parents=True, exist_ok=True)
+
+def look_at(obj, target):
+    obj.rotation_euler = (Vector(target) - obj.location).to_track_quat("-Z", "Y").to_euler()
+
+def ensure_preview_rig():
+    scene.render.engine = "BLENDER_EEVEE"
+    scene.render.resolution_x = 1400
+    scene.render.resolution_y = 820
+    scene.render.resolution_percentage = 100
+    scene.render.image_settings.file_format = "PNG"
+    bpy.ops.object.camera_add(location=(0,-8.8,3.3))
+    cam=bpy.context.object
+    cam.name="QA_CAMERA"
+    look_at(cam,(0,0,.72))
+    scene.camera=cam
+    for name,loc,energy,size in [
+        ("QA_KEY",(0,-2.5,6.2),1800,7.5),
+        ("QA_FILL",(4.0,-1.0,3.8),700,4.5),
+        ("QA_RIM",(-4.0,1.0,3.5),900,4.0),
+    ]:
+        bpy.ops.object.light_add(type="AREA", location=loc)
+        l=bpy.context.object
+        l.name=name
+        l.data.energy=energy
+        l.data.shape="DISK"
+        l.data.size=size
+    floor_mat=material("MAT_QA_FLOOR",(.055,.055,.060),.82,.0)
+    cube("QA_FLOOR",(0,0,-.045),(5.8,1.5,.04),floor_mat,ROOT_EMPTY,.004)
+    return cam
+
+def render_preview(filename, visible_ids, positions, target=(0,0,.72), camera=(0,-8.8,3.3)):
+    for aid,obj in ASSETS.items():
+        hidden = aid not in visible_ids
+        obj.hide_render = hidden
+        obj.hide_viewport = hidden
+    for aid,loc in positions.items():
+        ASSETS[aid].location=loc
+    cam=scene.camera or ensure_preview_rig()
+    cam.location=camera
+    look_at(cam,target)
+    scene.render.filepath=str(PREVIEW_OUT/filename)
+    bpy.ops.render.render(write_still=True)
+
+ensure_preview_rig()
+bike_ids=[
+    "cervelo-p5x-kona-study","specialized-shiv-disc-kona-study","felt-ia-kona-study",
+    "scott-plasma-kona-study","bmc-speedmachine-kona-study","orbea-ordu-kona-study"
+]
+render_preview(
+    "bikes-v0.2.png",
+    bike_ids,
+    {aid:((-4.25+i*1.70),0,0) for i,aid in enumerate(bike_ids)},
+    target=(0,0,.48),
+    camera=(0,-8.6,3.1),
+)
+shoe_ids=[
+    "nike-vaporfly-4pct-study","nike-vaporfly-next-study",
+    "nike-alphafly-next-study","nike-alphafly-3-study"
+]
+render_preview(
+    "nike-shoes-v0.2.png",
+    shoe_ids,
+    {aid:((-1.80+i*1.20),0,.04) for i,aid in enumerate(shoe_ids)},
+    target=(0,0,.13),
+    camera=(0,-5.1,1.55),
+)
+for obj in ASSETS.values():
+    obj.hide_render=False
+    obj.hide_viewport=False
+
 pack_blend = PACK_OUT / "kona_heritage_nike_pack.blend"
 pack_glb = PACK_OUT / "kona_heritage_nike_pack.glb"
 bpy.ops.wm.save_as_mainfile(filepath=str(pack_blend))
