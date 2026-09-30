@@ -24,7 +24,8 @@ test('consumer landing wires one truthful install experience', () => {
   assert.match(tpl, /id="entryInstall"/);
   assert.match(tpl, /data-pwa-action/);
   assert.match(appShell, /beforeinstallprompt/);
-  assert.match(appShell, /Install KONA now/);
+  assert.match(appShell, /data-pwa-action/);
+  assert.match(appShell, /deferred\.prompt/);
   assert.match(appShell, /app\/android-version\.json/);
   assert.match(appShell, /published/);
   assert.match(appShell, /serviceWorker\.register\('sw\.js', \{ scope: '\.\/', updateViaCache: 'none' \}\)/);
