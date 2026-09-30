@@ -124,3 +124,31 @@
   #konaQuest{width:100%;max-width:560px}
   .quest-choice{width:100%;box-sizing:border-box}
 }
+
+/* Batch 6: responsive 3D chrome. Avoid horizontal actions/text clipping on phones. */
+body.physical-phone #card,html.phone-fit #card{box-sizing:border-box}
+@media(max-width:600px),(pointer:coarse){
+  #card{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));width:auto!important;max-width:none!important;padding:16px!important}
+  #card h2{font-size:clamp(28px,8vw,38px);overflow-wrap:anywhere}
+  .c-note,.card-facts,.c-src,.c-view,.c-unc{overflow-wrap:anywhere;word-break:normal}
+  .c-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+  .c-actions .btn{width:100%;max-width:100%;white-space:normal!important;line-height:1.25;padding:10px 12px;height:auto;min-height:48px}
+  #tourPill{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));max-width:none;overflow:hidden}
+  #tourPill button{flex:0 1 auto;min-width:0;padding-inline:9px}
+  #rail{max-width:100dvw;overflow:hidden}
+  .rail-inner{max-width:100%;overflow-x:auto}
+  .chip{max-width:min(76vw,280px)}
+  .chip b,.chip small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:58vw}
+  #nearby{left:14px;right:14px;width:auto;max-width:none}
+}
+html.phone-fit header,
+html.phone-fit #rail,
+html.phone-fit #joy,
+html.phone-fit #card,
+html.phone-fit #nearby,
+html.phone-fit #tourPill,
+html.phone-fit #coach{
+  zoom:var(--fit);
+}
+html.phone-fit header,html.phone-fit #rail,html.phone-fit #nearby,html.phone-fit #tourPill{width:calc(100vw / var(--fit));max-width:calc(100vw / var(--fit))}
+html.phone-fit #card{left:8px;right:auto;width:calc((100vw - 16px)/var(--fit))!important;max-height:calc((100dvh - 150px)/var(--fit))}
