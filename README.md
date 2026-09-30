@@ -1,11 +1,11 @@
 # KONA · Caldas Studio
 
-> **Race the version of yourself.**  
+> **Race the version of yourself you haven't met yet.**  
 > KONA is a mobile-first triathlon race-week, identity, gear, story and challenge platform built on the Canyon Museum 3D production factory.
 
 ## What this repository contains
 
-- KONA app shell: Now · Explore · Setup · Plan · Me
+- KONA app shell: Home · Discover · Garage · Plan · Me
 - local-first RaceIdentity and progression
 - optional Supabase magic-link backup
 - 3D museum / product inspection / Studio
