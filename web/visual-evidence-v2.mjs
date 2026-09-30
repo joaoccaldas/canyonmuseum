@@ -19,6 +19,14 @@ async function capture(vp,state,theme){
    for(const sel of ['[data-set="intent"]','[data-set="bikeId"]','[data-set="shoeId"]','[data-set="goal"]']){await p.waitForSelector(sel,{timeout:5000});await p.click(sel);await new Promise(r=>setTimeout(r,120));}
  } else if(state!=='landing'){
    await p.click('#buildSelf');await p.waitForSelector('[data-quest-skip]',{timeout:5000});await p.click('[data-quest-skip]');await new Promise(r=>setTimeout(r,180));
+   if(state==='garage'||state==='me'){
+     await p.evaluate(()=>{
+       const equipment={schema_version:1,id:'equipment:visual-fixture:dream:canyon-cfr-2027',entity_type:'user-equipment',user_id:'user:visual-fixture',product_id:'product:canyon-cfr-2027',relationship:'dream',created_at:'2026-09-30T00:00:00.000Z',nickname:null,customization:{provenance:'visual-evidence'},visibility:'private',vendor_analytics_eligible:false};
+       const identity={schema_version:1,id:'race-identity:visual-fixture:kona-2026',entity_type:'race-identity',user_id:'user:visual-fixture',mode:'dream',event_id:'event:kona-2026',goal:{type:'experience',target_seconds:null,label:'Finish'},style:'custom',avatar:{avatar_id:'avatar:visual-fixture',appearance:{}},setup:{bike:equipment.id,wheel_front:null,wheel_rear:null,helmet:null,shoe:null,trisuit:null,watch:null,wetsuit:null,nutrition:null},visibility:'private',share_slug:null,intent:'dreaming'};
+       localStorage.setItem('kona.userEquipment.v1',JSON.stringify([equipment]));
+       localStorage.setItem('kona.raceIdentity.v1',JSON.stringify(identity));
+     });
+   }
    const fn={home:'now',discover:'explore',garage:'garage',plan:'plan',me:'me'}[state];
    const switched=await p.evaluate(fn=>{
      const shell=window.__konaShell || window.__app?.konaShell;
