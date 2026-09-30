@@ -1,6 +1,8 @@
 // KONA entry. HTML is already on screen. This file does not import Three.js.
 // The museum runtime loads only after the visitor chooses to explore.
 import { createProfile } from './engine/profile.js';
+import { desktopViewPhone, coarse } from './detect.js';
+import { consumeAuthCallback } from './cloud/supabase-lite.js';
 import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
@@ -10,6 +12,18 @@ import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, que
 import { shareRaceIdentity } from './growth/share.js';
 
 const intro = document.getElementById('intro');
+const physicalPhone = coarse || Math.min(screen.width || 1e5, screen.height || 1e5) <= 600;
+document.documentElement.classList.toggle('physical-phone', physicalPhone);
+document.body.classList.toggle('physical-phone', physicalPhone);
+if (desktopViewPhone) {
+  const short=Math.min(screen.width,screen.height);
+  const landscape=innerWidth>innerHeight;
+  const physical=landscape?Math.max(screen.width,screen.height):short;
+  const ratio=Math.max(1,innerWidth/Math.max(1,physical));
+  document.documentElement.classList.add('phone-fit');
+  document.documentElement.style.setProperty('--fit',ratio.toFixed(3));
+}
+const authReturned = consumeAuthCallback();
 const setEntryMode = mode => {
   intro?.classList.toggle('quest-active', mode === 'quest');
   intro?.classList.toggle('app-ready', mode === 'app');
@@ -79,6 +93,10 @@ function enterApp(first = 'home') {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
   if (first === 'garage') shell.garage?.();
+  else if (first === 'collection') shell.collection?.();
+  else if (first === 'discover') shell.explore?.();
+  else if (first === 'plan') shell.plan?.();
+  else if (first === 'me') shell.me?.();
   else shell.now?.();
 }
 
@@ -173,11 +191,11 @@ function paintQuest(step) {
         <div class="race-id-stamp">RACE SELF</div>
       </section>
       <p class="race-id-reward">+${xp} XP · +${credits} KONA CREDITS</p>
-      <button type="button" class="btn primary" id="enterKona">Open your Garage</button>
+      <button type="button" class="btn primary" id="enterKona">Open your Race Self</button>
       <button type="button" class="btn secondary" id="shareSelf">Share my Kona</button>
       <button type="button" class="btn text" id="saveSelf">Save across devices</button>
       <p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
-    host.querySelector('#enterKona')?.addEventListener('click', () => enterApp('garage'));
+    host.querySelector('#enterKona')?.addEventListener('click', () => enterApp('home'));
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
       const result = await shareRaceIdentity(draft);
@@ -260,3 +278,5 @@ const q = new URLSearchParams(location.search);
 const shared=decodeShare(q.get('kona'));
 if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
+else if (authReturned) enterApp('home');
+else if (['home','garage','collection','discover','plan','me'].includes(q.get('view'))) enterApp(q.get('view'));
