@@ -339,3 +339,73 @@ body:not(.walking) .where{display:none}
 .map-foot{margin-top:10px;font-size:11px;color:var(--faint)}
 .map-foot kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font:600 10px var(--sans);color:var(--ink)}
 body.map-open #joy{opacity:0;pointer-events:none}
+
+
+/* -------------------------------------------------------------------------
+   3D WORLD UI CONVERGENCE V1
+   Principle: the UI behaves like museum staff — present when needed, quiet
+   while the visitor is moving. These rules deliberately reuse existing
+   runtime state classes; no world behavior or interaction contract changes.
+   ------------------------------------------------------------------------- */
+
+/* WALK: keep the world dominant. Movement temporarily clears nonessential
+   chrome, but keyboard/focus interaction always restores it. */
+body.walking.flowing:not(.card-open):not(.touring):not(.map-open) header{
+  opacity:.12;
+  transform:translateY(-10px);
+}
+body.walking.flowing:not(.card-open):not(.touring):not(.map-open) #rail{
+  transform:translateY(calc(100% + 20px));
+  opacity:0;
+  pointer-events:none;
+}
+body.walking.flowing:not(.card-open):not(.touring):not(.map-open) .credit,
+body.walking.flowing:not(.card-open):not(.touring):not(.map-open) #bgload:not(.warn){
+  opacity:0;
+  pointer-events:none;
+}
+body.walking.flowing:not(.card-open):not(.touring):not(.map-open) header:hover,
+body.walking.flowing:not(.card-open):not(.touring):not(.map-open) header:focus-within{
+  opacity:1;
+  transform:none;
+}
+
+/* INSPECT: one object + one panel. Navigation and room rail recede while the
+   exhibit card is open so the user never sees WALK + NAVIGATE + INSPECT at
+   equal visual weight. */
+body.card-open header{opacity:.24}
+body.card-open header:focus-within,
+body.card-open header:hover{opacity:1}
+body.card-open #rail{
+  transform:translateY(calc(100% + 20px))!important;
+  opacity:0;
+  pointer-events:none;
+}
+body.card-open #nearby{opacity:0!important;pointer-events:none!important}
+body.card-open #card{
+  box-shadow:0 28px 90px -36px rgba(18,24,29,.48);
+}
+
+/* NAVIGATE: map is intentionally the sole strong overlay. */
+body.map-open header,
+body.map-open #rail,
+body.map-open #nearby,
+body.map-open #toast{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+
+/* Context cues should be quiet enough to read as museum labels, not HUD. */
+#nearby{
+  box-shadow:0 10px 32px -22px rgba(0,0,0,.65);
+}
+#tag,.plabel{
+  box-shadow:0 6px 22px -14px rgba(18,24,29,.48);
+}
+
+/* Reduced motion keeps the hierarchy changes but removes cinematic travel. */
+@media (prefers-reduced-motion:reduce){
+  body.walking.flowing:not(.card-open):not(.touring):not(.map-open) header,
+  body.walking.flowing:not(.card-open):not(.touring):not(.map-open) #rail,
+  body.card-open #rail{transition:none!important}
+}
