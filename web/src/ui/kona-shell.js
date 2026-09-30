@@ -32,9 +32,9 @@ export function initKonaShell({ profile, settings, enter }) {
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
     '</div>'+
     '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
-      '<button type="button" data-tab="now">'+icon('now')+'<span>Now</span></button>'+
-      '<button type="button" data-tab="explore">'+icon('explore')+'<span>Explore</span></button>'+
-      '<a href="Studio.html#setup" data-tab="setup">'+icon('setup')+'<span>Setup</span></a>'+
+      '<button type="button" data-tab="home">'+icon('now')+'<span>Home</span></button>'+
+      '<button type="button" data-tab="discover">'+icon('explore')+'<span>Discover</span></button>'+
+      '<a href="Studio.html#setup" data-tab="garage">'+icon('setup')+'<span>Garage</span></a>'+
       '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
       '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
     '</nav>';
@@ -62,7 +62,7 @@ export function initKonaShell({ profile, settings, enter }) {
       '<article><i>Explore</i><div><b>Walk the collection</b><span>Bikes, engineering, Kona stories and hidden rooms.</span></div></article></div></section>'+
       '<section class="kona-section"><div class="kona-section-head"><h3>Start with Kona</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('now');
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
   }
 
   function plan(){
@@ -124,11 +124,11 @@ export function initKonaShell({ profile, settings, enter }) {
       '<section class="kona-section"><div class="kona-section-head"><h3>Rooms</h3><small>Tap to walk</small></div><div class="kona-place-grid">'+rooms+'</div></section>';
     body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
     body.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>walkTo(b.dataset.go)));
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('explore');
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
   }
 
-  shell.querySelector('[data-tab=now]').onclick=now;
-  shell.querySelector('[data-tab=explore]').onclick=explore;
+  shell.querySelector('[data-tab=home]').onclick=now;
+  shell.querySelector('[data-tab=discover]').onclick=explore;
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close();});
