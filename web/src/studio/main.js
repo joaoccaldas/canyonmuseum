@@ -15,7 +15,7 @@ import { createProfile, renderSettings, QUALITY, AVATARS } from '../engine/profi
 import { captureView, shareImage } from '../engine/share.js';
 import { initSettings } from '../ui/settings.js';
 import { SCENES, encodeLook, decodeLook, productsFor } from './model.js';
-import { readRaceSetup, writeRaceSetup, encodeRaceSetup, decodeRaceSetup, completedSlots, RACE_SETUP_EVENT } from './race-setup.js';
+import { createRaceSetupStore, encodeRaceSetup, decodeRaceSetup, completedSlots, setSetupSlot, RACE_SETUP_EVENT } from './race-setup.js';
 
 const $ = id => document.getElementById(id);
 const CAT = window.__PRODUCTS, FILMS = window.__FILMS?.films || [], MSKINS = window.__SKINS?.skins || [], WYLD = window.__WYLDROOM?.variants || [], EVENTS = window.__EVENTS || [];
@@ -25,8 +25,9 @@ const RS = renderSettings(profile.get().quality, { lite: touch, dpr: devicePixel
 const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const q = new URLSearchParams(location.search);
 const sharedSetup = decodeRaceSetup(q.get('setup'), CAT.products);
-const event = EVENTS.find(e => e.id === (q.get('event') || sharedSetup?.event)) || null;
-let raceSetup = sharedSetup || readRaceSetup(CAT.products);
+const raceSetupStore = createRaceSetupStore();
+const event = EVENTS.find(e => e.id === (q.get('event') || sharedSetup?.event_id)) || null;
+let raceSetup = sharedSetup || raceSetupStore.load(CAT.products);
 
 // ---------------------------------------------------------------- renderer, camera, stage
 const canvas = $('stage');
@@ -194,18 +195,14 @@ function setupShareUrl() {
 }
 function saveCurrentToSetup() {
   if (!current) return;
-  raceSetup = writeRaceSetup({
-    version: 1,
-    event: RACE_SETUP_EVENT,
-    bike: { productId: current.product.id, look: encodeLook(look), scene: sceneId },
-    updatedAt: Date.now(),
-  }, CAT.products);
+  raceSetup = setSetupSlot(raceSetup, 'bike', current.product, { look:encodeLook(look), scene:sceneId }, CAT.products);
+  raceSetup = raceSetupStore.save(raceSetup, CAT.products);
   toast('Saved to My Kona Setup');
   tab = 'setup'; dock(false); drawPanel();
 }
 async function shareRaceSetup() {
-  if (!raceSetup?.bike) { toast('Add a bike to your setup first'); return; }
-  const product = CAT.products.find(p => p.id === raceSetup.bike.productId);
+  if (!raceSetup?.slots?.bike) { toast('Add a bike to your setup first'); return; }
+  const product = CAT.products.find(p => p.id === raceSetup.slots.bike.product_id);
   if (!product) return;
   const blob = await captureView(renderer, scene, camera, { title: 'My Kona 2026 Setup', place: product.name, site: 'Speedmax Museum' });
   const r = await shareImage(blob, {
@@ -217,7 +214,7 @@ async function shareRaceSetup() {
   toast({ shared:'Shared', link:'Link shared', saved:'Image saved', cancelled:'Not shared' }[r]);
 }
 function renderRaceSetup(P) {
-  const bikeProduct = raceSetup?.bike ? CAT.products.find(p => p.id === raceSetup.bike.productId) : null;
+  const bikeProduct = raceSetup?.slots?.bike ? CAT.products.find(p => p.id === raceSetup.slots.bike.product_id) : null;
   const n = completedSlots(raceSetup);
   const slot = (icon, label, value, state, onclick, soon=false) => h('button', {
     type:'button', class:`setup-slot${soon ? ' soon' : ''}`, disabled: soon, onclick
@@ -297,11 +294,11 @@ renderer.setAnimationLoop(now => {
 });
 
 // ---------------------------------------------------------------- start: from the link, the event, or the first product
-const requestedScene = sharedSetup?.bike?.scene || q.get('scene');
+const requestedScene = sharedSetup?.slots?.bike?.configuration?.scene || q.get('scene');
 setScene(requestedScene && SCENES[requestedScene] ? requestedScene : (event ? 'kona' : 'studio'));
-const start = CAT.products.find(p => p.id === (sharedSetup?.bike?.productId || q.get('p'))) || (event && CAT.products.find(p => p.id === event.featured?.[0])) || CAT.products[0];
-const fromLink = decodeLook(sharedSetup?.bike?.look || q.get('s'), start, FILMS);
-if (sharedSetup?.bike) tab = 'setup';
+const start = CAT.products.find(p => p.id === (sharedSetup?.slots?.bike?.product_id || q.get('p'))) || (event && CAT.products.find(p => p.id === event.featured?.[0])) || CAT.products[0];
+const fromLink = decodeLook(sharedSetup?.slots?.bike?.configuration?.look || q.get('s'), start, FILMS);
+if (sharedSetup?.slots?.bike) tab = 'setup';
 show(start, fromLink);
 dock(innerWidth < 900);
 window.__studio = { CAT, show, applyLook, setDream, get current() { return current; }, get look() { return look; }, get raceSetup() { return raceSetup; }, saveCurrentToSetup, renderer, scene, camera };
