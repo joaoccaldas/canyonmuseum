@@ -1559,6 +1559,7 @@ function openCard(p) {
   $('card').classList.add('on'); document.body.classList.add('card-open'); hallState('inspect');
 }
 function closeCard(keepCurrent) {
+  hallState('walk');
   $('card').classList.remove('on'); document.body.classList.remove('card-open');
   if (!keepCurrent) { if (exploded) setExploded(exploded, false); current = null; railActive(null); }
 }
