@@ -5,11 +5,10 @@ import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
 import { saveQuestIdentity } from './engine/identity.js';
-import { readStorage } from './engine/storage.js';
+import { readStorage, writeStorage } from './engine/storage.js';
 import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, questReady, relationshipFor } from './quest.js';
 import { shareRaceIdentity } from './growth/share.js';
 
-const INTENT_KEY = 'speedmax.entryIntent.v1';
 const intro = document.getElementById('intro');
 const setEntryMode = mode => { intro?.classList.toggle('quest-active', mode === 'quest'); intro?.classList.toggle('app-ready', mode === 'app'); };
 const profile = createProfile();
@@ -67,9 +66,15 @@ document.getElementById('entryInstall')?.addEventListener('click',()=>document.g
 const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
 window.__konaShell = shell;
 
+function enterApp() {
+  setEntryMode('app');
+  intro?.setAttribute('hidden','');
+  shell.now?.();
+}
+
 function paintIntent() {
   let cur = '';
-  try { cur = localStorage.getItem(INTENT_KEY) || ''; } catch (_) {}
+  try { cur = readStorage('entryIntent') || ''; } catch (_) {}
   document.querySelectorAll('[data-intent]').forEach(b => {
     const on = b.dataset.intent === cur;
     b.classList.toggle('on', on);
@@ -83,14 +88,13 @@ document.querySelectorAll('#intro [data-go]').forEach(b => b.addEventListener('c
   else shell[id]?.();
 }));
 
-const QUEST_KEY = 'speedmax.konaSelf.v1';
 function readQuest() {
-  try { return { ...emptyQuest(), ...JSON.parse(localStorage.getItem(QUEST_KEY) || '{}') }; }
+  try { return { ...emptyQuest(), ...JSON.parse(readStorage('konaSelf') || '{}') }; }
   catch (_) { return emptyQuest(); }
 }
 function writeQuest(draft) {
-  try { localStorage.setItem(QUEST_KEY, JSON.stringify(draft)); } catch (_) {}
-  try { if (draft.intent) localStorage.setItem(INTENT_KEY, draft.intent); } catch (_) {}
+  try { writeStorage('konaSelf', JSON.stringify(draft)); } catch (_) {}
+  try { if (draft.intent) writeStorage('entryIntent', draft.intent); } catch (_) {}
 }
 
 function questHost() {
@@ -118,6 +122,10 @@ function paintQuest(step) {
   }).join('');
   const stepNo={intent:1,bike:2,shoe:3,goal:4};
   const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 4"><span>${stepNo[step]} / 4</span><i style="--p:${stepNo[step]}"></i></div>` : '';
+  const backFor={bike:'intent',shoe:'bike',goal:'shoe'};
+  const questNav = step === 'intent'
+    ? '<div class="quest-nav"><button type="button" class="btn text" data-quest-cancel>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>'
+    : '<div class="quest-nav"><button type="button" class="btn text" data-quest-back>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>';
   const screens = {
     intent: `<p class="eyebrow">Why are you here?</p><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
     bike: `<p class="eyebrow">Choose your bike</p><div class="kona-intents">${choices(BIKES, 'bikeId')}</div><button type="button" class="quest-choice" data-set="bikeId" data-value="">Choose later</button>`,
@@ -144,7 +152,7 @@ function paintQuest(step) {
       console.warn('progression reward unavailable; RaceIdentity remains valid', err);
     }
     host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
-    host.querySelector('#enterKona')?.addEventListener('click', () => { setEntryMode('app'); intro?.setAttribute('hidden',''); shell.now?.(); });
+    host.querySelector('#enterKona')?.addEventListener('click', enterApp);
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
       const result = await shareRaceIdentity(draft);
@@ -155,7 +163,9 @@ function paintQuest(step) {
     return;
   }
   if (step === 'save') {
-    host.innerHTML = `<p class="eyebrow">Save your Kona</p><form id="saveForm"><input name="email" type="email" required placeholder="you@example.com" autocomplete="email"><button class="btn primary" type="submit">Send magic link</button></form><p class="kona-note" id="saveNote">No password. The passport reward waits until the link is confirmed.</p>`;
+    host.innerHTML = `<p class="eyebrow">Sign in or save</p><form id="saveForm"><input name="email" type="email" required placeholder="you@example.com" autocomplete="email"><button class="btn primary" type="submit">Send magic link</button></form><button class="btn text" type="button" id="continueLocal">Continue without account</button><button class="btn text" type="button" id="backFromSave">Back</button><p class="kona-note" id="saveNote">No password. Your local experience works without signing in.</p>`;
+    host.querySelector('#continueLocal')?.addEventListener('click', enterApp);
+    host.querySelector('#backFromSave')?.addEventListener('click',()=>{ const q=readQuest(); paintQuest(questReady(q)?'reveal':'intent'); });
     host.querySelector('#saveForm')?.addEventListener('submit', async (event) => {
       event.preventDefault();
       const email = new FormData(event.currentTarget).get('email');
@@ -171,7 +181,10 @@ function paintQuest(step) {
     return;
   }
   host.hidden = false;
-  host.innerHTML = progress + (screens[step] || screens.intent);
+  host.innerHTML = progress + (screens[step] || screens.intent) + questNav;
+  host.querySelector('[data-quest-back]')?.addEventListener('click',()=>paintQuest(backFor[step]||'intent'));
+  host.querySelector('[data-quest-cancel]')?.addEventListener('click',()=>{ setEntryMode('landing'); host.hidden=true; });
+  host.querySelector('[data-quest-skip]')?.addEventListener('click',enterApp);
   host.querySelectorAll('[data-set]').forEach(button => button.addEventListener('click', () => {
     const next = readQuest();
     next[button.dataset.set] = button.dataset.value || null;
@@ -190,6 +203,7 @@ function existingRaceIdentity() {
   } catch (_) { return null; }
 }
 
+document.getElementById('entryGuest')?.addEventListener('click', enterApp);
 document.getElementById('entrySignIn')?.addEventListener('click', () => paintQuest('save'));
 
 const existingIdentity = existingRaceIdentity();
@@ -202,7 +216,7 @@ if (existingIdentity) {
     : 'Your Kona is saved. Pick up where you left off.';
   if (buildButton) {
     buildButton.textContent = 'Continue your Kona';
-    buildButton.addEventListener('click', () => shell.now?.());
+    buildButton.addEventListener('click', enterApp);
   }
   if (note) note.textContent = 'Your RaceIdentity stays private on this device unless you choose to save or share it.';
 } else {
