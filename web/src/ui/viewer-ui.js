@@ -6,8 +6,9 @@ import * as THREE from 'three';
  */
 export function setupViewerUI({
   $, $$, state, bikeMeta, profile, tour, presets, swatches, decals, partsMeta, groupLabels, geometry, parts,
-  discMesh, setCfg, closeDrawers, select, setMode, setEnv, flyTo, paintRange, applyGhost,
+  discMesh, setCfg, closeDrawers, select, focusPart, setMode, setEnv, flyTo, paintRange, applyGhost,
   dims, controls, screenshot, download, glb, applyQuality, syncUI, getLab, toggleDrawer,
+  resetConfig, saveCfg, toast,
 }) {
   const S=state, BIKE=bikeMeta, PROFILE=profile, TOUR=tour, PRESETS=presets, SWATCHES=swatches, DECALS=decals, PARTS=partsMeta, GROUPS=groupLabels, GEOMETRY=geometry;
   const w=$('#stat-weight'), g=$('#stat-gear'), gs=$('#stat-gear-sub'), rims=$('#stat-rims');
@@ -101,12 +102,18 @@ export function setupViewerUI({
   $('#optRear').onchange=e=>setCfg({rearBottles:e.target.checked},true);
   $('#optShield').onchange=e=>setCfg({shield:e.target.checked},true);
   $('#optDisc').onchange=e=>setCfg({rearDisc:e.target.checked},true);
+  $('#reset').onclick=()=>{ resetConfig(); toast('Back to Pro White'); };
+  $('#share').onclick=async()=>{
+    saveCfg();
+    try { await navigator.clipboard.writeText(location.href); toast('Link to this build copied'); }
+    catch (_) { toast('Copy the address bar to share this build'); }
+  };
 
   const groups={};
   for(const [id,p] of Object.entries(PARTS)) if(!p.alias&&parts[id]) (groups[p.group]||=[]).push([id,p]);
   $('#bom').innerHTML=Object.entries(GROUPS).filter(([g])=>groups[g]).map(([g,label])=>
     `<h3>${label}</h3>`+groups[g].map(([id,p])=>`<button data-part="${id}"><span>${p.name}</span><em>${p.weight?p.weight+' g':''}</em></button>`).join('')).join('');
-  $$('[data-part]').forEach(b=>b.onclick=()=>{ select(b.dataset.part); flyTo && null; if(coarse) closeDrawers(); });
+  $('[data-part]').forEach(b=>b.onclick=()=>{ select(b.dataset.part); focusPart(b.dataset.part); if(coarse) closeDrawers(); });
   $('#geo').innerHTML=`<table><thead><tr><th></th>${GEOMETRY.sizes.map(s=>`<th class="${s==='M'?'m':''}">${s}</th>`).join('')}</tr></thead><tbody>`+
     GEOMETRY.rows.map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map((v,i)=>`<td class="${i===1?'m':''}">${v}</td>`).join('')}</tr>`).join('')+'</tbody></table>';
 
@@ -118,6 +125,7 @@ export function setupViewerUI({
   $$('[data-drawer]').forEach(b=>b.onclick=()=>toggleDrawer(b.dataset.drawer));
   $$('.drawer .x').forEach(b=>b.onclick=closeDrawers);
   $('#cardClose').onclick=()=>select(null);
+  $('#cardFocus').onclick=()=>S.sel&&focusPart(S.sel);
   $('#cardIsolate').onclick=()=>{ S.isolate=!S.isolate; $('#cardIsolate').classList.toggle('active',S.isolate); applyGhost(); };
   $('#dimsBtn').onclick=()=>{ S.dims=!S.dims; dims.visible=S.dims; $('#dimlayer').classList.toggle('on',S.dims); $('#dimsBtn').classList.toggle('active',S.dims); if(S.dims)flyTo('side'); };
   $('#xrayBtn').onclick=()=>{ S.xray=!S.xray; $('#xrayBtn').classList.toggle('active',S.xray); applyGhost(); };
