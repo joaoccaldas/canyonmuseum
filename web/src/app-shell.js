@@ -1,3 +1,4 @@
+import { installInstructions, installState } from './engine/install-state.js';
 // The museum as an installable app.
 //  - Web (Android Chrome, desktop, iOS Safari): a service worker (sw.js) keeps the museum offline and
 //    installs updates only after verifying every file's SHA-256 against the release manifest. When a
@@ -41,23 +42,56 @@ export function initAppShell() {
   let deferred = null;
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const android = /android/i.test(navigator.userAgent);
-  if (btn && !standalone && (ios || android)) btn.hidden = false;
-  addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; if (btn && !standalone) btn.hidden = false; });
-  addEventListener('appinstalled', () => { if (btn) btn.hidden = true; if (sheet) sheet.hidden = true; });
-  btn?.addEventListener('click', async () => {
-    if (deferred && !android) { deferred.prompt(); await deferred.userChoice.catch(() => {}); deferred = null; return; }
-    if (!sheet) return;
-    sheet.querySelector('[data-ios]').hidden = !ios;
-    sheet.querySelector('[data-pwa]').hidden = !deferred;
-    const apk = sheet.querySelector('[data-apk]'); apk.hidden = true;
-    sheet.hidden = false;
-    if (android) fetch('app/android-version.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(v => {
-      if (!v?.apk || /^[a-z]+:/i.test(v.apk)) return;                   // the APK is published by CI; until then only the web app is offered
-      apk.href = v.apk; apk.querySelector('small').textContent = `Version ${v.versionName} · ${(v.bytes / 1048576 || 0).toFixed(0)} MB · SHA-256 ${String(v.sha256 || '').slice(0, 12)}…`;
-      apk.hidden = false;
-    }).catch(() => {});
+  const native = Boolean(window.Capacitor?.isNativePlatform?.());
+  const state = () => installState({ standalone, native, ios, android, deferred: Boolean(deferred) });
+
+  function syncInstallUI() {
+    const s = state();
+    if (btn) btn.hidden = !s.show;
+    return s;
+  }
+  syncInstallUI();
+
+  addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferred = e;
+    syncInstallUI();
   });
-  sheet?.querySelector('[data-pwa]')?.addEventListener('click', async () => { if (deferred) { deferred.prompt(); await deferred.userChoice.catch(() => {}); deferred = null; } sheet.hidden = true; });
+  addEventListener('appinstalled', () => {
+    deferred = null;
+    if (btn) btn.hidden = true;
+    if (sheet) sheet.hidden = true;
+    document.body.classList.add('installed');
+  });
+
+  btn?.addEventListener('click', async () => {
+    const s = state();
+    if (s.action === 'prompt' && deferred) {
+      deferred.prompt();
+      await deferred.userChoice.catch(() => {});
+      deferred = null;
+      syncInstallUI();
+      return;
+    }
+    if (s.action !== 'instructions' || !sheet) return;
+    const iosRow = sheet.querySelector('[data-ios]');
+    const pwaRow = sheet.querySelector('[data-pwa]');
+    const apk = sheet.querySelector('[data-apk]');
+    if (iosRow) {
+      iosRow.hidden = s.kind !== 'ios-instructions';
+      const small = iosRow.querySelector('small');
+      if (small) small.textContent = installInstructions(s.kind);
+    }
+    if (pwaRow) {
+      pwaRow.hidden = s.kind !== 'android-instructions';
+      pwaRow.disabled = true;
+      const small = pwaRow.querySelector('small');
+      if (small) small.textContent = installInstructions(s.kind);
+    }
+    if (apk) apk.hidden = true;
+    sheet.hidden = false;
+  });
+
   sheet?.querySelector('.close')?.addEventListener('click', () => { sheet.hidden = true; });
   sheet?.addEventListener('click', e => { if (e.target === sheet) sheet.hidden = true; });
 
