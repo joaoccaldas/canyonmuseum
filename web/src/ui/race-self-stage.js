@@ -4,41 +4,40 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
 
 function mat(color,roughness=.72){ return new THREE.MeshStandardMaterial({color,roughness,metalness:.02}); }
 function capsule(radius,length,color){
   return new THREE.Mesh(new THREE.CapsuleGeometry(radius,length,8,16),mat(color));
 }
-function proceduralAvatar(accent='#e8471c'){
+function proceduralAvatar(styleInput={}){
+  const style=normaliseAvatarStyle(styleInput);
   const g=new THREE.Group();
-  const skin=mat('#b98f73',.86), kit=mat('#10161a',.58), accentMat=mat(accent,.52);
-  const sphere=(r,m)=>new THREE.Mesh(new THREE.SphereGeometry(r,28,20),m);
-  const body=(r,l,m)=>new THREE.Mesh(new THREE.CapsuleGeometry(r,l,10,20),m);
+  const skin=mat(AVATAR_COLORS.skin[style.skin],.88);
+  const hairColor=AVATAR_COLORS.hair[style.hair];
+  const top=mat(AVATAR_COLORS.top[style.top],.6);
+  const bottoms=mat(AVATAR_COLORS.bottoms[style.bottoms],.68);
+  const shoes=mat(AVATAR_COLORS.shoes[style.shoes],.55);
+  const accent=mat(style.accent,.52);
+  const box=(w,h,d,m)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
 
-  const head=sphere(.115,skin);head.position.y=1.69;
-  const neck=body(.052,.055,skin);neck.position.y=1.555;
-  const torso=body(.18,.36,kit);torso.position.y=1.31;torso.scale.set(1,.92,.72);
-  const hips=body(.15,.13,accentMat);hips.position.y=1.02;hips.rotation.z=Math.PI/2;hips.scale.z=.78;
+  const head=box(.34,.34,.34,skin);head.position.y=1.72;
+  const torso=box(.5,.56,.26,top);torso.position.y=1.27;
+  const hips=box(.46,.2,.25,bottoms);hips.position.y=.88;
+  const armL=box(.16,.55,.18,skin),armR=armL.clone();armL.position.set(-.34,1.27,0);armR.position.set(.34,1.27,0);
+  const legL=box(.19,.64,.22,bottoms),legR=legL.clone();legL.position.set(-.13,.46,0);legR.position.set(.13,.46,0);
+  const shoeL=box(.2,.12,.34,shoes),shoeR=shoeL.clone();shoeL.position.set(-.13,.09,.06);shoeR.position.set(.13,.09,.06);
+  g.add(head,torso,hips,armL,armR,legL,legR,shoeL,shoeR);
 
-  const shoulderL=sphere(.075,skin),shoulderR=sphere(.075,skin);
-  shoulderL.position.set(-.205,1.43,0);shoulderR.position.set(.205,1.43,0);
-  const upperL=body(.055,.26,skin),upperR=body(.055,.26,skin);
-  upperL.position.set(-.235,1.25,.02);upperR.position.set(.235,1.25,.02);
-  upperL.rotation.z=-.15;upperR.rotation.z=.15;
-  const foreL=body(.047,.24,skin),foreR=body(.047,.24,skin);
-  foreL.position.set(-.27,1.02,.035);foreR.position.set(.27,1.02,.035);
-  foreL.rotation.z=-.08;foreR.rotation.z=.08;
-
-  const thighL=body(.074,.34,kit),thighR=body(.074,.34,kit);
-  thighL.position.set(-.085,.73,.015);thighR.position.set(.085,.73,-.015);
-  thighL.rotation.z=.025;thighR.rotation.z=-.025;
-  const shinL=body(.06,.37,kit),shinR=body(.06,.37,kit);
-  shinL.position.set(-.09,.36,.03);shinR.position.set(.09,.36,-.03);
-  shinL.rotation.x=-.03;shinR.rotation.x=.03;
-  const shoeL=new THREE.Mesh(new THREE.BoxGeometry(.14,.08,.28),accentMat);
-  const shoeR=shoeL.clone();shoeL.position.set(-.09,.12,.075);shoeR.position.set(.09,.12,.075);
-
-  g.add(head,neck,torso,hips,shoulderL,shoulderR,upperL,upperR,foreL,foreR,thighL,thighR,shinL,shinR,shoeL,shoeR);
+  if(style.hair!=='none'){
+    const h=box(.36,style.hair==='crop'?.11:.15,.36,mat(hairColor,.8));h.position.y=1.94;g.add(h);
+    if(style.hair==='cap'){const brim=box(.22,.04,.16,mat(style.accent,.55));brim.position.set(0,1.92,.23);g.add(brim);}
+  }
+  if(style.accessory==='visor'){
+    const visor=box(.38,.08,.05,mat('#151a1e',.3));visor.position.set(0,1.73,.195);g.add(visor);
+  }else if(style.accessory==='headband'){
+    const band=box(.37,.06,.37,accent);band.position.y=1.83;g.add(band);
+  }
   g.rotation.y=-.08;
   return g;
 }
@@ -47,7 +46,7 @@ function frameObject(obj,target=1.8){
   const max=Math.max(size.x,size.y,size.z)||1;
   const s=target/max; obj.scale.setScalar(s); obj.position.sub(center.multiplyScalar(s));
 }
-export async function mountRaceSelfStage(canvas,{accent='#e8471c',bike=null,shoe=null,onReady}={}){
+export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=null,bike=null,shoe=null,onReady}={}){
   if(!canvas) return {dispose(){}};
   let disposed=false;
   const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power',alpha:true});
@@ -60,7 +59,7 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',bike=null,shoe
   const rim=new THREE.DirectionalLight(accent,1.3);rim.position.set(-3,2,-2);scene.add(rim);
   const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.62,.055,64),mat('#20272c',.52));platform.position.y=.025;scene.add(platform);
   const ground=new THREE.Mesh(new THREE.CircleGeometry(2.8,64),new THREE.MeshStandardMaterial({color:'#0e1519',roughness:.95,metalness:0}));ground.rotation.x=-Math.PI/2;ground.position.y=-.005;scene.add(ground);
-  const avatar=proceduralAvatar(accent);avatar.scale.setScalar(1.34);avatar.position.set(-.34,.03,.05);scene.add(avatar);
+  let avatar=proceduralAvatar({...avatarStyle,accent});avatar.scale.setScalar(1.22);avatar.position.set(-.34,.03,.05);scene.add(avatar);
 
   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
   const load=async(product,pos,scale=1.5)=>{
@@ -80,5 +79,13 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',bike=null,shoe
   const ro=new ResizeObserver(resize);ro.observe(canvas);resize();
   renderer.setAnimationLoop(()=>{if(disposed)return;controls.update();renderer.render(scene,camera)});
   onReady?.();
-  return {setAccent(c){rim.color.set(c);},dispose(){disposed=true;ro.disconnect();renderer.setAnimationLoop(null);controls.dispose();renderer.dispose();}};
+  return {
+    setAccent(c){rim.color.set(c);},
+    setAvatarStyle(next){
+      const pos=avatar.position.clone(),rot=avatar.rotation.clone(),scale=avatar.scale.clone();
+      scene.remove(avatar);avatar=proceduralAvatar(next);avatar.position.copy(pos);avatar.rotation.copy(rot);avatar.scale.copy(scale);scene.add(avatar);
+      rim.color.set(next?.accent||accent);
+    },
+    dispose(){disposed=true;ro.disconnect();renderer.setAnimationLoop(null);controls.dispose();renderer.dispose();}
+  };
 }
