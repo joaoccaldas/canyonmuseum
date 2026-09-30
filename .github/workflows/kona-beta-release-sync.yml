@@ -1,0 +1,73 @@
+name: KONA beta release sync
+
+on:
+  push:
+    branches:
+      - release/kona-beta-go-live-20260930
+    paths-ignore:
+      - 'sw.js'
+      - 'app/app-manifest.json'
+      - '*.html'
+      - 'web/dist/**'
+      - 'docs/ROOMS.md'
+      - 'llms.txt'
+      - 'llms-full.txt'
+      - 'robots.txt'
+      - 'sitemap.xml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kona-beta-release-sync
+  cancel-in-progress: true
+
+jobs:
+  build-test-visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: release/kona-beta-go-live-20260930
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci --ignore-scripts
+        working-directory: web
+      - name: Build canonical pages
+        run: node tools/build_pages.mjs
+      - name: Seal PWA release
+        run: node tools/build_app.mjs
+      - name: Unit + asset contracts
+        run: |
+          (cd web && npm test)
+          node tools/validate-bikes.mjs
+          node tools/validate_integration_contract.mjs
+      - name: Light/dark mobile visual matrix
+        run: |
+          python3 -m http.server 8754 --bind 127.0.0.1 >/tmp/kona-release-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in {1..30}; do curl -fsS http://127.0.0.1:8754/ >/dev/null && break; sleep .25; done
+          CHROME_PATH="$(which google-chrome || which google-chrome-stable || which chromium)" node web/kona-release-visual.mjs http://127.0.0.1:8754/ release-visual
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kona-beta-mobile-visuals
+          path: release-visual/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Commit deterministic generated outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add museum/catalog/products.json docs/ROOMS.md ./*.html web/dist/*.html sw.js app/app-manifest.json robots.txt sitemap.xml llms.txt llms-full.txt
+          if git diff --cached --quiet; then echo "outputs current"; exit 0; fi
+          git commit -m "build(release): sync KONA beta generated outputs [skip ci]"
+          git push origin HEAD:release/kona-beta-go-live-20260930
