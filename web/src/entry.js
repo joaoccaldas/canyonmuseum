@@ -10,6 +10,8 @@ import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, que
 import { shareRaceIdentity } from './growth/share.js';
 
 const INTENT_KEY = 'speedmax.entryIntent.v1';
+const intro = document.getElementById('intro');
+const setEntryMode = mode => { intro?.classList.toggle('quest-active', mode === 'quest'); intro?.classList.toggle('app-ready', mode === 'app'); };
 const profile = createProfile();
 const settingsBridge = { open() {} };
 window.__konaSettingsBridge = settingsBridge;
@@ -103,6 +105,7 @@ function questHost() {
 }
 
 function paintQuest(step) {
+  setEntryMode('quest');
   const host = questHost();
   const draft = readQuest();
   if (!host) return;
@@ -127,7 +130,8 @@ function paintQuest(step) {
     const shoe = labels.shoe;
     const xp = granted.history?.at?.(-1)?.xp ?? 0;
     const credits = granted.history?.at?.(-1)?.credits ?? 0;
-    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="shareSelf">Share my Kona</button><button type="button" class="btn primary" id="saveSelf">Save your Kona</button><p class="kona-note" id="saveNote"></p>`;
+    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
+    host.querySelector('#enterKona')?.addEventListener('click', () => { setEntryMode('app'); intro?.setAttribute('hidden',''); shell.now?.(); });
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
       const result = await shareRaceIdentity(draft);
