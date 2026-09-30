@@ -53,15 +53,15 @@ export function initKonaShell({ profile, settings, enter }) {
     const expo=nextExpo ? '<article><i>Expo</i><div><b>'+esc(fmtDate(nextExpo.date))+' · '+esc(nextExpo.start)+'–'+esc(nextExpo.end)+'</b><span>'+esc(nextExpo.venue)+'</span></div></article>' : '';
     const placeCards=places.slice(0,4).map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span></article>').join('');
     body.innerHTML=
-      '<section class="kona-hero-card"><small>IRONMAN WORLD CHAMPIONSHIP · '+esc(event.location||'Kailua-Kona, Hawaiʻi')+'</small>'+
+      '<section class="kona-hero-card"><small>YOUR KONA · '+esc(event.location||'Kailua-Kona, Hawaiʻi')+'</small>'+
       '<h3>'+(raceDays==null?'Kona awaits':raceDays===0?'Race day':raceDays+' days to race day')+'</h3>'+
       '<p>'+(event.date?esc(fmtDate(event.date)):'2026')+' · '+esc(event.venue||'Kailua Pier')+'</p>'+
-      '<button class="kona-primary" data-enter>Explore the coast <span>→</span></button></section>'+
-      '<section class="kona-section"><div class="kona-section-head"><h3>What matters next</h3><small>Official 2026 sources</small></div><div class="kona-list">'+expo+
-      '<article><i>Setup</i><div><b>Build your Kona setup</b><span>Bike today. Wheels, helmet and shoes plug into the same setup.</span></div><a href="Studio.html#setup">Open →</a></article>'+
-      '<article><i>Explore</i><div><b>Walk the collection</b><span>Bikes, engineering, Kona stories and hidden rooms.</span></div></article></div></section>'+
-      '<section class="kona-section"><div class="kona-section-head"><h3>Start with Kona</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
-    body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
+      '<button class="kona-primary" data-setup>Continue your setup <span>→</span></button></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>Next</h3><small>One useful thing</small></div><div class="kona-list">'+expo+
+      '<article><i>Setup</i><div><b>Complete your race setup</b><span>Bike, run gear and goal stay together.</span></div><a href="Studio.html#setup">Open →</a></article></div></section>'+
+      '<section class="kona-section"><div class="kona-section-head"><h3>Discover Kona</h3><small>Places worth knowing</small></div><div class="kona-place-grid">'+placeCards+'</div><button class="kona-primary kona-secondary-action" data-enter>Discover more <span>→</span></button></section>';
+    body.querySelector('[data-setup]')?.addEventListener('click',()=>{ location.href='Studio.html#setup'; });
+    body.querySelector('[data-enter]')?.addEventListener('click',()=>{ explore(); });
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
   }
 
