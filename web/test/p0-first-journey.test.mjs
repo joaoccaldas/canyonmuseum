@@ -11,3 +11,9 @@ test('CSP allows the exact public Supabase project used by auth adapter',()=>ass
 test('entry source itself never imports Three.js',()=>{assert.equal(/from ['"]three/.test(entry),false);assert.equal(/app\/hall\.js/.test(entry),true);});
 
 test('generated core bundle carries the P0 continuation contract',()=>{const bundle=fs.readFileSync(new URL('../../app/kona-core.js',import.meta.url),'utf8');assert.match(bundle,/Enter KONA/);});
+
+test('entry uses tiny entry-data and defers museum-data until explicit 3D entry',()=>{
+  assert.match(entry,/fetch\('app\/entry-data\.json'/);
+  assert.match(entry,/ensureMuseumData/);
+  assert.equal(/const dataReady = loadScript\('app\/museum-data\.js'\)/.test(entry),false);
+});
