@@ -62,17 +62,16 @@ for (const [name,w,h] of PHONES) {
       if (!el.closest('.tabs') && (r.left < -1 || r.right > vw + 1)) out.push(`horizontal overflow ${n}`);
       if (el.matches('button') && (r.height < 40 || r.width < 40)) out.push(`small tap target ${n} ${Math.round(r.width)}x${Math.round(r.height)}`);
     }
-    if (panel && panel.scrollHeight > panel.clientHeight) {
-      panel.scrollTop = panel.scrollHeight;
+    const scroller=panel?.querySelector('.setup-scroll');
+    if (scroller && scroller.scrollHeight > scroller.clientHeight) {
+      scroller.scrollTop = scroller.scrollHeight;
       const share=panel.querySelector('button[aria-label="Share My Kona Setup"]');
       if (share) {
-        const r=share.getBoundingClientRect();
-        if (r.left < -1 || r.right > vw + 1 || r.bottom > vh + 1) {
-          const pr=panel.getBoundingClientRect();
-          out.push('share action not reachable after opening and scrolling');
-        }
+        const r=share.getBoundingClientRect(), pr=panel.getBoundingClientRect();
+        if (r.left < pr.left - 1 || r.right > pr.right + 1 || r.top < pr.top - 1 || r.bottom > pr.bottom + 1)
+          out.push(`share action not reachable after content scroll [${[r.left,r.top,r.right,r.bottom].map(Math.round)}]`);
       }
-      panel.scrollTop = 0;
+      scroller.scrollTop = 0;
     }
     const share=document.querySelector('button[aria-label="Share My Kona Setup"]');
     if (share && visible(share)) {
