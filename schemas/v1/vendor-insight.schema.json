@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/v1/vendor-insight.schema.json",
+  "title": "Vendor Insight Aggregate V1",
+  "description": "Aggregate-only demand object. Never contains user identifiers or row-level equipment records.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "entity_type",
+    "period",
+    "segment",
+    "metrics",
+    "privacy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^vendor-insight:[a-z0-9:_-]+$"
+    },
+    "entity_type": {
+      "const": "vendor-insight"
+    },
+    "period": {
+      "type": "object",
+      "required": [
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "type": "string",
+          "format": "date"
+        },
+        "to": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "additionalProperties": false
+    },
+    "segment": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "owned_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dream_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "try_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "setup_share_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "product_view_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "privacy": {
+      "type": "object",
+      "required": [
+        "minimum_group_size",
+        "consent_basis",
+        "contains_user_ids"
+      ],
+      "properties": {
+        "minimum_group_size": {
+          "type": "integer",
+          "minimum": 10
+        },
+        "consent_basis": {
+          "const": "explicit-opt-in"
+        },
+        "contains_user_ids": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
