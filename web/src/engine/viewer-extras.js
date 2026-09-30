@@ -47,7 +47,7 @@ export function buildAnimatedChain({ chainNode, toThreeVector, meshesOf }) {
   };
 
   const chain = {
-    s: 0, total, pitch,
+    s: 0, tot: total, pitch,
     update() {
       for (let i = 0; i < count; i++) {
         const s0 = this.s + i * pitch;
