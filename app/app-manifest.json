@@ -1,5 +1,5 @@
 {
- "version": "ebc81fb1731b",
+ "version": "6243ba2fa21b",
  "core": [
   "index.html",
   "app/museum-data.js",
@@ -14,14 +14,14 @@
  "files": {
   "index.html": "0vg3AzzEoV7FKQPSQeUPUvLqOuKdQMWj5XC0HjqZYXg=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
-  "app/hall.js": "FJ6LMOZmh/UA392TyR9r5RLSwMb97tHeY89bXg+EdZg=",
+  "app/hall.js": "TCrdelA2t2xnMScYl3OjOnyUnZlyK0ByLPXAxhyxhRE=",
   "manifest.webmanifest": "PahVaqvQpzQCohyq/Xisk9M+MPIkdt5LgJRpeCOlSro=",
   "assets/pwa/icon-v3.svg": "kX7Wf3uv1TGV8QngLT59Ot0XX50qljLbo7CNgFQm1ws=",
   "assets/pwa/icon-v3-192.png": "r7xyhMJsNe726HzraMgmSrjCQ6jgM6gTEQIlOAMlqIY=",
   "assets/pwa/icon-v3-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/icon-v3-maskable-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/apple-touch-icon-v3.png": "R7r+34dBZMxUezo2xBD34dbHtfTyvjdCViUhs3wRamI=",
-  "app/studio.js": "45DIdvXW+RomeGYZ3tDZi89lWcfk/Yqs4/mVl7SjNPk=",
+  "app/studio.js": "TiYSgzwcPZXGsbG42FvnqP3qeAHb5zncVNNNqZpRKjw=",
   "app/studio-catalog.js": "Qj8rIu7C13w5fDmtGeLtuZmcl2S6tEN+XVDRHPYEZZ8=",
   "Canyon_Collection.html": "q4V+Cvk0BT18YiC03U3PoVNMBs7Za/XLOAp4DVsjT70=",
   "Experiences.html": "+DF2CS91MfQxcEcBY8lk4nDsHux/C45AUH7XssqS3xI=",
