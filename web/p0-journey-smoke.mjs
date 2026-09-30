@@ -26,6 +26,7 @@ try{
  await page.waitForFunction(()=>/What would make Kona a win/i.test(document.querySelector('#konaQuest')?.textContent||''));
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/What would make Kona a win/i);
  await page.click('[data-set="goal"][data-value="Finish"]');
+ await page.waitForFunction(()=>{const q=localStorage.getItem('kona.konaSelf.v1')||localStorage.getItem('speedmax.konaSelf.v1');try{return JSON.parse(q||'{}').goal==='Finish'}catch{return false}}, {timeout:5000}).catch(async()=>{throw new Error('Goal click did not persist. Quest: '+await page.$eval('#konaQuest',e=>e.textContent));});
  try { await page.waitForSelector('#enterKona',{timeout:8000}); }
  catch(err){ throw new Error('Reveal did not render. Page errors: '+pageErrors.join(' | ')+' Quest: '+await page.$eval('#konaQuest',e=>e.textContent)); }
  assert.match(await page.$eval('#konaQuest',e=>e.textContent),/This is your Kona/i);
