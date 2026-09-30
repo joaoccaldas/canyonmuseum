@@ -35,7 +35,18 @@ const today = () => new Date().toISOString().slice(0, 10);
 const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
 
 function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s?.v === 1) return s; } catch (_) { }
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s?.v === 1 && s.stamps && typeof s.stamps === 'object' && !Array.isArray(s.stamps)) return s;
+    // Migrate the pre-Passport museum discovery shape that accidentally used the
+    // same storage key. Preserve discoveries instead of crashing or discarding them.
+    if (s?.v === 1 && Array.isArray(s.discoveries)) {
+      const stamps = Object.fromEntries(s.discoveries
+        .filter(k => typeof k === 'string' && k)
+        .map(k => ['bike:' + k, { at: Date.now(), label: k }]));
+      return { v:1, profile:null, stamps, xp:Object.keys(stamps).length * 10, streak:0, best:0, last:null, badges:{} };
+    }
+  } catch (_) { }
   return { v: 1, profile: null, stamps: {}, xp: 0, streak: 0, best: 0, last: null, badges: {} };
 }
 function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) { } }
