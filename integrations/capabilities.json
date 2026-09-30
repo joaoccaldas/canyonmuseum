@@ -17,7 +17,13 @@
     "wheel",
     "trisuit",
     "artifact",
-    "artwork"
+    "artwork",
+    "crankset",
+    "cassette",
+    "aerobar_extensions",
+    "hydration",
+    "saddle",
+    "groupset"
   ],
   "capabilities": [
     "inspect",
