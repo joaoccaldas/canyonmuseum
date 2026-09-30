@@ -24,6 +24,6 @@ test('Build enters quest state instead of appending below hero',()=>{
 test('reveal enters Home without loading hall runtime',()=>{
  const reveal=entry.slice(entry.indexOf("if (step === 'reveal'"),entry.indexOf("if (step === 'save'"));
  assert.match(reveal,/enterKona/);
- assert.match(reveal,/shell\.now/);
+ assert.match(reveal,/enterApp/);
  assert.equal(reveal.includes("openMuseum("),false);
 });
