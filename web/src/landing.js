@@ -19,6 +19,7 @@ import { initMap } from './map.js';
 import { createProfile, renderSettings, QUALITY, AVATARS } from './engine/profile.js';
 import { captureView, shareImage } from './engine/share.js';
 import { initSettings } from './ui/settings.js';
+import { initKonaShell } from './ui/kona-shell.js';
 import { slotsOf, applySkin, skinFromWyld, skinFromFilm } from './engine/skins.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
 import { initArtWorld } from './artworld.js';
@@ -1752,6 +1753,9 @@ addEventListener('resize', resize); resize();
 let last = performance.now(), shift = 0;
 function frame(now) {
   requestAnimationFrame(frame);
+  // Zero visual cost: pause expensive 3D work when it cannot be seen.
+  // Reset the clock while paused so resuming never creates a physics/camera jump.
+  if (document.hidden || document.body.classList.contains('kona-panel-open') || document.body.classList.contains('settings-open')) { last = now; return; }
   const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000;
   // movement: gentle acceleration, slide along obstacles
   let ix = 0, iz = 0;
@@ -1952,7 +1956,8 @@ async function shareView(title) {
 }
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
 $('cardShare')?.addEventListener('click', () => shareView($('cName').textContent));
-window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas };
+const konaShell = initKonaShell({ profile, settings: settingsUI, enter });
+window.__app = { profile, settings: settingsUI, shareView, openArt, openAtlas, konaShell };
 window.__atlas = atlas;
 window.__museum = { P, PIECES, visit, enter, scene, camera, champs, visitChamp, wyldBikes, visitWyld, renderer, tour, tourStart, pier, visitPier, hween, visitHween, pickables, obstacles, loader, halt: () => { path = null; P.vx = P.vz = 0; } };
 initArtWorld(window.__museum).catch(e => console.warn('art world', e));
