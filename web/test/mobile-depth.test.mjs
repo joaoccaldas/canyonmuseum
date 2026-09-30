@@ -5,7 +5,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const src = fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8');
+const src = [
+  fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8'),
+  fs.readFileSync(path.join(here, '../src/engine/museum-architecture.js'), 'utf8'),
+].join('\n');
 
 test('walkable floor overlays are depth-separated on mobile', () => {
   assert.ok(src.includes('polygonOffsetFactor: -2'));
