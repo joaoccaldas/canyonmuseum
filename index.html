@@ -51,24 +51,6 @@
 <!--design-system:start--><link rel="stylesheet" href="web/styles/system.css"><link rel="stylesheet" href="web/styles/shell-mobile.css"><link rel="stylesheet" href="brand/tokens.css"><link rel="stylesheet" href="brand/themes.css"><link rel="stylesheet" href="brand/artifacts.css"><!--design-system:end-->
 </head>
 <body>
-<canvas id="hall" aria-label="A walkable museum hall with every Canyon Speedmax generation on display" tabindex="0"></canvas>
-
-<header>
-  <div class="brand"><a class="logo" href="./" aria-label="Speedmax Museum home"><b>KONA</b><small>Triathlon world · beta</small></a>
-  <button id="where" class="where" hidden aria-label="Where you are: open the map"><i></i><span><small></small><b></b></span></button></div>
-  <nav>
-    <button id="installBtn" hidden title="Install the museum on this device"><span class="long">Get the </span>app</button>
-    <button id="mapBtn" aria-label="Museum map" title="Map (M)">Map</button>
-    <button id="shareBtn" aria-label="Share this view" title="Share this view">Share</button>
-    <a id="studioLink" href="Studio.html" title="Paint and share any bike">Studio</a>
-    <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
-    <button id="passportBtn" aria-label="Museum Passport progress">Passport <span id="passportCount">0/0</span></button>
-    <a href="Canyon_Collection.html#compare">Compare</a>
-    <a class="wide" href="Canyon_Collection.html#archive">Archive</a>
-    <button id="meBtn" class="me" aria-label="Profile and settings"><i aria-hidden="true"></i><span>Sign in</span></button>
-  </nav>
-</header>
-
 <section id="intro" class="kona-entry">
   <div class="entry-media" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" decoding="async" fetchpriority="high"></div>
   <div class="intro-inner">
@@ -84,61 +66,18 @@
   </div>
 </section>
 
-<div id="rail" aria-label="Pieces in the collection"><div class="rail-inner" id="railInner"></div></div>
-
-<aside id="card" aria-live="polite" aria-label="Piece details">
-  <button class="close" id="cardClose" aria-label="Close">×</button>
-  <button class="card-share" id="cardShare" aria-label="Share this exhibit" title="Share">↗</button>
-  <div class="c-years" id="cYears"></div>
-  <h2 id="cName"></h2>
-  <div class="c-mat" id="cMat"></div>
-  <p class="c-note" id="cNote"></p>
-  <div class="c-stats" id="cStats"></div>
-  <div class="c-actions" id="cActions"></div>
-  <div id="cMedia"></div>
-</aside>
-<div id="labels" aria-label="Part labels"></div>
-
-<div id="joy" aria-label="Walk: drag the knob" role="application">
-  <svg viewBox="0 0 120 120" aria-hidden="true"><defs>
-    <path id="jarc1" d="M60 60 m-49 0 a49 49 0 0 1 24.5 -42.4"/><path id="jarc2" d="M60 60 m24.5 -42.4 a49 49 0 0 1 24.5 42.4"/><path id="jarc3" d="M15 72 a47 47 0 0 0 90 0"/></defs>
-    <circle cx="60" cy="60" r="56" fill="rgba(251,249,245,.82)"/>
-    <path d="M60 60 m-49 0 a49 49 0 0 1 42 -48.5" fill="none" stroke="#138a8f" stroke-width="6" stroke-linecap="round"/>
-    <path d="M60 60 m8 -48.4 a49 49 0 0 1 38 57" fill="none" stroke="#f3b64f" stroke-width="6" stroke-linecap="round"/>
-    <path d="M60 60 m45 20 a49 49 0 0 1 -92 -13" fill="none" stroke="#e8471c" stroke-width="6" stroke-linecap="round"/>
-    <text font-size="10" font-weight="800" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc1" startOffset="30%">SWIM</textPath></text>
-    <text font-size="10" font-weight="800" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc2" startOffset="35%">BIKE</textPath></text>
-    <text font-size="10" font-weight="800" letter-spacing="1.5" fill="#12181d"><textPath href="#jarc3" startOffset="50%" text-anchor="middle" dy="8">RUN</textPath></text>
-  </svg>
-  <div class="joy-knob"><i></i></div>
-</div>
-<div id="tourPill" role="status" aria-live="polite"><span class="tp-dot"></span><b>Guided tour</b><span id="tourStep">1 / 12</span>
-  <button id="tourPause">Pause</button><button id="tourNext" aria-label="Next stop">Next ›</button><button id="tourStop" aria-label="End tour">✕</button><i id="tourBar"></i></div>
-<div id="coach" hidden role="status" aria-live="polite"><span class="coach-ring"></span><div><b></b><span class="coach-row"><small></small><button id="coachOk">Got it</button></span></div></div>
 <div id="appSheet" hidden role="dialog" aria-modal="true" aria-labelledby="appSheetTitle"><div>
   <button class="close" aria-label="Close">×</button>
   <img src="assets/pwa/icon-v3-192.png" alt="">
   <h3 id="appSheetTitle">KONA, on your phone</h3>
   <p>Install KONA as a lightweight app. The 3D world stays optional and loads only when you enter it.</p>
-  <div class="opt" data-pwa hidden><b>Add to Home Screen</b><small>Chrome: menu ⋮ → Install app / Add to Home screen. KONA then opens full-screen from your Home screen.</small></div>
+  <button class="opt" type="button" data-pwa-action hidden><b>Install KONA now</b><small>Use Chrome's native app-install prompt.</small></button>
+  <div class="opt" data-pwa hidden><b>Add KONA to your phone</b><small>Chrome: menu ⋮ → Install app / Add to Home screen. KONA then opens full-screen from your Home screen.</small></div>
   <a class="opt" data-apk hidden href="#" download>Android app (APK)<small></small></a>
+  <div class="opt" data-apk-unavailable hidden><b>Native Android download</b><small>Not published yet. The signed APK release channel is not configured, so use the PWA install above.</small></div>
   <div class="opt" data-ios hidden>On iPhone or iPad<small>Tap the Share button, then “Add to Home Screen”.</small></div>
 </div></div>
 <div id="updateBar" hidden role="status" aria-live="polite"><span></span><button type="button"></button><button type="button" class="later" aria-label="Later">×</button></div>
-<div id="tag"></div>
-<button id="nearby" hidden aria-label="Inspect nearby bike"><small>Nearby</small><b id="nearbyName"></b><span aria-hidden="true">→</span></button>
-<div id="toast"></div>
-<div id="fade" aria-hidden="true"></div>
-<div id="bgload" role="status" aria-live="polite" hidden><i></i><span></span></div>
-
-<div id="fallback">
-  <div class="eyebrow">Speedmax Museum</div>
-  <h1 style="font-size:44px">The collection</h1>
-  <p class="lede">This browser can't render the 3D hall. Every exhibit is still one tap away:</p>
-  <ul id="fallbackList"></ul>
-</div>
-
-<p class="credit">Independent study from public references. Not affiliated with or endorsed by Canyon Bicycles. 3D models are visual reconstructions.</p>
 
 <script src="app/kona-core.js" defer></script>
 </body>

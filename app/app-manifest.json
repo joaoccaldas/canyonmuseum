@@ -1,5 +1,5 @@
 {
- "version": "e1e35d73c28b",
+ "version": "8678b41c56d6",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -13,8 +13,8 @@
   "assets/pwa/apple-touch-icon-v3.png"
  ],
  "files": {
-  "index.html": "KSqZXSa+Y/d8ynRu1H2je7Jj39zWcfXmiadRcOrRn5M=",
-  "app/kona-core.js": "LI/NwVcGS2VkcnegshdmcFXiTJANTiz2aqqE1P/Lnjg=",
+  "index.html": "t9KTQQzZpxNtqA6K+NAIbLfMnJtHfe1jFtHn1Tblu9k=",
+  "app/kona-core.js": "qdrEx4QyXE3SaIKtxP1P598yUPYvfdeyPq33Y7a2MPM=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
@@ -23,10 +23,11 @@
   "assets/pwa/icon-v3-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/icon-v3-maskable-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/apple-touch-icon-v3.png": "R7r+34dBZMxUezo2xBD34dbHtfTyvjdCViUhs3wRamI=",
-  "app/race-self-stage.js": "0FiOocFujQSzSwYUALFePWLCvnA2n3OeIEG6o722Ju8=",
+  "app/world-shell.html": "QuYnswz4I2bd1Ia426+RB7lfDb+Ey2xrrbNYkWzBr7M=",
+  "app/race-self-stage.js": "Wm8ajdIDvC9WbsGOZ88iIaOZhAiBtIozgGbpSXfxAUY=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
-  "app/hall.js": "Z/lf8EScko1aLpKVIyzN8figiRm+5NuR6FaQGwKgjXE=",
+  "app/hall.js": "M6WqqoaUJ/mFgj+OiFrFwmAbeUFeF74V+13g6Gxd7Pg=",
   "app/studio.js": "RhnvP4yYW9/dmcUcyqiI7HrNfr4eGVpcUkbwPb/j9t8=",
   "app/studio-catalog.js": "Qj8rIu7C13w5fDmtGeLtuZmcl2S6tEN+XVDRHPYEZZ8=",
   "Canyon_Collection.html": "weOlH8QsluZ69syQBjJMnn2xMEXTu4ZY7QDYUf1ARb8=",
