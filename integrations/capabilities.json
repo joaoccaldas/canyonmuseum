@@ -23,7 +23,13 @@
     "aerobar_extensions",
     "hydration",
     "saddle",
-    "groupset"
+    "groupset",
+    "bike_computer",
+    "pedal",
+    "smart_trainer",
+    "smart_frame",
+    "trainer_accessory",
+    "accessory"
   ],
   "capabilities": [
     "inspect",
