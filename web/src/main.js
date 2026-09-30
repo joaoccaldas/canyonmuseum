@@ -19,6 +19,7 @@ import { BIKE, PROFILE, GEOMETRY, PARTS, GROUPS, PRESETS, SWATCHES, DECALS, VIEW
 import { coarse, desktopViewPhone } from './detect.js';
 import { buildAnimatedChain, buildRearDisc, createDimensionOverlay, createWindTunnel } from './engine/viewer-extras.js';
 import { createViewerInteraction } from './engine/viewer-interaction.js';
+import { setupViewerUI } from './ui/viewer-ui.js';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -215,7 +216,12 @@ loader.parse(GLB.buffer, '', gltf => {
   windTunnel.build();
   tunnelMat = windTunnel.material();
   applyCfg();
-  buildUI();
+  setupViewerUI({
+    $, $, state:S, bikeMeta:BIKE, profile:PROFILE, tour:TOUR, presets:PRESETS, swatches:SWATCHES, decals:DECALS,
+    partsMeta:PARTS, groupLabels:GROUPS, geometry:GEOMETRY, parts, discMesh, setCfg, closeDrawers, select, focusPart,
+    setMode, setEnv, flyTo, paintRange, applyGhost, dims, controls, screenshot, download, glb:GLB, applyQuality, syncUI,
+    getLab:()=>lab, toggleDrawer, resetConfig:()=>{S.cfg={...DEFAULT_CFG};applyCfg();}, saveCfg, toast,
+  });
   makeSpecs({profile:PROFILE,parts});
   lab = makeLab({getCfg:()=>S.cfg,setCfg:p=>setCfg(p,true),download,
     enter:()=>{closeDrawers();select(null);$('#tour').hidden=true;setMode('assembled');setEnv('tunnel');flyTo('lab');document.body.classList.add('engaged');},
@@ -349,153 +355,6 @@ function syncUI() {
 }
 function setCfg(patch, keepPreset = false) { Object.assign(S.cfg, patch); if (!keepPreset) S.cfg.preset = 'custom'; applyCfg(); }
 
-function buildUI() {
-  // Dynamic hero stats from active profile (weight / gear / rims).
-  const _w = $('#stat-weight'), _g = $('#stat-gear'), _gs = $('#stat-gear-sub'), _r = $('#stat-rims');
-  if(_w) _w.textContent = String(BIKE.weight ?? '—');
-  if(_g) _g.textContent = BIKE.gear || '—';
-  if(_gs) _gs.textContent = BIKE.gearSub || '';
-  if(_r) _r.textContent = BIKE.rims || '—';
-  let tourIndex = -1;
-  const showTour = i => {
-    tourIndex = i; const stop = TOUR[i];
-    closeDrawers(); select(null); setMode('assembled'); setEnv('museum');
-    $('#tour').hidden = false;
-    $('#tourCount').textContent = `${i+1} / ${TOUR.length}`;
-    $('#tourTitle').textContent = stop.title; $('#tourText').textContent = stop.text;
-    $('#tourNext').textContent = i === TOUR.length-1 ? 'Explore freely' : 'Next detail →';
-    flyTo(stop.view); $('#tourNext').focus({preventScroll:true});
-  };
-  $('#tourStart').onclick = () => showTour(0);
-  $('#tourNext').onclick = () => { if(tourIndex < TOUR.length-1) showTour(tourIndex+1); else { $('#tour').hidden=true; $('#tourStart').focus(); } };
-  $('#tourClose').onclick = () => { $('#tour').hidden=true; $('#tourStart').focus(); };
-  // Wheel customisation
-  const wc = (id, key) => { const e = $(id); if (e) e.oninput = () => setCfg({ [key]: e.value }, true); };
-  wc('#pickRim', 'rimBase'); wc('#pickRimText', 'rimText'); wc('#pickTyreText', 'tyreText'); wc('#pickDisc', 'discColor');
-  const rl = $('#optRimLabels'); if (rl) rl.onchange = e => setCfg({ rimLabels: e.target.checked }, true);
-  // Disc artwork
-  const discArt = { texture: null, mesh: null, uniforms: { artOn: { value: 0 }, artTex: { value: new THREE.Texture() }, artScale: { value: 1 }, artAngle: { value: 0 }, artOpacity: { value: 1 }, artAspect: { value: 1 } } };
-  function discMat(mat) {
-    const m = mat.clone();
-    m.onBeforeCompile = shader => {
-      Object.assign(shader.uniforms, discArt.uniforms);
-      shader.vertexShader = 'varying vec2 artUv;\n' + shader.vertexShader;
-      shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\nartUv = uv;');
-      shader.fragmentShader = 'varying vec2 artUv; uniform sampler2D artTex; uniform float artOn,artScale,artAngle,artOpacity,artAspect;\n' + shader.fragmentShader;
-      shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>',
-        '#include <color_fragment>\nif(artOn>0.5){vec2 p=artUv-.5;float c=cos(artAngle),s=sin(artAngle);p=mat2(c,-s,s,c)*p;vec2 uv=p/vec2(artScale,artScale/artAspect)+.5;float mask=step(0.,uv.x)*step(0.,uv.y)*step(uv.x,1.)*step(uv.y,1.);vec4 art=texture2D(artTex,uv);diffuseColor.rgb=mix(diffuseColor.rgb,art.rgb,art.a*artOpacity*mask);}');
-    };
-    m.customProgramCacheKey = () => 'museum-disc-v1';
-    return m;
-  }
-  function applyDiscArt(mat) {
-    if (!discMesh) return;
-    discMesh.traverse(o => { if (o.isMesh && o.material === mat) { o.material = discMat(mat); } });
-  }
-  function installDiscArt(url) {
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement('canvas'); const sc = Math.min(1, 1024 / Math.max(img.width, img.height));
-      c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      discArt.uniforms.artTex.value.dispose();
-      const t = new THREE.CanvasTexture(c);
-      t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-      discArt.uniforms.artTex.value = t; discArt.uniforms.artAspect.value = c.width / c.height;
-      discArt.uniforms.artOn.value = 1;
-      if (discMesh) discMesh.traverse(o => { if (o.isMesh) { o.material = discMat(o.material); o.material.needsUpdate = true; } });
-      $('#discArtControls').hidden = false; $('#discArtStatus').textContent = `${img.width} × ${img.height} · local`;
-    };
-    img.onerror = () => { $('#discArtStatus').textContent = 'Could not decode image.'; };
-    img.src = url;
-  }
-  const daFile = $('#discFile');
-  if (daFile) daFile.onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(f.type) || f.size > 12 * 1024 * 1024) {
-      $('#discArtStatus').textContent = 'PNG, JPEG or WebP up to 12 MB.';
-      e.target.value = '';
-      return;
-    }
-    const url = URL.createObjectURL(f);
-    installDiscArt(url);
-    URL.revokeObjectURL(url);
-    e.target.value = '';
-  };
-  for (const [id, key] of [['#wyldDark', 'wyldDark'], ['#wyldSheer', 'wyldSheer'], ['#wyldAlpha', 'wyldAlpha']]) {
-    const el = $(id); if (el) el.oninput = () => { setCfg({ [key]: +el.value, wyld: true }, true); paintRange(el); };
-  }
-  $('#optFront').onchange = e => setCfg({ frontBottle: e.target.checked }, true);
-
-  // presets
-  $('#presets').innerHTML = Object.entries(PRESETS).map(([k, p]) =>
-    `<button data-preset="${k}"><i style="${p.wyld?'background:linear-gradient(135deg,#ff3d8e,#ff8fbf 28%,#e9cde8 46%,#8fe7dc 66%,#5fd8d3)':`background:linear-gradient(135deg,${p.frame} 55%,${p.decal} 55%)`}"></i><strong>${p.name}</strong><span>${p.sub}</span></button>`).join('');
-  $('#swFrame').innerHTML = SWATCHES.map(c => `<button data-frame="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickFrame"></label>`;
-  $('#swDecal').innerHTML = DECALS.map(c => `<button data-decal="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickDecal"></label>`;
-  $$('[data-preset]').forEach(b => b.onclick = () => setCfg({ ...PRESETS[b.dataset.preset], preset: b.dataset.preset, wyld: !!PRESETS[b.dataset.preset].wyld }, true));
-  $$('[data-frame]').forEach(b => b.onclick = () => setCfg({ frame: b.dataset.frame, wyld: false }));
-  $$('[data-decal]').forEach(b => b.onclick = () => setCfg({ decal: b.dataset.decal }));
-  $$('[data-finish]').forEach(b => b.onclick = () => setCfg({ finish: b.dataset.finish }));
-  $$('[data-cockpit]').forEach(b => b.onclick = () => setCfg({ cockpit: b.dataset.cockpit }));
-  $('#pickFrame').oninput = e => setCfg({ frame: e.target.value, wyld: false });
-  $('#pickDecal').oninput = e => setCfg({ decal: e.target.value });
-  $('#irid').oninput = e => setCfg({ irid: +e.target.value });
-  // Options this bike's model does not carry: disable honestly with a reason.
-  for (const k of (PROFILE.unavailableOptions || [])) {
-    const id = { aerofuel: '#optFuel', frontBottle: '#optFront', rearBottles: '#optRear', shield: '#optShield', rearDisc: '#optDisc' }[k];
-    const el = id && $(id); if (!el) continue;
-    el.disabled = true; el.checked = false;
-    const lbl = el.closest('label'); if (lbl) lbl.hidden = true;           // not on this frame: don't offer a dead switch
-  }
-  if (PROFILE.unavailableOptions?.length && !$('#setupNote')) $('#optShield')?.closest('label')?.insertAdjacentHTML('beforebegin', `<p class="note" id="setupNote">${PROFILE.unavailableNote || 'This frame predates AeroShield, AeroFuel storage and the disc-wheel option, so they are not offered here.'}</p>`);
-  if(PROFILE.unavailableOptions?.includes('rearBottles') && !$('#optRear').disabled){$('#optRear').disabled=true;$('#optRear').closest('label').title='The standard SP102 seatpost has no modelled rear bottle carrier.';}
-  $('#optRear').onchange = e => setCfg({ rearBottles: e.target.checked }, true);
-  $('#optShield').onchange = e => setCfg({ shield: e.target.checked }, true);
-  $('#optDisc').onchange = e => setCfg({ rearDisc: e.target.checked }, true);
-  $('#reset').onclick = () => { S.cfg = { ...DEFAULT_CFG }; applyCfg(); toast('Back to Pro White'); };
-  $('#share').onclick = async () => { saveCfg(); try { await navigator.clipboard.writeText(location.href); toast('Link to this build copied'); } catch (_) { toast('Copy the address bar to share this build'); } };
-
-  // build sheet
-  const groups = {};
-  for (const [id, p] of Object.entries(PARTS)) if (!p.alias && parts[id]) (groups[p.group] ||= []).push([id, p]);
-  $('#bom').innerHTML = Object.entries(GROUPS).filter(([g]) => groups[g]).map(([g, label]) =>
-    `<h3>${label}</h3>` + groups[g].map(([id, p]) => `<button data-part="${id}"><span>${p.name}</span><em>${p.weight ? p.weight + ' g' : ''}</em></button>`).join('')).join('');
-  $$('[data-part]').forEach(b => b.onclick = () => { select(b.dataset.part); focusPart(b.dataset.part); if (coarse) closeDrawers(); });
-
-  // geometry table
-  $('#geo').innerHTML = `<table><thead><tr><th></th>${GEOMETRY.sizes.map(s => `<th class="${s === 'M' ? 'm' : ''}">${s}</th>`).join('')}</tr></thead><tbody>` +
-    GEOMETRY.rows.map(r => `<tr><td>${r[0]}</td>${r.slice(1).map((v, i) => `<td class="${i === 1 ? 'm' : ''}">${v}</td>`).join('')}</tr>`).join('') + '</tbody></table>';
-
-  // modes
-  $$('[data-mode]').forEach(b => b.onclick = () => setMode(b.dataset.mode));
-  $$('[data-view]').forEach(b => b.onclick = () => flyTo(b.dataset.view));
-  $$('[data-env]').forEach(b => b.onclick = () => b.dataset.env==='tunnel'?lab?.open():setEnv(b.dataset.env));
-  $('#explode').oninput = e => { S.eT = +e.target.value; if (S.mode !== 'exploded' && S.eT > 0) setMode('exploded', true); if (S.eT === 0 && S.mode === 'exploded') setMode('assembled', true); };
-  $('#cadence').oninput = e => { S.cadence = +e.target.value; paintRange(e.target); };
-  $$('[data-drawer]').forEach(b => b.onclick = () => toggleDrawer(b.dataset.drawer));
-  $$('.drawer .x').forEach(b => b.onclick = closeDrawers);
-  $('#cardClose').onclick = () => select(null);
-  $('#cardFocus').onclick = () => S.sel && focusPart(S.sel);
-  $('#cardIsolate').onclick = () => { S.isolate = !S.isolate; $('#cardIsolate').classList.toggle('active', S.isolate); applyGhost(); };
-  $('#dimsBtn').onclick = () => { S.dims = !S.dims; dims.visible = S.dims; $('#dimlayer').classList.toggle('on', S.dims); $('#dimsBtn').classList.toggle('active', S.dims); if (S.dims) flyTo('side'); };
-  $('#xrayBtn').onclick = () => { S.xray = !S.xray; $('#xrayBtn').classList.toggle('active', S.xray); applyGhost(); };
-  $('#spinBtn').onclick = () => { S.spin = !S.spin; controls.autoRotate = S.spin; controls.autoRotateSpeed = .7; $('#spinBtn').classList.toggle('active', S.spin); };
-  $('#shotBtn').onclick = screenshot;
-  $('#glbBtn').onclick = () => download(new Blob([GLB], { type: 'model/gltf-binary' }), 'speedmax_cfr_axs_web.glb');
-  $('#quality').value = S.quality;
-  $('#quality').onchange = e => { S.quality = e.target.value; applyQuality(); };
-  $('#hint').textContent = coarse ? 'Drag to orbit · pinch to zoom · tap a part' : 'Drag to orbit · scroll to zoom · click any part';
-  addEventListener('keydown', e => {
-    if (e.target.tagName === 'INPUT') return;
-    if (e.key === 'e') setMode(S.mode === 'exploded' ? 'assembled' : 'exploded');
-    if (e.key === 'r') setMode(S.mode === 'ride' ? 'assembled' : 'ride');
-    if (e.key === 'Escape') { select(null); closeDrawers(); }
-    const vk = { 1: 'hero', 2: 'side', 3: 'front', 4: 'cockpit', 5: 'drivetrain', 6: 'top', 7: 'nds' }[e.key]; if (vk) flyTo(vk);
-  });
-  $$('header button, .dock button').forEach(b => b.addEventListener('click', () => document.body.classList.add('engaged')));
-  paintRange($('#explode')); paintRange($('#cadence'));
-  setEnv(S.env); syncUI(); applyQuality();
-}
 function paintRange(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
 function toggleDrawer(id) { const d = $('#' + id), open = !d.classList.contains('open'); closeDrawers(); d.classList.toggle('open', open); $$(`[data-drawer="${id}"]`).forEach(b => b.classList.toggle('active', open)); applyShift(); }
 function closeDrawers() { $$('.drawer').forEach(d => d.classList.remove('open')); $$('[data-drawer]').forEach(b => b.classList.remove('active')); applyShift(); }
