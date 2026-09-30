@@ -1,3 +1,4 @@
+import { mapBounds, mapFloors } from './world/map-model.js';
 // map.js — the museum map. Two floors drawn from the same rectangles the walls are built from,
 // a live "you are here" arrow, and every area one tap away (the walk there is the museum's own route).
 // Open with the Map button or M; Esc closes. The list under the plan is the same set of places for
@@ -5,7 +6,7 @@
 const NS = 'http://www.w3.org/2000/svg';
 
 export function initMap({ areas, pose, go, button }) {
-  const floors = [...new Set(areas.map(a => a.floor))];
+  const floors = mapFloors(areas);
   const root = document.createElement('div');
   root.id = 'map'; root.hidden = true; root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', 'Museum map');
   const floorName=f=>({ground:'Ground floor',upper:'Upper floor',future:'Future levels'}[f]||f);
@@ -23,8 +24,7 @@ export function initMap({ areas, pose, go, button }) {
 
   function draw() {
     const on = areas.filter(a => a.floor === floor);
-    const xs = on.flatMap(a => [a.x0, a.x1]), zs = on.flatMap(a => [a.z0, a.z1]);
-    const pad = 3, minX = Math.min(...xs) - pad, maxX = Math.max(...xs) + pad, minZ = Math.min(...zs) - pad, maxZ = Math.max(...zs) + pad;
+    const {minX,maxX,minZ,maxZ}=mapBounds(on,3);
     svg.setAttribute('viewBox', `${minX} ${-maxZ} ${maxX - minX} ${maxZ - minZ}`);            // north (+z) up
     svg.innerHTML = '';
     const unit = Math.max(maxX - minX, maxZ - minZ) / 60;
