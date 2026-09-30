@@ -11,17 +11,18 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const J = f => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
 const CAT = J('museum/catalog/products.json'), FILMS = J('museum/themes/films.json').films;
 
-test('catalogue: unique ids, every model on disk, every skin valid', () => {
+test('catalogue: unique ids, every bike model on disk, every skin valid', () => {
   const ids = CAT.products.map(p => p.id); assert.equal(new Set(ids).size, ids.length);
   for (const p of CAT.products) {
-    assert.ok(fs.existsSync(path.join(root, p.glb)), p.glb);
+    if (p.type === 'bike') assert.ok(typeof p.glb === 'string' && fs.existsSync(path.join(root, p.glb)), `${p.id} bike model`);
     for (const s of p.skins || []) assert.deepEqual(skinProblems(s), [], `${p.id} ${s.id}`);
     assert.ok(p.sources?.length, `${p.id} has sources`);
   }
 });
-test('the studio always holds more bikes than the museum', () => {
-  assert.ok(CAT.products.length > CAT.products.filter(p => p.museum).length);
-  assert.equal(CAT.studio_only, CAT.products.filter(p => !p.museum).length);
+test('the studio bike inventory remains larger than the museum bike inventory', () => {
+  const bikes=CAT.products.filter(p=>p.type==='bike');
+  assert.ok(bikes.length > bikes.filter(p => p.museum).length);
+  assert.equal(CAT.studio_only, bikes.filter(p => !p.museum).length);
 });
 test('catalogue is generated from its sources (never edited by hand)', () => {
   assert.equal(CAT.generated_by, 'tools/build_catalog.mjs');
