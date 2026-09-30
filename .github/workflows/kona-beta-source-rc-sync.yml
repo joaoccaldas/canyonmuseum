@@ -1,6 +1,23 @@
 name: Sync deterministic generated outputs
 
 on:
+  push:
+    branches:
+      - 'rebrand/**'
+      - 'product/**'
+      - 'refactor/**'
+      - 'design/**'
+    paths-ignore:
+      - 'sw.js'
+      - 'app/app-manifest.json'
+      - 'app/entry-data.json'
+      - '*.html'
+      - 'web/dist/**'
+      - 'docs/ROOMS.md'
+      - 'llms.txt'
+      - 'llms-full.txt'
+      - 'robots.txt'
+      - 'sitemap.xml'
   workflow_dispatch:
     inputs:
       target_ref:
@@ -12,7 +29,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: generated-sync-${{ inputs.target_ref }}
+  group: generated-sync-${{ inputs.target_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -22,14 +39,14 @@ jobs:
     steps:
       - name: Validate target ref
         env:
-          TARGET: ${{ inputs.target_ref }}
+          TARGET: ${{ inputs.target_ref || github.ref_name }}
         run: |
           case "$TARGET" in
             main|master|refs/*|*..*|*~*|*^*|*:*|*\\*) echo "unsafe target ref"; exit 1 ;;
           esac
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.target_ref }}
+          ref: ${{ inputs.target_ref || github.ref_name }}
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
