@@ -27,8 +27,10 @@ for(const [name,w,h] of VIEWS){
   if(before.loaded||before.requested.length||leakedBefore.length)issues.push('candidate loaded before explicit action');
 
   await page.click('#loadCandidates');
-  await page.waitForFunction(()=>window.__intakeProof.loaded,{timeout:120000});
-  await new Promise(r=>setTimeout(r,1200));
+  await page.waitForFunction(()=>window.__intakeProof.loaded||window.__intakeProof.loadError,{timeout:30000});
+  const loadError=await page.evaluate(()=>window.__intakeProof.loadError);
+  if(loadError)issues.push('candidate load error '+loadError.slice(0,180));
+  await new Promise(r=>setTimeout(r,700));
 
   for(const id of IDS){
     const t=await page.evaluate(id=>{
