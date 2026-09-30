@@ -34,8 +34,10 @@ function proceduralAvatar(styleInput={}){
   voxel(.48,.48,.48,skin,[0,1.72,0],.88);
   voxel(.5,.6,.28,top,[0,1.18,0],.58);
   voxel(.46,.2,.27,bottoms,[0,.78,0],.66);
-  voxel(.18,.58,.2,top,[-.35,1.19,0],.62);
-  voxel(.18,.58,.2,top,[.35,1.19,0],.62);
+  voxel(.18,.44,.2,top,[-.35,1.26,0],.62);
+  voxel(.18,.44,.2,top,[.35,1.26,0],.62);
+  voxel(.18,.14,.2,skin,[-.35,.96,0],.82);
+  voxel(.18,.14,.2,skin,[.35,.96,0],.82);
   voxel(.2,.62,.24,bottoms,[-.13,.38,0],.67);
   voxel(.2,.62,.24,bottoms,[.13,.38,0],.67);
   voxel(.22,.12,.34,shoes,[-.13,.04,.07],.52);
@@ -62,8 +64,9 @@ function proceduralAvatar(styleInput={}){
     voxel(.5,.07,.5,accent,[0,1.9,0],.5);
   }
 
-  // Small chest mark makes the kit feel intentionally branded rather than plain geometry.
-  voxel(.16,.05,.025,accent,[0,1.29,.153],.45);
+  // Small chest stripe + bib-like block make the kit feel intentionally authored.
+  voxel(.18,.05,.025,accent,[0,1.31,.153],.45);
+  voxel(.18,.12,.026,'#ecebe6',[0,1.13,.154],.42);
 
   g.rotation.y=-.04;
   return g;
