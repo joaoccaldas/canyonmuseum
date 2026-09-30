@@ -36,14 +36,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}a{colo
 .hero p{font-size:13px;opacity:.85;margin-top:8px}
 body.light-scene .hero{color:var(--ink);text-shadow:none}
 /* dock: tabs + sheet (mobile first: a bottom sheet) */
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;flex-direction:column;max-height:var(--sheet);background:var(--paper);border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.25);padding-bottom:var(--safe-b);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;flex-direction:column;max-height:var(--sheet);overflow:hidden;background:var(--paper);border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.25);padding-bottom:var(--safe-b);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
 .dock.min{transform:translateY(calc(100% - 64px - var(--safe-b)))}
 .grab{align-self:center;width:44px;height:5px;border-radius:3px;background:rgba(18,24,29,.18);margin:8px 0 2px}
 .tabs{display:flex;gap:4px;padding:6px 10px 8px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{flex:0 0 auto;height:44px;min-width:44px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted);scroll-margin-inline:12px}
 .tabs button[aria-selected=true]{background:var(--ink);color:var(--paper)}
-.panel{overflow:auto;padding:4px 14px 16px;overscroll-behavior:contain}
+.panel{flex:1;min-height:0;overflow:auto;padding:4px 14px 16px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 /* product grid */
 .filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}
 .filters button{flex:0 0 auto;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:600}
@@ -152,10 +152,10 @@ body.dreaming #dreamTitle.on{opacity:1}
   <div class="grab" aria-hidden="true"></div>
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="bikes" aria-selected="true">Bikes</button>
+    <button role="tab" data-tab="setup">Setup</button>
     <button role="tab" data-tab="paint">Paint</button>
     <button role="tab" data-tab="themes">Themes</button>
     <button role="tab" data-tab="scene">Scene</button>
-    <button role="tab" data-tab="setup">Setup</button>
     <button role="tab" data-tab="info">About</button>
   </nav>
   <div class="panel" id="panel" role="tabpanel"></div>
