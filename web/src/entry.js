@@ -61,6 +61,7 @@ function openMuseum(room) {
 }
 
 initAppShell();
+document.getElementById('entryInstall')?.addEventListener('click',()=>document.getElementById('installBtn')?.click());
 const shell = initKonaShell({ profile, settings: settingsBridge, enter: openMuseum });
 window.__konaShell = shell;
 
@@ -103,6 +104,7 @@ function questHost() {
 }
 
 function paintQuest(step) {
+  document.getElementById('intro')?.classList.add('quest-active');
   const host = questHost();
   const draft = readQuest();
   if (!host) return;
@@ -127,7 +129,8 @@ function paintQuest(step) {
     const shoe = labels.shoe;
     const xp = granted.history?.at?.(-1)?.xp ?? 0;
     const credits = granted.history?.at?.(-1)?.credits ?? 0;
-    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="shareSelf">Share my Kona</button><button type="button" class="btn primary" id="saveSelf">Save your Kona</button><p class="kona-note" id="saveNote"></p>`;
+    host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn secondary" id="saveSelf">Save / sign in</button><p class="kona-note" id="saveNote">Your RaceIdentity is already saved privately on this device. Sign in only if you want cross-device backup.</p>`;
+    host.querySelector('#enterKona')?.addEventListener('click',()=>{document.getElementById('intro')?.classList.remove('quest-active');shell.now?.();});
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
       const result = await shareRaceIdentity(draft);
@@ -176,6 +179,7 @@ function existingRaceIdentity() {
 const existingIdentity = existingRaceIdentity();
 const buildButton = document.getElementById('buildSelf');
 if (existingIdentity) {
+  document.getElementById('intro')?.classList.remove('quest-active');
   const lede = document.querySelector('#intro .lede');
   const note = document.querySelector('#intro .kona-note');
   if (lede) lede.textContent = existingIdentity.goal?.label
