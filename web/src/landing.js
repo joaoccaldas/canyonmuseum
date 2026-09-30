@@ -26,6 +26,7 @@ import { canvasTex, wallWash, contactShadow, lettering, onFontsReady } from './e
 import { planRoute, noteProgress } from './engine/route.js';
 import { slotsOf, applySkin, skinFromWyld, skinFromFilm } from './engine/skins.js';
 import { buildFinds, FINDS, readFinds } from './finds.js';
+import { createPassport } from './passport.js';
 import { initArtWorld } from './artworld.js';
 import { microNoise } from './tex.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -1059,45 +1060,45 @@ let nearbyPiece = null;
 const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 $('nearby')?.addEventListener('click', () => { if (nearbyPiece) { haptic(8); visit(nearbyPiece); } });
 
-// ------------------------------------------------------------------ local-first Museum Passport
-const PASSPORT_KEY = 'speedmax.passport.v1';
-function readPassport() {
+// ------------------------------------------------------------------ local-first Museum Passport + visit resume
+// Passport owns collectible/progression state. Resume pose is a separate concern and
+// therefore has a separate key; the old implementation reused speedmax.passport.v1
+// with an incompatible schema and could overwrite Passport stamps.
+const passport = createPassport();
+const SESSION_KEY = 'speedmax.museum-session.v1';
+function readSession() {
   try {
-    const raw = JSON.parse(localStorage.getItem(PASSPORT_KEY) || 'null');
-    if (raw?.v === 1 && Array.isArray(raw.discoveries)) return raw;
+    const raw = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (raw?.v === 1) return { v:1, visits:Number(raw.visits)||0, pose:raw.pose||null };
   } catch (_) { }
-  return { v: 1, discoveries: [], visits: 0, pose: null };
+  return { v:1, visits:0, pose:null };
 }
-const passport = readPassport();
-function writePassport() {
-  try { localStorage.setItem(PASSPORT_KEY, JSON.stringify(passport)); } catch (_) { }
+const session = readSession();
+function writeSession() {
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch (_) { }
 }
 function passportProgress() {
   const total = modelled.length;
-  const seen = passport.discoveries.filter(k => modelled.some(p => p.key === k)).length;
+  const seen = modelled.filter(piece => passport.has('bike:' + piece.key)).length;
   const count = $('passportCount'); if (count) count.textContent = `${seen}/${total}`;
   return { seen, total };
 }
 function discover(p) {
-  if (!p?.key || !p.glb || passport.discoveries.includes(p.key)) return false;
-  passport.discoveries.push(p.key); writePassport();
-  const { seen, total } = passportProgress();
-  if (started) toast(`Museum Passport · discovered ${p.name} · ${seen}/${total}`);
+  if (!p?.key || !p.glb || passport.has('bike:' + p.key)) return false;
+  passport.stamp('bike:' + p.key, p.name, 10);
+  passportProgress();
   return true;
 }
 function savePose() {
   if (!started) return;
   const region = roomOf(P.x, P.z);
   if (region === 'horror') return;
-  passport.pose = { x: P.x, z: P.z, yaw: P.yaw, pitch: P.pitch, region };
-  writePassport();
+  session.pose = { x:P.x, z:P.z, yaw:P.yaw, pitch:P.pitch, region };
+  writeSession();
 }
 addEventListener('pagehide', savePose);
-$('passportBtn')?.addEventListener('click', () => {
-  const { seen, total } = passportProgress();
-  const found = readFinds().length;
-  toast(`Museum Passport · ${seen} of ${total} bikes · ${found} of ${FINDS.length} shoreline finds${seen === total && found === FINDS.length ? ' · the coast is complete' : ''}`);
-});
+$('passportBtn')?.addEventListener('click', () => passport.open());
+passport.onChange?.(passportProgress);
 passportProgress();
 
 const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
@@ -1438,11 +1439,11 @@ function enter() {
   if (started) return; started = true;
   document.body.classList.add('walking'); $('intro').classList.add('off');
   const coaching = coarse && (() => { try { return localStorage.getItem('speedmax.coach.v1') !== '1'; } catch (_) { return true; } })();
-  const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld', 'pier', 'hween'].includes(passport.pose.region)
-    && walkable(passport.pose.x, passport.pose.z);
-  passport.visits = (passport.visits || 0) + 1;
+  const returning = session.visits > 0 && session.pose && ['hall', 'champ', 'wyld', 'pier', 'hween'].includes(session.pose.region)
+    && walkable(session.pose.x, session.pose.z);
+  session.visits = (session.visits || 0) + 1;
   if (returning) {
-    P.x = passport.pose.x; P.z = passport.pose.z; P.yaw = passport.pose.yaw || 0; P.pitch = passport.pose.pitch ?? -.04;
+    P.x = session.pose.x; P.z = session.pose.z; P.yaw = session.pose.yaw || 0; P.pitch = session.pose.pitch ?? -.04;
     path = null;
     const { seen, total } = passportProgress();
     if (!coaching) toast(`Welcome back · Museum Passport ${seen}/${total}`);
@@ -1450,7 +1451,7 @@ function enter() {
     if (!coaching) toast(coarse ? 'Walk with the tri-stick · drag to look around · tap any bike' : 'WASD to walk · drag to look · click a bike or press 1–9');
     path = [{ x: 0, z: .6 }];
   }
-  writePassport(); canvas.focus({ preventScroll: true }); haptic(10); coach();
+  writeSession(); canvas.focus({ preventScroll: true }); haptic(10); coach();
   if (profile.get().sound && $('soundBtn').getAttribute('aria-pressed') !== 'true') $('soundBtn').click();
   if (!returning && pier && new URLSearchParams(location.search).get('room') === 'pier') setTimeout(() => visitPier(pier.stations[0]), 400);
   { // app shortcuts and shared links: ?room=<map area id> walks there, ?map=1 opens the map
