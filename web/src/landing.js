@@ -33,6 +33,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { coarse as dc, small as ds } from './detect.js';
 import { buildMuseumArchitecture } from './engine/museum-architecture.js';
 import { createMuseumSession } from './engine/museum-session.js';
+import { createMuseumTour } from './ui/museum-tour.js';
 
 const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
@@ -1143,69 +1144,11 @@ function openArt(item) {
 }
 function openRef(ref) { current = null; champ = null; renderCard(photoCard(ref)); }
 
-// ------------------------------------------------------------------ guided tour: hands-free walk through the highlights
-const tour = { on: false, i: -1, t: 0, paused: false, stops: [] };
-const DWELL = 9;                                                     // seconds at each stop
-function tourStops() {
-  const H = PIECES.filter(p => p.glb && !p.flagship), F = PIECES.filter(p => p.flagship);
-  const stops = [{ kind: 'hween' }, ...H.map(p => ({ kind: 'piece', p })),
-    ...[0, 2, 4, 5].map(i => champs[i]).filter(Boolean).map(c => ({ kind: 'champ', c })),
-    ...[0, 3].map(i => wyldBikes[i]).filter(Boolean).map(v => ({ kind: 'wyld', v })),
-    ...F.map(p => ({ kind: 'piece', p })),
-    ...(pier ? [0, 4, 9, 10, 11].map(i => pier.stations[i]).filter(Boolean).map(y => ({ kind: 'pier', y })).concat([{ kind: 'pier', y: pier.finale }]) : [])];
-  return stops;
-}
-function tourGo(i) {
-  tour.i = i; tour.t = 0; const st = tour.stops[i];
-  if (!st) return tourEnd(true);
-  if (st.kind === 'piece') visit(st.p); else if (st.kind === 'champ') visitChamp(st.c); else if (st.kind === 'pier') visitPier(st.y); else if (st.kind === 'hween') visitHween(); else visitWyld(st.v);
-  $('tourStep').textContent = `${i + 1} / ${tour.stops.length}`;
-  $('tourBar').style.setProperty('--p', 0);
-}
-function tourStart() {
-  $('coach').hidden = true;
-  if (!started) enter();
-  tour.stops = tourStops(); tour.on = true; tour.paused = false; document.body.classList.add('touring');
-  $('tourPause').textContent = 'Pause'; haptic(12);
-  tourGo(0);
-}
-function tourEnd(finished) {
-  if (!tour.on) return;
-  tour.on = false; document.body.classList.remove('touring');
-  toast(finished ? 'That was the collection. Walk on, or tap any piece to revisit it.' : 'Tour paused — you have the controls.');
-}
-function tourTick(dt) {
-  if (!tour.on || tour.paused || path) return;
-  if (!$('card').classList.contains('on')) return;                   // wait until we've arrived and the card is up
-  tour.t += dt; $('tourBar').style.setProperty('--p', Math.min(1, tour.t / DWELL));
-  if (tour.t >= DWELL) tourGo(tour.i + 1);
-}
-$('tourBtn')?.addEventListener('click', tourStart);
-$('tourPause')?.addEventListener('click', () => { tour.paused = !tour.paused; $('tourPause').textContent = tour.paused ? 'Resume' : 'Pause'; });
-$('tourNext')?.addEventListener('click', () => tourGo(tour.i + 1));
-$('tourStop')?.addEventListener('click', () => tourEnd(false));
-function haptic(ms = 8) { try { if (coarse) navigator.vibrate?.(ms); } catch (_) { } }
-
-// ------------------------------------------------------------------ first visit on a phone: three quick coach marks
-const coachState = { k: -1, steps: [] };
-function coach() {                                                  // returns true when the coach will speak
-  let seen = false; try { seen = localStorage.getItem('speedmax.coach.v1') === '1'; } catch (_) { }
-  if (seen || !coarse) return false;
-  coachState.steps = [['joy', 'Push the tri-stick to walk'], ['look', 'Drag anywhere to look around'], ['tap', 'Tap a bike to visit it']];
-  setTimeout(() => { if (!tour.on) coachShow(0); }, 900);
-  return true;
-}
-function coachShow(k) {
-  const el = $('coach'); coachState.k = k;
-  if (k >= coachState.steps.length) { el.hidden = true; try { localStorage.setItem('speedmax.coach.v1', '1'); } catch (_) { } return; }
-  const [kind, txt] = coachState.steps[k];
-  el.dataset.kind = kind; el.querySelector('b').textContent = txt; el.querySelector('small').textContent = `${k + 1} of ${coachState.steps.length}`; el.hidden = false;
-}
-function coachDid(kind) {                                            // the hint advances when the visitor does the thing
-  if (coachState.k < 0 || $('coach').hidden) return;
-  if (coachState.steps[coachState.k]?.[0] === kind) { haptic(6); coachShow(coachState.k + 1); }
-}
-$('coachOk')?.addEventListener('click', () => coachShow(coachState.k + 1));
+// ------------------------------------------------------------------ guided tour + first-visit coach
+const {tour,tourStart,tourEnd,tourTick,haptic,coach,coachDid}=createMuseumTour({
+  $,coarse,isStarted:()=>started,enter:()=>enter(),pathActive:()=>Boolean(path),pieces:PIECES,champs,wyldBikes,pier,
+  visitPiece:visit,visitChamp,visitPier,visitHween,visitWyld,toast,
+});
 
 function enter() {
   if (started) return; started = true;
