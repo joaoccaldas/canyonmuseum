@@ -1,26 +1,18 @@
-name: KONA beta source RC sync
+name: Sync deterministic generated outputs
 
 on:
-  push:
-    branches:
-      - release/kona-beta-source-rc-20260930
-    paths-ignore:
-      - 'sw.js'
-      - 'app/app-manifest.json'
-      - '*.html'
-      - 'web/dist/**'
-      - 'docs/ROOMS.md'
-      - 'llms.txt'
-      - 'llms-full.txt'
-      - 'robots.txt'
-      - 'sitemap.xml'
   workflow_dispatch:
+    inputs:
+      target_ref:
+        description: Existing branch to validate and synchronize
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
-  group: kona-beta-source-rc-sync
+  group: generated-sync-${{ inputs.target_ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,9 +20,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Validate target ref
+        env:
+          TARGET: ${{ inputs.target_ref }}
+        run: |
+          case "$TARGET" in
+            main|master|refs/*|*..*|*~*|*^*|*:*|*\\*) echo "unsafe target ref"; exit 1 ;;
+          esac
       - uses: actions/checkout@v4
         with:
-          ref: release/kona-beta-source-rc-20260930
+          ref: ${{ inputs.target_ref }}
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
@@ -49,7 +48,8 @@ jobs:
           (cd web && npm test)
           node tools/validate-bikes.mjs
           node tools/validate_integration_contract.mjs
-      - name: Light/dark mobile visual matrix
+          node tools/repo-hygiene.mjs
+      - name: Mobile visual matrix
         run: |
           python3 -m http.server 8754 --bind 127.0.0.1 >/tmp/kona-release-http.log 2>&1 &
           SERVER_PID=$!
@@ -59,15 +59,17 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: kona-beta-mobile-visuals
+          name: generated-sync-${{ github.run_id }}
           path: release-visual/
           if-no-files-found: error
           retention-days: 14
-      - name: Commit deterministic generated outputs
+      - name: Commit deterministic outputs
+        env:
+          TARGET: ${{ inputs.target_ref }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add museum/catalog/products.json docs/ROOMS.md ./*.html web/dist/*.html sw.js app/app-manifest.json robots.txt sitemap.xml llms.txt llms-full.txt
+          git add museum/catalog/products.json docs/ROOMS.md ./*.html web/dist/*.html sw.js app/app-manifest.json app/entry-data.json robots.txt sitemap.xml llms.txt llms-full.txt
           if git diff --cached --quiet; then echo "outputs current"; exit 0; fi
-          git commit -m "build(release): sync KONA beta generated outputs [skip ci]"
-          git push origin HEAD:release/kona-beta-source-rc-20260930
+          git commit -m "build: sync deterministic outputs [skip ci]"
+          git push origin HEAD:"$TARGET"
