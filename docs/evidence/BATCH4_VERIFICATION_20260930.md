@@ -10,3 +10,6 @@ Verified during the batch:
 - release visual harness uses the canonical KONA shell
 
 This file changes no runtime or generated application output. Its purpose is to trigger the normal current-tree verification gates after the bot synchronization commit.
+
+Final deterministic bundle sync: `6c5bda7ce812d37878ff9696c37036885b29bed1`.
+This follow-up commit triggers checks against that synchronized tree.
