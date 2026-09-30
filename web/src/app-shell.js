@@ -107,7 +107,7 @@ export function initAppShell() {
   sheet?.addEventListener('click', e => { if (e.target === sheet) sheet.hidden = true; });
 
   // --- offline + verified updates
-  if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
+  if (!('serviceWorker' in navigator) || !window.isSecureContext) return api;
   let wantReload = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (wantReload) { wantReload = false; location.reload(); } });
   navigator.serviceWorker.register('sw.js', { scope: './', updateViaCache: 'none' }).then(reg => {
