@@ -10,7 +10,6 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifes
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(root, 'web/landing.template.html'), 'utf8');
 const appShell = fs.readFileSync(path.join(root, 'web/src/app-shell.js'), 'utf8');
-const entry = fs.readFileSync(path.join(root, 'web/src/entry.js'), 'utf8');
 
 test('mobile app manifest is installable and standalone', () => {
   assert.equal(manifest.display, 'standalone');
@@ -26,7 +25,8 @@ test('landing page wires manifest and install experience', () => {
   assert.match(appShell, /beforeinstallprompt/);
   assert.match(appShell, /openInstall/);
   assert.match(appShell, /serviceWorker\.register\('sw\.js'/);
-  assert.match(entry, /entryInstall[\s\S]{0,120}openInstall/);
+  assert.match(appShell, /entryBtn = \$\('entryInstall'\)/);
+  assert.match(appShell, /entryBtn\?\.addEventListener\('click', openInstall\)/);
 });
 
 test('sealed service worker verifies release files and keeps GLBs out of the core shell', () => {
