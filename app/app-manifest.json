@@ -1,5 +1,5 @@
 {
- "version": "d62f9cc094c2",
+ "version": "3c1f94abd367",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -13,9 +13,9 @@
  ],
  "files": {
   "index.html": "w2SA1noNxv3DXrsFf/cnaVZnOLvAjEZPx1jPJhC5Jm0=",
-  "app/kona-core.js": "Pd0aLpy+e4+aIvOKks4MBmHtXjufY6zDUKu5XKioRYA=",
+  "app/kona-core.js": "XCa5KdMwErHdwX1pTkFVmhB0Y97IaFzLhVmyFtXDnQI=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
-  "manifest.webmanifest": "PahVaqvQpzQCohyq/Xisk9M+MPIkdt5LgJRpeCOlSro=",
+  "manifest.webmanifest": "iMwobAXUqZuO4QiehlvXSScLu2l5YYEgZE5HthcHKlc=",
   "assets/pwa/icon-v3.svg": "kX7Wf3uv1TGV8QngLT59Ot0XX50qljLbo7CNgFQm1ws=",
   "assets/pwa/icon-v3-192.png": "r7xyhMJsNe726HzraMgmSrjCQ6jgM6gTEQIlOAMlqIY=",
   "assets/pwa/icon-v3-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
