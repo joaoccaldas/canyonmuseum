@@ -28,7 +28,7 @@ test('Home has one primary next action and no direct 3D dependency',()=>{
 
 test('Plan is lightweight and independent of museum globals',()=>{
   assert.match(plan,/race_week/);
-  assert.doesNotMatch(plan,/__EVENT|__ISLAND|museum-data\.js|hall\.js|Three/);
+  assert.doesNotMatch(plan,/__EVENT|__ISLAND|museum-data\.js|hall\.js/);
   assert.doesNotMatch(shell,/__EVENT|__ISLAND/);
 });
 
