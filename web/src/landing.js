@@ -1501,16 +1501,29 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
   const WORDS = Object.fromEntries((window.__ROOMS?.areas || []).map(a => [a.id, a]));
   const AREA_COLOR = { hall: '#eadfca', sanctuary: '#d7c7e6', hween: '#f0a86c', kona: '#e2b27c', wyld: '#ffc4dd', pier: '#cfe4e2', stair: '#dcd6cb', nave: '#ece6da' };
   const R = (id, name, sub, rect, floor, color, extra = {}) => ({ id, name, sub, x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1, floor, color, ...extra });
+  const roomMeta = id => {
+    const w = WORDS[id] || {};
+    return {
+      theme: w.theme || w.sub || '',
+      decorations: w.decorations || [],
+      dimensions: w.dimensions_m || null,
+      mapMeta: w.map || null,
+      roomKind: w.kind || '',
+      hidden: !!w.hidden,
+      exhibitCount: Array.isArray(w.exhibits?.products) ? w.exhibits.products.length : w.exhibits?.remembered || null,
+      story: w.text || '',
+    };
+  };
   const areas = [
-    ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), 'stair', 'nave'].map(id => {       // names from museum/world/rooms.json
+    ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), 'stair', 'nave'].map(id => {
       const w = WORDS[id], rect = { hall: HALL, sanctuary: SROOM, hween: HROOM, kona: ROOM, wyld: WROOM, pier: pier && { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, stair: { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, nave: { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 } }[id];
-      return R(id, w?.short || id, w?.sub || '', rect, w?.floor || 'ground', AREA_COLOR[id], id === 'stair' || id === 'nave' ? { layer: 0 } : {});
+      return R(id, w?.short || id, w?.sub || '', rect, w?.floor || 'ground', w?.map?.accent || AREA_COLOR[id], { ...(id === 'stair' || id === 'nave' ? { layer: 0 } : {}), ...roomMeta(id) });
     }),
-    ...galleries.bays.map(b => R('bay-' + b.id, b.title, b.sub, { x0: 8.4, x1: 14.8, z0: b.z - 1.8, z1: b.z + 1.8 }, 'upper', b.floor, { layer: 1, ink: /^#(1|0)/.test(b.floor) ? '#fbf9f5' : '#12181d', kind: 'bay' })),
-    ...galleries.rooms.map(r => R('room-' + r.id, r.name, r.sub, { x0: 16.5, x1: 25.1, z0: r.z1, z1: r.z0 }, 'upper', r.vein, { layer: 1, ink: '#12181d' })),
-    ...atlas.wings.map(w => R('wing-' + w.id, w.name, w.sub, w.corridor, w.floor, w.corridor.map_color || '#c89b62', { layer: 0 })),
-    ...atlas.rooms.map(r => R('atlas-' + r.wing + '-' + r.id, r.name, r.feature === 'paintshop' ? 'Every livery' : r.feature === 'references' ? 'The photographs' : [r.bikes.length ? `${r.bikes.length} bike${r.bikes.length > 1 ? 's' : ''}` : '', r.art.length ? `${r.art.length} work${r.art.length > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ') || r.sub, r.rect, 'upper', r.tint, { layer: 1, ink: '#fbf9f5' })),
-  ];
+    ...galleries.bays.map(b => { const id='bay-'+b.id, m=roomMeta(id); return R(id, b.title, b.sub, { x0: 8.4, x1: 14.8, z0: b.z - 1.8, z1: b.z + 1.8 }, 'upper', m.mapMeta?.accent || b.floor, { layer: 1, ink: /^#(1|0)/.test(b.floor) ? '#fbf9f5' : '#12181d', kind: 'bay', ...m }); }),
+    ...galleries.rooms.map(rm => { const id='room-'+rm.id, m=roomMeta(id); return R(id, rm.name, rm.sub, { x0: 16.5, x1: 25.1, z0: rm.z1, z1: rm.z0 }, 'upper', m.mapMeta?.accent || rm.vein, { layer: 1, ink: '#12181d', ...m }); }),
+    ...atlas.wings.map(w => R('wing-' + w.id, w.name, w.sub, w.corridor, w.floor, w.corridor.map_color || '#c89b62', { layer: 0, theme: w.sub, roomKind:'wing', decorations:[], exhibitCount: atlas.rooms.filter(rm=>rm.wing===w.id).reduce((n,rm)=>n+rm.bikes.length+rm.art.length,0) })),
+    ...atlas.rooms.map(rm => R('atlas-' + rm.wing + '-' + rm.id, rm.name, rm.feature === 'paintshop' ? 'Every livery' : rm.feature === 'references' ? 'The photographs' : [rm.bikes.length ? `${rm.bikes.length} bike${rm.bikes.length > 1 ? 's' : ''}` : '', rm.art.length ? `${rm.art.length} work${rm.art.length > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ') || rm.sub, rm.rect, 'upper', rm.tint, { layer: 1, ink: '#fbf9f5', theme:rm.sub || rm.feature || 'Gallery room', roomKind:rm.feature || 'gallery', decorations:[rm.feature === 'paintshop' ? 'livery turntable' : rm.feature === 'references' ? 'reference photography' : 'curated exhibits'], exhibitCount:rm.bikes.length+rm.art.length })),
+  ].filter(a => !a.hidden);
   const chip = room => document.querySelector(`.chip.${room}`)?.click();
   const go = id => {
     if (!started) enter();
