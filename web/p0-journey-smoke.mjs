@@ -33,13 +33,15 @@ try{
  assert.equal(heavy().length,0,'onboarding/reveal must request zero heavy 3D assets');
  await page.click('#enterKona');
  await page.waitForFunction(()=>document.querySelector('#intro')?.hasAttribute('hidden'));
- assert.equal(heavy().length,0,'Home must request zero heavy 3D assets');
+ assert.equal(heavy().length,0,'Garage must request zero heavy 3D assets');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR EQUIPMENT|Mine|Dreaming|Try/i,'post-onboarding state should be Garage');
+ assert.ok(await page.$eval('[data-tab="garage"]',e=>e.classList.contains('on')),'Garage nav should be active after reveal');
  const identity=await page.evaluate(()=>localStorage.getItem('kona.raceIdentity.v1')||localStorage.getItem('speedmax.raceIdentity.v1'));
  assert.ok(identity,'RaceIdentity must persist locally before registration');
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForSelector('#buildSelf');
  assert.match(await page.$eval('#buildSelf',e=>e.textContent),/Continue your Kona/i);
- assert.equal(heavy().length,0,'returning Home must request zero heavy 3D assets');
+ assert.equal(heavy().length,0,'returning shell must request zero heavy 3D assets');
  assert.equal(museumData().length,0,'returning Home must not request museum catalog data');
  // Registration path: prove the browser is allowed to issue the Supabase OTP request.
  const auth=await browser.newPage();auth.setDefaultTimeout(30000);
@@ -61,5 +63,5 @@ try{
  assert.equal(otpSeen,true,'magic-link flow must issue the allowed Supabase OTP request');
  await auth.close();
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → identity → reveal → Home → reload + magic-link request; zero heavy 3D/catalog requests');
+ console.log('P0 browser journey PASS: entry-only data → identity → reveal → Garage → reload + magic-link request; zero heavy 3D/catalog requests');
 } finally {await browser.close();}
