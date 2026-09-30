@@ -23,3 +23,6 @@ Deterministic sync before verification:
 - generated output sync: PASS
 
 This evidence-only commit changes no runtime behavior. It triggers browser/release verification against the synchronized tree.
+
+Synchronized generated head: `b18a596c71865b0eebfa1999e4d0ff72f007365b`.
+This evidence-only commit triggers the full PR release gates against the synchronized RC3 tree.
