@@ -145,3 +145,15 @@ html.phone-fit .credit{display:none}
  #intro.kona-entry.quest-active #konaQuest .quest-choice{color:#f5f3ee;border-color:rgba(245,243,238,.22)}
  #intro.kona-entry.quest-active #konaQuest .quest-choice.on{background:#f5f3ee;color:#071116}
 }
+
+@media (max-width:760px),(pointer:coarse){
+ #intro.kona-entry.quest-active #konaQuest h2{font:400 clamp(34px,11vw,52px)/.98 'Instrument Serif',serif;margin:10px 0 24px;color:#f5f3ee}
+ #intro.kona-entry.quest-active .kona-intents{display:grid;grid-template-columns:1fr;gap:10px}
+ #intro.kona-entry.quest-active .quest-choice{width:100%;min-height:58px;border-radius:18px;padding:14px 16px;text-align:left;background:rgba(255,255,255,.04);font:650 15px/1.25 Manrope,system-ui}
+ #intro.kona-entry.quest-active .quest-choice.quiet{background:transparent;color:#aab6bd;border-style:dashed}
+ #intro.kona-entry.quest-active .quest-progress{display:grid;grid-template-columns:44px 1fr;align-items:center;gap:12px;margin:0 0 36px}
+ #intro.kona-entry.quest-active .quest-progress button{width:44px;height:44px;border-radius:50%;border:1px solid rgba(245,243,238,.18);color:#f5f3ee}
+ #intro.kona-entry.quest-active .quest-progress button:disabled{opacity:.28}
+ #intro.kona-entry.quest-active .quest-progress span{font:700 10px/1 Manrope,system-ui;letter-spacing:.14em;color:#aab6bd}
+ #intro.kona-entry.quest-active .quest-progress i{grid-column:1/-1;height:2px;background:linear-gradient(90deg,#ff6a22 var(--p),rgba(245,243,238,.14) var(--p));border-radius:2px}
+}
