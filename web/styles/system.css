@@ -1,3 +1,4 @@
+[hidden]{display:none!important}
 /* WEB + shared — KONA shell and type, injected into every page by tools/harden_pages.mjs.
    Desktop shell lives here. Phone shell: shell-mobile.css
    Hall chrome: hall-web.css (desktop) and hall-mobile.css (phone and phone-fit).
