@@ -49,6 +49,17 @@ test('landing index stays a thin shell with external shared styles', () => {
   assert.match(harden, /brand\/themes\.css/);
 });
 
-test('deterministic output sync pushes back to the active branch', () => {
+test('deterministic output sync pushes back to the active branch and stages generated bundles', () => {
   assert.match(sync, /TARGET: \$\{\{ inputs\.target_ref \|\| github\.ref_name \}\}/);
+  for (const generated of ['app/hall.js','app/kona-core.js','app/museum-data.js','app/studio.js','app/studio-catalog.js']) {
+    assert.match(sync, new RegExp(generated.replace('.', '\\.')));
+  }
+});
+
+test('2D shell naming and Garage-first depth remain canonical', () => {
+  assert.match(shell, /title\.textContent='Home'/);
+  assert.match(shell, /title\.textContent='Discover'/);
+  assert.match(shell, /Open Garage/);
+  assert.match(shell, /Open my Garage/);
+  assert.doesNotMatch(shell, /href="Studio\.html#setup"/);
 });
