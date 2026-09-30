@@ -146,3 +146,45 @@ html[data-theme="dark"]{
 .kona-place-grid b{font:400 22px/1.05 var(--serif);margin:6px 0}.kona-place-grid span{font-size:10.5px;line-height:1.4;color:var(--kona-muted)}
 .kona-place-grid em{font:700 9px var(--sans);color:var(--kona-accent);margin-top:7px;text-transform:uppercase;letter-spacing:.1em}
 .kona-source-note{color:var(--kona-faint);font-size:10.5px;line-height:1.5;padding:0 4px 12px}
+
+/* Reference-fidelity entry: PLACE + PERSON, never a blank implementation surface. */
+#intro.kona-entry:not(.quest-active){
+  position:relative;
+  min-height:100dvh;
+  align-items:flex-end;
+  isolation:isolate;
+  background:
+    linear-gradient(180deg,rgba(5,13,17,.06) 0%,rgba(5,13,17,.16) 32%,rgba(5,13,17,.70) 72%,rgba(5,13,17,.94) 100%),
+    url('assets/kona-years/kailua-bay.jpg') center 44%/cover no-repeat;
+}
+#intro.kona-entry:not(.quest-active)::after{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(90deg,rgba(5,13,17,.18),transparent 58%);
+  pointer-events:none;
+}
+#intro.kona-entry:not(.quest-active) .intro-inner{width:min(100%,760px);padding:clamp(24px,5vw,64px);padding-bottom:max(34px,calc(28px + env(safe-area-inset-bottom)))}
+#intro.kona-entry:not(.quest-active) .eyebrow{color:#76d7d9}
+#intro.kona-entry:not(.quest-active) h1{color:#fbf8f2;text-shadow:0 4px 28px rgba(0,0,0,.22);font-size:clamp(54px,8vw,112px);line-height:.86;letter-spacing:-.035em}
+#intro.kona-entry:not(.quest-active) h1 em{color:#ff6427;-webkit-text-fill-color:#ff6427;background:none}
+#intro.kona-entry:not(.quest-active) .lede{color:#f2f1ed;font-size:clamp(16px,2vw,21px);font-weight:500}
+#intro.kona-entry:not(.quest-active) .kona-note{color:#dce3e4}
+#intro.kona-entry:not(.quest-active) .btn.primary{background:#ff6427;color:#fff;border-color:#ff6427;box-shadow:0 14px 36px -20px rgba(255,100,39,.75)}
+#intro.kona-entry:not(.quest-active) .btn.text{color:#f7f4ee}
+#intro.kona-entry.quest-active{
+  min-height:100dvh;align-items:center;
+  background:
+    linear-gradient(135deg,rgba(7,17,22,.96),rgba(13,25,32,.92)),
+    url('assets/kona-years/kailua-bay.jpg') center/cover no-repeat;
+  color:#f5f3ee;
+}
+#intro.kona-entry.quest-active .intro-inner{width:min(100%,680px);padding:clamp(22px,6vw,56px)}
+#intro.kona-entry.quest-active .kona-intents button{border-color:rgba(245,243,238,.22);color:#f5f3ee}
+#intro.kona-entry.quest-active .kona-intents button.on{background:#f5f3ee;color:#071116}
+@media(max-width:760px){
+ #intro.kona-entry:not(.quest-active){background-position:62% center}
+ #intro.kona-entry:not(.quest-active)::after{background:linear-gradient(180deg,rgba(5,13,17,.04),rgba(5,13,17,.18) 35%,rgba(5,13,17,.90) 76%)}
+ #intro.kona-entry:not(.quest-active) .intro-inner{padding:22px;padding-bottom:max(28px,calc(22px + env(safe-area-inset-bottom)))}
+ #intro.kona-entry:not(.quest-active) h1{font-size:clamp(52px,15vw,76px);max-width:8ch}
+ #intro.kona-entry:not(.quest-active) .cta{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+ #intro.kona-entry:not(.quest-active) .btn.primary{width:100%;min-height:54px}
+}
