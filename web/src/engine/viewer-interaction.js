@@ -138,9 +138,8 @@ export function createViewerInteraction({
     if (!view) return;
     const p1 = new THREE.Vector3(...view.p), t1 = new THREE.Vector3(...view.t);
     if (coarse && name === 'hero') p1.multiplyScalar(1.25);
-    const phoneFit = document.documentElement.classList.contains('phone-fit');
-    if (innerWidth < innerHeight || phoneFit) {
-      p1.sub(t1).multiplyScalar(phoneFit && name === 'exploded' ? 1.75 : 1.55).add(t1);
+    if (innerWidth < innerHeight) {
+      p1.sub(t1).multiplyScalar(name === 'exploded' ? 1.7 : 1.55).add(t1);
     }
     if (!duration) {
       camera.position.copy(p1);
