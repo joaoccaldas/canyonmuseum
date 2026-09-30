@@ -33,15 +33,15 @@ export function initKonaShell({ profile, settings, enter }) {
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
     '<div id="konaPanel" class="kona-panel" hidden>'+
-      '<div class="kona-panel-head"><div><small id="konaPanelEyebrow">KONA · BETA</small><h2 id="konaPanelTitle">Now</h2></div><button id="konaPanelClose" type="button" aria-label="Close">×</button></div>'+
+      '<div class="kona-panel-head"><div><small id="konaPanelEyebrow">KONA · BETA</small><h2 id="konaPanelTitle">'+esc(t('nav.home',locale))+'</h2></div><button id="konaPanelClose" type="button" aria-label="Close">×</button></div>'+
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
     '</div>'+
     '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
-      '<button type="button" data-tab="home">'+icon('now')+'<span>Home</span></button>'+
-      '<button type="button" data-tab="discover">'+icon('explore')+'<span>Discover</span></button>'+
-      '<button type="button" data-tab="garage">'+icon('setup')+'<span>Garage</span></button>'+
-      '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
-      '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
+      '<button type="button" data-tab="home">'+icon('now')+'<span>'+esc(t('nav.home',locale))+'</span></button>'+
+      '<button type="button" data-tab="discover">'+icon('explore')+'<span>'+esc(t('nav.discover',locale))+'</span></button>'+
+      '<button type="button" data-tab="garage">'+icon('setup')+'<span>'+esc(t('nav.garage',locale))+'</span></button>'+
+      '<button type="button" data-tab="plan">'+icon('plan')+'<span>'+esc(t('nav.plan',locale))+'</span></button>'+
+      '<button type="button" data-tab="me">'+icon('me')+'<span>'+esc(t('nav.me',locale))+'</span></button>'+
     '</nav>';
   document.body.append(shell);
 
