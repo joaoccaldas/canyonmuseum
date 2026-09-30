@@ -15,6 +15,11 @@ export const APP_STATE_KEYS = Object.freeze([
   'speedmax.raceSetup.v1',
   'speedmax.garage.v1',
   'speedmax.progression.v1',
+  'speedmax.raceIdentity.v1',
+  'speedmax.userEquipment.v1',
+  'speedmax.konaSelf.v1',
+  'speedmax.entryIntent.v1',
+  'speedmax.raceHistory.v1',
   'speedmax.exp.tut.v1',
   'speedmax.hist.tut.v1',
 ]);

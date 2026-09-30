@@ -5,6 +5,8 @@ import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
 import { applyStoredEvent } from './engine/progression.js';
 import { saveQuestIdentity } from './engine/identity.js';
+import { confirmCandidate, rememberHistory, reviewCandidates } from './engine/identity-assist.js';
+import { assistMarkup } from './ui/race-assist.js';
 import { BIKES, GOALS, INTENTS, SHOES, emptyQuest, questReady, relationshipFor } from './quest.js';
 
 const INTENT_KEY = 'speedmax.entryIntent.v1';
@@ -168,5 +170,31 @@ document.getElementById('buildSelf')?.addEventListener('click', () => paintQuest
 paintIntent();
 dataReady.then(paintCount).catch(() => {});
 
+function paintAssist(rows) {
+  const host = questHost();
+  if (!host || host.childElementCount) return;
+  host.innerHTML = assistMarkup(rows);
+  host.querySelector('#findRaces')?.addEventListener('click', () => {
+    const note = host.querySelector('#assistNote');
+    if (note) note.textContent = 'Public race search is not connected. No results were added.';
+  });
+  host.querySelectorAll('[data-confirm]').forEach(button => button.addEventListener('click', () => {
+    const row = rows.find(item => item.id === button.dataset.confirm);
+    const decided = confirmCandidate(row, 'thats-me');
+    if (!decided.ok) return;
+    rememberHistory(decided.history);
+    button.textContent = 'Saved';
+  }));
+}
+
+async function offerAssist() {
+  try {
+    const { currentUser } = await import('./cloud/supabase-lite.js');
+    if (!await currentUser()) return;
+    paintAssist(reviewCandidates({}, []));
+  } catch (_) { /* still useful without an account */ }
+}
+
 const q = new URLSearchParams(location.search);
 if (q.get('room') || q.get('map')) openMuseum();
+offerAssist();
