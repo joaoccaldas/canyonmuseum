@@ -7,7 +7,7 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
 const SITE = 'https://joaoccaldas.github.io/canyonmuseum/';
-const NAME = 'Canyon Speedmax Museum';
+const NAME = 'KONA';
 const DISCLAIMER = 'An independent, unofficial fan and research project. Not affiliated with, endorsed by or sponsored by Canyon Bicycles GmbH. Canyon and Speedmax are trademarks of their owners.';
 
 // The only third parties the pages load (measured with a request log): Google Fonts and Wikimedia images.
@@ -24,9 +24,12 @@ const CSP = [
 ].join('; ');
 
 const PAGES = [
-  { file: 'index.html', type: 'Museum', image: 'assets/share/museum.jpg',
-    title: 'Canyon Speedmax Museum · Kona — walk 28 years of triathlon bikes in 3D',
-    description: 'A walkable 3D museum on the Kona coast: every Canyon Speedmax generation from 1999 to 2027, the six Ironman World Championship titles won on a Speedmax, the WYLD dye room, and brand studies such as the Nike Alphafly. Works in any browser and installs as an app.' },
+  { file: 'index.html', type: 'SoftwareApplication', image: 'assets/share/museum.jpg', lang: 'en',
+    title: 'KONA · Race the version of yourself — triathlon gear, stories, places and 3D',
+    description: 'Build your race identity, explore triathlon gear, athletes, places and stories, prepare for race week, collect rare finds and enter an immersive 3D world when you choose.' },
+  { file: 'pt-br.html', type: 'SoftwareApplication', image: 'assets/share/museum.jpg', lang: 'pt-BR',
+    title: 'KONA · Corra como a versão de você que quer se tornar — triathlon, equipamentos e Kona',
+    description: 'Crie sua identidade de prova, explore equipamentos, atletas, lugares e histórias do triathlon, prepare sua semana de prova e entre no mundo 3D quando quiser.' },
   { file: 'Canyon_Collection.html', type: 'CollectionPage', image: 'assets/share/collection.jpg',
     title: 'Canyon Triathlon Collection · every Speedmax generation, compared',
     description: 'Every Canyon Speedmax generation on record, 1999–2027: interactive 3D exhibits, side-by-side specifications, an aero calculator and a sourced archive of the bikes that were never modelled.' },
@@ -54,7 +57,7 @@ const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
 function block(p) {
   const url = SITE + (p.file === 'index.html' ? '' : p.file), img = SITE + p.image;
   const ld = {
-    '@context': 'https://schema.org', '@type': p.type, name: p.title, description: p.description, url, image: img, inLanguage: 'en',
+    '@context': 'https://schema.org', '@type': p.type, name: p.title, description: p.description, url, image: img, inLanguage: p.lang || 'en',
     isAccessibleForFree: true, publisher: { '@type': 'Person', name: 'João Caldas', url: 'https://joaoccaldas.github.io/ai/' },
     about: [{ '@type': 'Thing', name: 'Canyon Speedmax' }, { '@type': 'SportsEvent', name: 'IRONMAN World Championship', location: 'Kailua-Kona, Hawaii' }],
     disambiguatingDescription: DISCLAIMER,
@@ -64,6 +67,9 @@ function block(p) {
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="${url}">
+<link rel="alternate" hreflang="en" href="${SITE}">
+<link rel="alternate" hreflang="pt-BR" href="${SITE}pt-br.html">
+<link rel="alternate" hreflang="x-default" href="${SITE}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="${NAME}">
 <meta property="og:title" content="${esc(p.title)}"><meta property="og:description" content="${esc(p.description)}">
 <meta property="og:url" content="${url}"><meta property="og:image" content="${img}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
