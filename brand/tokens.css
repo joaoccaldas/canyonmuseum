@@ -1,0 +1,26 @@
+/* KONA canonical semantic tokens. No component selectors belong here. */
+:root{
+  --brand-bg:#f4efe7;
+  --brand-surface:#fbf9f5;
+  --brand-ink:#12181d;
+  --brand-muted:#5f6a72;
+  --brand-faint:#8e979d;
+  --brand-line:rgba(18,24,29,.12);
+  --brand-accent:#e85a22;
+  --brand-accent-2:#1db7d8;
+  --brand-on-accent:#fff;
+  --brand-success:#2bbf88;
+  --brand-font-ui:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --brand-font-editorial:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --brand-font-data:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --brand-space-1:8px;
+  --brand-space-2:12px;
+  --brand-space-3:16px;
+  --brand-space-4:24px;
+  --brand-space-5:32px;
+  --brand-control-radius:12px;
+  --brand-pill-radius:999px;
+  --artifact-edge:0px;
+  --artifact-soft:10px;
+  --artifact-shadow:0 20px 55px -38px rgba(18,24,29,.36);
+}
