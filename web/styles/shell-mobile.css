@@ -99,3 +99,28 @@ html.phone-fit #appSheet>div{zoom:var(--fit);width:min(420px,calc((100vw - 24px)
   .race-self-mini-grid,.race-picker-results,.race-picker-selected [data-race-badges],.race-badge-strip,[data-profile-races],.studio-race-badges{grid-template-columns:1fr}
   .race-card{min-height:125px}
 }
+
+/* Batch 7: Race Self should read as one immersive studio, not a long dashboard. */
+.race-self-shell{min-height:0!important;background:#0b1115}
+.race-self-stage-wrap{min-height:clamp(300px,44dvh,500px)}
+.race-self-dock{flex:0 0 auto}
+.race-self-tabs{
+  scroll-snap-type:x proximity;
+  overscroll-behavior-x:contain;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%);
+  padding-inline:16px 24px;
+}
+.race-self-tabs button{scroll-snap-align:start;padding-inline:12px;min-height:40px}
+.race-self-pane{min-height:86px;max-height:36dvh}
+.race-self-pane .race-picker{margin-top:0}
+.race-self-pane .race-picker-results{max-height:30dvh;overflow:auto;overscroll-behavior:contain}
+@media(max-width:520px),(pointer:coarse){
+  .race-self-shell{min-height:0!important;margin:-2px}
+  .race-self-stage-wrap{min-height:40dvh;max-height:44dvh}
+  .race-self-dock{margin-top:-8px}
+  .race-self-tabs button{font-size:11px;padding-inline:10px}
+  .race-self-pane{min-height:82px;max-height:34dvh}
+  .race-self-stage-copy{bottom:14px}
+  .race-self-stage-copy h3{font-size:clamp(34px,9vw,46px)}
+}
