@@ -42,3 +42,6 @@ jobs:
         run: node integrations/candidate-components.test.mjs
       - name: Validate equipment compatibility
         run: node integrations/equipment-compatibility.test.mjs
+
+      - name: Validate affiliate and maintenance contracts
+        run: node integrations/affiliate-maintenance.test.mjs
