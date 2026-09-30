@@ -12,7 +12,7 @@
     "remote_writes": false
   },
   "counts": {
-    "products": 52,
+    "products": 53,
     "places": 9,
     "events": 1
   },
@@ -1458,6 +1458,33 @@
       ],
       "locations": [
         "secret"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "nike-alphafly-3-study",
+      "object_type": "product",
+      "product_type": "shoe",
+      "brand": "Nike",
+      "label": "Alphafly 3",
+      "family": "Alphafly",
+      "year": 2024,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": null,
+      "canonical_url": null,
+      "source_records": [
+        "https://www.nike.com/w/alphafly-running-shoes-2g35fzy7ok"
+      ],
+      "locations": [
+        "nike-running-lab"
       ]
     }
   ],
