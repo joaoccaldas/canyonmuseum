@@ -68,6 +68,9 @@ Official-source candidate adapters; explicit confirmation before race history pe
 ### G9 — Commerce
 Apply to verified affiliate programs; activate links only after approval. Disclose affiliate status. Commission never affects ranking. Add B2B room/athlete/event activation packages.
 
+### G9.5 — Mobile world navigation + avatar
+Default mobile 3D exploration becomes elevated third-person/top-down with tap-to-move, drag-to-orbit, pinch-to-zoom and a neutral translucent humanoid proxy. First-person remains optional. The avatar evolves later from explicit user choices and RaceIdentity, never inferred sensitive traits.
+
 ### G10 — Production certification
 Normalize valuable backend entities, migrations/backups/export/delete, observability, accessibility, 320/360/390/430 phone matrix, iPhone Safari/PWA, Android PWA/native, desktop Safari/Chrome, performance budgets and rollback proof.
 
