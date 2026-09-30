@@ -1,1 +1,6 @@
-{"versionCode":5,"versionName":"1.4","apk":"downloads/SpeedmaxMuseum.apk","sha256":"4e30a982cdb532df6cbc196199711f56c8d650fe13817909af0d8de7ac781a5b","bytes":33162755}
+{
+  "versionCode": 5,
+  "versionName": "1.4",
+  "published": false,
+  "note": "Native APK is not currently published. Install the KONA PWA from the website."
+}
