@@ -18,7 +18,7 @@ body.entry-quest #intro{padding-bottom:calc(24px + var(--safe-b,0px))!important}
 #intro.kona-entry .btn.primary{background:#f8f5ef;color:#11171c;border-color:#f8f5ef;box-shadow:0 16px 44px rgba(0,0,0,.2)}
 #intro.kona-entry .btn.text{color:#f8f5ef;border-color:rgba(255,255,255,.22);background:rgba(7,17,22,.24);backdrop-filter:blur(10px)}
 #intro.kona-entry .entry-utilities{display:flex;align-items:center;gap:14px;margin-top:12px;color:#d8e0e2;font:600 12px/1.4 var(--sans,system-ui)}
-#intro.kona-entry .entry-utilities #entryInstall{min-height:44px;padding:0 2px;border:0;border-bottom:1px solid rgba(255,255,255,.5);border-radius:0;background:transparent}
+#intro.kona-entry .entry-utilities #entryInstall{display:inline-flex;width:auto;min-height:36px;padding:0;border:0;border-bottom:1px solid rgba(255,255,255,.5);border-radius:0;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;color:#f8f5ef}
 
 /* Onboarding is a full state, not content appended beneath the hero. */
 #intro.quest-active .entry-media{filter:saturate(.75) brightness(.42)}
@@ -47,6 +47,6 @@ body.entry-quest #intro{padding-bottom:calc(24px + var(--safe-b,0px))!important}
  #intro.kona-entry .cta{display:grid;grid-template-columns:1fr auto;width:100%;gap:8px}
  #intro.kona-entry .cta .btn.primary{min-height:58px}
  #intro.kona-entry .cta .btn.text{min-height:46px;padding-inline:16px}
- #intro.kona-entry .entry-utilities{justify-content:space-between}
+ #intro.kona-entry .entry-utilities{justify-content:flex-start;gap:18px;align-items:center}
  #intro.quest-active .intro-inner{padding:calc(42px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom))}
 }

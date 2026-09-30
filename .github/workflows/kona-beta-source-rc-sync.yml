@@ -65,6 +65,7 @@ jobs:
           (cd web && npm test)
           node tools/validate-bikes.mjs
           node tools/validate_integration_contract.mjs
+          node tools/scan_private_data.mjs
           node tools/repo-hygiene.mjs
       - name: Mobile visual matrix
         run: |

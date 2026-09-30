@@ -5,10 +5,10 @@ import { ensureProgression } from '../engine/progression.js';
 import { consumeAuthCallback, sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 import { applyBrandMode } from '../brand/runtime.js';
 import { renderGarageSurface } from './garage.js';
+import { renderHomeSurface } from './home.js';
+import { renderDiscoverSurface } from './discover.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtDate = iso => { try { return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00')); } catch (_) { return iso; } };
-const daysUntil = iso => Math.max(0, Math.ceil((new Date(iso+'T12:00:00') - Date.now()) / 86400000));
 const icon = name => {
   const d={
     now:'M3 11.5 12 4l9 7.5v8.5a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
@@ -23,7 +23,7 @@ const icon = name => {
 export function initKonaShell({ profile, settings, enter }) {
   consumeAuthCallback();
   const facts = () => ({
-    event: window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {},
+    event: window.__ENTRY_EVENT || window.__EVENT?.current_facts?.event || window.__ISLAND?.race_2026 || {},
     week: window.__EVENT?.current_facts?.race_week || [],
     places: window.__ISLAND?.places || [],
   });
@@ -48,22 +48,12 @@ export function initKonaShell({ profile, settings, enter }) {
   shell.querySelector('#konaPanelClose').onclick=close;
 
   function now(){
-    const { event, week, places } = facts();
-    const raceDays=event.date ? daysUntil(event.date) : null;
-    const nextExpo=week.find(x=>new Date(x.date+'T23:59:00')>=new Date()) || week[0];
-    title.textContent='Now'; eyebrow.textContent='KONA · RACE WEEK';
-    const expo=nextExpo ? '<article><i>Expo</i><div><b>'+esc(fmtDate(nextExpo.date))+' · '+esc(nextExpo.start)+'–'+esc(nextExpo.end)+'</b><span>'+esc(nextExpo.venue)+'</span></div></article>' : '';
-    const placeCards=places.slice(0,4).map(p=>'<article><small>'+esc(p.region)+'</small><b>'+esc(p.name)+'</b><span>'+esc(p.purpose)+'</span></article>').join('');
-    body.innerHTML=
-      '<section class="kona-hero-card artifact artifact--hero"><small>IRONMAN WORLD CHAMPIONSHIP · '+esc(event.location||'Kailua-Kona, Hawaiʻi')+'</small>'+
-      '<h3>'+(raceDays==null?'Kona awaits':raceDays===0?'Race day':raceDays+' days to race day')+'</h3>'+
-      '<p>'+(event.date?esc(fmtDate(event.date)):'2026')+' · '+esc(event.venue||'Kailua Pier')+'</p>'+
-      '<button class="kona-primary" data-enter>Explore the coast <span>→</span></button></section>'+
-      '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>What matters next</h3><small>Official 2026 sources</small></div><div class="kona-list">'+expo+
-      '<article><i>Setup</i><div><b>Build your Kona setup</b><span>Bike today. Wheels, helmet and shoes plug into the same setup.</span></div><a href="Studio.html#setup">Open →</a></article>'+
-      '<article><i>Explore</i><div><b>Walk the collection</b><span>Bikes, engineering, Kona stories and hidden rooms.</span></div></article></div></section>'+
-      '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Start with Kona</h3><small>Useful, not noisy</small></div><div class="kona-place-grid">'+placeCards+'</div></section>';
-    body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
+    title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
+    renderHomeSurface(body,{
+      event:facts().event,
+      openGarage:garage,
+      openDiscover:explore,
+    });
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
   }
 
@@ -118,21 +108,10 @@ export function initKonaShell({ profile, settings, enter }) {
     if(go){ go(id); return; }
     enter?.(id);
   }
-  function explore(){
-    title.textContent='Explore'; eyebrow.textContent='KONA · THE MUSEUM';
-    const named=(window.__ROOMS?.areas||[]).filter(a=>['hall','sanctuary','hween','kona','wyld','pier'].includes(a.id));
-    const brands=window.__BRANDROOMS?.rooms||[];
-    const themes=window.__gallery?.rooms||[];
-    const row=(kicker,name,sub,id)=>'<button type="button" data-go="'+esc(id)+'"><article><small>'+esc(kicker)+'</small><b>'+esc(name)+'</b><span>'+esc(sub)+'</span></article></button>';
-    const rooms=named.map(a=>row(a.floor==='upper'?'Upper floor':'Ground', a.short||a.name, a.sub||'', a.id)).join('')
-      +brands.map(r=>row('Brand room', r.name, (r.products?.[0]?.model)||r.kicker||'', r.id)).join('')
-      +themes.map(r=>row('Upper floor', r.name, r.sub||'', 'room-'+r.id)).join('');
-    body.innerHTML=
-      '<section class="kona-hero-card artifact artifact--hero"><small>WALK THE COAST</small><h3>Every room, one museum</h3><p>Kona hall, themed rooms, and the studies that have a place of their own.</p><button class="kona-primary" data-enter>Enter where you stand <span>→</span></button></section>'+
-      '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Rooms</h3><small>Tap to walk</small></div><div class="kona-place-grid">'+rooms+'</div></section>';
-    body.querySelector('[data-enter]')?.addEventListener('click',()=>{close();enter?.();});
-    body.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>walkTo(b.dataset.go)));
+  async function explore(){
+    title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
+    await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});
   }
 
   shell.querySelector('[data-tab=home]').onclick=now;

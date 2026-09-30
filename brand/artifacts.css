@@ -2,7 +2,7 @@
 .artifact{position:relative;color:var(--brand-ink)}
 .artifact--hero{border:0;border-radius:var(--artifact-edge);overflow:hidden;background:var(--brand-surface);box-shadow:var(--artifact-shadow)}
 .artifact--photo{border:0;border-radius:var(--artifact-edge);overflow:hidden;background:var(--brand-surface);box-shadow:var(--artifact-shadow)}
-.artifact--label{border-top:1px solid var(--brand-line);border-bottom:1px solid var(--brand-line);border-radius:0;background:transparent;box-shadow:none}
+.artifact--label{border-top:1px solid var(--brand-line);border-right:0;border-bottom:1px solid var(--brand-line);border-left:0;border-radius:0;background:transparent;box-shadow:none}
 .artifact--spec{border:1px solid var(--brand-line);border-radius:2px;background:var(--brand-surface);font-variant-numeric:tabular-nums}
 .artifact--bib{border:1px solid var(--brand-ink);border-radius:2px;background:var(--brand-surface);box-shadow:3px 3px 0 color-mix(in srgb,var(--brand-ink) 14%,transparent)}
 .artifact--map{border:0;border-radius:0;background:linear-gradient(var(--brand-line) 1px,transparent 1px),linear-gradient(90deg,var(--brand-line) 1px,transparent 1px),var(--brand-surface);background-size:24px 24px}
