@@ -1,0 +1,72 @@
+name: Build Zwift hardware core batch 05
+
+on:
+  push:
+    branches:
+      - assets/kona-environment-pack-20260930
+    paths:
+      - blender/zwift_hardware_core_batch05.py
+      - museum/catalog/zwift-hardware-master-catalog.json
+      - museum/instructions/zwift-hardware-core.json
+      - .github/workflows/zwift-hardware-core-batch05.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zwift-hardware-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install Blender
+        run: python -m pip install --upgrade pip bpy
+      - name: Build
+        run: python blender/zwift_hardware_core_batch05.py
+      - name: Validate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('assets/zwift-hardware/batch-05-core')
+          glbs=sorted(root.glob('*.glb'))
+          assert len(glbs)==10, f'expected 10 GLBs, got {len(glbs)}'
+          for p in glbs:
+              b=p.read_bytes()
+              assert b[:4]==b'glTF'
+              assert int.from_bytes(b[8:12],'little')==len(b)
+              assert len(b)<2_500_000, f'{p} too heavy: {len(b)}'
+              print(p,len(b))
+          r=json.loads((root/'build-report.json').read_text())
+          a=r['assets']
+          assert a['zwift-ride-v2']['product_length_mm']==1340
+          assert a['zwift-ride-v2']['product_width_mm']==602
+          assert a['zwift-ride-v2']['stepover_mm']==730
+          assert a['zwift-ride-v2']['handlebar_width_mm']==420
+          assert a['zwift-cog-v2']['dimensions_mm']==[103,42]
+          assert a['zwift-cog-v2']['teeth']==14
+          assert a['zwift-cog-v2']['alignment_positions']==10
+          assert a['zwift-click-v2']['dimensions_mm']==[50,50]
+          assert a['zwift-click-v1']['dimensions_mm']==[47,47,13]
+          assert a['zwift-play']['dimensions_mm_each']==[100,95,95]
+          assert a['zwift-runpod']['weight_g']==13
+          print('Zwift core hardware QA passed')
+          PY
+      - name: Commit generated assets
+        run: |
+          if [ -z "$(git status --porcelain -- assets/zwift-hardware/batch-05-core)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/zwift-hardware/batch-05-core
+          git add -f assets/zwift-hardware/batch-05-core/zwift_hardware_core_batch05.blend
+          git commit -m "build: generate Zwift hardware core batch 05 [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
