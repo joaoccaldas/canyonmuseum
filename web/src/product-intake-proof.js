@@ -153,23 +153,27 @@ document.querySelectorAll('[data-room]').forEach(b=>b.onclick=()=>focusRoom(atla
 function focusProduct(id){
   const inst=atlas.bikes.find(x=>x.data.key===id);
   if(!inst?.turn)return false;
-  inst.turn.updateMatrixWorld(true);
+  scene.updateMatrixWorld(true); inst.turn.updateMatrixWorld(true);
   const box=new THREE.Box3().setFromObject(inst.turn);
   if(box.isEmpty())return false;
   const sphere=box.getBoundingSphere(new THREE.Sphere());
   const center=sphere.center;
   const radius=Math.max(sphere.radius,.25);
-  const fov=THREE.MathUtils.degToRad(camera.fov);
-  const dist=Math.max(radius/Math.sin(fov/2)*1.2,radius*3,1.8);
-  const dir=new THREE.Vector3(1.15,.55,1.4).normalize();
+  const vFov=THREE.MathUtils.degToRad(camera.fov);
+  const hFov=2*Math.atan(Math.tan(vFov/2)*Math.max(camera.aspect,.1));
+  const limitingFov=Math.max(.12,Math.min(vFov,hFov));
+  const dist=Math.max(radius/Math.sin(limitingFov/2)*1.18,radius*2.8,1.8);
+  const opening=inst.room?.face===-1?-1:1;
+  const dir=new THREE.Vector3(opening,.18,.12).normalize();
   camera.position.copy(center).addScaledVector(dir,dist);
   controls.target.copy(center);
   controls.minDistance=Math.max(.35,radius*.5);
-  controls.maxDistance=Math.max(8,radius*10);
-  camera.near=Math.max(.02,dist-radius*2.5);
-  camera.far=Math.max(50,dist+radius*8);
+  controls.maxDistance=Math.max(8,radius*12);
+  camera.near=Math.max(.02,dist-radius*2.8);
+  camera.far=Math.max(50,dist+radius*9);
   camera.updateProjectionMatrix();
   controls.update();
+  camera.updateMatrixWorld(true);
   return true;
 }
 function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
