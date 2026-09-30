@@ -126,13 +126,23 @@ function paintQuest(step) {
     reveal: '',
   };
   if (step === 'reveal' && questReady(draft)) {
+    // Identity and entry are the primary transaction. Progression is a bonus and
+    // must never strand a user on onboarding if reward state is unavailable/corrupt.
     saveQuestIdentity(draft);
-    const granted = applyStoredEvent({ type: 'RACE_IDENTITY_CREATED', subject: 'kona-2026' });
     const labels = questLabels(draft);
     const bike = labels.bike;
     const shoe = labels.shoe;
-    const xp = granted.history?.at?.(-1)?.xp ?? 0;
-    const credits = granted.history?.at?.(-1)?.credits ?? 0;
+    let xp = 0, credits = 0;
+    try {
+      const progression = applyStoredEvent({ type: 'RACE_IDENTITY_CREATED', subject: 'kona-2026' });
+      const reward = progression?.history?.at?.(-1);
+      if (reward?.type === 'RACE_IDENTITY_CREATED') {
+        xp = Number(reward.xp) || 0;
+        credits = Number(reward.credits) || 0;
+      }
+    } catch (err) {
+      console.warn('progression reward unavailable; RaceIdentity remains valid', err);
+    }
     host.innerHTML = `<p class="eyebrow">This is your Kona</p><h2>${bike}</h2><p>${shoe}</p><p>${draft.goal}</p><p class="kona-count">+${xp} XP · +${credits} Kona Credits</p><button type="button" class="btn primary" id="enterKona">Enter KONA</button><button type="button" class="btn secondary" id="shareSelf">Share my Kona</button><button type="button" class="btn text" id="saveSelf">Save across devices</button><p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
     host.querySelector('#enterKona')?.addEventListener('click', () => { setEntryMode('app'); intro?.setAttribute('hidden',''); shell.now?.(); });
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
