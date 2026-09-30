@@ -1,14 +1,14 @@
 /* KONA appearance modes. Functional semantics stay identical across modes. */
 html[data-theme="dark"]{
   color-scheme:dark;
-  --brand-bg:#071116;
-  --brand-surface:#0d1920;
-  --brand-ink:#f5f3ee;
-  --brand-muted:#b4c0c8;
-  --brand-faint:#7f929e;
-  --brand-line:rgba(238,247,250,.13);
-  --brand-accent:#ff6a22;
-  --brand-accent-2:#39c8ef;
+  --brand-bg:#080b0d;
+  --brand-surface:#101519;
+  --brand-ink:#f7f4ee;
+  --brand-muted:#b7bec2;
+  --brand-faint:#899297;
+  --brand-line:rgba(247,244,238,.13);
+  --brand-accent:#ff5a1f;
+  --brand-accent-2:#0c91a4;
   --brand-on-accent:#071116;
   --brand-success:#55d6a0;
   --artifact-shadow:0 24px 65px -38px rgba(0,0,0,.72);
