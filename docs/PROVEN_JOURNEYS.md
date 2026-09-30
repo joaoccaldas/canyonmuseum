@@ -6,7 +6,7 @@ This is the product maturity dashboard. Contracts, schemas and commits do not co
 |---|---|---|
 | Fresh user → RaceIdentity → Home | PARTIAL | real S25 + iPhone, reload, no 3D before Discover |
 | Home → Discover → Artifact | PARTIAL | canonical Artifact visible from Discover |
-| Artifact → Add to Garage → reload | FAIL | Garage UI + persisted UserEquipment |
+| Artifact → Add to Garage → reload | PARTIAL | Garage UI + persisted UserEquipment exist; still prove Artifact action wiring + reload in one runtime journey |
 | Enter 3D → proximity → Inspect → return | PARTIAL | one canonical hall-state implementation + real phone |
 | Share → friend opens → Build Yours | PARTIAL | shared link on second device + completed RaceIdentity |
 | Save/sign in → relaunch | PARTIAL | magic link round-trip + state reconciliation |
