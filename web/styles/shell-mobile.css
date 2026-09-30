@@ -185,3 +185,10 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
   .hub-tile{min-height:104px;padding:13px}
   .hub-tile b{font-size:16px}.hub-tile span{font-size:9.5px}
 }
+
+/* RC1 touch invariant: all primary phone interactions in Home/Garage are at least 48px. */
+.kona-list a,.kona-list button,.race-card-actions button,.race-picker button,.race-picker input,
+.kona-bottom-nav button,.quest-choice,.btn,.hub-tile,.hub-settings,.hub-drawer-head button{min-height:48px}
+.kona-list a,.kona-list button{display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border-radius:12px}
+.race-card-actions button{padding-inline:12px}
+#entryInstall,#installBtn{min-height:48px;padding:0 16px;border-radius:999px}
