@@ -1,5 +1,5 @@
 {
- "version": "a6cced86acfb",
+ "version": "5c9681168c63",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -26,7 +26,7 @@
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
   "web/styles/entry-visual-v2.css": "psli1G5AtVc+VVkop+LkjFnLmIeEsm551aEE62VdK5g=",
   "web/styles/system.css": "47dES3NTtgV6ueLGZpsnRC7cx9DTvvHkcR2hwQsDPNU=",
-  "web/styles/shell-mobile.css": "Zym2+t96PMhuB8wCve0u84/rQjgy5JaOm2tix+ll0tI=",
+  "web/styles/shell-mobile.css": "pV9nR5o4RVR8W2EM7ck89Z4ewmfCHpQPIYBPMVkjJss=",
   "brand/tokens.css": "IHZqSUIlqEIyr0kMjDBoOQV+N1S9tsUaWMLcryuufkI=",
   "brand/themes.css": "Hhov5kE9vhLxeEzXh8a0Ybe0bdQ3LPnC1sxOpOZvrHo=",
   "brand/artifacts.css": "eFVVXE91n+Pf8sBFwoFhdF13k9k1Adq8NN/gdKfWyUg=",
@@ -35,9 +35,9 @@
   "assets/pwa/icon-v3-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/icon-v3-maskable-512.png": "TjJpu7ZmZYrQIO9sWSzdVeBHr2RYy+FWmCyygkZsECs=",
   "assets/pwa/apple-touch-icon-v3.png": "R7r+34dBZMxUezo2xBD34dbHtfTyvjdCViUhs3wRamI=",
-  "app/world-shell.html": "QuYnswz4I2bd1Ia426+RB7lfDb+Ey2xrrbNYkWzBr7M=",
+  "app/world-shell.html": "TTf6z6pUXZoR+AeCTJZkEptRjff7sNgSZzs4ITcluJM=",
   "web/styles/hall-web.css": "RTu9sdh2fQgoP5Thhhpkis8iYxcLQnEPs9RyrWlPTeI=",
-  "web/styles/hall-mobile.css": "leFyK03Ta/Z5EWM+vLiwxe9NoXlob2mZ2D8uEDFaasY=",
+  "web/styles/hall-mobile.css": "C8ZplQkaKuAvGYJxcdGk/36KnKHqyBaDpG5fbXvUzsM=",
   "app/race-self-stage.js": "j5qWdvY6rnZ8KbYRa40MrnetXQxKpWZobPZafGAlXz4=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
