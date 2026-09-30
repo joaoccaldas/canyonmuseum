@@ -8,7 +8,7 @@ const read = p => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const productsSrc = read("museum/catalog/products.json");
 const island = read("museum/kona/island-guide.json");
 
-const allowedProductTypes = new Set(["bike","shoe","helmet","wheel","trisuit","artifact","artwork","crankset","cassette","aerobar_extensions","hydration","saddle","groupset"]);
+const allowedProductTypes = new Set(["bike","shoe","helmet","wheel","trisuit","artifact","artwork","crankset","cassette","aerobar_extensions","hydration","saddle","groupset","bike_computer","pedal","smart_trainer","smart_frame","trainer_accessory","accessory"]);
 const safeId = id => typeof id === "string" && /^[a-z0-9][a-z0-9._-]*$/.test(id);
 
 function representation(origin="") {
