@@ -5,6 +5,8 @@ import fs from 'node:fs';
 const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'utf8');
 const home=fs.readFileSync(new URL('../src/ui/home.js',import.meta.url),'utf8');
 const discover=fs.readFileSync(new URL('../src/ui/discover.js',import.meta.url),'utf8');
+const catalog=fs.readFileSync(new URL('../src/engine/catalog.js',import.meta.url),'utf8');
+const garage=fs.readFileSync(new URL('../src/ui/garage.js',import.meta.url),'utf8');
 const plan=fs.readFileSync(new URL('../src/ui/plan.js',import.meta.url),'utf8');
 const me=fs.readFileSync(new URL('../src/ui/me.js',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
@@ -19,9 +21,17 @@ test('shell orchestrates extracted Home, Discover, Plan and Me surfaces',()=>{
 });
 
 test('Discover is lightweight before optional 3D',()=>{
-  assert.match(discover,/public-catalog\.json/);
+  assert.match(discover,/loadPublicCatalog/);
+  assert.match(catalog,/integrations\/public-catalog\.json/);
   assert.doesNotMatch(discover,/__ROOMS|__BRANDROOMS|__gallery|museum-data\.js|hall\.js/);
   assert.match(discover,/Enter the world/);
+});
+
+test('Garage and Me resolve Product presentation from the shared public projection',()=>{
+  assert.match(garage,/getPublicProduct/);
+  assert.match(me,/getPublicProduct/);
+  assert.doesNotMatch(garage,/BIKES|SHOES|questLabels/);
+  assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
 test('Home has one primary next action and no direct 3D dependency',()=>{
