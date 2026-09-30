@@ -177,3 +177,5 @@ window.__intakeProof={
     };
   }
 };
+window.__intakeStage('PROOF_API_READY');
+requestAnimationFrame(loop);
