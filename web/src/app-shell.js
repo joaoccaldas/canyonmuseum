@@ -40,6 +40,7 @@ export function initAppShell() {
   // --- install
   const btn = $('installBtn'), entryBtn = $('entryInstall'), sheet = $('appSheet');
   let deferred = null;
+  let installSheetRequested = false;
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const android = /android/i.test(navigator.userAgent);
   const native = Boolean(window.Capacitor?.isNativePlatform?.());
@@ -66,6 +67,7 @@ export function initAppShell() {
   });
 
   async function beginInstall() {
+    installSheetRequested = true;
     const s = state();
     if (!sheet) return;
     const iosRow = sheet.querySelector('[data-ios]');
@@ -106,13 +108,13 @@ export function initAppShell() {
         } else if(apkUnavailable) apkUnavailable.hidden=false;
       }).catch(()=>{if(apkUnavailable) apkUnavailable.hidden=false;});
     }
-    sheet.hidden = false;
+    sheet.hidden = !installSheetRequested;
   }
   btn?.addEventListener('click', beginInstall);
   entryBtn?.addEventListener('click', beginInstall);
 
-  sheet?.querySelector('.close')?.addEventListener('click', () => { sheet.hidden = true; });
-  sheet?.addEventListener('click', e => { if (e.target === sheet) sheet.hidden = true; });
+  sheet?.querySelector('.close')?.addEventListener('click', () => { installSheetRequested=false; sheet.hidden = true; });
+  sheet?.addEventListener('click', e => { if (e.target === sheet) { installSheetRequested=false; sheet.hidden = true; } });
 
   // --- offline + verified updates
   if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
