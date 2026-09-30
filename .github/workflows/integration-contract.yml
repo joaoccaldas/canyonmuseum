@@ -23,3 +23,5 @@ jobs:
         run: node tools/build_public_catalog.mjs --check
       - name: Exercise public catalog adapter
         run: node integrations/public-catalog.test.mjs
+      - name: Exercise MCP read prototype
+        run: node integrations/mcp-read-adapter.test.mjs
