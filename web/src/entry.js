@@ -37,6 +37,18 @@ const settingsBridge = { open() {} };
 window.__konaSettingsBridge = settingsBridge;
 
 const loads = new Map();
+function loadStyle(href) {
+  const key='css:'+href;
+  if (loads.has(key)) return loads.get(key);
+  const pending = new Promise((resolve,reject)=>{
+    const link=document.createElement('link');
+    link.rel='stylesheet'; link.href=href;
+    link.onload=()=>resolve(); link.onerror=()=>reject(new Error(href));
+    document.head.append(link);
+  });
+  loads.set(key,pending);
+  return pending;
+}
 function loadScript(src) {
   if (loads.has(src)) return loads.get(src);
   const pending = new Promise((resolve, reject) => {
@@ -57,7 +69,10 @@ let worldShellReady = null;
 const ensureWorldShell = () => {
   if (document.getElementById('hall')) return Promise.resolve();
   if (worldShellReady) return worldShellReady;
-  worldShellReady = fetch('app/world-shell.html',{cache:'no-store',credentials:'same-origin'})
+  worldShellReady = Promise.all([
+    loadStyle('web/styles/hall-web.css'),
+    loadStyle('web/styles/hall-mobile.css'),
+  ]).then(()=>fetch('app/world-shell.html',{cache:'no-store',credentials:'same-origin'}))
     .then(r=>r.ok?r.text():Promise.reject(new Error('world shell unavailable')))
     .then(html=>{
       const t=document.createElement('template'); t.innerHTML=html.trim();
