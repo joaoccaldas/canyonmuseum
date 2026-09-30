@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "disclaimer": "Museum/education instructions. For real bicycle installation or service, follow the manufacturer's current manual and torque specifications.",
+  "items": [
+    {
+      "id": "dt-swiss-arc1100-db80-front",
+      "exploded_order": [
+        "thru axle",
+        "centerlock rotor",
+        "hub/end caps",
+        "spokes",
+        "80 mm carbon rim"
+      ],
+      "exhibit_steps": [
+        "Rotate assembled wheel",
+        "Toggle exploded view",
+        "Tap hub, spoke, rim, rotor, or axle",
+        "Compare 80 mm rim cross-section with other depths"
+      ],
+      "install_note": "Install with the correct 12x100 thru axle and Center Lock rotor according to bike and DT Swiss manuals."
+    },
+    {
+      "id": "dt-swiss-arc1100-db80-rear",
+      "exploded_order": [
+        "thru axle",
+        "centerlock rotor",
+        "hub/end caps",
+        "Ratchet EXP/freehub body",
+        "spokes",
+        "80 mm carbon rim"
+      ],
+      "exhibit_steps": [
+        "Explode along hub axis",
+        "Inspect freehub side",
+        "Inspect 24-spoke wheel structure",
+        "Compare front/rear hub spacing"
+      ],
+      "install_note": "12x142 rear spacing. Cassette/freehub compatibility must match the drivetrain."
+    },
+    {
+      "id": "dt-swiss-arc1100-disc-rear",
+      "exploded_order": [
+        "thru axle",
+        "centerlock rotor",
+        "180 hub",
+        "Ratchet EXP/freehub body",
+        "full carbon disc shell"
+      ],
+      "exhibit_steps": [
+        "Toggle shell transparency",
+        "Expose central hub",
+        "Compare disc shell with spoked ARC 80",
+        "Show 20 mm inner / 27 mm outer rim width"
+      ],
+      "install_note": "Disc-brake rear wheel only; use current DT Swiss service documentation for hub or freehub work."
+    },
+    {
+      "id": "shimano-fc-r9200-54-40-170",
+      "exploded_order": [
+        "left crank arm",
+        "axle",
+        "right crank/spider",
+        "40T inner ring",
+        "54T outer ring",
+        "four fixing bolts"
+      ],
+      "exhibit_steps": [
+        "Show 110 mm PCD circle",
+        "Show 148 mm Q-factor envelope",
+        "Toggle 54/40 chainrings",
+        "Animate exploded assembly back onto axle"
+      ],
+      "install_note": "Use Shimano Dealer's Manual and exploded-view documentation for real assembly, orientation, fastening sequence, and torque."
+    },
+    {
+      "id": "shimano-cs-r9200-11-30",
+      "exploded_order": [
+        "lockring",
+        "11T",
+        "12T",
+        "13T",
+        "14T",
+        "15T",
+        "16T",
+        "17/19T unit",
+        "21/24/27/30T unit",
+        "spider carriers"
+      ],
+      "exhibit_steps": [
+        "Explode by sprocket order",
+        "Highlight seven steel and five titanium sprockets",
+        "Show tooth-count progression",
+        "Reassemble onto HG L2 spline axis"
+      ],
+      "install_note": "Use Shimano's current cassette manual and specified lockring tool/torque for real installation."
+    },
+    {
+      "id": "profile-design-43asc-400",
+      "exploded_order": [
+        "left 400 mm extension",
+        "right 400 mm extension",
+        "22.2 mm clamp zones"
+      ],
+      "exhibit_steps": [
+        "Show 43° terminal angle",
+        "Measure 107 mm rise",
+        "Show 16 mm total offset",
+        "Show 22.2 mm OD clamp interface"
+      ],
+      "install_note": "Do not cut below the manufacturer's minimum usable length. Follow Profile Design installation instructions and compatible aerobar requirements."
+    }
+  ]
+}
