@@ -1,0 +1,144 @@
+{
+  "schema": "progression-config-v2",
+  "philosophy": [
+    "reward meaningful firsts",
+    "no paid randomness",
+    "no reward for affiliate clicks",
+    "core race/safety information is never locked",
+    "repeatable challenges reward mastery, not farming"
+  ],
+  "events": {
+    "CARD_DISCOVERED": {
+      "xp": 3,
+      "credits": 0,
+      "repeat": "once-per-subject"
+    },
+    "PLACE_DISCOVERED": {
+      "xp": 10,
+      "credits": 10,
+      "repeat": "once-per-place"
+    },
+    "STORY_COMPLETED": {
+      "xp": 15,
+      "credits": 10,
+      "repeat": "once-per-story"
+    },
+    "ARTIFACT_INSPECTED": {
+      "xp": 15,
+      "credits": 10,
+      "repeat": "once-per-artifact"
+    },
+    "ARTIFACT_3D_INSPECTED": {
+      "xp": 20,
+      "credits": 20,
+      "repeat": "once-per-artifact"
+    },
+    "RACE_RESULT_CONFIRMED": {
+      "xp": 75,
+      "credits": 100,
+      "repeat": "once-per-result"
+    },
+    "PROFILE_COMPLETED": {
+      "xp": 50,
+      "credits": 50,
+      "repeat": "once"
+    },
+    "COLLECTION_COMPLETED": {
+      "xp": 100,
+      "credits": 150,
+      "repeat": "once-per-collection"
+    },
+    "AFFILIATE_CLICK": {
+      "xp": 0,
+      "credits": 0,
+      "repeat": "never-reward"
+    },
+    "SHARE_ATTEMPTED": {
+      "xp": 0,
+      "credits": 0,
+      "repeat": "never-reward"
+    },
+    "REFERRAL_ACTIVATED": {
+      "xp": 150,
+      "credits": 250,
+      "repeat": "server-verified-once-per-referral"
+    }
+  },
+  "rarity_rewards": {
+    "common": {
+      "xp": 25,
+      "credits": 40
+    },
+    "uncommon": {
+      "xp": 50,
+      "credits": 80
+    },
+    "rare": {
+      "xp": 120,
+      "credits": 200
+    },
+    "epic": {
+      "xp": 300,
+      "credits": 500
+    },
+    "legendary": {
+      "xp": 750,
+      "credits": 1200
+    },
+    "mythic": {
+      "xp": 1500,
+      "credits": 2500
+    }
+  },
+  "collections": [
+    {
+      "id": "collection:kona-elements",
+      "name": "Kona Elements",
+      "required": 5,
+      "reward": {
+        "badge": "kona-elements",
+        "xp": 100,
+        "credits": 150
+      }
+    },
+    {
+      "id": "collection:aero-revolution",
+      "name": "Aero Revolution",
+      "required": 5,
+      "reward": {
+        "badge": "aero-revolution",
+        "xp": 200,
+        "credits": 300
+      }
+    },
+    {
+      "id": "collection:race-day",
+      "name": "Race Day Relics",
+      "required": 5,
+      "reward": {
+        "badge": "race-day-relics",
+        "xp": 150,
+        "credits": 250
+      }
+    },
+    {
+      "id": "collection:hidden-engineering",
+      "name": "Hidden Engineering",
+      "required": 5,
+      "reward": {
+        "badge": "hidden-engineering",
+        "xp": 250,
+        "credits": 400
+      }
+    }
+  ],
+  "unlock_policy": {
+    "visible_product_info": "always",
+    "safety_and_compatibility": "always",
+    "cosmetics": "may_unlock",
+    "historical_rooms": "may_unlock",
+    "alternate_display_skins": "may_unlock",
+    "challenge_variants": "may_unlock",
+    "dream_equipment_equip_slot": "may_unlock"
+  }
+}
