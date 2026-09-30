@@ -1,55 +1,95 @@
 // ui/avatar-home.js — personal landing menu / Race Self studio.
-// Avatar presentation reads Profile + RaceIdentity + collection. It owns no separate database.
+// Lightweight 3D stage is progressive enhancement; canonical state remains 2D-first.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
+import { renderRaceBadges } from './race-cards.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
 
-async function equipped(snapshot, equipmentId) {
+async function equipped(snapshot,equipmentId){
   const row=(snapshot.user_equipment||[]).find(x=>x.id===equipmentId);
-  if(!row?.product_id) return null;
+  if(!row?.product_id)return null;
   return getPublicProduct(productId(row.product_id));
 }
 
-export async function renderAvatarHome(root,{profile,openMuseum,openGarage,openPlan,openCollection}={}) {
+export async function renderAvatarHome(root,{profile,settings,openMuseum,openGarage,openPlan,openCollection,openDiscover}={}){
   const snapshot=readGameState();
-  const identity=snapshot.race_identity || {};
+  const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
-  const bike=await equipped(snapshot,identity.setup?.bike);
-  const shoe=await equipped(snapshot,identity.setup?.shoe);
-  const accent=profile?.get?.().avatar || AVATARS[0];
-  const goal=identity.goal?.label || 'Build your Kona';
+  const [bike,shoe]=await Promise.all([equipped(snapshot,identity.setup?.bike),equipped(snapshot,identity.setup?.shoe)]);
+  const accent=profile?.get?.().avatar||AVATARS[0];
+  const goal=identity.goal?.label||'Build your Kona';
   const intent=String(identity.intent||identity.mode||'exploring').replace(/[-_]+/g,' ');
   const bikeTitle=bike?[bike.brand,bike.name||bike.label||bike.model].filter(Boolean).join(' '):'Choose a bike';
   const studioHref=bike?'Studio.html?p='+encodeURIComponent(bike.id)+'#setup':'Studio.html#setup';
 
   root.innerHTML=
-    '<section class="race-self-studio artifact artifact--hero">'+
-      '<div class="race-self-figure" style="--avatar-accent:'+esc(accent)+'" aria-label="Your stylized Race Self"><i class="race-self-head"></i><i class="race-self-body"></i><i class="race-self-leg a"></i><i class="race-self-leg b"></i></div>'+
-      '<div class="race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3><p>'+esc(intent)+' · '+esc(bikeTitle)+(shoe?' · '+esc(shoe.name||shoe.label||shoe.model):'')+'</p>'+
-        '<div class="race-self-swatches" aria-label="Avatar accent">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===accent?' class="on"':'')+'></button>').join('')+'</div>'+
+    '<section class="race-self-shell">'+
+      '<div class="race-self-stage-wrap">'+
+        '<canvas class="race-self-stage" data-race-self-stage aria-label="3D Race Self with selected gear"></canvas>'+
+        '<div class="race-self-stage-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3><p>'+esc(intent)+' · '+esc(bikeTitle)+(shoe?' · '+esc(shoe.name||shoe.label||shoe.model):'')+'</p></div>'+
+      '</div>'+
+      '<div class="race-self-dock">'+
+        '<div class="race-self-tabs" role="tablist" aria-label="Race Self menu">'+
+          '<button type="button" data-self-tab="self" class="on">Self</button>'+
+          '<button type="button" data-self-tab="gear">Gear</button>'+
+          '<button type="button" data-self-tab="bike">Bike</button>'+
+          '<button type="button" data-self-tab="kit">Kit</button>'+
+          '<button type="button" data-self-tab="races">Races</button>'+
+          '<button type="button" data-self-tab="cards">Cards</button>'+
+          '<button type="button" data-self-tab="garage">Garage</button>'+
+          '<button type="button" data-self-tab="world">World</button>'+
+          '<button type="button" data-self-tab="settings">Settings</button>'+
+        '</div>'+
+        '<div class="race-self-pane" data-self-pane>'+
+          '<div class="race-self-profile">'+
+            '<div><small>ACCENT</small><div class="race-self-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===accent?' class="on"':'')+'></button>').join('')+'</div></div>'+
+            '<div><small>COLLECTION</small><b>'+summary.total+' items</b></div>'+
+          '</div>'+
+        '</div>'+
       '</div>'+
     '</section>'+
-    '<section class="kona-section race-self-menu artifact artifact--label"><div class="kona-section-head"><h3>Where next?</h3><small>'+summary.total+' collected</small></div>'+
-      '<div class="race-self-actions">'+
-        '<button type="button" data-action="museum"><small>WORLD</small><b>Canyon Museum</b><span>Enter 3D when you want it.</span></button>'+
-        '<a href="'+studioHref+'"><small>STUDIO</small><b>Customize your bike</b><span>Paint, setup, finish and scene.</span></a>'+
-        '<button type="button" data-action="collection"><small>COLLECTION</small><b>Cards & items</b><span>'+summary.total+' things collected so far.</span></button>'+
-        '<button type="button" data-action="garage"><small>GARAGE</small><b>Your equipment</b><span>Mine. Dreaming. Try.</span></button>'+
-        '<button type="button" data-action="plan"><small>RACE WEEK</small><b>Plan</b><span>Useful details without loading the world.</span></button>'+
-      '</div>'+
-    '</section>';
+    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Race badges</h3><small>Past & future</small></div><div data-race-badges></div></section>';
 
-  root.querySelectorAll('[data-avatar]').forEach(btn=>btn.addEventListener('click',()=>{
+  let stageApi=null;
+  import('./race-self-stage.js').then(async m=>{
+    stageApi=await m.mountRaceSelfStage(root.querySelector('[data-race-self-stage]'),{accent,bike,shoe});
+  }).catch(()=>{});
+
+  await renderRaceBadges(root.querySelector('[data-race-badges]'),{limit:8,empty:true});
+
+  const pane=root.querySelector('[data-self-pane]');
+  const show=(tab)=>{
+    root.querySelectorAll('[data-self-tab]').forEach(x=>x.classList.toggle('on',x.dataset.selfTab===tab));
+    if(tab==='self'){
+      pane.innerHTML='<div class="race-self-profile"><div><small>ACCENT</small><div class="race-self-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></div><div><small>COLLECTION</small><b>'+summary.total+' items</b></div></div>';
+      wireSwatches();
+    } else if(tab==='gear'){
+      pane.innerHTML='<div class="race-self-mini-grid"><article><small>BIKE</small><b>'+esc(bikeTitle)+'</b></article><article><small>SHOES</small><b>'+esc(shoe?.name||shoe?.label||shoe?.model||'Choose later')+'</b></article></div>';
+    } else if(tab==='bike'){
+      location.href=studioHref;
+    } else if(tab==='kit'){
+      pane.innerHTML='<div class="race-self-mini-grid"><article><small>KIT</small><b>Race kit slots</b><span>Helmet, trisuit, watch, wetsuit and nutrition follow the RaceSetup contract.</span></article></div>';
+    } else if(tab==='races'){
+      const host=document.createElement('div'); pane.replaceChildren(host); renderRaceBadges(host,{limit:20,empty:true});
+    } else if(tab==='cards'){
+      openCollection?.();
+    } else if(tab==='garage'){
+      openGarage?.();
+    } else if(tab==='world'){
+      openMuseum?.();
+    } else if(tab==='settings'){
+      settings?.open?.();
+    }
+  };
+  const wireSwatches=()=>root.querySelectorAll('[data-avatar]').forEach(btn=>btn.addEventListener('click',()=>{
     profile?.set?.({avatar:btn.dataset.avatar});
-    root.querySelector('.race-self-figure')?.style.setProperty('--avatar-accent',btn.dataset.avatar);
+    stageApi?.setAccent?.(btn.dataset.avatar);
     root.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('on',x===btn));
   }));
-  root.querySelector('[data-action=museum]')?.addEventListener('click',()=>openMuseum?.());
-  root.querySelector('[data-action=collection]')?.addEventListener('click',()=>openCollection?.());
-  root.querySelector('[data-action=garage]')?.addEventListener('click',()=>openGarage?.());
-  root.querySelector('[data-action=plan]')?.addEventListener('click',()=>openPlan?.());
+  wireSwatches();
+  root.querySelectorAll('[data-self-tab]').forEach(btn=>btn.addEventListener('click',()=>show(btn.dataset.selfTab)));
 }
