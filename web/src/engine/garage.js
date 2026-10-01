@@ -2,6 +2,7 @@
 // Garage is a view over userEquipment, never a second ownership database.
 import { readStorage, writeStorage } from './storage.js';
 import { canonicalProductId, equipmentRecord } from './identity.js';
+import { ensureProgression } from './progression.js';
 
 export const EQUIPMENT_RELATIONSHIPS = Object.freeze(['owned','dream','try']);
 
@@ -32,6 +33,7 @@ export function addToGarage(product, { relationship='dream', storage=globalThis.
   if (!EQUIPMENT_RELATIONSHIPS.includes(relationship)) throw new Error('Invalid garage relationship');
   const productId = canonicalProductId(product);
   const items = readGarage(storage);
+  if(relationship==='owned' && ensureProgression(storage).level < 2) return {items,item:null,added:false,locked:true,required_level:2};
   const existing = items.find(x => x.product_id === productId && x.relationship === relationship);
   if (existing) return { items, item:existing, added:false };
   const item = equipmentRecord({ product:{ id:productId }, relationship });
