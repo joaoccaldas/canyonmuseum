@@ -242,3 +242,5 @@ body.install-open{overflow:hidden}
 .tour-target{outline:3px solid var(--brand-discovery)!important;outline-offset:4px;box-shadow:0 0 0 8px color-mix(in srgb,var(--brand-discovery) 18%,transparent)!important}
 @media(min-width:900px){.kona-tour{left:32px;bottom:32px;transform:none}}
 @media(prefers-reduced-motion:reduce){.tour-target{scroll-behavior:auto}}
+
+/* RC8 go-live evidence trigger: no behavioral effect. */
