@@ -72,7 +72,7 @@ export function initMap({ areas, pose, go, button }) {
   function close() { root.hidden = true; document.body.classList.remove('map-open'); cancelAnimationFrame(raf); }
   root.querySelector('.map-close').addEventListener('click', close);
   root.addEventListener('click', e => { if (e.target === root) close(); });
-  root.querySelectorAll('.map-tabs button').forEach(b => b.addEventListener('click', () => { floor = b.dataset.floor; draw(); tick(); }));
+  root.querySelectorAll('.map-tabs button').forEach(b => b.addEventListener('click', () => { floor = b.dataset.floor; draw(); }));
   addEventListener('keydown', e => {
     if (e.target?.closest?.('input,textarea')) return;
     if (e.key === 'Escape' && !root.hidden) close();

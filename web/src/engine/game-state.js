@@ -13,7 +13,7 @@ const parse = (raw, fallback) => {
 const clone = v => JSON.parse(JSON.stringify(v));
 
 const readJson = (name, fallback, storage) => parse(readStorage(name, storage), fallback);
-const writeJson = (name, value, storage) => writeStorage(name, value == null ? null : JSON.stringify(value), storage);
+
 
 export function readGameState(storage = globalThis.localStorage) {
   const profile = readJson('profile', null, storage);
@@ -40,20 +40,38 @@ export function readGameState(storage = globalThis.localStorage) {
 
 export function writeGameState(snapshot, storage = globalThis.localStorage) {
   if (!snapshot || snapshot.schema_version !== GAME_STATE_SCHEMA_VERSION) throw new Error('Unsupported game state');
-  try {
-    writeJson('profile', snapshot.profile, storage);
-    writeJson('passport', snapshot.progression, storage);
-    writeJson('finds', snapshot.finds || {}, storage);
-    writeJson('raceSetup', snapshot.race_setup, storage);
-    writeJson('garage', Array.isArray(snapshot.garage) ? snapshot.garage : [], storage);
-    if ('progression_engine' in snapshot) writeJson('progression', snapshot.progression_engine, storage);
-    if ('race_identity' in snapshot) writeJson('raceIdentity', snapshot.race_identity, storage);
-    if ('user_equipment' in snapshot) writeJson('userEquipment', Array.isArray(snapshot.user_equipment) ? snapshot.user_equipment : [], storage);
-    if ('kona_self' in snapshot) writeJson('konaSelf', snapshot.kona_self, storage);
-    if ('entry_intent' in snapshot) writeJson('entryIntent', snapshot.entry_intent, storage);
-    if ('race_history' in snapshot) writeJson('raceHistory', Array.isArray(snapshot.race_history) ? snapshot.race_history : [], storage);
-  } catch (_) {
-    throw new Error('Unable to persist game state');
+  // Serialize first, then restore the previous values if any write fails. A JSON
+  // null is intentional: it prevents a deleted field resurrecting a legacy key.
+  const fields = [
+    ['profile', snapshot.profile], ['passport', snapshot.progression],
+    ['finds', snapshot.finds || {}], ['raceSetup', snapshot.race_setup],
+    ['garage', Array.isArray(snapshot.garage) ? snapshot.garage : []],
+  ];
+  const optional = {
+    progression_engine: 'progression', race_identity: 'raceIdentity',
+    user_equipment: 'userEquipment', kona_self: 'konaSelf',
+    entry_intent: 'entryIntent', race_history: 'raceHistory',
+  };
+  for (const [field, name] of Object.entries(optional)) {
+    if (field in snapshot) fields.push([name,
+      ['user_equipment', 'race_history'].includes(field)
+        ? (Array.isArray(snapshot[field]) ? snapshot[field] : []) : snapshot[field]]);
+  }
+  const changes = fields.map(([name, value]) => ({
+    name, value: JSON.stringify(value ?? null), before: readStorage(name, storage),
+  }));
+  const applied = [];
+  for (const change of changes) {
+    if (!writeStorage(change.name, change.value, storage)) {
+      let restored = true;
+      for (const previous of applied.reverse()) {
+        if (!writeStorage(previous.name, previous.before, storage)) restored = false;
+      }
+      throw new Error(restored
+        ? 'Unable to persist game state. Your previous progress was kept.'
+        : 'Unable to persist game state or fully recover previous progress. Free device storage before trying again.');
+    }
+    applied.push(change);
   }
   return readGameState(storage);
 }

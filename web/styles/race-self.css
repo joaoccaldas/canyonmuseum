@@ -4,7 +4,7 @@ body.race-self-open .kona-panel-head,body.race-self-open .kona-bottom-nav,body.r
 body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:100%;margin:0;display:block}
 .race-self-experience{--stage-ink:#f8f5ef;--stage-muted:#adbec5;--stage-line:#ffffff20;position:relative;isolation:isolate;display:grid;grid-template-rows:64px minmax(220px,1fr) auto auto;min-height:100dvh;height:100dvh;background:radial-gradient(ellipse at 50% 40%,#24383e 0%,#101d25 40%,#091116 80%);color:var(--stage-ink);font-family:var(--sans);padding:0 max(16px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(16px,env(safe-area-inset-left));gap:0 24px}
 .studio-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--stage-line);padding-top:env(safe-area-inset-top)}
-.studio-wordmark{display:flex;gap:16px;align-items:center;font:800 22px/1 var(--sans);letter-spacing:.14em;color:inherit;text-decoration:none}
+.studio-wordmark{min-height:48px;min-width:48px;display:flex;gap:16px;align-items:center;font:800 22px/1 var(--sans);letter-spacing:.14em;color:inherit;text-decoration:none}
 .studio-wordmark span{font:600 11px/1.4 var(--sans);letter-spacing:.15em;color:var(--stage-muted);border-left:1px solid var(--stage-line);padding-left:16px}
 .studio-save-state{font:500 12px/1.4 var(--sans);color:#bbd6ce}
 .race-self-stage-wrap{position:relative;min-width:0;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;text-align:center}

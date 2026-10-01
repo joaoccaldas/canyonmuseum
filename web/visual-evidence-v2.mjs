@@ -7,7 +7,7 @@ const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'desktop',width:1440,height:900}];
 const states=['landing','sign-in','user-studio','avatar-editor','discover','garage','plan','passport','bike-studio'];const report=[];
 async function capture(vp,state,theme){
- const p=await browser.newPage();const requests=[];const errors=[];
+ const p=await browser.newPage();p.setDefaultNavigationTimeout(180000);const requests=[];const errors=[];
  p.on('request',r=>requests.push(r.url()));p.on('pageerror',e=>errors.push(e.message));
  await p.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:vp.id==='desktop'?1:2,isMobile:vp.id!=='desktop',hasTouch:vp.id!=='desktop'});
  await p.evaluateOnNewDocument((theme)=>{localStorage.clear();localStorage.setItem('speedmax.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));},theme);
@@ -52,6 +52,8 @@ async function capture(vp,state,theme){
  const name=`${vp.id}-${theme}-${state}`;await p.screenshot({path:path.join(out,name+'.png'),fullPage:false});
  report.push({viewport:vp.id,theme,state,metrics,heavyRequests:heavy,personal3DRequests:personal3D,errors});
  await p.close();
+ fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
+ console.log('Captured '+name);
 }
 for(const vp of viewports)for(const theme of ['light','dark','random'])for(const state of states)await capture(vp,state,theme);
 await browser.close();
