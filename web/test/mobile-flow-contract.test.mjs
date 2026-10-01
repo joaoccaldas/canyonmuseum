@@ -31,7 +31,7 @@ test('mobile app removes duplicate Studio chrome and gives active nav a real vis
 
 test('User Studio keeps the global mobile nav and uses vertical grids instead of hidden horizontal destinations',()=>{
   assert.match(studio,/@media\(max-width:899px\)[\s\S]*body\.race-self-open \.kona-bottom-nav\{display:grid\}/);
-  assert.match(studio,/\.race-self-controls\{grid-row:3;grid-template-columns:repeat\(2/);
+  assert.match(studio,/\.race-self-controls\{[^}]*grid-row:3;[^}]*grid-template-columns:repeat\(2/);
   assert.match(studio,/\.studio-destinations\{[\s\S]*grid-row:4;display:grid;grid-template-columns:repeat\(2/);
   assert.match(studio,/\.studio-home\{display:none\}/);
 });
