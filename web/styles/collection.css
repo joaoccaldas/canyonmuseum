@@ -41,8 +41,7 @@
 @media(max-width:760px){.timeline:before{left:5px}.tl-item{padding-left:26px}.news-wall{grid-template-columns:1fr}}
 
 /* ---- Museum theme: same paper, ink, serif and Kona accents as the walkable museum (was a separate dark/mint design) ---- */
-:root{--sand:#f4efe7;--paper:#fbf9f5;--ink:#12181d;--muted:#5f6a72;--faint:#8e979d;--line:rgba(18,24,29,.12);--accent:#b4541f;--lava:#e8471c;--sun:#f3b64f;--reef:#138a8f;
-  --serif:'Instrument Serif',Georgia,serif;--sans:'Manrope',system-ui,-apple-system,sans-serif;font-family:var(--sans);color:var(--ink);background:var(--sand)}
+:root{--sand:var(--brand-bg);--paper:var(--brand-surface);--ink:var(--brand-ink);--muted:var(--brand-muted);--faint:var(--brand-faint);--line:var(--brand-line);--accent:var(--brand-accent);--lava:var(--brand-sunrise);--sun:var(--brand-ember);--reef:var(--brand-accent-2);--serif:var(--brand-font-editorial);--sans:var(--brand-font-ui);font-family:var(--sans);color:var(--ink);background:var(--sand)}
 html{font-size:clamp(15px,.35vw + 14px,17px);-webkit-text-size-adjust:100%}
 body{background:radial-gradient(ellipse at 80% 0%,#f7d9a855,transparent 55%),var(--sand);color:var(--ink)}
 a{color:inherit}
@@ -88,6 +87,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{o
 .arrows button,.collection-bar button{font-size:1rem}
 .logo span{font-size:max(12px,.72rem)}.bike-image.placeholder span{font-size:.8rem}.wc-info small{font-size:max(12px,.78rem)}
 
-/* RC5 shared KONA brand convergence */
-:root{--sand:var(--brand-bg,#f4efe7);--paper:var(--brand-surface,#fbf9f5);--ink:var(--brand-ink,#12181d);--muted:var(--brand-muted,#5f6a72);--faint:var(--brand-faint,#8e979d);--line:var(--brand-line,rgba(18,24,29,.12));--reef:var(--brand-accent-2,#1db7d8);--lava:var(--brand-accent,#e85a22)}
+/* shared KONA interaction contract */
 button,a,[role="button"]{min-height:var(--brand-touch,48px)}
