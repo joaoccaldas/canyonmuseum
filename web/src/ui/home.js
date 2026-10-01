@@ -43,6 +43,12 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<h3 data-countdown-value>'+esc(headline)+'</h3><p>'+esc(note)+'</p>'+
       '<button class="kona-primary" type="button" data-home-plan>What matters next <span>→</span></button>'+
     '</section>'+
+    '<section class="home-flow" aria-label="KONA journey">'+
+      '<button type="button" data-home-discover><small>01</small><span><b>Explore</b><em>Places, stories, world</em></span><i>→</i></button>'+
+      '<button type="button" data-home-garage><small>02</small><span><b>Gear</b><em>Bike, kit, setup</em></span><i>→</i></button>'+
+      '<button type="button" data-home-plan><small>03</small><span><b>Race</b><em>Plan, weather, logistics</em></span><i>→</i></button>'+
+      '<button type="button" data-home-self><small>04</small><span><b>You</b><em>Avatar, progress, collection</em></span><i>→</i></button>'+
+    '</section>'+
     '<section class="home-race-self artifact artifact--label">'+
       '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
@@ -70,10 +76,10 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       button.disabled=true;status.textContent='Perfect Volcanic Rock saved in KONA Finds. +'+(after.xp-before.xp)+' XP · +'+(after.credits-before.credits)+' KC';
     }catch{status.textContent='Could not save your Find. Tap the rock to try again.';}
   });
-  root.querySelector('[data-home-self]')?.addEventListener('click',()=>openRaceSelf?.());
-  root.querySelector('[data-home-garage]')?.addEventListener('click',()=>openGarage?.());
-  root.querySelector('[data-home-discover]')?.addEventListener('click',()=>openDiscover?.());
-  root.querySelector('[data-home-plan]')?.addEventListener('click',()=>openPlan?.());
+  root.querySelectorAll('[data-home-self]').forEach(x=>x.addEventListener('click',()=>openRaceSelf?.()));
+  root.querySelectorAll('[data-home-garage]').forEach(x=>x.addEventListener('click',()=>openGarage?.()));
+  root.querySelectorAll('[data-home-discover]').forEach(x=>x.addEventListener('click',()=>openDiscover?.()));
+  root.querySelectorAll('[data-home-plan]').forEach(x=>x.addEventListener('click',()=>openPlan?.()));
   root.querySelector('[data-home-nudge]')?.addEventListener('click',e=>{
     const button=e.currentTarget,id='nudge:'+dayKey;
     try {
