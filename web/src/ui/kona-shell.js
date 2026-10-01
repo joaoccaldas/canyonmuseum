@@ -37,12 +37,12 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       '<div class="kona-panel-head"><div><small id="konaPanelEyebrow">KONA · BETA</small><h2 id="konaPanelTitle">Now</h2></div><button id="konaPanelClose" type="button" aria-label="Close">×</button></div>'+
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
     '</div>'+
-    '<nav class="kona-bottom-nav" aria-label="KONA main navigation">'+
-      '<button type="button" data-tab="home" aria-label="Home, what matters now" title="Home">'+icon('now')+'<span>Home</span></button>'+
-      '<button type="button" data-tab="discover" aria-label="Explore places, stories and the world" title="Explore">'+icon('explore')+'<span>Explore</span></button>'+
-      '<button type="button" data-tab="garage" aria-label="Gear, bike and race setup" title="Gear">'+icon('setup')+'<span>Gear</span></button>'+
-      '<button type="button" data-tab="plan" aria-label="Race week, weather and logistics" title="Race">'+icon('plan')+'<span>Race</span></button>'+
-      '<button type="button" data-tab="me" aria-label="You, avatar, progress and collection" title="You">'+icon('me')+'<span>You</span></button>'+
+    '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
+      '<button type="button" data-tab="home">'+icon('now')+'<span>Home</span></button>'+
+      '<button type="button" data-tab="discover">'+icon('explore')+'<span>Discover</span></button>'+
+      '<button type="button" data-tab="garage">'+icon('setup')+'<span>Garage</span></button>'+
+      '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
+      '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
     '</nav>';
   document.body.append(shell);
 
