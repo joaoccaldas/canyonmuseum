@@ -16,6 +16,8 @@ const MAP = Object.freeze({
   entryIntent: { current: 'kona.entryIntent.v1', legacy: ['speedmax.entryIntent.v1'] },
   raceHistory: { current: 'kona.raceHistory.v1', legacy: ['speedmax.raceHistory.v1'] },
   onboarding: { current: 'kona.onboarding.v1', legacy: [] },
+  onboardingCards: { current: 'kona.onboarding.cards.v1', legacy: [] },
+  returnJourney: { current: 'kona.returnJourney.v1', legacy: [] },
   otpCooldown: { current: 'kona.supabase.otp.cooldown.v1', legacy: [] },
   session: { current: 'kona.supabase.session.v1', legacy: ['kona.supabase.session.v1'] },
   companionSources: { current: 'kona.companion.sources.v1', legacy: [] },
