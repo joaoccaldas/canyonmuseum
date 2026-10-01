@@ -32,3 +32,6 @@ Shared hidden-state ownership fixed in consumer CSS. This evidence-only commit t
 
 Final synchronized generated head: `aac95940ce34ac1697299f998164f9c04845f590`.
 Shared layout reset now lives in consumer system CSS. Triggering final release gates on synchronized RC3.
+
+Synchronized final RC3 head: `12c3de1e24b0c40da6ff8d6e0bd7a6a9bde1caa9`.
+The 8px browser body margin leak is fixed in shared consumer CSS. Triggering final release verification on this synchronized tree.
