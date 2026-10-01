@@ -1,5 +1,5 @@
 {
- "version": "d8e6faa47ba0",
+ "version": "7f9ce7485f70",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -29,7 +29,7 @@
  "files": {
   "index.html": "iEoYHOG0uPtIxEXSqdaCgEwRVakbseM16CqCqsHJAnw=",
   "app/viewport.js": "sDvR++FCwr47Gl5gmxR2iVNUS3nhtW+sJfLBa8qcxc4=",
-  "app/kona-core.js": "7UFuBCtPsVc8HydiK1cR5n1WfHyDHSuJTvRVxZbF0Uw=",
+  "app/kona-core.js": "7DxgP5qq+16J8sDPUBE4GmQDBj6PQsd/vDWjava7a+E=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
