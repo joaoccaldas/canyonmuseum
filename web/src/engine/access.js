@@ -8,8 +8,12 @@ const selectorMatch=(product,selector={})=>Object.entries(selector).every(([key,
 });
 
 export function minimumLevelForRoom(roomId){
-  const row=rewards().find(x=>x.type==='room'&&x.id===roomId);
-  return row?.level||1;
+  let min=Infinity;
+  for(const reward of rewards()){
+    if(reward.type==='room'&&reward.id===roomId)min=Math.min(min,reward.level);
+    if(reward.type==='room-group'&&typeof reward.selector?.prefix==='string'&&String(roomId).startsWith(reward.selector.prefix))min=Math.min(min,reward.level);
+  }
+  return Number.isFinite(min)?min:1;
 }
 export function minimumLevelForProduct(product){
   if(!product)return 1;
@@ -49,7 +53,7 @@ export function levelContent(state=ensureProgression(),{admin=false}={}){
   const all=rewards();
   return Object.freeze({
     level,
-    rooms:all.filter(x=>x.type==='room').map(x=>({...x,unlocked:admin||x.level<=level})),
+    rooms:all.filter(x=>x.type==='room'||x.type==='room-group').map(x=>({...x,unlocked:admin||x.level<=level})),
     bikes:all.filter(x=>x.type==='bike'||x.type==='bike-group').map(x=>({...x,unlocked:admin||x.level<=level})),
     avatar:all.filter(x=>x.type==='avatar-item').map(x=>({...x,unlocked:admin||x.level<=level})),
     features:all.filter(x=>['feature','equipment-slot','garage-bay','surprise-tier','cosmetic'].includes(x.type)).map(x=>({...x,unlocked:admin||x.level<=level})),
