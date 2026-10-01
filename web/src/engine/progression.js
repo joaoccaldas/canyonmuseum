@@ -1,91 +1,48 @@
 import { readStorage, writeStorage, storageKey } from './storage.js';
-// Progression V1. Access, XP, collection and Kona Credits stay separate.
-// Rewards come from events. UI code does not add XP itself.
-// Rarity is fixed on the collectible. Nothing here is random or paid.
+import { PROGRESSION_CONFIG, RELIC_REGISTRY, UNLOCK_REGISTRY } from '../generated/game-config.js';
+// Progression runtime is generated from museum/game/*.json.
+// JSON registries are the source of truth; UI code never owns reward values.
 
 export const PROGRESSION_KEY = storageKey('progression');
+export const TIERS = Object.freeze(['visitor','passport','athlete']);
+export const LEVELS = Object.freeze((PROGRESSION_CONFIG.levels||[]).map(row=>Object.freeze({...row,unlock:row.summary||''})));
+export const EVENTS = Object.freeze(PROGRESSION_CONFIG.events||{});
+const RARITY = Object.freeze(PROGRESSION_CONFIG.rarity_rewards||{});
+export const COLLECTIBLES = Object.freeze([
+  ...(PROGRESSION_CONFIG.legacy_collectibles||[]),
+  ...(RELIC_REGISTRY.relics||[]),
+].map(x=>Object.freeze({...x})));
+export const UNLOCKS = Object.freeze((UNLOCK_REGISTRY.unlocks||[]).map(x=>Object.freeze({...x})));
+export const COLLECTIONS = Object.freeze((PROGRESSION_CONFIG.collections||[]).map(x=>Object.freeze({...x})));
+export const SURPRISE_POLICY = Object.freeze(PROGRESSION_CONFIG.surprise_policy||{});
+export const RANKING_POLICY = Object.freeze(PROGRESSION_CONFIG.ranking_policy||{});
+export const ADMIN_POLICY = Object.freeze(PROGRESSION_CONFIG.admin_policy||{});
 
-export const TIERS = ['visitor', 'passport', 'athlete'];
-
-export const LEVELS = [
-  { level:1, name:'Visitor', xp:0, unlock:'Race Self + the world preview', status:'live' },
-  { level:2, name:'Explorer', xp:40, unlock:'Keep your first bike + first Garage bay', status:'live' },
-  { level:3, name:'Collector', xp:100, unlock:'Two more bike reveals + Kona wall theme', status:'live' },
-  { level:4, name:'Racer', xp:200, unlock:'Advanced trisuit tools + Garage wall slot', status:'live' },
-  { level:5, name:'Kona Rookie', xp:350, unlock:'Kona Credits shop', status:'teased' },
-  { level:6, name:'Lava Runner', xp:550, unlock:'Lava Night + decoration slot', status:'teased' },
-  { level:7, name:'Queen K Veteran', xp:800, unlock:'Gear rack + helmet and shoe displays', status:'teased' },
-  { level:8, name:'Archivist', xp:1100, unlock:'History vault + rare artifact shelf', status:'teased' },
-  { level:9, name:'Legend', xp:1500, unlock:'Larger Garage + legendary bike slots', status:'teased' },
-  { level:10, name:'Kahuna', xp:2000, unlock:'Full Kona Garage theme + Secret Collection key', status:'teased' },
-];
-
-export const EVENTS = {
-  FIRST_VISIT: { xp: 25, credits: 0 },
-  ONBOARDING_ANSWER: { xp: 15, credits: 0 },
-  NUDGE_OPENED: { xp: 5, credits: 0 },
-  PRODUCT_VIEWED: { xp: 5, credits: 0 },
-  PRODUCT_EXPLODED: { xp: 10, credits: 0 },
-  ROOM_ENTERED: { xp: 0, credits: 0 },
-  ROOM_COMPLETED: { xp: 25, credits: 40 },
-  EQUIPMENT_ADDED: { xp: 15, credits: 0 },
-  DREAM_EQUIPMENT_ADDED: { xp: 10, credits: 0 },
-  RACE_IDENTITY_CREATED: { xp: 100, credits: 200 },
-  SETUP_SHARED: { xp: 0, credits: 0 },
-  REFERRAL_ACTIVATED: { xp: 150, credits: 250 },
-  CHALLENGE_COMPLETED: { xp: 50, credits: 80 },
-  STRAVA_CONNECTED: { xp: 20, credits: 0 },
-  PASSPORT_CREATED: { xp: 250, credits: 500 },
-  FIND_DISCOVERED: { xp: 0, credits: 0 },
-  CURRENCY_SPENT: { xp: 0, credits: 0 },
+const relicById=id=>(RELIC_REGISTRY.relics||[]).find(x=>x.id===id)||null;
+const collectionCount=(state,id)=>{
+  const relics=(RELIC_REGISTRY.relics||[]).filter(x=>x.collection===id);
+  const found=new Set(state?.discoveries||[]);
+  return relics.filter(x=>found.has(x.id)).length;
 };
-
-const RARITY = {
-  common: { xp: 50, credits: 80 },
-  uncommon: { xp: 80, credits: 150 },
-  rare: { xp: 200, credits: 400 },
-  epic: { xp: 750, credits: 1200 },
-  legendary: { xp: 1500, credits: 2500 },
-  mythic: { xp: 2000, credits: 4000 },
-};
-
-// Nine night-experience finds, plus the five shoreline objects already in the hall.
-// Each reward is fixed. Finding one twice does not pay twice.
-export const COLLECTIBLES = [
-  { id: 'find:lava:raven', name: 'The raven', rarity: 'uncommon', place: 'lava' },
-  { id: 'find:lava:gel', name: 'Pumpkin-spice gel', rarity: 'common', place: 'lava' },
-  { id: 'find:lava:spoke', name: 'The golden spoke', rarity: 'epic', place: 'lava' },
-  { id: 'find:camp13:whistle', name: 'The counselor’s whistle', rarity: 'uncommon', place: 'camp13' },
-  { id: 'find:camp13:flashlight', name: 'A flashlight', rarity: 'common', place: 'camp13' },
-  { id: 'find:camp13:mini-mask', name: 'Mini goalie mask keyring', rarity: 'rare', place: 'camp13' },
-  { id: 'find:tunnel:tuft', name: 'A wool tuft', rarity: 'uncommon', place: 'tunnel' },
-  { id: 'find:tunnel:wand', name: 'The smoke wand', rarity: 'rare', place: 'tunnel' },
-  { id: 'find:tunnel:stopwatch', name: 'A stopwatch, still running', rarity: 'legendary', place: 'tunnel' },
-  { id: 'find:shore:plumeria', name: 'A plumeria', rarity: 'common', place: 'shore' },
-  { id: 'find:shore:cowrie', name: 'A cowrie', rarity: 'uncommon', place: 'shore' },
-  { id: 'find:shore:lava', name: 'A lava stone', rarity: 'common', place: 'shore' },
-  { id: 'find:shore:coral', name: 'Black coral', rarity: 'rare', place: 'shore' },
-  { id: 'find:shore:bib', name: 'A race bib', rarity: 'epic', place: 'shore' },
-];
-
-export const UNLOCKS = [
-  { id:'unlock:first-bike', requirements:[{type:'level',min:2}], reward:{type:'feature',id:'garage:first-bike'} },
-  { id:'unlock:kona-wall', requirements:[{type:'level',min:3}], reward:{type:'cosmetic',id:'wall:kona'} },
-  { id:'unlock:advanced-trisuit', requirements:[{type:'level',min:4}], reward:{type:'feature',id:'trisuit:advanced'} },
-  {
-    id: 'unlock:arrival-badge',
-    requirements: [{ type: 'tier', min: 'passport' }],
-    reward: { type: 'badge', id: 'arrival' },
-  },
-  {
-    id: 'unlock:archive-frame',
-    requirements: [
-      { type: 'level', min: 4 },
-      { type: 'collection', prefix: 'find:', count: 5 },
-    ],
-    reward: { type: 'cosmetic', id: 'frame:archive' },
-  },
-];
+export function levelRewards(level){
+  return Object.freeze([...(LEVELS.find(x=>x.level===Number(level))?.rewards||[])].map(x=>Object.freeze({...x})));
+}
+export function visibleProgression(state,{admin=false}={}){
+  const level=admin&&ADMIN_POLICY.full_visibility?LEVELS.at(-1)?.level||10:Math.max(1,Number(state?.level)||1);
+  const levels=LEVELS.map(row=>Object.freeze({...row,unlocked:admin||row.level<=level}));
+  const rewards=levels.flatMap(row=>(row.rewards||[]).map(reward=>Object.freeze({...reward,level:row.level,unlocked:admin||row.level<=level})));
+  return Object.freeze({level,levels,rewards,admin:!!admin});
+}
+export function rewardUnlocked(state,reward,{admin=false}={}){
+  if(admin&&ADMIN_POLICY.bypass_progression_visibility)return true;
+  if(!reward)return false;
+  const source=LEVELS.find(row=>(row.rewards||[]).some(x=>x.type===reward.type&&x.id===reward.id));
+  if(source)return (Number(state?.level)||1)>=source.level;
+  return (state?.unlocks||[]).some(id=>{
+    const unlock=UNLOCKS.find(x=>x.id===id);
+    return unlock?.reward?.type===reward.type&&unlock?.reward?.id===reward.id;
+  });
+}
 
 const tierRank = t => Math.max(0, TIERS.indexOf(t));
 
@@ -119,15 +76,20 @@ export function collectibleById(id) {
 }
 
 function countPrefix(state, prefix) {
-  return state.discoveries.filter(id => id.startsWith(prefix)).length;
+  return (state.discoveries||[]).filter(id => id.startsWith(prefix)).length;
 }
 
 export function canUnlock(state, unlock) {
   if (!state || !unlock || state.unlocks.includes(unlock.id)) return false;
-  return unlock.requirements.every(req => {
+  return (unlock.requirements||[]).every(req => {
     if (req.type === 'level') return state.level >= req.min;
     if (req.type === 'tier') return tierRank(state.access_tier) >= tierRank(req.min);
-    if (req.type === 'collection') return countPrefix(state, req.prefix || req.id || '') >= req.count;
+    if (req.type === 'collection') {
+      if(req.prefix)return countPrefix(state,req.prefix)>=Number(req.count||1);
+      const collection=COLLECTIONS.find(x=>x.id===req.id);
+      const required=Number(req.count||collection?.required||1);
+      return collectionCount(state,req.id)>=required;
+    }
     return false;
   });
 }
