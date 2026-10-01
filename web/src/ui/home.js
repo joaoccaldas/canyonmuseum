@@ -2,22 +2,13 @@
 // Home is the shell's navigation surface. Race Self is a deep experience entered explicitly.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
-import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
 import { ensureProgression } from '../engine/progression.js';
 import { discoveryHorizon } from '../engine/discovery.js';
+import { avatarPreviewMarkup } from './visual-primitives.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
 const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/86400000);return Number.isFinite(n)?Math.max(0,n):null};
-
-function avatarPreview(styleInput){
-  const s=normaliseAvatarStyle(styleInput);
-  const skin=avatarItem(s,'skin').color,hair=avatarItem(s,'hair').color,tri=avatarItem(s,'trisuit'),shoes=avatarItem(s,'shoes').color;
-  const top=tri.layout==='separates'?avatarItem(s,'top').color:tri.color,bottoms=tri.layout==='separates'?avatarItem(s,'bottoms').color:tri.color;
-  return '<div class="home-avatar" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+';--kit-accent:'+tri.accentColor+'">'+
-    '<i class="ha-hair"></i><i class="ha-head"></i><i class="ha-body"></i><i class="ha-arm l"></i><i class="ha-arm r"></i><i class="ha-leg l"></i><i class="ha-leg r"></i><i class="ha-shoe l"></i><i class="ha-shoe r"></i>'+
-  '</div>';
-}
 
 export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage,openDiscover,openPlan}={}){
   const snapshot=readGameState();
@@ -40,7 +31,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<button class="kona-primary" type="button" data-home-plan>What matters next <span>→</span></button>'+
     '</section>'+
     '<section class="home-race-self artifact artifact--label">'+
-      '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
+      '<div class="home-race-self-visual">'+avatarPreviewMarkup(style,{className:'home-avatar'})+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
         '<p>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</p>'+
         '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open User Studio <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Open Garage</button></div>'+
