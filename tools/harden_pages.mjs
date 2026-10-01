@@ -48,12 +48,14 @@ const COMMON_DESIGN_LINKS = [
   'brand/tokens.css',
   'brand/themes.css',
   'brand/artifacts.css',
+  'brand/typography.css',
   'web/styles/system.css',
+  'web/styles/components.css',
 ];
 const pageDesignLinks = file => file === 'index.html'
-  ? [...COMMON_DESIGN_LINKS, 'web/styles/shell-mobile.css', 'web/styles/home.css', 'web/styles/garage.css', 'web/styles/race-self.css', 'web/styles/entry-visual-v2.css']
+  ? [...COMMON_DESIGN_LINKS, 'web/styles/shell-mobile.css', 'web/styles/home.css', 'web/styles/garage.css', 'web/styles/race-self.css', 'web/styles/admin-assets.css', 'web/styles/entry-visual-v2.css']
   : COMMON_DESIGN_LINKS;
-const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
+const FONTS = 'https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
 
@@ -90,7 +92,7 @@ for (const p of PAGES) {
   // The hardener may add missing shared links, but never duplicates page-owned CSS.
   // shell-mobile and race-self belong only to the consumer app, not standalone Studio/Collection/Experiences.
   html = html.replace(/<!--design-system:start-->[\s\S]*?<!--design-system:end-->\n?/, '');
-  const fonts = /fonts\.googleapis\.com\/css2\?family=Instrument\+Serif[^"]*Manrope/.test(html) ? '' : `<link rel="stylesheet" href="${FONTS}">`;
+  const fonts = /fonts\.googleapis\.com\/css2\?family=(?:Caveat[^\"]*&family=)?Instrument\+Serif[^\"]*Manrope/.test(html) ? '' : `<link rel="stylesheet" href="${FONTS}">`;
   const missing = pageDesignLinks(p.file).filter(href => !html.includes(`href="${href}"`))
     .map(href => `<link rel="stylesheet" href="${href}">`).join('');
   html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}${missing}<!--design-system:end-->\n</head>`);
