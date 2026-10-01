@@ -75,6 +75,7 @@ for(const id of selected){
       assert.equal(await p.evaluate(()=>localStorage.getItem('kona.onboarding.v1')),'seen');
     });
     await step('Home actions and five-tab navigation reach their declared surfaces',async()=>{
+      assert.equal(await p.$eval('.kona-user-menu',e=>getComputedStyle(e).display),'none','panel navigation must not be covered by the floating Studio shortcut');
       for(const [selector,title] of [['[data-home-plan]','Plan'],['[data-home-garage]','Garage'],['[data-home-discover]','Discover']]){
         await click(selector);await p.waitForFunction(t=>document.querySelector('#konaPanelTitle')?.textContent===t,{},title);
         await inventory(title);await click('[data-tab="home"]');await waitHome();
@@ -143,7 +144,8 @@ for(const id of selected){
       await click('[data-studio-home]');await waitHome();
       await click('[data-first-find]');const earned=await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')));
       assert.ok(earned.discoveries.includes('find:shore:lava'));await click('[data-home-finds]');
-      await p.waitForSelector('[data-find]');assert.equal((await p.$$('[data-find]')).length,100);
+      await p.waitForSelector('[data-find]');assert.equal((await p.$('[data-find]')).length,100);
+      assert.equal(await p.$eval('#konaPanel',e=>e.scrollTop),0,'new collection route must start at its heading');
       for(const filter of ['hidden','trade','event','all']){await click('[data-find-filter="'+filter+'"]');assert.equal(await p.$eval('[data-find-filter="'+filter+'"]',e=>e.getAttribute('aria-pressed')),'true');assert.ok((await p.$$('[data-find]')).length>0);}
       await inventory('KONA Finds');await p.screenshot({path:path.join(out,prefix+'-finds.png')});
       await click('[data-find="find:shore:lava"]');assert.match(await text('.find-studio'),/Perfect Volcanic Rock|Its story/);
