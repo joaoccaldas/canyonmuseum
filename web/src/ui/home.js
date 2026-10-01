@@ -2,19 +2,12 @@
 // Home is the shell's navigation surface. Race Self is a deep experience entered explicitly.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
-import { AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
+import { avatarPreviewMarkup } from './visual-primitives.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
 const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/86400000);return Number.isFinite(n)?Math.max(0,n):null};
 
-function avatarPreview(styleInput){
-  const s=normaliseAvatarStyle(styleInput);
-  const skin=AVATAR_COLORS.skin[s.skin], hair=AVATAR_COLORS.hair[s.hair], top=AVATAR_COLORS.top[s.top], bottoms=AVATAR_COLORS.bottoms[s.bottoms], shoes=AVATAR_COLORS.shoes[s.shoes];
-  return '<div class="home-avatar" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
-    '<i class="ha-hair"></i><i class="ha-head"></i><i class="ha-body"></i><i class="ha-arm l"></i><i class="ha-arm r"></i><i class="ha-leg l"></i><i class="ha-leg r"></i><i class="ha-shoe l"></i><i class="ha-shoe r"></i>'+
-  '</div>';
-}
 
 export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage,openDiscover,openPlan}={}){
   const snapshot=readGameState();
@@ -37,7 +30,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
     '<section class="home-launch-grid" aria-label="Start here">'+
       '<button type="button" class="home-launch home-launch--self" data-home-self><small>YOUR RACE SELF</small><b>'+esc(goal)+'</b><span>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</span><em>Build me →</em></button>'+
       '<button type="button" class="home-launch home-launch--discover" data-home-discover><small>EXPLORE KONA</small><b>Know the place before you arrive.</b><span>Roads, lava, landmarks and race-week details.</span><em>Explore →</em></button>'+
-      '<button type="button" class="home-launch home-launch--garage" data-home-garage><div class="home-race-self-visual">'+avatarPreview(style)+'</div><small>MY SETUP</small><b>Bike first. More gear is coming.</b><span>Your equipment lives here.</span><em>Open garage →</em></button>'+
+      '<button type="button" class="home-launch home-launch--garage" data-home-garage><div class="home-race-self-visual">'+avatarPreviewMarkup(style,{className:'home-avatar'})+'</div><small>MY SETUP</small><b>Bike first. More gear is coming.</b><span>Your equipment lives here.</span><em>Open garage →</em></button>'+
     '</section>'+
     '<section class="home-postcard artifact artifact--photo">'+
       '<div class="home-postcard-photo" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" loading="lazy" decoding="async"></div>'+
