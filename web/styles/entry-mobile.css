@@ -10,3 +10,15 @@
  #intro.kona-entry .entry-utilities{justify-content:flex-start;gap:18px;align-items:center}
  #intro.quest-active .intro-inner{padding:calc(42px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom))}
 }
+
+
+/* Phone-fit and phone-only Entry geometry live here, not in shell-mobile.css. */
+body.touch #intro{padding-bottom:calc(102px + var(--safe-b,0px))}
+html.phone-fit #intro.kona-entry{
+  zoom:var(--fit);
+  left:0;right:auto;
+  width:calc(100vw / var(--fit));
+  max-width:calc(100vw / var(--fit));
+  height:calc(100dvh / var(--fit));
+  max-height:calc(100dvh / var(--fit));
+}
