@@ -3,12 +3,14 @@
 // index.html stays the shell: layout, phone-fit, and the script tags.
 //   node web/build_landing.mjs
 import { build } from 'esbuild';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { assembleMuseumData, writeMuseumData } from './museum_data.mjs';
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const root = path.resolve(here, '..');
+execFileSync(process.execPath,[path.join(root,'tools/build_game_config.mjs')],{cwd:root,stdio:'inherit'});
 const data = await assembleMuseumData();
 const dataBytes = writeMuseumData(data);
 const outfile = path.join(root, 'app/hall.js');
