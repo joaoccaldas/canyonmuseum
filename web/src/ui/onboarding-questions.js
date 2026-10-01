@@ -5,39 +5,39 @@ import { applyStoredEvent, ensureProgression, LEVELS } from '../engine/progressi
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const QUESTIONS=[
   {
-    id:'kona-intent',
-    kicker:'1 · WHY ARE YOU HERE?',
+    id:'kona-intent',tone:'arrival',mark:'01',
+    kicker:'WHY ARE YOU HERE?',
     title:'What brings you to Kona?',
     note:'No wrong answer. Several questionable ones.',
     answers:[
-      ['racing','I’m racing. This seemed sensible once.'],
-      ['supporting','I’m supporting someone with expensive hobbies.'],
-      ['dreaming','I’m dreaming irresponsibly.'],
-      ['curious','I followed a bike here.'],
+      ['racing','RACE','I’m racing. This seemed sensible once.'],
+      ['supporting','CREW','I’m supporting someone with expensive hobbies.'],
+      ['dreaming','DREAM','I’m dreaming irresponsibly.'],
+      ['curious','CURIOUS','I followed a bike here.'],
     ],
   },
   {
-    id:'tri-history',
-    kicker:'2 · ATHLETIC CREDENTIALS',
-    title:'Have you done a triathlon before?',
-    note:'We are calibrating the amount of useful nonsense.',
+    id:'tri-history',tone:'credentials',mark:'02',
+    kicker:'ATHLETIC CREDENTIALS',
+    title:'How deep in the rabbit hole are we?',
+    note:'This calibrates the amount of useful nonsense KONA is allowed to send your way.',
     answers:[
-      ['never','No. I do own shoes though.'],
-      ['some','A few. I know where the body glide lives.'],
-      ['many','Many. My holidays have transition areas.'],
-      ['undefined','Define “done”.'],
+      ['never','ROOKIE','No triathlons yet. I do own shoes though.'],
+      ['some','INITIATED','A few. I know where the body glide lives.'],
+      ['many','REPEAT OFFENDER','Many. My holidays have transition areas.'],
+      ['undefined','TECHNICALLY…','Define “done”.'],
     ],
   },
   {
-    id:'kona-energy',
-    kicker:'3 · IMPORTANT SCIENCE',
+    id:'kona-energy',tone:'energy',mark:'03',
+    kicker:'IMPORTANT SCIENCE',
     title:'Pick your Kona energy.',
-    note:'This may affect absolutely everything. Or a wallpaper.',
+    note:'This may affect absolutely everything. Or a wallpaper. Science is developing.',
     answers:[
-      ['lava','Lava. Hot, fast, mildly unreasonable.'],
-      ['ocean','Ocean. Calm until it very much isn’t.'],
-      ['garage','Garage. I came here for the machines.'],
-      ['mystery','Mystery. Please do not explain things yet.'],
+      ['lava','LAVA','Hot, fast, mildly unreasonable.'],
+      ['ocean','OCEAN','Calm until it very much isn’t.'],
+      ['garage','GARAGE','I came here for the machines.'],
+      ['mystery','MYSTERY','Please do not explain everything yet.'],
     ],
   },
 ];
@@ -57,20 +57,24 @@ export function renderOnboardingQuestions(host,{onDone,onSkip}={}){
     const progress=Math.round((answered/QUESTIONS.length)*100);
     const state=ensureProgression();
     const next=LEVELS.find(x=>x.level===Math.min(10,state.level+1));
-    host.innerHTML='<section class="onboarding-question" data-onboarding-question>'+
-      '<div class="onboarding-progress"><span style="width:'+progress+'%"></span></div>'+
+    host.innerHTML='<section class="onboarding-question" data-onboarding-question data-onboarding-tone="'+esc(q.tone)+'">'+
+      '<div class="onboarding-progress" aria-label="Onboarding progress"><span style="width:'+progress+'%"></span></div>'+
+      '<div class="onboarding-step-mark" aria-hidden="true"><strong>'+esc(q.mark)+'</strong><span>OF 03</span></div>'+
       '<div class="onboarding-question-copy"><p class="eyebrow">'+esc(q.kicker)+'</p><h2>'+esc(q.title)+'</h2><p>'+esc(q.note)+'</p></div>'+
-      '<div class="onboarding-answer-grid">'+q.answers.map(([id,label])=>'<button type="button" data-onboarding-answer="'+esc(id)+'">'+esc(label)+'</button>').join('')+'</div>'+
+      '<div class="onboarding-answer-grid">'+q.answers.map(([id,tag,label])=>'<button type="button" data-onboarding-answer="'+esc(id)+'"><small>'+esc(tag)+'</small><b>'+esc(label)+'</b><i aria-hidden="true">→</i></button>').join('')+'</div>'+
       '<div class="onboarding-reward"><small>YOUR COMPLETELY SERIOUS REWARD METER</small><b>+15 XP</b><span>'+(next?'Next: Level '+next.level+' · '+next.name:'You have become suspiciously powerful.')+'</span></div>'+
       '<div class="onboarding-actions"><button type="button" class="btn-text" data-onboarding-skip>Skip the interrogation</button><span>'+(index+1)+' / '+QUESTIONS.length+'</span></div>'+
     '</section>';
     host.querySelectorAll('[data-onboarding-answer]').forEach(btn=>btn.onclick=()=>{
+      btn.classList.add('is-picked');
       data.answers[q.id]=btn.dataset.onboardingAnswer;
       data.updated_at=new Date().toISOString();
       save(data);
       applyStoredEvent({type:'ONBOARDING_ANSWER',id:'onboarding:'+q.id,subject:q.id});
-      if(index<QUESTIONS.length-1){index+=1;paint();return;}
-      data.completed=true;save(data);markCardsSeen();onDone?.(data);
+      setTimeout(()=>{
+        if(index<QUESTIONS.length-1){index+=1;paint();return;}
+        data.completed=true;save(data);markCardsSeen();onDone?.(data);
+      },140);
     });
     host.querySelector('[data-onboarding-skip]').onclick=()=>{
       data.skipped=true;data.updated_at=new Date().toISOString();save(data);markCardsSeen();onSkip?.(data);
