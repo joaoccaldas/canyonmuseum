@@ -116,6 +116,8 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       openCollection:collection,
       isAdmin:admin,
       openAssets:adminAssets,
+      openFeed:feed,
+      openTravel:travel,
     });
     if(request===studioRequest) disposeStudio=cleanup; else cleanup?.();
   }
