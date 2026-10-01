@@ -20,7 +20,7 @@ function specs(a){
 function card(a){
  const loc=a.locations||[],img=firstImage(a);
  return '<article class="asset-card" data-asset-card data-type="'+esc(a.type)+'" data-brand="'+esc(a.brand)+'" data-year="'+esc(a.year)+'">'+
-   '<div class="asset-thumb">'+(img?'<img src="'+esc(img)+'" alt="" loading="lazy" decoding="async">':'')+
+   '<div class="asset-thumb">'+(img?'<img src="'+esc(img)+'" alt="" loading="lazy" decoding="async">':(a.glb?'<div class="asset-thumb-3d" data-admin-3d data-glb="'+esc(a.glb)+'"></div>':''))+
     '<div class="asset-thumb-fallback"><small>'+esc(a.type)+'</small><b>'+esc(a.brand||'KONA')+'</b><em>'+(a.glb?'3D asset':'thumbnail pending')+'</em></div></div>'+
    '<div class="asset-card-body">'+
     '<div class="asset-meta"><span>'+esc(a.brand||'Independent')+'</span><span>'+esc(a.year||a.kind)+'</span></div>'+
@@ -78,6 +78,10 @@ export async function renderAdminAssets(root){
      ).join('')||'<p class="asset-empty">Nothing here. Which is useful information too.</p>';
    };
    Object.values(controls).forEach(el=>el.addEventListener(el.tagName==='INPUT'?'input':'change',render));render();
+   const mount=()=>window.__mountAdminAssetPreviews?.(host);
+   if(window.__mountAdminAssetPreviews)mount();
+   else{const script=document.createElement('script');script.src='app/admin-asset-preview.js';script.onload=mount;document.body.append(script);}
+
  }catch(error){
    status.textContent='Asset Portfolio could not load: '+error.message;status.setAttribute('role','alert');
  }
