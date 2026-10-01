@@ -19,6 +19,7 @@ const MAP = Object.freeze({
   session: { current: 'kona.supabase.session.v1', legacy: ['kona.supabase.session.v1'] },
   companionSources: { current: 'kona.companion.sources.v1', legacy: [] },
   companionTravel: { current: 'kona.companion.travel.v1', legacy: [] },
+  companionCache: { current: 'kona.companion.cache.v1', legacy: [] },
 });
 
 export function storageKey(name) {
