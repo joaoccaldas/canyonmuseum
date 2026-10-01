@@ -44,13 +44,18 @@ try{
  assert.equal(museumHeavy().length,0,'onboarding/reveal must request zero museum/world assets');
  await page.click('#enterKona');
  await page.waitForFunction(()=>document.querySelector('#intro')?.hasAttribute('hidden'));
- await page.waitForSelector('.player-hub',{timeout:8000});
- assert.equal(museumHeavy().length,0,'Race Self home must not request museum/world assets');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/RACE SELF|3D World|Bike Studio|Garage|Collection|Races|Discover|Games|Self/i,'post-onboarding state should be Race Self game hub');
+ await page.waitForSelector('.kona-home-hero',{timeout:8000});
+ assert.equal(museumHeavy().length,0,'Home must request zero museum/world assets');
+ assert.equal(personal3D().length,0,'Home must not preload personal 3D');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/Something worth doing today|YOUR RACE SELF|Garage|Discover/i,'post-onboarding state should be calm Home');
  assert.ok(await page.$eval('[data-tab="home"]',e=>e.classList.contains('on')),'Home nav should be active after reveal');
- await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]'),{timeout:5000});
+ await page.click('[data-home-raceself]');
+ await page.waitForSelector('[data-race-self-stage]',{timeout:5000});
  await new Promise(r=>setTimeout(r,500));
- assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load progressively');
+ assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load only after explicit entry');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Customize|Bike|Races|Settings/i,'Race Self should expose only contextual personal controls');
+ await page.click('[data-race-self-back]');
+ await page.waitForSelector('.kona-home-hero',{timeout:5000});
  const identity=await page.evaluate(()=>localStorage.getItem('kona.raceIdentity.v1')||localStorage.getItem('speedmax.raceIdentity.v1'));
  assert.ok(identity,'RaceIdentity must persist locally before registration');
  await page.reload({waitUntil:'domcontentloaded'});
@@ -99,5 +104,5 @@ try{
  await installPage.close();
 
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → race search → identity → Race Self Studio → reload + magic-link request; museum/world stays lazy');
+ console.log('P0 browser journey PASS: entry-only data → race search → identity → calm Home → optional Race Self → reload + magic-link request; heavy worlds stay lazy');
 } finally {await browser.close();}
