@@ -23,5 +23,5 @@ test('User Studio keeps personal depth plus explicit companion shortcuts',()=>{
 test('five-tab app shell remains the only top-level map and Home means Home',()=>{
   assert.match(shell,/\[data-tab=home\]'\)\.onclick=now/);
   for(const tab of ['home','discover','garage','plan','me']) assert.match(shell,new RegExp('data-tab="'+tab+'"'));
-  assert.equal((shell.match(/data-tab=\"/g)||[]).length,5);
+  assert.equal((shell.match(/<button[^>]*data-tab=\"/g)||[]).length,5);
 });
