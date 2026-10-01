@@ -29,3 +29,6 @@ This evidence-only commit triggers the full PR release gates against the synchro
 
 Synchronized generated head: `15aa2fba5f3e7eaf9e8b4dde8033c4313ae3287f`.
 Shared hidden-state ownership fixed in consumer CSS. This evidence-only commit triggers final RC3 release verification.
+
+Final synchronized generated head: `aac95940ce34ac1697299f998164f9c04845f590`.
+Shared layout reset now lives in consumer system CSS. Triggering final release gates on synchronized RC3.
