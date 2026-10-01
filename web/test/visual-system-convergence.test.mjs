@@ -42,3 +42,17 @@ test('consumer and personal surfaces share touch and card rules',()=>{
   assert.match(system,/--brand-card-radius/);
   assert.match(shell,/--brand-sheet-radius/);
 });
+
+test('active consumer templates do not own inline design systems',()=>{
+  for(const rel of ['web/landing.template.html','web/studio.template.html','web/experience.template.html','web/collection.template.html']){
+    const src=read(rel);
+    assert.doesNotMatch(src,/<style>/,rel+' reintroduced inline CSS');
+    assert.match(src,/brand\/tokens\.css/,rel+' is not brand-token aware');
+  }
+});
+test('active secondary surfaces have dedicated external style authorities',()=>{
+  for(const rel of ['web/styles/studio.css','web/styles/experience.css','web/styles/collection.css']){
+    const src=read(rel);
+    assert.match(src,/--brand-(?:bg|surface|ink|touch)/,rel+' does not consume brand semantics');
+  }
+});
