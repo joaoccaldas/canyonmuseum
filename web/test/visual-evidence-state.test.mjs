@@ -8,5 +8,5 @@ test('visual harness blocks CSS lifecycle and stage geometry regressions',()=>{
   assert.match(src,/museum CSS remained enabled after returning Home/);
   assert.match(src,/museum header styling leaked into companion page/);
   assert.match(src,/User Studio stage too small/);
-  assert.match(src,/museum-return-home/);
+  assert.match(src,/museum-return-home/);assert.match(src,/onboarding-tour/);
 });
