@@ -277,17 +277,5 @@ html.phone-fit body.in-lab .dock{display:none}
 html.phone-fit #loader .load{zoom:var(--fit);width:min(420px,calc(82vw / var(--fit)))}
 html.phone-fit #toast{zoom:var(--fit)}
 
-/* KONA canonical brand bridge */
-:root{
-  --brand-bg:var(--brand-bg,#f4efe7);
-  --brand-surface:var(--brand-surface,#fbf9f5);
-  --brand-ink:var(--brand-ink,#12181d);
-  --brand-muted:var(--brand-muted,#5f6a72);
-  --brand-line:var(--brand-line,rgba(18,24,29,.12));
-  --brand-accent:var(--brand-accent,#e85a22);
-  --brand-accent-2:var(--brand-accent-2,#1db7d8);
-  --brand-touch:48px;
-  --brand-control-radius:12px;
-  --brand-sheet-radius:24px;
-}
+/* Shared interaction floor; semantic brand tokens are prepended by the builder. */
 button,a[role="button"]{min-height:var(--brand-touch,48px)}
