@@ -286,7 +286,7 @@ $('shareBtn').onclick = async () => {
 const settingsUI = initSettings({ profile, QUALITY, AVATARS, activeQuality: () => profile.get().quality,
   onQuality: id => { const n = renderSettings(id, { lite: touch, dpr: devicePixelRatio }); renderer.setPixelRatio(n.dpr); resize(); renderer.shadowMap.enabled = n.shadows; return n.lite !== RS.lite; },
   onSound: () => false, onMotion: () => true, sync: { available: false } });
-if (event) { $('eventPill').hidden = false; $('eventPill').textContent = `${event.name} · ${event.place.split(',')[0]}`; $('eventPill').style.borderColor = event.accent; }
+if (event) { $('eventPill').hidden = false; $('eventPill').textContent = `${event.name} · ${event.place.split(',')[0]}`; $('eventPill').style.setProperty('--event-accent',event.accent); }
 
 // ---------------------------------------------------------------- loop
 function resize() { const w = innerWidth, hh = innerHeight; renderer.setSize(w, hh, false); camera.aspect = w / hh; camera.fov = w < hh ? 42 : 32; camera.updateProjectionMatrix(); }
