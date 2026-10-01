@@ -212,3 +212,21 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 
 body.install-open{overflow:hidden}
 #appSheet .install-status:empty{display:none}
+
+/* RC8 containment: cards must never escape their parent at phone widths. */
+.race-picker,.race-picker-results,.race-picker-selected,[data-race-badges]{min-width:0;max-width:100%;overflow-x:hidden}
+.race-picker label{display:grid;gap:7px;min-width:0;max-width:100%}
+.race-picker input{width:100%;max-width:100%;min-width:0}
+.race-card{width:100%;max-width:100%;min-width:0;overflow:hidden;padding:14px}
+.race-card>*{min-width:0;max-width:100%}
+.race-card-top{display:flex;justify-content:space-between;gap:10px;min-width:0}
+.race-card-top small,.race-card-top b,.race-card h4,.race-card p{overflow-wrap:anywhere;word-break:normal}
+.race-card h4{margin:8px 0 6px;font:400 clamp(23px,6vw,32px)/1.02 var(--brand-font-editorial)}
+.race-card p{margin:0;color:var(--brand-muted);font-size:12px;line-height:1.45}
+.race-card-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px;min-width:0}
+.race-card-actions button{width:100%;min-width:0;padding:8px 6px;white-space:normal;overflow-wrap:anywhere;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius)}
+.race-card-badge{display:inline-flex;max-width:100%;width:max-content;margin-top:12px;padding:6px 9px;border-radius:var(--brand-pill-radius);font:700 10px/1 var(--brand-font-ui);white-space:normal}
+@media(max-width:520px){
+  .race-card-actions{grid-template-columns:1fr}
+  .race-card-actions button{padding-inline:12px}
+}
