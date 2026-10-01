@@ -73,8 +73,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   const showSelf=()=>{
     const style=normaliseAvatarStyle(profile?.get?.().avatarStyle);
     const optionRow=(slot,values)=>'<section class="avatar-slot"><small>'+slot.toUpperCase()+'</small><div class="avatar-options">'+values.map(v=>{
-      const color=AVATAR_COLORS[slot]?.[v]||'#777';
-      return '<button type="button" data-avatar-slot="'+slot+'" data-avatar-value="'+v+'" class="'+(style[slot]===v?'on':'')+'" style="--slot-color:'+color+'"><i></i><span>'+v.replace(/-/g,' ')+'</span></button>';
+      return '<button type="button" data-avatar-slot="'+slot+'" data-avatar-value="'+v+'" class="'+(style[slot]===v?'on':'')+'"><i></i><span>'+v.replace(/-/g,' ')+'</span></button>';
     }).join('')+'</div></section>';
     drawerKicker.textContent='SELF';drawerTitle.textContent='Customize your avatar';
     drawerBody.innerHTML='<div class="hub-self-grid avatar-builder">'+
@@ -84,9 +83,14 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
       optionRow('bottoms',AVATAR_OPTIONS.bottoms)+
       optionRow('shoes',AVATAR_OPTIONS.shoes)+
       optionRow('accessory',AVATAR_OPTIONS.accessory)+
-      '<section><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
+      '<section><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
       '</div>';
     drawer.hidden=false;
+    drawerBody.querySelectorAll('[data-avatar-slot]').forEach(btn=>{
+      const color=AVATAR_COLORS[btn.dataset.avatarSlot]?.[btn.dataset.avatarValue]||'#777';
+      btn.style.setProperty('--slot-color',color);
+    });
+    drawerBody.querySelectorAll('[data-avatar]').forEach(btn=>btn.style.setProperty('--swatch',btn.dataset.avatar));
     drawerBody.querySelectorAll('[data-avatar-slot]').forEach(btn=>btn.addEventListener('click',()=>{
       avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,[btn.dataset.avatarSlot]:btn.dataset.avatarValue,accent:profile.get().avatar});
       profile.set({avatarStyle});
