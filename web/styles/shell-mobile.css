@@ -76,3 +76,30 @@ html.phone-fit #appSheet>div{zoom:var(--fit);width:min(420px,calc((100vw - 24px)
 .garage-bike-mark{position:absolute;z-index:1;right:20px;top:26px;width:min(46%,220px);fill:none;stroke:rgba(255,255,255,.76);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 8px 18px rgba(0,0,0,.25))}
 .garage-setup-media img{filter:saturate(.82) contrast(1.02)}
 @media(max-width:430px){.garage-bike-mark{right:12px;top:20px;width:44%;opacity:.86}}
+
+
+/* RC7: useful Home launchpad + first-run coach marks. */
+.home-hero-proof{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.home-hero-proof span{padding:6px 9px;border:1px solid var(--kona-line);border-radius:999px;color:var(--kona-muted);font:700 9px/1 var(--sans)}
+.home-launch-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.home-launch{position:relative;min-height:210px;padding:18px;border:1px solid var(--kona-line);border-radius:24px;background:var(--kona-surface);color:var(--kona-text);text-align:left;display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;box-shadow:var(--kona-shadow)}
+.home-launch small{font:800 9px/1 var(--sans);letter-spacing:.16em;color:var(--kona-cyan)}
+.home-launch b{margin-top:auto;max-width:15rem;font:400 clamp(24px,5vw,34px)/.96 var(--serif);letter-spacing:-.025em}
+.home-launch span{margin-top:8px;color:var(--kona-muted);font:500 11px/1.4 var(--sans)}
+.home-launch em{margin-top:14px;color:var(--kona-accent);font:800 10px/1 var(--sans);font-style:normal}
+.home-launch--self{background:radial-gradient(circle at 85% 12%,color-mix(in srgb,var(--kona-accent) 20%,transparent),transparent 34%),var(--kona-surface)}
+.home-launch--discover{background:radial-gradient(circle at 15% 8%,color-mix(in srgb,var(--kona-cyan) 20%,transparent),transparent 32%),var(--kona-surface)}
+.home-launch--garage .home-race-self-visual{position:absolute;right:10px;top:10px;width:78px;min-height:102px;opacity:.82;background:transparent}
+.home-launch--garage .home-avatar{transform:scale(.62) translateY(-14px)}
+.kona-tour{position:fixed;z-index:120;right:max(16px,env(safe-area-inset-right));bottom:calc(94px + env(safe-area-inset-bottom));width:min(380px,calc(100dvw - 32px));padding:18px;border:1px solid color-mix(in srgb,var(--kona-accent) 30%,var(--kona-line));border-radius:22px;background:color-mix(in srgb,var(--kona-surface-strong) 96%,transparent);color:var(--kona-text);box-shadow:0 26px 80px -26px #000a;backdrop-filter:blur(18px)}
+.kona-tour small{color:var(--kona-accent);font:800 9px/1 var(--sans);letter-spacing:.16em}.kona-tour h3{margin:7px 0 6px;font:400 30px/1 var(--serif)}.kona-tour p{color:var(--kona-muted);font-size:12px;line-height:1.45}
+.kona-tour>div{display:flex;justify-content:space-between;gap:8px;margin-top:14px}.kona-tour button{min-height:46px;padding:0 14px;border-radius:999px;border:1px solid var(--kona-line);background:transparent;color:var(--kona-text);font-weight:750}.kona-tour [data-tour-next]{margin-left:auto;background:var(--kona-accent);border-color:var(--kona-accent);color:#fff}
+.tour-target{position:relative!important;z-index:121!important;outline:3px solid var(--kona-accent)!important;outline-offset:3px;animation:konaTourPulse 1.5s ease-in-out infinite}
+@keyframes konaTourPulse{50%{outline-offset:7px}}
+@media(max-width:760px),(pointer:coarse){
+  .home-launch-grid{grid-template-columns:1fr 1fr}
+  .home-launch{min-height:180px;padding:15px}
+  .home-launch--garage{grid-column:1/-1;min-height:145px}
+  .kona-tour{left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));width:auto}
+}
+@media(max-width:390px){.home-launch-grid{grid-template-columns:1fr}.home-launch--garage{grid-column:auto}.home-launch{min-height:156px}}
