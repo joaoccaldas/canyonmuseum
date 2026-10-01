@@ -7,7 +7,7 @@ const read=f=>fs.readFileSync(path.join(root,f),'utf8');
 const errors=[];
 const active=[
  'web/styles/system.css','web/styles/shell-mobile.css','web/styles/home.css','web/styles/garage.css',
- 'web/styles/race-self.css','web/styles/entry-visual-v2.css','web/styles/studio.css',
+ 'web/styles/race-self.css','web/styles/entry.css','web/styles/studio.css',
  'web/styles/collection.css','web/styles/experience.css','web/styles/components.css','web/styles/admin-assets.css'
 ];
 for(const rel of active){
@@ -18,7 +18,7 @@ for(const rel of active){
 }
 const consumer=[
  'web/styles/system.css','web/styles/shell-mobile.css','web/styles/home.css','web/styles/garage.css',
- 'web/styles/race-self.css','web/styles/entry-visual-v2.css','web/styles/companion.css','web/styles/admin-assets.css'
+ 'web/styles/race-self.css','web/styles/entry.css','web/styles/companion.css','web/styles/admin-assets.css'
 ];
 let importantTotal=0;
 for(const rel of consumer){
