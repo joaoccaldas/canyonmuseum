@@ -78,7 +78,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 
 @media(max-width:899px){
   #intro.kona-entry{
-    min-height:100dvh;padding:calc(14px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));overflow:auto
+    min-height:100dvh;padding:calc(14px + env(safe-area-inset-top)) max(var(--brand-mobile-gutter),env(safe-area-inset-left),env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom));overflow:auto
   }
   #intro.kona-entry .entry-media img{object-position:58% center;filter:saturate(.68) contrast(1.04)}
   #intro.kona-entry::before{background:linear-gradient(180deg,rgba(5,14,19,.38),rgba(5,14,19,.62) 36%,rgba(5,14,19,.96) 78%)}
@@ -89,7 +89,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .entry-event{padding-left:0;border-left:0;font-size:8px}
   #intro.kona-entry h1{font-size:clamp(43px,13vw,64px);line-height:.86;margin-bottom:13px;max-width:11ch}
   #intro.kona-entry .lede{font-size:14px;line-height:1.4;max-width:28rem}
-  #intro.kona-entry .entry-product{order:2;width:100%;min-height:0;margin-top:15px}
+  #intro.kona-entry .entry-product{order:3;width:100%;min-height:0;margin-top:15px}
   #intro.kona-entry .entry-product-stage{min-height:270px;border-radius:24px}
   #intro.kona-entry .entry-stage-avatar{left:2%;bottom:27%;width:12%}
   #intro.kona-entry .entry-avatar{transform:scale(.92)}
@@ -103,7 +103,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .entry-race-clock{margin-top:7px}
   #intro.kona-entry .entry-race-clock small{font-size:8px}
   #intro.kona-entry .entry-race-clock strong{font-size:9px}
-  #intro.kona-entry .entry-actions-wrap{order:3;width:100%;max-width:none}
+  #intro.kona-entry .entry-actions-wrap{order:2;width:100%;max-width:none}
   #intro.kona-entry .entry-actions{width:100%;display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
   #intro.kona-entry .entry-actions .btn{min-height:52px}
   #intro.kona-entry .entry-trust{margin-top:10px;font-size:9px}
@@ -111,7 +111,6 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .entry-signin-note{margin-top:5px;font-size:9px}
 }
 @media(max-width:360px){
-  #intro.kona-entry{padding-inline:14px}
   #intro.kona-entry h1{font-size:42px}
   #intro.kona-entry .lede{font-size:13px}
   #intro.kona-entry .entry-product{margin-top:11px}
@@ -174,14 +173,6 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 .visual-avatar .va-shoe.l{left:11px}.visual-avatar .va-shoe.r{right:11px}
 .visual-bike-mark{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 
-/* Short viewports keep entry available before the optional preview. */
-@media(max-width:899px){
- #intro.kona-entry .entry-actions-wrap{order:2}
- #intro.kona-entry .entry-product{order:3}
- #intro.kona-entry .entry-trust{font-size:12px}
- #intro.kona-entry .entry-signin-note{font-size:12px}
- #intro.kona-entry .entry-product-nav span{font-size:12px}
-}
 @media(prefers-reduced-motion:reduce){#intro.kona-entry .entry-product-stage{transition:none}}
 
 /* RC8 first-run Race Self registration ------------------------------------ */
