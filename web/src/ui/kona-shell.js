@@ -98,6 +98,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   const leaveRaceSelf=()=>{panel.classList.remove('companion-panel');studioRequest++;disposeStudio?.();disposeStudio=null;document.body.classList.remove('race-self-open');
     surpriseLayer.close();routeToken++;
     const next=body.cloneNode(false);body.replaceWith(next);body=next;
+    panel.scrollTop=0;
   };
   const close=()=>{routeToken++;surpriseLayer.close();leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
