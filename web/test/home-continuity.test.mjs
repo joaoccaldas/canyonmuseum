@@ -12,8 +12,8 @@ test('Home is the shell surface and Race Self is entered explicitly',()=>{
   assert.match(home,/data-home-self/);
   assert.doesNotMatch(home,/race-self-stage\.js|\.glb|THREE/);
 });
-test('Race Self exposes contextual personal controls, not a second app map',()=>{
-  for(const duplicate of ['3D World','Collection','Games','Garage','Discover','Plan']) assert.doesNotMatch(raceSelf,new RegExp(duplicate));
+test('User Studio is the main menu with world and personal controls',()=>{
+  for(const destination of ['Canyon Museum','Discover Kona','Race week','Passport']) assert.match(raceSelf,new RegExp(destination));
   for(const control of ['Avatar','Bike','Races','Settings']) assert.match(raceSelf,new RegExp(control));
   assert.doesNotMatch(raceSelf,/hub-launcher/);
   assert.match(raceSelf,/race-self-controls/);

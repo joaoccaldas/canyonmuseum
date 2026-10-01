@@ -15,7 +15,7 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
     if (!chip) return;
     chip.querySelector('i').style.background = p.avatar;
     chip.querySelector('i').textContent = (p.name || '').trim().slice(0, 1).toUpperCase();
-    chip.querySelector('span').textContent = p.name ? p.name.split(' ')[0] : 'Sign in';
+    chip.querySelector('span').textContent = p.name ? p.name.split(' ')[0] : 'Profile';
   };
   paintChip(profile.get()); profile.subscribe(paintChip);
 
@@ -53,8 +53,8 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
         el('div', { class: 'set-row' }, el('span', {}, 'Motion'), seg('Motion', p.motion, [['auto', 'Auto'], ['full', 'Full'], ['reduced', 'Reduced']], v => { profile.set({ motion: v }); reloadNeeded = onMotion(v) || reloadNeeded; }))),
       el('section', {}, el('h4', {}, 'Sync across devices'),
         sync?.available
-          ? el('div', { class: 'set-row' }, el('span', {}, p.sync ? `Signed in as ${p.sync.email}` : 'Sign in to keep your profile, passport and favourites on every device.'), el('button', { type: 'button', class: 'btn ghost', onclick: () => sync.start() }, p.sync ? 'Sign out' : 'Sign in'))
-          : el('p', { class: 'set-note' }, 'Optional sign-in is on its way. Until then your profile lives on this device, and you can export it below.')),
+          ? el('div', { class: 'set-row' }, el('span', {}, p.sync ? `Signed in as ${p.sync.email}` : 'Sign in through Passport to back up or restore your progress.'), el('button', { type: 'button', class: 'btn ghost', onclick: () => sync.start() }, 'Open account'))
+          : el('p', { class: 'set-note' }, 'Use Passport in your User Studio to sign in and manage cloud backups. Your local profile is available here.')),
       el('section', {}, el('h4', {}, 'Your data'),
         el('div', { class: 'set-row' },
           el('button', { type: 'button', class: 'btn ghost', onclick: () => { const b = new Blob([exportAppState()], { type: 'application/json' }); const u=URL.createObjectURL(b); const a = el('a', { href: u, download: 'kona-app-local-data.json' }); document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),0); } }, 'Export everything'),

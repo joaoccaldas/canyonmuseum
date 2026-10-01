@@ -1,11 +1,16 @@
-// ui/avatar-home.js — immersive Race Self surface.
-// Race Self is personal depth inside the app, never a second navigation authority.
+// ui/avatar-home.js — canonical User Studio surface.
+// Both the persistent user menu and the Me tab enter this same game-style studio.
+// Avatar building is a projection over engine/avatar.js; mobile and desktop share this exact UI.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
-import { AVATAR_OPTIONS, AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
+import {
+  AVATAR_ARCHETYPES, AVATAR_ITEMS, AVATAR_SLOTS,
+  avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype,
+} from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
+import { renderPassportSurface } from './me.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -15,12 +20,22 @@ async function equipped(snapshot,equipmentId){
   if(!row?.product_id)return null;
   return getPublicProduct(productId(row.product_id));
 }
+function readImage(file){
+  if(!file||!/^image\/(png|jpeg|webp)$/i.test(file.type)||file.size>500000)return Promise.resolve(null);
+  return new Promise(resolve=>{
+    const r=new FileReader();
+    r.onload=()=>resolve({src:String(r.result||''),name:file.name,opacity:1,updatedAt:new Date().toISOString()});
+    r.onerror=()=>resolve(null);
+    r.readAsDataURL(file);
+  });
+}
 
-export async function renderAvatarHome(root,{profile,settings,onBack}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,isCurrent=()=>true}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
   const [bike,shoe]=await Promise.all([equipped(snapshot,identity.setup?.bike),equipped(snapshot,identity.setup?.shoe)]);
+  if(!isCurrent())return ()=>{};
   const p=profile?.get?.()||{};
   const accent=p.avatar||AVATARS[0];
   let avatarStyle=normaliseAvatarStyle({...p.avatarStyle,accent});
@@ -31,86 +46,176 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   const studioHref=bike?'Studio.html?p='+encodeURIComponent(bike.id):'Studio.html';
   const raceCount=(snapshot.race_history||[]).length;
 
+  const menuItem=(action,mark,title,note)=>'<button type="button" data-race-self-action="'+action+'"><i aria-hidden="true">'+mark+'</i><span><b>'+title+'</b><small>'+note+'</small></span><em aria-hidden="true">↗</em></button>';
   root.innerHTML=
-    '<section class="race-self-experience">'+
+    '<section class="race-self-experience" aria-label="User Studio">'+
+      '<header class="studio-heading"><a href="index.html" class="studio-wordmark" aria-label="KONA title screen">KONA<span>USER STUDIO</span></a><button class="studio-install" data-install-app type="button">Install app</button><span class="studio-save-state" role="status">● Saved on this device</span></header>'+
       '<div class="race-self-stage-wrap">'+
-        '<canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D Race Self"></canvas>'+
-        '<button type="button" class="race-self-back" data-race-self-back aria-label="Back to Home">←</button>'+
-        '<div class="race-self-identity"><small>YOUR RACE SELF</small><h2>'+esc(goal)+'</h2><p>'+esc(intent)+' · '+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
+        '<div class="race-self-identity"><small>YOUR ATHLETE. YOUR NEXT CHAPTER.</small><h1>Your race starts here.</h1><p>Make it yours. Then step into the museum.</p></div>'+
+        '<div class="studio-canvas-frame"><canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D User Studio"></canvas><p class="studio-stage-status" role="status">Preparing your athlete…</p></div>'+
+        '<div class="studio-stage-caption"><span>'+esc(p.name||'Your athlete')+'</span><button type="button" data-stage-reset aria-label="Reset athlete view">↺ Reset view</button><small>Drag to rotate · Scroll or pinch to zoom</small></div>'+
       '</div>'+
-      '<nav class="race-self-controls" aria-label="Race Self controls">'+
-        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Avatar</b><small>Voxel figure</small></span></button>'+
-        '<a href="'+studioHref+'"><i>△</i><span><b>Bike</b><small>Choose in 3D</small></span></a>'+
-        '<button type="button" data-race-self-action="races"><i>◉</i><span><b>Races</b><small>'+raceCount+' badges</small></span></button>'+
-        '<button type="button" data-race-self-action="settings"><i>⚙</i><span><b>Settings</b><small>'+(summary.total||0)+' collected</small></span></button>'+
+      '<nav class="studio-destinations" aria-label="Explore KONA"><small class="studio-menu-label">STEP INTO THE WORLD</small>'+
+        menuItem('museum','↗','Canyon Museum','Walk through cycling history')+
+        menuItem('discover','◎','Discover Kona','Places, stories & race week')+
+        menuItem('plan','▤','Race week','Your plan for the island')+
+        menuItem('passport','☆','Passport','Your progress & collection')+
+        '<p class="studio-menu-note">Start anywhere.<br>Your studio is always here.</p>'+
       '</nav>'+
-      '<section class="hub-drawer" data-hub-drawer hidden><div class="hub-drawer-head"><div><small data-hub-kicker>SELF</small><h3 data-hub-title>Your Race Self</h3></div><button type="button" data-hub-close aria-label="Close">×</button></div><div data-hub-body></div></section>'+
+      '<nav class="race-self-controls" aria-label="User Studio menu"><small class="studio-menu-label">MAKE IT YOURS</small>'+
+        menuItem('customize','●','Avatar','Build your character')+
+        '<a href="'+studioHref+'"><i aria-hidden="true">△</i><span><b>Bike Studio</b><small>Choose & customize in 3D</small></span><em aria-hidden="true">↗</em></a>'+
+        '<button type="button" disabled aria-label="Gear customization, coming soon"><i aria-hidden="true">◇</i><span><b>Gear <mark>Soon</mark></b><small>Your next layer of expression</small></span></button>'+
+        menuItem('races','◉','Races',raceCount+' race badges')+
+        menuItem('settings','⚙','Settings','Appearance & preferences')+
+        '<p class="studio-menu-note">No account needed.<br>Your choices save automatically.</p>'+
+      '</nav>'+
+      '<section class="hub-drawer" data-hub-drawer hidden role="dialog" aria-modal="true" aria-labelledby="studioDrawerTitle"><div class="hub-drawer-head"><div><small data-hub-kicker>USER STUDIO</small><h2 id="studioDrawerTitle" data-hub-title>Your athlete</h2></div><button type="button" data-hub-close aria-label="Close customization">×</button></div><div data-hub-body></div></section>'+
     '</section>';
 
-  let stageApi=null;
-  const mountStage=()=>{
-    const result=window.__mountRaceSelfStage?.(root.querySelector('[data-race-self-stage]'),{accent,avatarStyle,bike,shoe});
-    if(result?.then) result.then(api=>{stageApi=api});
+  let stageApi=null, disposed=false;
+  const status=root.querySelector('.studio-stage-status');
+  const stageError=()=>{if(!disposed)status.textContent='3D preview unavailable. You can still customize your avatar and explore.';};
+  const mountStage=async()=>{
+    if(disposed)return;
+    try{
+      const api=await window.__mountRaceSelfStage?.(root.querySelector('[data-race-self-stage]'),{accent,avatarStyle,bike,shoe});
+      if(disposed){api?.dispose?.();return;}
+      stageApi=api;status.hidden=true;
+    }catch(error){stageError();}
   };
+  let script=null;
   if(window.__mountRaceSelfStage) mountStage();
   else {
-    const script=document.createElement('script');
-    script.src='app/race-self-stage.js';
-    script.onload=mountStage;
-    script.onerror=()=>{};
-    document.body.append(script);
+    script=document.createElement('script');script.src='app/race-self-stage.js';
+    script.onload=mountStage;script.onerror=stageError;document.body.append(script);
   }
-
-  root.querySelector('[data-race-self-back]')?.addEventListener('click',()=>onBack?.());
+  root.querySelector('[data-stage-reset]').addEventListener('click',()=>stageApi?.resetView?.());
 
   const drawer=root.querySelector('[data-hub-drawer]');
   const drawerBody=root.querySelector('[data-hub-body]');
   const drawerTitle=root.querySelector('[data-hub-title]');
   const drawerKicker=root.querySelector('[data-hub-kicker]');
-  const closeDrawer=()=>{drawer.hidden=true;drawerBody.replaceChildren();};
+  let drawerTrigger=null;
+  const siblings=[...root.querySelector('.race-self-experience').children].filter(x=>x!==drawer);
+  const openDrawer=()=>{drawerTrigger=document.activeElement;drawer.hidden=false;siblings.forEach(x=>x.inert=true);root.querySelector('[data-hub-close]').focus();};
+  const closeDrawer=()=>{drawer.hidden=true;siblings.forEach(x=>x.inert=false);drawerBody.replaceChildren();drawerTrigger?.focus?.();};
+  const handleKey=e=>{
+    if(drawer.hidden)return;
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeDrawer();}
+    if(e.key==='Tab'){
+      const items=[...drawer.querySelectorAll('button,a[href],input,select,textarea,[tabindex="0"]')].filter(x=>!x.disabled&&x.getClientRects().length);
+      const first=items[0],last=items.at(-1);
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
+    }
+  };
+  root.addEventListener('keydown',handleKey);
   root.querySelector('[data-hub-close]')?.addEventListener('click',closeDrawer);
 
+  const commitStyle=next=>{
+    avatarStyle=normaliseAvatarStyle(next);
+    profile?.set?.({avatarStyle});
+    const saved=root.querySelector('.studio-save-state');
+    if(saved){saved.classList.toggle('save-failed',profile?.saved===false);saved.textContent=profile?.saved===false?'Storage full · changes are temporary':'● Saved on this device';}
+    stageApi?.setAvatarStyle?.(avatarStyle);
+  };
+
   const showSelf=()=>{
-    const style=normaliseAvatarStyle(profile?.get?.().avatarStyle);
-    const optionRow=(slot,values)=>'<section class="avatar-slot"><small>'+slot.toUpperCase()+'</small><div class="avatar-options">'+values.map(v=>{
-      const color=AVATAR_COLORS[slot]?.[v]||'#777';
-      return '<button type="button" data-avatar-slot="'+slot+'" data-avatar-value="'+v+'" class="'+(style[slot]===v?'on':'')+'" style="--slot-color:'+color+'"><i></i><span>'+v.replace(/-/g,' ')+'</span></button>';
-    }).join('')+'</div></section>';
-    drawerKicker.textContent='VOXEL SELF';drawerTitle.textContent='Build your figure';
-    drawerBody.innerHTML='<div class="hub-self-grid avatar-builder">'+
-      optionRow('skin',AVATAR_OPTIONS.skin)+
-      optionRow('hair',AVATAR_OPTIONS.hair)+
-      optionRow('top',AVATAR_OPTIONS.top)+
-      optionRow('bottoms',AVATAR_OPTIONS.bottoms)+
-      optionRow('shoes',AVATAR_OPTIONS.shoes)+
-      optionRow('accessory',AVATAR_OPTIONS.accessory)+
-      '<section><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
+    const active=document.activeElement;
+    const focusAttr=['data-avatar-archetype','data-avatar-item','data-avatar-overlay','data-avatar-overlay-remove'].find(attr=>active?.hasAttribute?.(attr));
+    const focusValue=focusAttr?active.getAttribute(focusAttr):null;
+    const scrollTop=drawer.scrollTop;
+    avatarStyle=normaliseAvatarStyle(profile?.get?.().avatarStyle);
+    const archetypes=AVATAR_ARCHETYPES.map(a=>
+      '<button type="button" class="avatar-archetype '+(avatarStyle.archetype===a.id?'on':'')+'" data-avatar-archetype="'+a.id+'">'+
+      '<b>'+esc(a.label)+'</b><span>'+esc(a.note)+'</span></button>'
+    ).join('');
+    const rows=AVATAR_SLOTS.map(slot=>{
+      const selected=avatarItem(avatarStyle,slot);
+      const options=(AVATAR_ITEMS[slot]||[]).map(item=>
+        '<button type="button" data-avatar-item="'+slot+':'+item.id+'" class="'+(selected.id===item.id?'on':'')+'" style="--slot-color:'+(item.color||'#777')+'"><i></i><span>'+esc(item.label)+'</span></button>'
+      ).join('');
+      const overlay=avatarStyle.items[slot]?.overlay;
+      return '<section class="avatar-slot" data-avatar-slot-card="'+slot+'">'+
+        '<div class="avatar-slot-title"><small>'+slot.toUpperCase()+'</small><span>'+esc(selected.label||selected.id)+'</span></div>'+
+        '<div class="avatar-options">'+options+'</div>'+
+        '<div class="avatar-item-tools">'+
+          '<label><span>Custom color</span><input type="color" data-avatar-color="'+slot+'" value="'+esc(/^#[0-9a-f]{6}$/i.test(selected.color)?selected.color:'#777777')+'"></label>'+
+          '<label class="avatar-upload"><span>'+(overlay?'Replace image':'Add image')+'</span><input type="file" accept="image/png,image/jpeg,image/webp" data-avatar-overlay="'+slot+'"></label>'+
+          (overlay?'<button type="button" data-avatar-overlay-remove="'+slot+'">Remove image</button>':'')+
+        '</div>'+
+      '</section>';
+    }).join('');
+
+    drawerKicker.textContent='AVATAR STUDIO';drawerTitle.textContent='Build your character';
+    drawerBody.innerHTML=
+      '<div class="avatar-builder">'+
+        '<section class="avatar-archetypes"><small>CHARACTER</small><div class="avatar-archetype-grid">'+archetypes+'</div></section>'+
+        rows+
+        '<section class="avatar-accent"><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
+        '<p class="avatar-builder-note">PNG, JPEG or WebP overlays are stored with your local avatar profile. Maximum 500 KB per image.</p>'+
       '</div>';
-    drawer.hidden=false;
-    drawerBody.querySelectorAll('[data-avatar-slot]').forEach(btn=>btn.addEventListener('click',()=>{
-      avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,[btn.dataset.avatarSlot]:btn.dataset.avatarValue,accent:profile.get().avatar});
-      profile.set({avatarStyle});
-      drawerBody.querySelectorAll('[data-avatar-slot="'+btn.dataset.avatarSlot+'"]').forEach(x=>x.classList.toggle('on',x===btn));
-      stageApi?.setAvatarStyle?.(avatarStyle);
+    if(drawer.hidden)openDrawer();
+    else {
+      const replacement=focusAttr?drawerBody.querySelector('['+focusAttr+'="'+CSS.escape(focusValue)+'"]'):null;
+      (replacement||root.querySelector('[data-hub-close]')).focus({preventScroll:true});
+      drawer.scrollTop=scrollTop;
+    }
+
+    drawerBody.querySelectorAll('[data-avatar-archetype]').forEach(btn=>btn.addEventListener('click',()=>{
+      commitStyle(setAvatarArchetype(avatarStyle,btn.dataset.avatarArchetype));
+      showSelf();
+    }));
+    drawerBody.querySelectorAll('[data-avatar-item]').forEach(btn=>btn.addEventListener('click',()=>{
+      const [slot,id]=btn.dataset.avatarItem.split(':');
+      commitStyle(patchAvatarItem(avatarStyle,slot,{id}));
+      showSelf();
+    }));
+    drawerBody.querySelectorAll('[data-avatar-color]').forEach(input=>input.addEventListener('input',()=>{
+      commitStyle(patchAvatarItem(avatarStyle,input.dataset.avatarColor,{color:input.value}));
+    }));
+    drawerBody.querySelectorAll('[data-avatar-overlay]').forEach(input=>input.addEventListener('change',async()=>{
+      const overlay=await readImage(input.files?.[0]);
+      if(!overlay){const note=drawerBody.querySelector('.avatar-builder-note');note.textContent='Choose a PNG, JPEG or WebP image smaller than 500 KB.';note.setAttribute('role','alert');return;}
+      if(disposed)return;
+      commitStyle(patchAvatarItem(avatarStyle,input.dataset.avatarOverlay,{overlay}));
+      showSelf();
+    }));
+    drawerBody.querySelectorAll('[data-avatar-overlay-remove]').forEach(btn=>btn.addEventListener('click',()=>{
+      commitStyle(patchAvatarItem(avatarStyle,btn.dataset.avatarOverlayRemove,{overlay:null}));
+      showSelf();
     }));
     drawerBody.querySelectorAll('[data-avatar]').forEach(btn=>btn.addEventListener('click',()=>{
       const nextAccent=btn.dataset.avatar;
-      avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,accent:nextAccent});
-      profile.set({avatar:nextAccent,avatarStyle});
+      avatarStyle=normaliseAvatarStyle({...avatarStyle,accent:nextAccent});
+      profile?.set?.({avatar:nextAccent,avatarStyle});
       stageApi?.setAvatarStyle?.(avatarStyle);
       drawerBody.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('on',x===btn));
     }));
   };
 
   const showRaces=()=>{
-    drawerKicker.textContent='RACES';drawerTitle.textContent='Your race cards';
+    drawerKicker.textContent='USER STUDIO · RACES';drawerTitle.textContent='Your race cards';
     const host=document.createElement('div');
     drawerBody.replaceChildren(host);
     renderRacePicker(host,{onChange:()=>{}});
-    drawer.hidden=false;
+    if(drawer.hidden)openDrawer();
+  };
+
+  const showPassport=async()=>{
+    drawerKicker.textContent='USER STUDIO · PASSPORT';drawerTitle.textContent='Your progress';
+    drawerBody.replaceChildren();
+    await renderPassportSurface(drawerBody,{settings});
+    if(drawer.hidden)openDrawer();
   };
 
   root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
+  root.querySelector('[data-race-self-action="museum"]')?.addEventListener('click',()=>openMuseum?.());
+  root.querySelector('[data-race-self-action="discover"]')?.addEventListener('click',()=>openDiscover?.());
+  root.querySelector('[data-race-self-action="plan"]')?.addEventListener('click',()=>openPlan?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
+  root.querySelector('[data-race-self-action="passport"]')?.addEventListener('click',showPassport);
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
+  return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();root.removeEventListener('keydown',handleKey);};
 }

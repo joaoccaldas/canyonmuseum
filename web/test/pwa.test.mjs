@@ -9,6 +9,7 @@ const root = path.resolve(here, '../..');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'), 'utf8'));
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(root, 'web/landing.template.html'), 'utf8');
+const install = fs.readFileSync(path.join(root,'web/src/ui/install.js'),'utf8');
 const appShell = fs.readFileSync(path.join(root, 'web/src/app-shell.js'), 'utf8');
 
 test('mobile app manifest is installable and standalone', () => {
@@ -23,11 +24,12 @@ test('consumer landing wires one truthful install experience', () => {
   assert.match(tpl, /apple-mobile-web-app-capable/);
   assert.match(tpl, /id="entryInstall"/);
   assert.match(tpl, /data-pwa-action/);
-  assert.match(appShell, /beforeinstallprompt/);
-  assert.match(appShell, /data-pwa-action/);
-  assert.match(appShell, /prompt\.prompt/);
+  assert.match(install, /beforeinstallprompt/);
+  assert.match(install, /data-pwa-action/);
+  assert.match(install, /prompt\.prompt/);
   assert.match(appShell, /app\/android-version\.json/);
-  assert.match(appShell, /published/);
+  assert.match(install,/initInstall/);
+  assert.match(appShell,/initInstall/);
   assert.match(appShell, /serviceWorker\.register\('sw\.js', \{ scope: '\.\/', updateViaCache: 'none' \}\)/);
 });
 

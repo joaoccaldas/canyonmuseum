@@ -5,6 +5,7 @@
 // with the museum: engine/skins.js (the one livery system), engine/card.js, engine/profile.js,
 // engine/share.js, ui/settings.js. State lives in the URL (?p=&s=&scene=&event=) so every look is a link.
 import * as THREE from 'three';
+import { fitPerspectiveBounds } from '../engine/framing.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -66,6 +67,8 @@ let sceneId = 'studio';
 function setScene(id, film) {
   const s = SCENES[id] || SCENES.studio; sceneId = id;
   const top = film ? film.stops[0] : s.sky[0], bottom = film ? film.stops[2] : s.sky[1];
+  document.body.style.setProperty('--studio-backdrop',top);
+  scene.background?.dispose?.();
   scene.background = sceneTex(top, bottom);
   floor.material.color.set(film ? film.stops[0] : s.floor);
   hemi.intensity = s.hemi; key.intensity = s.key; key.color.set(s.keyColor); rim.color.set(film ? film.stops[4] : s.rim); rim.intensity = s.rimI;
@@ -77,7 +80,18 @@ function setScene(id, film) {
 // ---------------------------------------------------------------- products, looks, loading
 const cache = new Map();
 let current = null, look = null, loadToken = 0;
-const loadModel = url => { if (!cache.has(url)) cache.set(url, loader.loadAsync(url).then(g => g.scene)); return cache.get(url); };
+const loadModel = url => {
+  if (!cache.has(url)) cache.set(url, loader.loadAsync(url).then(g => g.scene).catch(error=>{cache.delete(url);throw error;}));
+  const pending=cache.get(url);cache.delete(url);cache.set(url,pending);return pending;
+};
+function trimModelCache(){
+  for(const [url,pending] of cache){
+    if(cache.size<=3)break;
+    if(url===current?.product.glb)continue;
+    cache.delete(url);
+    pending.then(model=>model.traverse(o=>{o.geometry?.dispose();for(const m of (Array.isArray(o.material)?o.material:[o.material])){m?.map?.dispose();m?.dispose();}})).catch(()=>{});
+  }
+}
 async function show(product, lookIn) {
   const token = ++loadToken; $('loading').hidden = false;
   $('heroEyebrow').textContent = [product.year || product.years || product.era, product.brand].filter(Boolean).join(' · ');
@@ -89,11 +103,13 @@ async function show(product, lookIn) {
     const b = new THREE.Box3().setFromObject(bike), c = b.getCenter(new THREE.Vector3()), size = b.getSize(new THREE.Vector3());
     const turned = size.z > size.x;                                  // some pipelines export the bike along z
     const wrap = new THREE.Group(); wrap.add(bike); bike.position.set(-c.x, -b.min.y, -c.z); if (turned) wrap.rotation.y = Math.PI / 2;
+    // Cloned materials are per view; geometries/textures remain owned by the bounded model cache.
+    current?.root?.traverse(o=>{for(const m of (Array.isArray(o.material)?o.material:[o.material]))m?.dispose?.();});
     holder.clear(); holder.add(wrap);
     current = { product, root: wrap, paint: slotsOf(wrap) };
     applyLook(lookIn || defaultLook(product));
     $('favBtn').setAttribute('aria-pressed', profile.get().favourites.includes(product.id)); $('favBtn').textContent = profile.get().favourites.includes(product.id) ? '♥' : '♡';
-    drawPanel();
+    drawPanel();resize();trimModelCache();
   } catch (e) {
     console.warn('studio load', product.id, e);
     toast(navigator.onLine === false ? 'You are offline: this bike has not been cached yet' : 'Could not load this bike · check your connection');
@@ -289,10 +305,18 @@ const settingsUI = initSettings({ profile, QUALITY, AVATARS, activeQuality: () =
 if (event) { $('eventPill').hidden = false; $('eventPill').textContent = `${event.name} · ${event.place.split(',')[0]}`; $('eventPill').style.borderColor = event.accent; }
 
 // ---------------------------------------------------------------- loop
-function resize() { const w = innerWidth, hh = innerHeight; renderer.setSize(w, hh, false); camera.aspect = w / hh; camera.fov = w < hh ? 42 : 32; camera.updateProjectionMatrix(); }
-addEventListener('resize', resize); resize();
+function resize() {
+  const w=Math.max(1,canvas.clientWidth),hh=Math.max(1,canvas.clientHeight);
+  renderer.setSize(w,hh,false);camera.aspect=w/hh;camera.fov=38;camera.updateProjectionMatrix();
+  if(current){
+    const bounds=new THREE.Box3().setFromObject(current.root);
+    fitPerspectiveBounds(camera,controls,bounds,{direction:[.65,.2,1],padding:1.15});
+  }
+}
+const stageResize=new ResizeObserver(resize);stageResize.observe(canvas);resize();
 let last = performance.now();
 renderer.setAnimationLoop(now => {
+  if(document.hidden||document.body.classList.contains('settings-open')){last=now;return;}
   const dt = Math.min(.05, (now - last) / 1000); last = now;
   if (dreaming && !reduce) {                                          // a slow crane around the bike
     dreamT += dt; const a = dreamT * .22, r = 3.2 + Math.sin(dreamT * .17) * .6;
@@ -309,5 +333,5 @@ const start = CAT.products.find(p => p.id === (sharedSetup?.slots?.bike?.product
 const fromLink = decodeLook(sharedSetup?.slots?.bike?.configuration?.look || q.get('s'), start, FILMS);
 if (sharedSetup?.slots?.bike) tab = 'setup';
 show(start, fromLink);
-dock(innerWidth < 900);
+dock(false);
 window.__studio = { CAT, show, applyLook, setDream, get current() { return current; }, get look() { return look; }, get raceSetup() { return raceSetup; }, saveCurrentToSetup, renderer, scene, camera };

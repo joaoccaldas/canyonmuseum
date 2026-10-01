@@ -1,30 +1,63 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { AVATAR_MODEL, AVATAR_OPTIONS, defaultAvatarStyle, normaliseAvatarStyle } from '../src/engine/avatar.js';
+import {
+  AVATAR_SCHEMA_VERSION, AVATAR_ARCHETYPES, AVATAR_ITEMS, AVATAR_SLOTS,
+  avatarItem, defaultAvatarStyle, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype,
+} from '../src/engine/avatar.js';
 
 const stage=fs.readFileSync(new URL('../src/ui/race-self-stage.js',import.meta.url),'utf8');
+const models=fs.readFileSync(new URL('../src/engine/avatar-models.js',import.meta.url),'utf8');
 const home=fs.readFileSync(new URL('../src/ui/avatar-home.js',import.meta.url),'utf8');
 
-test('voxel avatar exposes stable customization slots',()=>{
-  for(const slot of ['skin','hair','top','bottoms','shoes','accessory']) assert.ok(Array.isArray(AVATAR_OPTIONS[slot])&&AVATAR_OPTIONS[slot].length>=2);
-  const d=defaultAvatarStyle();
-  assert.equal(AVATAR_MODEL,'voxel');
-  assert.equal(d.model,'voxel');
-  assert.equal(d.v,2);
-  assert.equal(normaliseAvatarStyle({...d,hair:'bogus'}).hair,d.hair);
+test('avatar platform exposes four scalable archetypes and item slots',()=>{
+  assert.equal(AVATAR_SCHEMA_VERSION,3);
+  assert.deepEqual(AVATAR_ARCHETYPES.map(x=>x.id),['minecraft','renegade','aero','islander']);
+  for(const slot of ['skin','hair','top','bottoms','shoes','accessory','tattoo']){
+    assert.ok(AVATAR_SLOTS.includes(slot));
+    assert.ok(Array.isArray(AVATAR_ITEMS[slot])&&AVATAR_ITEMS[slot].length>=2);
+  }
 });
-test('Race Self stage uses voxel geometry, not the old capsule mannequin',()=>{
-  assert.match(stage,/BoxGeometry/);
-  assert.doesNotMatch(stage,/CapsuleGeometry/);
-  assert.match(stage,/voxelAvatar/);
-  assert.match(stage,/userData\.avatarModel='voxel'/);
+
+test('legacy voxel settings migrate into v3 without losing choices',()=>{
+  const migrated=normaliseAvatarStyle({v:2,model:'voxel',skin:'deep',hair:'crop',top:'lava',bottoms:'navy',shoes:'ocean',accessory:'visor',accent:'#138a8f'});
+  assert.equal(migrated.v,3);
+  assert.equal(migrated.archetype,'minecraft');
+  assert.equal(migrated.items.skin.id,'deep');
+  assert.equal(migrated.items.top.id,'lava');
+  assert.equal(migrated.items.accessory.id,'visor');
+  assert.equal(migrated.accent,'#138a8f');
+});
+
+test('each avatar item supports independent custom colour and safe image overlay',()=>{
+  let style=defaultAvatarStyle();
+  style=patchAvatarItem(style,'top',{color:'#123456',overlay:{src:'data:image/png;base64,AAAA',name:'team.png',opacity:.7}});
+  assert.equal(avatarItem(style,'top').color,'#123456');
+  assert.equal(style.items.top.overlay.name,'team.png');
+  const rejected=patchAvatarItem(style,'shoes',{overlay:{src:'javascript:alert(1)',name:'bad'}});
+  assert.equal(rejected.items.shoes.overlay,null);
+});
+
+test('archetype switching preserves customized items',()=>{
+  const styled=patchAvatarItem(defaultAvatarStyle(),'bottoms',{id:'navy',color:'#112233'});
+  const next=setAvatarArchetype(styled,'renegade');
+  assert.equal(next.archetype,'renegade');
+  assert.equal(next.items.bottoms.id,'navy');
+  assert.equal(next.items.bottoms.color,'#112233');
+});
+
+test('Race Self stage renders distinct procedural archetypes and live updates',()=>{
+  for(const builder of ['minecraftAvatar','renegadeAvatar','aeroAvatar','islanderAvatar']) assert.match(models,new RegExp(builder));
   assert.match(stage,/setAvatarStyle/);
+  assert.match(stage,/avatarAnimation/);
+  assert.match(models,/textureLoader\.load/);
 });
-test('hub owns live voxel customization and 3D equipment entry',()=>{
-  for(const slot of ['skin','hair','top','bottoms','shoes','accessory']) assert.match(home,new RegExp(slot));
-  assert.match(home,/data-avatar-slot/);
-  assert.match(home,/setAvatarStyle/);
-  assert.match(home,/Voxel figure/);
-  assert.match(home,/Choose in 3D/);
+
+test('avatar builder owns archetype, item, colour and image controls while bike stays separate',()=>{
+  assert.match(home,/data-avatar-archetype/);
+  assert.match(home,/data-avatar-item/);
+  assert.match(home,/data-avatar-color/);
+  assert.match(home,/data-avatar-overlay/);
+  assert.match(home,/Choose & customize in 3D/);
+  assert.doesNotMatch(home,/patchBike|setBikeStyle|bikeOverlay/);
 });

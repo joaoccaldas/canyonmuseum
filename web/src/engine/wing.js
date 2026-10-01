@@ -6,6 +6,7 @@
 // walkable space, pick targets and one update loop. Nothing here names a particular room.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { decorateRoom } from './decoration-props.js';
 import { rng } from '../roomkit.js';
 import { slotsOf, applySkin as paintBike } from './skins.js';
 
@@ -191,6 +192,7 @@ export function buildWings(ctx, { wings, bikes: BIKES = [], extraRefs = [], pain
     const oak = planks('#d9b98c', '#8a6a44', 9); oak.repeat.set(2.2, 2.2);
     const wingBikes = BIKES.filter(b => w.rooms.some(r => r.id === b.room));
     for (const r of w.rooms) {
+      decorateRoom((r.decorations||[]).map(p=>({...p,y:(p.y||0)+Y})),{group,lite,obstacles});
       const roomBikes = wingBikes.filter(b => b.room === r.id);
       const L = layoutRoom(w, r, roomBikes.length, r.paintings || [], (r.sculptures || []).length);
       const { q, face, back, cz } = L, rcx = (q.x0 + q.x1) / 2;

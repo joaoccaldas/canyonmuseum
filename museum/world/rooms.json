@@ -29,7 +29,86 @@
      "canyon-slx-2027"
     ],
     "remembered": 3
-   }
+   },
+   "decorations": [
+    {
+     "prop": "kona-palm",
+     "x": 6.1,
+     "z": 0.35,
+     "height": 2.2,
+     "seed": 1
+    },
+    {
+     "prop": "kona-palm",
+     "x": 6.1,
+     "z": -11.8,
+     "height": 2.45,
+     "seed": 2
+    },
+    {
+     "prop": "kona-palm",
+     "x": 6.1,
+     "z": -22.6,
+     "height": 2.7,
+     "seed": 3
+    },
+    {
+     "prop": "kona-palm",
+     "x": 6.1,
+     "z": -33.6,
+     "height": 2.2,
+     "seed": 4
+    },
+    {
+     "prop": "kona-palm",
+     "x": -6.1,
+     "z": -3.9,
+     "height": 2.45,
+     "seed": 5
+    },
+    {
+     "prop": "kona-palm",
+     "x": -6.1,
+     "z": -37.4,
+     "height": 2.7,
+     "seed": 6
+    },
+    {
+     "prop": "kona-palm",
+     "x": -6.1,
+     "z": -44.6,
+     "height": 2.2,
+     "seed": 7
+    },
+    {
+     "prop": "kona-palm",
+     "x": -6.1,
+     "z": -14.4,
+     "height": 2.45,
+     "seed": 8
+    },
+    {
+     "prop": "kona-palm",
+     "x": -6.1,
+     "z": -20.1,
+     "height": 2.7,
+     "seed": 9
+    },
+    {
+     "prop": "kona-palm",
+     "x": -6.1,
+     "z": -26.4,
+     "height": 2.2,
+     "seed": 10
+    },
+    {
+     "prop": "kona-palm",
+     "x": -6.1,
+     "z": -32,
+     "height": 2.45,
+     "seed": 11
+    }
+   ]
   },
   {
    "id": "sanctuary",
@@ -65,7 +144,23 @@
      "canyon-kona-cfslx-2015",
      "canyon-kona-cfr-2019"
     ]
-   }
+   },
+   "decorations": [
+    {
+     "prop": "kona-palm",
+     "x": -18.4,
+     "z": -9.7,
+     "height": 2.4,
+     "seed": 11
+    },
+    {
+     "prop": "kona-palm",
+     "x": -18.4,
+     "z": -24.7,
+     "height": 2.4,
+     "seed": 12
+    }
+   ]
   },
   {
    "id": "wyld",
@@ -129,7 +224,13 @@
    "sub": "Red rock",
    "kind": "art",
    "exhibits": {},
-   "text": "One canyon silhouette from the aisle. Up here the floor is the rock itself: terracotta, with a warm seam."
+   "text": "One canyon silhouette from the aisle. Up here the floor is the rock itself: terracotta, with a warm seam.",
+   "presentation": {
+    "kind": "bay",
+    "floor": "#8a3b28",
+    "vein": "#e7b089",
+    "z": 9
+   }
   },
   {
    "id": "bay-las-vegas",
@@ -139,7 +240,13 @@
    "sub": "Neon",
    "kind": "art",
    "exhibits": {},
-   "text": "A dark floor that keeps the light. The sculpture in the hall is the same study, seen from the Queen K."
+   "text": "A dark floor that keeps the light. The sculpture in the hall is the same study, seen from the Queen K.",
+   "presentation": {
+    "kind": "bay",
+    "floor": "#14151c",
+    "vein": "#ff3d8e",
+    "z": 13.6
+   }
   },
   {
    "id": "bay-nice",
@@ -149,7 +256,13 @@
    "sub": "Sea glass",
    "kind": "art",
    "exhibits": {},
-   "text": "Pale glass underfoot, the colour of the bay on a still morning."
+   "text": "Pale glass underfoot, the colour of the bay on a still morning.",
+   "presentation": {
+    "kind": "bay",
+    "floor": "#d7f3f2",
+    "vein": "#7ec8c4",
+    "z": 18.2
+   }
   },
   {
    "id": "bay-kona",
@@ -159,7 +272,13 @@
    "sub": "Obsidian",
    "kind": "art",
    "exhibits": {},
-   "text": "Basalt, and a line of heat. The same coast as the hall, one storey closer to the weather."
+   "text": "Basalt, and a line of heat. The same coast as the hall, one storey closer to the weather.",
+   "presentation": {
+    "kind": "bay",
+    "floor": "#1a1c20",
+    "vein": "#ff592c",
+    "z": 22.8
+   }
   },
   {
    "id": "room-bio",
@@ -172,7 +291,17 @@
     "editions": "galleries",
     "edition": "theme-bio"
    },
-   "text": "A Speedmax taken by the room. Vines have the frame, pods sit on the floor, and the walls are the same green as the growth."
+   "text": "A Speedmax taken by the room. Vines have the frame, pods sit on the floor, and the walls are the same green as the growth.",
+   "presentation": {
+    "kind": "room",
+    "floor": "#10281a",
+    "vein": "#3dba55",
+    "fog": "#123024",
+    "exposure": 0.92,
+    "z0": 10.6,
+    "z1": 6.15,
+    "decoration": "bio"
+   }
   },
   {
    "id": "room-horror",
@@ -185,7 +314,17 @@
     "editions": "galleries",
     "edition": "theme-horror"
    },
-   "text": "One bulb over a Speedmax at the end of the passage. The corridor is narrower than the room. If the eyes blink, you were looking."
+   "text": "One bulb over a Speedmax at the end of the passage. The corridor is narrower than the room. If the eyes blink, you were looking.",
+   "presentation": {
+    "kind": "room",
+    "floor": "#10080c",
+    "vein": "#ff2a3c",
+    "fog": "#1a0a10",
+    "exposure": 0.78,
+    "z0": 15.6,
+    "z1": 11.0,
+    "decoration": "horror"
+   }
   },
   {
    "id": "room-alien",
@@ -198,7 +337,17 @@
     "editions": "galleries",
     "edition": "theme-alien"
    },
-   "text": "Four rings over a Speedmax, and a scan that does not care what it passes through. Cold light, no weather."
+   "text": "Four rings over a Speedmax, and a scan that does not care what it passes through. Cold light, no weather.",
+   "presentation": {
+    "kind": "room",
+    "floor": "#070b12",
+    "vein": "#3dffe0",
+    "fog": "#0c2430",
+    "exposure": 0.95,
+    "z0": 20.6,
+    "z1": 16.0,
+    "decoration": "alien"
+   }
   },
   {
    "id": "room-zombie",
@@ -211,7 +360,17 @@
     "editions": "galleries",
     "edition": "theme-zombie"
    },
-   "text": "They keep to the walls. A Speedmax is still on the block in the middle of the yard. The air is the colour of a bruise that has started to heal."
+   "text": "They keep to the walls. A Speedmax is still on the block in the middle of the yard. The air is the colour of a bruise that has started to heal.",
+   "presentation": {
+    "kind": "room",
+    "floor": "#16180c",
+    "vein": "#d2e06a",
+    "fog": "#2a2c18",
+    "exposure": 0.98,
+    "z0": 26.4,
+    "z1": 21.0,
+    "decoration": "zombie"
+   }
   }
  ]
 }

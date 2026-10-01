@@ -1,4 +1,4 @@
-import { storageKeys } from './storage.js';
+import { storageKeys, storageKey } from './storage.js';
 // engine/app-state.js — one registry for all local-only app state.
 //
 // Domain modules keep owning validation and business rules. This layer owns privacy operations:
@@ -36,7 +36,7 @@ export function listAppState(storage = globalThis.localStorage) {
 }
 
 export function exportAppState(storage = globalThis.localStorage) {
-  const entries = Object.fromEntries(listAppState(storage).map(({ key, value }) => [key, value]));
+  const entries = Object.fromEntries(listAppState(storage).filter(({key})=>key!==storageKey('session')).map(({ key, value }) => [key, value]));
   return JSON.stringify({
     schema_version: APP_STATE_SCHEMA_VERSION,
     scope: 'canyonmuseum-local-state',

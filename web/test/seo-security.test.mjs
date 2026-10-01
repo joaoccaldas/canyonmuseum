@@ -38,7 +38,7 @@ test('crawler files exist and point at the public site', () => {
 });
 
 test('deploy publishes an allowlist and runs a leak guard', () => {
-  const wf = fs.readFileSync(path.join(root, '.github/workflows/pages.yml'), 'utf8');
+  const wf = fs.readFileSync(path.join(root, '.github/workflows/pages.yml'), 'utf8') + fs.readFileSync(path.join(root, 'tools/stage_site.sh'), 'utf8');
   assert.doesNotMatch(wf, /rsync -a \.\/ _site\//);              // never the whole repository
   assert.match(wf, /--exclude reference\//);                      // saved third-party pages stay private
   assert.match(wf, /Leak guard/);

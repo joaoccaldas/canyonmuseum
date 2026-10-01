@@ -29,6 +29,8 @@ jobs:
         run: node tools/validate-bikes.mjs
       - name: Repository hygiene
         run: node tools/repo-hygiene.mjs
+      - name: Published asset contract
+        run: bash tools/stage_site.sh
       - name: P0 browser journey
         run: |
           python3 -m http.server 8744 > /tmp/kona-p0-http.log 2>&1 &
@@ -36,6 +38,7 @@ jobs:
           trap 'kill $SERVER_PID || true' EXIT
           for i in {1..20}; do curl -fsS http://127.0.0.1:8744/ >/dev/null && break; sleep 0.5; done
           CHROME_PATH=/usr/bin/google-chrome node web/p0-journey-smoke.mjs http://127.0.0.1:8744/
+          CHROME_PATH=/usr/bin/google-chrome node web/studio-launch-audit.mjs http://127.0.0.1:8744
       - name: Built pages are up to date
         run: |
           node tools/build_pages.mjs

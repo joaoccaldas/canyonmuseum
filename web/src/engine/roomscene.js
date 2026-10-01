@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { marbleTex, travertineTex, basaltTex, lettering, contactShadow, FONT, SERIF } from './textures.js';
+import { decorateRoom } from './decoration-props.js';
 import { layoutStations } from './brandroom.js';
 
 const FLOOR_TEX = {
@@ -86,6 +87,8 @@ export function buildBrandRoom(desc, { lite = false, spinners = [], obstacles = 
     const doorZ = desc.door ? (desc.door.z0 + desc.door.z1) / 2 : CZ;
     mark.position.set(desc.door?.wall === 'west' ? b.x1 - .02 : b.x1 - .02, 3.9, doorZ); mark.rotation.y = -Math.PI / 2; group.add(mark);
   }
+
+  decorateRoom(desc.decorations,{group,lite,obstacles});
 
   // products on plinths with light pools + contact shadows
   const chrome = new THREE.MeshStandardMaterial({ color: '#e8eaee', metalness: 1, roughness: .12 });
