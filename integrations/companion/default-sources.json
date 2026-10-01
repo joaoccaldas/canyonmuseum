@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "slowtwitch",
+      "name": "Slowtwitch",
+      "kind": "news",
+      "url": "https://www.slowtwitch.com/feed/"
+    },
+    {
+      "id": "triathlon-magazine",
+      "name": "Triathlon Magazine",
+      "kind": "news",
+      "url": "https://triathlonmagazine.ca/feed/"
+    },
+    {
+      "id": "big-island-now",
+      "name": "Big Island Now",
+      "kind": "kona",
+      "url": "https://bigislandnow.com/feed/"
+    },
+    {
+      "id": "lionel-sanders",
+      "name": "Lionel Sanders",
+      "kind": "video",
+      "url": "https://www.youtube.com/channel/UC-gct8TB_8l5HsQHBBr8hyQ"
+    },
+    {
+      "id": "lucy-charles-barclay",
+      "name": "Lucy Charles-Barclay",
+      "kind": "video",
+      "url": "https://www.youtube.com/channel/UC6PP69DCmBwMCPf9RSSTNTg"
+    },
+    {
+      "id": "paula-findlay",
+      "name": "Paula Findlay · That Triathlon Life",
+      "kind": "video",
+      "url": "https://www.youtube.com/channel/UC8Wjskc9fSkYLporjscGIBQ"
+    },
+    {
+      "id": "sam-laidlow",
+      "name": "Sam Laidlow",
+      "kind": "video",
+      "url": "https://www.youtube.com/channel/UCP6EsU9T2RykT1quNR5moeg"
+    },
+    {
+      "id": "sam-long",
+      "name": "Sam Long",
+      "kind": "video",
+      "url": "https://www.youtube.com/channel/UCuGZGcO5LvIH4u9g_2ZsHGQ"
+    },
+    {
+      "id": "jan-frodeno",
+      "name": "Jan Frodeno · Going Mental",
+      "kind": "video",
+      "url": "https://www.youtube.com/channel/UCaxiAhuGz2SvnIYml4B5qMA"
+    }
+  ]
+}
