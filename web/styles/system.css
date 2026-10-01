@@ -238,7 +238,7 @@ body.install-open{overflow:hidden}
 .kona-tour h3{margin:7px 0 8px;font:400 30px/1 var(--brand-font-editorial);letter-spacing:-.02em}
 .kona-tour p{margin:0;color:var(--brand-muted);font:500 13px/1.55 var(--brand-font-ui)}
 .kona-tour-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
-.kona-tour-actions .btn-text,.kona-tour-actions .btn-primary{min-height:48px}
+.kona-tour-actions .btn-text,.kona-tour-actions .btn-primary{min-width:var(--brand-touch);min-height:var(--brand-touch)}.kona-tour-actions .btn-text{justify-content:center}
 .tour-target{outline:3px solid var(--brand-discovery)!important;outline-offset:4px;box-shadow:0 0 0 8px color-mix(in srgb,var(--brand-discovery) 18%,transparent)!important}
 @media(min-width:900px){.kona-tour{left:32px;bottom:32px;transform:none}}
 @media(prefers-reduced-motion:reduce){.tour-target{scroll-behavior:auto}}
