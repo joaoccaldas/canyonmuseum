@@ -64,3 +64,5 @@ body.entry-quest #intro{padding-bottom:calc(24px + var(--safe-b,0px))!important}
 #konaQuest h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,56px);line-height:1;margin:8px 0}
 #konaQuest input{width:100%;max-width:360px;min-height:48px;margin:8px 0;padding:12px 14px;border-radius:12px;border:1px solid var(--brand-line);background:transparent;color:inherit}
 #konaQuest .btn{margin-right:8px;margin-top:8px}
+
+#loadstate i b{width:calc(var(--load-p,0) * 100%)}
