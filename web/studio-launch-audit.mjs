@@ -87,9 +87,9 @@ try{
  assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.items.top.id),'lava');
  await page.click('[data-race-self-action="customize"]');await page.screenshot({path:new URL('avatar-editor-phone.png',out).pathname});await page.keyboard.press('Escape');
  await page.click('[data-race-self-action="progress"]');await page.waitForSelector('[data-hub-drawer]:not([hidden]) #konaAccount');await page.keyboard.press('Escape');
- await page.click('[data-race-self-action="plan"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Plan');await page.click('[data-user-studio]');await page.waitForSelector('[data-race-self-stage]');
- await page.click('[data-race-self-action="discover"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Discover');await page.click('[data-user-studio]');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
- await page.click('[data-race-self-action="museum"]');await page.waitForFunction(()=>!!window.__museum,{timeout:60000});
+ await page.click('[data-tab="plan"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Plan');await page.click('[data-user-studio]');await page.waitForSelector('[data-race-self-stage]');
+ await page.click('[data-tab="discover"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Discover');await page.click('[data-user-studio]');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
+ await page.click('[data-tab="discover"]');await page.waitForSelector('[data-enter-world]');await page.click('[data-enter-world]');await page.waitForFunction(()=>!!window.__museum,{timeout:60000});
  await page.waitForFunction(()=>document.body.classList.contains('walking'),{timeout:60000});
  const hallLinks=await page.evaluate(()=>[...document.querySelectorAll('link[data-style-scope="museum"]')].map(l=>({href:l.getAttribute('href'),disabled:l.disabled})));
  assert.ok(hallLinks.length>=2&&hallLinks.every(x=>x.disabled===false),'museum styles must be enabled inside museum');
