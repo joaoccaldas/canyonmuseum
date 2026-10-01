@@ -12,6 +12,7 @@ import { renderAdminAssets } from './admin-assets.js';
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 import { readStorage, writeStorage } from '../engine/storage.js';
 import { initReturnJourney } from './return-journey.js';
+import { initSurpriseLayer } from './surprise.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon = name => {
@@ -46,10 +47,22 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   document.body.append(shell);
 
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
+  const accessContext={admin:false};
+  globalThis.__konaAccess=accessContext;
+  currentUser().then(user=>{accessContext.admin=isAdminUser(user);}).catch(()=>{});
+  let routeToken=0;
   const returnJourney=initReturnJourney({openProgress:async()=>{
     await raceSelf();
     body.querySelector('[data-race-self-action="progress"]')?.click();
   }});
+  const surpriseLayer=initSurpriseLayer({
+    admin:()=>accessContext.admin,
+    openProgress:async()=>{await raceSelf();body.querySelector('[data-race-self-action="progress"]')?.click();}
+  });
+  const scheduleSurprise=surface=>{
+    const token=++routeToken;
+    setTimeout(()=>{if(token===routeToken&&!panel.hidden)surpriseLayer.maybeShow(surface);},2200);
+  };
   const setActive=id=>shell.querySelectorAll('[data-tab]').forEach(x=>(x.classList.toggle('on',x.dataset.tab===id),x.setAttribute('aria-current',x.dataset.tab===id?'page':'false')));
   let tourNode=null,tourTarget=null;
   const dismissTour=()=>{
@@ -82,7 +95,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   const replayTour=async()=>{await now();requestAnimationFrame(()=>requestAnimationFrame(()=>startTour({force:true})));};
   let disposeStudio=null, studioRequest=0;
   const leaveRaceSelf=()=>{panel.classList.remove('companion-panel');studioRequest++;disposeStudio?.();disposeStudio=null;document.body.classList.remove('race-self-open');};
-  const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
+  const close=()=>{routeToken++;surpriseLayer.close();leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
 
   async function now(){
@@ -100,6 +113,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
 
     });
     requestAnimationFrame(()=>requestAnimationFrame(()=>startTour()));
+    scheduleSurprise('home');
     setTimeout(()=>{
       if(!panel.hidden&&title.textContent==='Home'&&!document.querySelector('.kona-tour'))returnJourney.maybeShow();
     },1200);
@@ -127,6 +141,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       openTravel:travel,
     });
     if(request===studioRequest) disposeStudio=cleanup; else cleanup?.();
+    scheduleSurprise('studio');
   }
 
   async function companion(view){
@@ -152,7 +167,8 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     await featureStyle('garage','web/styles/garage.css');
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
-    await renderGarageSurface(body);
+    await renderGarageSurface(body,{admin:accessContext.admin});
+    scheduleSurprise('garage');
   }
 
   async function plan(){
@@ -189,6 +205,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
     await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});
+    scheduleSurprise('discover');
   }
 
   shell.querySelector('[data-tab=home]').onclick=now;
