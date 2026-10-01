@@ -8,9 +8,15 @@ import { initInstall } from './ui/install.js';
 //    Android only installs it over this one if it carries the same signing key.
 const SITE = 'https://joaoccaldas.github.io/canyonmuseum/';
 const $ = id => document.getElementById(id);
+function ensureUpdateBar(){
+ let el=$('updateBar');if(el)return el;
+ el=document.createElement('div');el.id='updateBar';el.hidden=true;el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+ el.innerHTML='<span></span><button type="button"></button><button type="button" class="later" aria-label="Later">×</button>';
+ document.body.append(el);return el;
+}
 
 function pill(text, action, onAction) {
-  const el = $('updateBar'); if (!el) return;
+  const el = ensureUpdateBar();
   el.querySelector('span').textContent = text;
   const b = el.querySelector('button, a.go'); b.textContent = action;
   if (typeof onAction === 'string') { b.outerHTML = `<a class="go" href="${onAction}" rel="noopener">${action}</a>`; }
