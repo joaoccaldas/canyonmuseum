@@ -1,0 +1,42 @@
+name: Avatar visual evidence
+on:
+  pull_request:
+    paths:
+      - 'web/src/engine/avatar.js'
+      - 'web/src/ui/avatar-home.js'
+      - 'web/src/ui/race-self-stage.js'
+      - 'web/styles/race-self.css'
+      - 'web/avatar-visual-evidence.mjs'
+      - '.github/workflows/avatar-visual-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  avatar-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: web
+      - run: node tools/build_pages.mjs
+      - name: Start local site
+        run: |
+          python3 -m http.server 8754 > /tmp/kona-avatar-http.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:8754/ >/dev/null && exit 0; sleep 1; done
+          exit 1
+      - name: Capture avatar matrix
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: node web/avatar-visual-evidence.mjs http://127.0.0.1:8754/ avatar-visual-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: avatar-visual-evidence
+          path: avatar-visual-evidence/
+          retention-days: 14

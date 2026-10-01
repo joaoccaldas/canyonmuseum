@@ -63,3 +63,8 @@ body.entry-quest #intro{padding-bottom:calc(24px + var(--safe-b,0px))!important}
  #intro.kona-entry .entry-utilities{justify-content:flex-start;gap:18px;align-items:center}
  #intro.quest-active .intro-inner{padding:calc(42px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom))}
 }
+
+#intro.kona-entry .entry-game-loop{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 16px}
+#intro.kona-entry .entry-game-loop span{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 11px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(7,17,22,.28);backdrop-filter:blur(10px);color:#eef3f4;font:650 11px/1 var(--sans,system-ui)}
+#intro.kona-entry .entry-game-loop b{color:#72d3d6;font:800 9px/1 var(--sans,system-ui);letter-spacing:.08em}
+@media(max-width:760px),(pointer:coarse){#intro.kona-entry .entry-game-loop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}#intro.kona-entry .entry-game-loop span{justify-content:center;padding-inline:6px;font-size:10px}}

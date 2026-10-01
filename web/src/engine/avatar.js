@@ -1,26 +1,132 @@
-// engine/avatar.js — canonical customizable voxel avatar contract.
-// The personal figure is deliberately block-built: lightweight, readable on phones and easy to skin.
-// Renderer and UI both consume this one shape; equipment remains separate canonical UserEquipment.
-export const AVATAR_MODEL='voxel';
-export const AVATAR_OPTIONS=Object.freeze({
-  skin:['sand','bronze','umber','deep'],
-  hair:['none','short','crop','cap'],
-  top:['kona-black','lava','ocean','hibiscus','lime'],
-  bottoms:['black','navy','graphite'],
-  shoes:['white','lava','ocean','lime'],
-  accessory:['none','visor','headband'],
+// engine/avatar.js — canonical avatar platform contract.
+// One data model powers phone and desktop. UI and renderer are projections only.
+// New archetypes/items should be added here, not hard-coded into screen code.
+
+export const AVATAR_SCHEMA_VERSION=3;
+
+export const AVATAR_ARCHETYPES=Object.freeze([
+  Object.freeze({id:'minecraft',label:'Minecraft',note:'Block-built, playful and instantly readable.',shape:'voxel',animation:'bounce'}),
+  Object.freeze({id:'renegade',label:'Badass',note:'Athletic street-racer silhouette with optional ink.',shape:'renegade',animation:'swagger'}),
+  Object.freeze({id:'aero',label:'Aero',note:'Lean futuristic race avatar with a technical silhouette.',shape:'aero',animation:'ready'}),
+  Object.freeze({id:'islander',label:'Islander',note:'Relaxed Kona explorer with a softer, sun-ready silhouette.',shape:'islander',animation:'sway'}),
+]);
+export const AVATAR_ARCHETYPE_IDS=Object.freeze(AVATAR_ARCHETYPES.map(x=>x.id));
+
+export const AVATAR_SLOTS=Object.freeze(['skin','hair','top','bottoms','shoes','accessory','tattoo']);
+
+export const AVATAR_ITEMS=Object.freeze({
+  skin:Object.freeze([
+    {id:'sand',label:'Sand',color:'#d6aa86'},
+    {id:'bronze',label:'Bronze',color:'#b77d58'},
+    {id:'umber',label:'Umber',color:'#80543d'},
+    {id:'deep',label:'Deep',color:'#4e342b'},
+  ]),
+  hair:Object.freeze([
+    {id:'none',label:'No hair',color:'transparent'},
+    {id:'short',label:'Short',color:'#211c1a'},
+    {id:'crop',label:'Crop',color:'#342922'},
+    {id:'cap',label:'Cap',color:'#0f1519'},
+  ]),
+  top:Object.freeze([
+    {id:'kona-black',label:'Kona black top',color:'#11181c',kind:'clothing'},
+    {id:'lava',label:'Lava top',color:'#e8471c',kind:'clothing'},
+    {id:'ocean',label:'Ocean top',color:'#138a8f',kind:'clothing'},
+    {id:'hibiscus',label:'Hibiscus top',color:'#c53b72',kind:'clothing'},
+    {id:'lime',label:'Lime top',color:'#719444',kind:'clothing'},
+  ]),
+  bottoms:Object.freeze([
+    {id:'black',label:'Black bottoms',color:'#101417',kind:'clothing'},
+    {id:'navy',label:'Navy bottoms',color:'#172938',kind:'clothing'},
+    {id:'graphite',label:'Graphite bottoms',color:'#3a4247',kind:'clothing'},
+  ]),
+  shoes:Object.freeze([
+    {id:'white',label:'White shoes',color:'#ecebe6',kind:'clothing'},
+    {id:'lava',label:'Lava shoes',color:'#e8471c',kind:'clothing'},
+    {id:'ocean',label:'Ocean shoes',color:'#138a8f',kind:'clothing'},
+    {id:'lime',label:'Lime shoes',color:'#719444',kind:'clothing'},
+  ]),
+  accessory:Object.freeze([
+    {id:'none',label:'No accessory',color:'transparent',kind:'accessory'},
+    {id:'visor',label:'Visor',color:'#11181c',kind:'accessory'},
+    {id:'headband',label:'Headband',color:'#f0eee8',kind:'accessory'},
+  ]),
+  tattoo:Object.freeze([
+    {id:'none',label:'No ink',color:'transparent',kind:'body-art'},
+    {id:'bands',label:'Arm bands',color:'#15191b',kind:'body-art'},
+    {id:'geo',label:'Geometric ink',color:'#15191b',kind:'body-art'},
+    {id:'lava-mark',label:'Lava mark',color:'#6f2112',kind:'body-art'},
+  ]),
 });
-export const AVATAR_COLORS=Object.freeze({
-  skin:{sand:'#d6aa86',bronze:'#b77d58',umber:'#80543d',deep:'#4e342b'},
-  hair:{none:'transparent',short:'#211c1a',crop:'#342922',cap:'#0f1519'},
-  top:{'kona-black':'#11181c',lava:'#e8471c',ocean:'#138a8f',hibiscus:'#c53b72',lime:'#719444'},
-  bottoms:{black:'#101417',navy:'#172938',graphite:'#3a4247'},
-  shoes:{white:'#ecebe6',lava:'#e8471c',ocean:'#138a8f',lime:'#719444'},
-  accessory:{none:'transparent',visor:'#11181c',headband:'#f0eee8'},
+
+export const AVATAR_OPTIONS=Object.freeze(Object.fromEntries(
+  Object.entries(AVATAR_ITEMS).map(([slot,items])=>[slot,Object.freeze(items.map(x=>x.id))])
+));
+export const AVATAR_COLORS=Object.freeze(Object.fromEntries(
+  Object.entries(AVATAR_ITEMS).map(([slot,items])=>[slot,Object.freeze(Object.fromEntries(items.map(x=>[x.id,x.color])))])
+));
+
+const hex=v=>/^#[0-9a-f]{6}$/i.test(String(v||''))?String(v):null;
+const safeOverlay=v=>{
+  if(!v||typeof v!=='object')return null;
+  const src=String(v.src||'');
+  if(!/^data:image\/(png|jpeg|webp);base64,/i.test(src)||src.length>700000)return null;
+  return {src,name:String(v.name||'overlay').slice(0,80),opacity:Math.min(1,Math.max(0,+v.opacity||1)),updatedAt:String(v.updatedAt||'')};
+};
+const itemFor=(slot,id)=>AVATAR_ITEMS[slot]?.find(x=>x.id===id)||AVATAR_ITEMS[slot]?.[0];
+
+export const defaultAvatarStyle=()=>({
+  v:AVATAR_SCHEMA_VERSION,
+  archetype:'minecraft',
+  accent:'#e8471c',
+  items:{
+    skin:{id:'bronze',color:null,overlay:null},
+    hair:{id:'short',color:null,overlay:null},
+    top:{id:'kona-black',color:null,overlay:null},
+    bottoms:{id:'black',color:null,overlay:null},
+    shoes:{id:'white',color:null,overlay:null},
+    accessory:{id:'none',color:null,overlay:null},
+    tattoo:{id:'none',color:null,overlay:null},
+  },
 });
-export const defaultAvatarStyle=()=>({v:2,model:AVATAR_MODEL,skin:'bronze',hair:'short',top:'kona-black',bottoms:'black',shoes:'white',accessory:'none',accent:'#e8471c'});
-export function normaliseAvatarStyle(v){
-  const d=defaultAvatarStyle(),o=v&&typeof v==='object'?v:{};
-  const pick=(k,val)=>AVATAR_OPTIONS[k]?.includes(val)?val:d[k];
-  return {v:2,model:AVATAR_MODEL,skin:pick('skin',o.skin),hair:pick('hair',o.hair),top:pick('top',o.top),bottoms:pick('bottoms',o.bottoms),shoes:pick('shoes',o.shoes),accessory:pick('accessory',o.accessory),accent:/^#[0-9a-f]{6}$/i.test(o.accent||'')?o.accent:d.accent};
+
+export function normaliseAvatarItem(slot,value,fallbackId){
+  const raw=value&&typeof value==='object'?value:{id:value};
+  const requested=String(raw.id||fallbackId||AVATAR_ITEMS[slot]?.[0]?.id||'');
+  const item=itemFor(slot,requested);
+  return {id:item.id,color:hex(raw.color),overlay:safeOverlay(raw.overlay)};
+}
+
+export function normaliseAvatarStyle(value){
+  const d=defaultAvatarStyle(),o=value&&typeof value==='object'?value:{};
+  const legacy={
+    skin:o.skin,hair:o.hair,top:o.top,bottoms:o.bottoms,shoes:o.shoes,accessory:o.accessory,tattoo:o.tattoo,
+  };
+  const items={};
+  for(const slot of AVATAR_SLOTS){
+    const source=o.items?.[slot]??legacy[slot]??d.items[slot];
+    items[slot]=normaliseAvatarItem(slot,source,d.items[slot].id);
+  }
+  return {
+    v:AVATAR_SCHEMA_VERSION,
+    archetype:AVATAR_ARCHETYPE_IDS.includes(o.archetype)?o.archetype:d.archetype,
+    accent:hex(o.accent)||d.accent,
+    items,
+  };
+}
+
+export function avatarItem(styleInput,slot){
+  const style=normaliseAvatarStyle(styleInput);
+  const state=style.items[slot];
+  const item=itemFor(slot,state?.id);
+  return Object.freeze({...item,...state,color:state?.color||item?.color||'#777777'});
+}
+
+export function patchAvatarItem(styleInput,slot,patch={}){
+  const style=normaliseAvatarStyle(styleInput);
+  if(!AVATAR_SLOTS.includes(slot))return style;
+  return normaliseAvatarStyle({...style,items:{...style.items,[slot]:{...style.items[slot],...patch}}});
+}
+
+export function setAvatarArchetype(styleInput,archetype){
+  return normaliseAvatarStyle({...normaliseAvatarStyle(styleInput),archetype});
 }

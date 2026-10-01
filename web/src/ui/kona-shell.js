@@ -7,7 +7,6 @@ import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
-import { renderMeSurface } from './me.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon = name => {
@@ -27,6 +26,7 @@ export function initKonaShell({ profile, settings, enter }) {
   });
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
+    '<button type="button" class="kona-user-menu" data-user-studio aria-label="Open User Studio"><i></i><span>Me</span></button>'+
     '<div id="konaPanel" class="kona-panel" hidden>'+
       '<div class="kona-panel-head"><div><small id="konaPanelEyebrow">KONA · BETA</small><h2 id="konaPanelTitle">Now</h2></div><button id="konaPanelClose" type="button" aria-label="Close">×</button></div>'+
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
@@ -61,12 +61,13 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   async function raceSelf(){
-    title.textContent='Race Self'; eyebrow.textContent='KONA · YOUR SELF';
+    title.textContent='User Studio'; eyebrow.textContent='KONA · YOUR ATHLETE';
     panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('home');
     await renderAvatarHome(body,{
       profile,
       settings,
       onBack:now,
+      openGarage:garage,
       openMuseum:()=>{ close(); enter?.(); },
       openCollection:collection,
     });
@@ -94,10 +95,8 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   async function me(){
-    leaveRaceSelf();
-    title.textContent='Me'; eyebrow.textContent='KONA · PASSPORT';
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
-    await renderMeSurface(body,{settings});
+    await raceSelf();
+    setActive('me');
   }
 
   function walkTo(id){
@@ -118,9 +117,17 @@ export function initKonaShell({ profile, settings, enter }) {
   shell.querySelector('[data-tab=garage]').onclick=garage;
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
+  shell.querySelector('[data-user-studio]').onclick=me;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)close();});
 
-  const applyTheme=p=>applyBrandMode(p?.appearance||'auto');
-  applyTheme(profile?.get?.()); profile?.subscribe?.(applyTheme);
+  const userMenu=shell.querySelector('[data-user-studio]');
+  const syncUserMenu=p=>{
+    applyBrandMode(p?.appearance||'auto');
+    if(userMenu){
+      userMenu.style.setProperty('--user-accent',p?.avatar||'#e8471c');
+      userMenu.querySelector('span').textContent=(p?.name||'Me').trim().split(/\s+/)[0].slice(0,12)||'Me';
+    }
+  };
+  syncUserMenu(profile?.get?.()); profile?.subscribe?.(syncUserMenu);
   return { now, raceSelf, garage, plan, me, explore, collection, close };
 }

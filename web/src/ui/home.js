@@ -2,7 +2,7 @@
 // Home is the shell's navigation surface. Race Self is a deep experience entered explicitly.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
-import { AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
+import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
@@ -10,7 +10,7 @@ const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/8
 
 function avatarPreview(styleInput){
   const s=normaliseAvatarStyle(styleInput);
-  const skin=AVATAR_COLORS.skin[s.skin], hair=AVATAR_COLORS.hair[s.hair], top=AVATAR_COLORS.top[s.top], bottoms=AVATAR_COLORS.bottoms[s.bottoms], shoes=AVATAR_COLORS.shoes[s.shoes];
+  const skin=avatarItem(s,'skin').color, hair=avatarItem(s,'hair').color, top=avatarItem(s,'top').color, bottoms=avatarItem(s,'bottoms').color, shoes=avatarItem(s,'shoes').color;
   return '<div class="home-avatar" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
     '<i class="ha-hair"></i><i class="ha-head"></i><i class="ha-body"></i><i class="ha-arm l"></i><i class="ha-arm r"></i><i class="ha-leg l"></i><i class="ha-leg r"></i><i class="ha-shoe l"></i><i class="ha-shoe r"></i>'+
   '</div>';
@@ -37,7 +37,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
         '<p>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</p>'+
-        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open Race Self <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Your setup</button></div>'+
+        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open User Studio <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Your gear</button></div>'+
       '</div>'+
     '</section>'+
     '<section class="home-postcard artifact artifact--photo">'+
