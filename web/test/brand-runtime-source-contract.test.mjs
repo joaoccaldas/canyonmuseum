@@ -51,7 +51,8 @@ test('landing index stays a thin consumer shell and world styles remain lazy', (
   assert.match(landingTemplate, /web\/styles\/components\.css/);
   assert.match(entry, /loadStyle\('web\/styles\/hall-web\.css','museum'\)/);
   assert.match(entry, /loadStyle\('web\/styles\/hall-mobile\.css','museum'\)/);
-  assert.match(entry, /link\.disabled=!enabled/);
+  assert.match(entry, /link\.disabled=disabled/);
+ assert.match(entry, /link\.sheet\)link\.sheet\.disabled=disabled/);
   assert.match(entry, /kona-panel-open/);
   assert.doesNotMatch(landingBuild, /packCss/);
   assert.doesNotMatch(harden, /<style id="design-system">/);
