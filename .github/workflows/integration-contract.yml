@@ -5,6 +5,7 @@ on:
     branches:
       - feat/integration-platform-v1-rebased-20260930
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
