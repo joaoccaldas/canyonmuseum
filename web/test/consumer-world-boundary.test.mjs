@@ -6,6 +6,8 @@ const template=fs.readFileSync(new URL('../landing.template.html',import.meta.ur
 const world=fs.readFileSync(new URL('../world-shell.template.html',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const build=fs.readFileSync(new URL('../build_landing.mjs',import.meta.url),'utf8');
+const install=fs.readFileSync(new URL('../src/ui/install.js',import.meta.url),'utf8');
+const appShell=fs.readFileSync(new URL('../src/app-shell.js',import.meta.url),'utf8');
 
 test('consumer index template contains no museum runtime DOM',()=>{
   for(const id of ['hall','rail','card','joy','tourPill','coach','fallback','nearby']) {
@@ -13,7 +15,8 @@ test('consumer index template contains no museum runtime DOM',()=>{
     assert.match(world,new RegExp('id=["\\\']'+id+'["\\\']'));
   }
   assert.match(template,/id="intro"/);
-  assert.match(template,/id="appSheet"/);
+  assert.doesNotMatch(template,/id="appSheet"|id="updateBar"/);
+  assert.match(install,/ensureInstallSheet/);assert.match(appShell,/ensureUpdateBar/);
   assert.match(template,/app\/kona-core\.js/);
   assert.doesNotMatch(template,/hall-web\.css|hall-mobile\.css/);
 });
