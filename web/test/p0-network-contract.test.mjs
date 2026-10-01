@@ -16,8 +16,9 @@ test('hall runtime is requested only inside explicit openMuseum function',()=>{
  assert.ok(entry.slice(start,end).includes("loadScript('app/hall.js')"));
 });
 
-test('Entry opens User Studio without a quest gate',()=>{
- assert.match(entry,/buildButton\?\.addEventListener\('click', \(\) => enterApp\(\)\)/);
+test('first entry starts lightweight avatar registration before the app',()=>{
+ assert.match(entry,/buildButton\?\.addEventListener\('click', \(\) => paintQuest\('avatar'\)\)/);
+ assert.match(entry,/renderAvatarRegistration/);
  assert.match(entry,/setEntryMode\('quest'\)/);
 });
 
