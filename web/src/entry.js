@@ -213,9 +213,9 @@ const buildButton = document.getElementById('buildSelf');
 if (returningVisit) {
   const lede = document.querySelector('#intro .lede');
   const note = document.querySelector('#intro .kona-note');
-  if (lede) lede.textContent = existingIdentity.goal?.label
+  if (lede) lede.textContent = existingIdentity?.goal?.label
     ? `Your Kona is saved. Next: ${existingIdentity.goal.label}.`
-    : 'Your Kona is saved. Pick up where you left off.';
+    : 'Your athlete is saved. Pick up where you left off.';
   if (buildButton) {
     buildButton.textContent = 'Continue your Kona';
     buildButton.addEventListener('click', () => enterApp());
