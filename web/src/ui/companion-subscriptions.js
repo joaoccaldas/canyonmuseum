@@ -2,7 +2,7 @@ import {PUBLIC_SUPABASE_URL,PUBLIC_SUPABASE_KEY} from '../cloud/supabase-lite.js
 import {readStorage,writeStorage} from '../engine/storage.js';
 import {safeURL} from './companion-data.js';
 
-export const supportedPublishers=['Slowtwitch','Triathlon Magazine','Big Island Now','Hawaiʻi DOT','TRI247','Triathlete','220 Triathlon','World Triathlon'];
+export const supportedPublishers=['YouTube athlete channels','Slowtwitch','Triathlon Magazine','Big Island Now','Hawaiʻi DOT','TRI247','Triathlete','220 Triathlon','World Triathlon'];
 const endpoint=PUBLIC_SUPABASE_URL+'/functions/v1/companion';
 const readSources=()=>{try{return JSON.parse(readStorage('companionSources')||'{}');}catch{return {};}};
 const readTravel=()=>{try{return JSON.parse(readStorage('companionTravel')||'[]');}catch{return [];}};
