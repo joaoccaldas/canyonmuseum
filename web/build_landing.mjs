@@ -1,6 +1,6 @@
 // Builds the Kona museum landing.
 // Catalogs go to app/museum-data.js. The walkable hall goes to app/hall.js.
-// index.html stays the shell: layout, phone-fit, and the script tags.
+// index.html stays the document + entry shell; runtime behavior and feature styles are external/lazy.
 //   node web/build_landing.mjs
 import { build } from 'esbuild';
 import fs from 'node:fs';
