@@ -1,0 +1,27 @@
+{
+  "id": "specialized-sworks-tt5-study",
+  "type": "helmet",
+  "brand": "Specialized",
+  "model": "S-Works TT 5",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27952,
+  "sha256": "b995d781446b6604c3e6c6f68e040c9c418123d702c967c4a60fa8d4b329e8c7",
+  "asset": "assets/3d/generated/next100/helmet/specialized-sworks-tt5-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

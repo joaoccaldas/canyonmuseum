@@ -1,0 +1,27 @@
+{
+  "id": "stgeorge-703wc-2022-medal-study",
+  "type": "medal",
+  "brand": "Race Archive",
+  "model": "70.3 WC St. George 2022 Medal",
+  "representation": "geometry-study",
+  "room": "bay-st-george",
+  "why": "Adds collectible race-memory objects and timeline decoration",
+  "rarity": "rare",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 616,
+  "bytes": 13396,
+  "sha256": "49c9af41b4f270856e9c853f6406153e7904d3e9803bc509d11f8f34a24b6c4e",
+  "asset": "assets/3d/generated/next100/medal/stgeorge-703wc-2022-medal-study/model.glb",
+  "semantic_parts": [
+    "medallion",
+    "ribbon",
+    "relief"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

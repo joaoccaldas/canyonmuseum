@@ -1,0 +1,25 @@
+{
+  "id": "gear-swimskin-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Race swimskin",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-bay",
+  "why": "Adds swim-to-bike clothing layer",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 88,
+  "bytes": 2844,
+  "sha256": "a59c2bfb0eb61b33c860a95163264634d7525d4e311bc5f63ec0d01208b89cec",
+  "asset": "assets/3d/generated/next100/gear/gear-swimskin-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

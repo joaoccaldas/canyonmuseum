@@ -1,0 +1,26 @@
+{
+  "id": "artifact-kona-vintage-bib",
+  "type": "artifact",
+  "brand": "Race Archive",
+  "model": "Vintage Kona race bib",
+  "representation": "geometry-study",
+  "room": "pier",
+  "why": "Personal race-history object",
+  "rarity": "uncommon",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 88,
+  "bytes": 2844,
+  "sha256": "51c7b02f0d073201d5f5e2d47dba224304391828508c64d4dd184d4d62287c24",
+  "asset": "assets/3d/generated/next100/artifact/artifact-kona-vintage-bib/model.glb",
+  "semantic_parts": [
+    "body",
+    "detail"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "artifact-prototype-aero-fork",
+  "type": "artifact",
+  "brand": "Engineering Archive",
+  "model": "Prototype aero fork",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Makes iteration/prototyping visible",
+  "rarity": "uncommon",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 144,
+  "bytes": 3912,
+  "sha256": "8a16accc320297cf8a1f776f7db8b1ced312aa03f86455f42cbf3dd9bbb9fdff",
+  "asset": "assets/3d/generated/next100/artifact/artifact-prototype-aero-fork/model.glb",
+  "semantic_parts": [
+    "body",
+    "detail"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

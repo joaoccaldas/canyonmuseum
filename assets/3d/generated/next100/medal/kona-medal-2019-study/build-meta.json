@@ -1,0 +1,27 @@
+{
+  "id": "kona-medal-2019-study",
+  "type": "medal",
+  "brand": "KONA Archive",
+  "model": "Finisher Medal \u00b7 2019",
+  "representation": "geometry-study",
+  "room": "pier",
+  "why": "Adds collectible race-memory objects and timeline decoration",
+  "rarity": "rare",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 640,
+  "bytes": 13876,
+  "sha256": "ea86e7b705b26851e2e841ecdc8d2ae10607680ae42189d3d9434d454f3ca142",
+  "asset": "assets/3d/generated/next100/medal/kona-medal-2019-study/model.glb",
+  "semantic_parts": [
+    "medallion",
+    "ribbon",
+    "relief"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

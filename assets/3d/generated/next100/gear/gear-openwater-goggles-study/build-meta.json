@@ -1,0 +1,25 @@
+{
+  "id": "gear-openwater-goggles-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Open-water goggles",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-bay",
+  "why": "Adds swim leg equipment",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 864,
+  "bytes": 18288,
+  "sha256": "3e4f73c327ee4be76b1ca31934ee398b6dd1eac4b14aae5fd7cafb8b39c23ec8",
+  "asset": "assets/3d/generated/next100/gear/gear-openwater-goggles-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

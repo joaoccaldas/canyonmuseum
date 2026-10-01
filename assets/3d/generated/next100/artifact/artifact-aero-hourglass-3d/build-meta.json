@@ -1,0 +1,26 @@
+{
+  "id": "artifact-aero-hourglass-3d",
+  "type": "artifact",
+  "brand": "KONA Original",
+  "model": "Aero hourglass",
+  "representation": "geometry-study",
+  "room": "secret",
+  "why": "Turns existing legendary relic into a physical exhibit",
+  "rarity": "rare",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 288,
+  "bytes": 6832,
+  "sha256": "245ef15eed25a6b99eb9aaf0813881ccd39b7c60c9793cdcc36393fe040acb5f",
+  "asset": "assets/3d/generated/next100/artifact/artifact-aero-hourglass-3d/model.glb",
+  "semantic_parts": [
+    "body",
+    "detail"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

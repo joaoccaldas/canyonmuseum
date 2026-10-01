@@ -1,0 +1,27 @@
+{
+  "id": "lazer-volante-study",
+  "type": "helmet",
+  "brand": "Lazer",
+  "model": "Volante",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27952,
+  "sha256": "a113d92c759397b4068b80316fc5e9cb0a450304dbba41e73e33d2b242c85d96",
+  "asset": "assets/3d/generated/next100/helmet/lazer-volante-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "zone3-aeroforce-x2-study",
+  "type": "trisuit",
+  "brand": "Zone3",
+  "model": "Aeroforce-X II",
+  "representation": "geometry-study",
+  "room": "kona",
+  "why": "Makes athlete identity and championship-room mannequins tangible",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 808,
+  "bytes": 17356,
+  "sha256": "0122ec8b5affdc6198b7a3efdd0d9c1e48cc9075e0cf13f0c841aa44f8386f5c",
+  "asset": "assets/3d/generated/next100/trisuit/zone3-aeroforce-x2-study/model.glb",
+  "semantic_parts": [
+    "torso",
+    "sleeves",
+    "legs",
+    "zipper",
+    "paneling"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

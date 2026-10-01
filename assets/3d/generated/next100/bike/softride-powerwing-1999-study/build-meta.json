@@ -1,0 +1,31 @@
+{
+  "id": "softride-powerwing-1999-study",
+  "type": "bike",
+  "brand": "Softride",
+  "model": "PowerWing 1999",
+  "representation": "geometry-study",
+  "room": "secret",
+  "why": "Rare beam-bike chapter in triathlon history",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 3332,
+  "bytes": 68096,
+  "sha256": "1edc536366e5e93cdce4915afe1e2b82c9c8ee823060f6b9a660458f2403cd84",
+  "asset": "assets/3d/generated/next100/bike/softride-powerwing-1999-study/model.glb",
+  "semantic_parts": [
+    "frame",
+    "rim",
+    "tyre",
+    "saddle",
+    "aerobar",
+    "fork",
+    "crank",
+    "storage"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

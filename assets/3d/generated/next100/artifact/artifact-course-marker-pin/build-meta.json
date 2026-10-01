@@ -1,0 +1,26 @@
+{
+  "id": "artifact-course-marker-pin",
+  "type": "artifact",
+  "brand": "Race Archive",
+  "model": "Course marker pin",
+  "representation": "geometry-study",
+  "room": "bay-kona",
+  "why": "Collectible place marker",
+  "rarity": "rare",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 60,
+  "bytes": 2216,
+  "sha256": "cfb5e48d0a9593f1ff09b4d4aaf9c0ca79eff7c8eb5b2b4140ef6c427da5eb5d",
+  "asset": "assets/3d/generated/next100/artifact/artifact-course-marker-pin/model.glb",
+  "semantic_parts": [
+    "body",
+    "detail"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

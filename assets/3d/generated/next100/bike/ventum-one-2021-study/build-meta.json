@@ -1,0 +1,31 @@
+{
+  "id": "ventum-one-2021-study",
+  "type": "bike",
+  "brand": "Ventum",
+  "model": "One 2021",
+  "representation": "geometry-study",
+  "room": "atlas-against-the-clock-mono",
+  "why": "Beam/monocoque long-course architecture",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 3332,
+  "bytes": 68100,
+  "sha256": "3abac54ce6b50de69236a9b2101488ad11bb131376e84899c4024110016cde6a",
+  "asset": "assets/3d/generated/next100/bike/ventum-one-2021-study/model.glb",
+  "semantic_parts": [
+    "frame",
+    "rim",
+    "tyre",
+    "saddle",
+    "aerobar",
+    "fork",
+    "crank",
+    "storage"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

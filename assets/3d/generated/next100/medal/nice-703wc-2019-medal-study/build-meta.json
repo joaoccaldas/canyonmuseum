@@ -1,0 +1,27 @@
+{
+  "id": "nice-703wc-2019-medal-study",
+  "type": "medal",
+  "brand": "Race Archive",
+  "model": "70.3 WC Nice 2019 Medal",
+  "representation": "geometry-study",
+  "room": "bay-nice",
+  "why": "Adds collectible race-memory objects and timeline decoration",
+  "rarity": "rare",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 624,
+  "bytes": 13556,
+  "sha256": "4297c65279549b906775f353750ae2b8ac00fac04aded7e9c2033ccd5b141c94",
+  "asset": "assets/3d/generated/next100/medal/nice-703wc-2019-medal-study/model.glb",
+  "semantic_parts": [
+    "medallion",
+    "ribbon",
+    "relief"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

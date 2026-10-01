@@ -1,0 +1,25 @@
+{
+  "id": "gear-deep-front-wheel-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Deep front wheel",
+  "representation": "geometry-study",
+  "room": "atlas-against-the-clock-tri",
+  "why": "Wheel depth comparison",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1216,
+  "bytes": 25300,
+  "sha256": "787ad79994696866e4dc7525c0c0cf342aedf55c1fe057a70dc68494c36e5b24",
+  "asset": "assets/3d/generated/next100/gear/gear-deep-front-wheel-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

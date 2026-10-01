@@ -1,0 +1,25 @@
+{
+  "id": "gear-carbon-pedal-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Carbon tri pedal",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Small engineering collectible",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 60,
+  "bytes": 2216,
+  "sha256": "2b381b37367f16209717090dab4773a153a74fe35f165705382776c385cb473d",
+  "asset": "assets/3d/generated/next100/gear/gear-carbon-pedal-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

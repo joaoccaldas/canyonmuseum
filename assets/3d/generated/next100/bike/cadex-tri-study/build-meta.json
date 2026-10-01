@@ -1,0 +1,31 @@
+{
+  "id": "cadex-tri-study",
+  "type": "bike",
+  "brand": "CADEX",
+  "model": "Tri",
+  "representation": "geometry-study",
+  "room": "atlas-against-the-clock-mono",
+  "why": "Rare boundary-pushing monocoque tri concept",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 3296,
+  "bytes": 67380,
+  "sha256": "a6e9ec3e20e76c64804bedc35ef245f95060003ae824fced2895b79930df8598",
+  "asset": "assets/3d/generated/next100/bike/cadex-tri-study/model.glb",
+  "semantic_parts": [
+    "frame",
+    "rim",
+    "tyre",
+    "saddle",
+    "aerobar",
+    "fork",
+    "crank",
+    "storage"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

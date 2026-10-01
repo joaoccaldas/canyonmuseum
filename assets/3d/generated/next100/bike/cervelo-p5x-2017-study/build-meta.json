@@ -1,0 +1,31 @@
+{
+  "id": "cervelo-p5x-2017-study",
+  "type": "bike",
+  "brand": "Cerv\u00e9lo",
+  "model": "P5X 2017",
+  "representation": "geometry-study",
+  "room": "atlas-against-the-clock-mono",
+  "why": "Radical non-traditional long-course architecture",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 3296,
+  "bytes": 67380,
+  "sha256": "5081083747839e96f5322de3eef3bf1d8efb35ef2e42ffe4dfbff1845df0fce7",
+  "asset": "assets/3d/generated/next100/bike/cervelo-p5x-2017-study/model.glb",
+  "semantic_parts": [
+    "frame",
+    "rim",
+    "tyre",
+    "saddle",
+    "aerobar",
+    "fork",
+    "crank",
+    "storage"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}
