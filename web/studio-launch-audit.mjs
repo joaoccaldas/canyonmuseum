@@ -106,6 +106,6 @@ try{
  assert.ok(afterMuseum.hall.length>=2&&afterMuseum.hall.every(Boolean),'museum styles must be disabled on app surfaces');
  assert.match(afterMuseum.homeFont,/Instrument Serif|Georgia/i,'Home editorial typography must survive museum round trip');
  assert.deepEqual(errors,[],'runtime errors');
- report.push({journeys:'avatar persistence, Escape/focus, Passport, Plan, Discover, museum',status:'PASS'});
+ report.push({journeys:'avatar persistence, Escape/focus, Progress, Plan, Discover, 3D World',status:'PASS'});
  console.log(JSON.stringify(report,null,2));
 }finally{fs.writeFileSync(new URL('studio-audit.json',out),JSON.stringify(report,null,2));await browser.close();}
