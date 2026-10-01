@@ -114,12 +114,12 @@ html[data-theme="dark"]{
   overflow:auto;overscroll-behavior:contain;padding:max(18px,env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom))
 }
 .kona-panel[hidden]{display:none!important}
-.kona-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;max-width:760px;margin:0 auto 20px}
+.kona-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;max-width:var(--brand-panel-max,760px);margin:0 auto 20px}
 .kona-panel-head small{display:block;color:var(--kona-cyan);font:700 10px/1.2 var(--sans);letter-spacing:.22em}
 .kona-panel-head h2{font:400 clamp(42px,12vw,64px)/.95 var(--serif);margin:8px 0 0;letter-spacing:-.02em}
 .kona-panel-head button{width:48px;height:48px;min-width:48px;min-height:48px;border:1px solid var(--kona-line);border-radius:50%;background:var(--kona-surface);color:var(--kona-text);font-size:25px}
-.kona-panel-body{max-width:760px;margin:auto;display:grid;gap:14px}
-.kona-hero-card,.kona-section{border:1px solid var(--kona-line);border-radius:24px;background:var(--kona-surface);box-shadow:0 18px 50px -32px rgba(0,0,0,.4)}
+.kona-panel-body{max-width:var(--brand-panel-max,760px);margin:auto;display:grid;gap:14px}
+.kona-hero-card,.kona-section{border:1px solid var(--kona-line);border-radius:var(--brand-card-radius,20px);background:var(--kona-surface);box-shadow:0 18px 50px -32px rgba(0,0,0,.4)}
 .kona-hero-card{position:relative;overflow:hidden;padding:24px;min-height:235px;display:flex;flex-direction:column;justify-content:flex-end;
   background:
     linear-gradient(0deg,color-mix(in srgb,var(--kona-surface-strong) 96%,transparent) 0%,color-mix(in srgb,var(--kona-surface-strong) 50%,transparent) 52%,transparent 100%),
@@ -181,3 +181,24 @@ html[data-theme="dark"]{
 #updateBar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #updateBar button,#updateBar a.go{background:linear-gradient(100deg,#ff3d8e,#5fd8d3);color:#12181d;font-weight:700;border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center}
 #updateBar .later{background:rgba(255,255,255,.12);color:#fbf9f5;width:36px;padding:0;justify-content:center}
+
+/* RC5 canonical consumer component grammar */
+.kona-panel{padding-inline:max(var(--brand-mobile-gutter),env(safe-area-inset-left));}
+.kona-panel-head,.kona-panel-body{width:min(100%,var(--brand-panel-max));}
+.kona-hero-card,.kona-section,.race-card,.kona-item-card{
+  border-color:var(--brand-line);
+  background:var(--brand-surface-glass-strong);
+  box-shadow:var(--artifact-shadow);
+}
+.kona-section{border-radius:var(--brand-card-radius);}
+.kona-primary,.btn,.quest-choice,.kona-list button,.kona-list a{min-height:var(--brand-touch)}
+.kona-list article,.kona-timeline article{gap:var(--brand-space-2)}
+@media(max-width:760px),(pointer:coarse){
+  .kona-panel{padding-inline:var(--brand-mobile-gutter);padding-top:max(12px,env(safe-area-inset-top));}
+  .kona-panel-head{margin-bottom:12px}
+  .kona-panel-head h2{font-size:clamp(34px,10vw,48px)}
+  .kona-panel-body{gap:10px}
+  .kona-hero-card{min-height:170px;padding:18px}
+  .kona-hero-card h3{font-size:clamp(32px,9vw,44px)}
+  .kona-section{padding:14px}
+}
