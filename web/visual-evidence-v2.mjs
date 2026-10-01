@@ -68,14 +68,14 @@ for(const r of report){
  if(!['landing','onboarding','reveal'].includes(r.state) && r.metrics.introVisible) violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
  if(r.state==='onboarding' && !/Why are you here/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/onboarding: onboarding question missing`);
  if(r.state==='reveal' && !/This is your Kona|Enter KONA/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/reveal: payoff missing`);
- if(r.state==='home' && !/YOUR RACE SELF|Something worth doing today|What matters next|Open Race Self/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: calm Home content missing`);
- if(r.state==='home' && r.personal3DRequests.length) violations.push(`${r.viewport}/${r.theme}/home: personal 3D loaded before explicit Race Self entry`);
+ if(r.state==='home' && !/YOUR RACE SELF|Something worth doing today|What matters next|Open User Studio/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/home: calm Home content missing`);
+ if(r.state==='home' && r.personal3DRequests.length) violations.push(`${r.viewport}/${r.theme}/home: personal 3D loaded before explicit User Studio entry`);
  if(r.state==='race-self' && !/RACE SELF|Customize|Bike|Races|Settings/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/race-self: contextual Race Self content missing`);
  if(r.state==='race-self' && /3D World|Collection|Games|Garage|Discover/.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/race-self: duplicate global navigation leaked into Race Self`);
  if(r.state==='garage' && !/Garage|Your equipment|Mine|Dreaming|Try/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/garage: no Garage content detected`);
  if(r.viewport!=='desktop' && ['home','garage'].includes(r.state) && r.metrics.smallTargets.length) violations.push(`${r.viewport}/${r.theme}/${r.state}: touch targets below 48px: ${r.metrics.smallTargets.map(x=>x.text||x.tag).join(', ')}`);
  if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);
- if(r.state==='me' && !/Me|Passport|XP|Credits/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: no Me/Passport content detected`);
+ if(r.state==='me' && !/USER STUDIO|Avatar|Bike|Gear|Races|Passport|Settings/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: Me does not resolve to User Studio`);
 }
 if(violations.length){console.error(violations.join('\n'));process.exitCode=1}
 console.log(`visual evidence: ${report.length} captures, ${violations.length} blocking violations`);
