@@ -31,6 +31,11 @@ Statuses:
 | EN + PT-BR locale contract | Market expansion | NOW (foundation only) | Stable ids/localization policy can land safely; translated public URLs wait until content exists. |
 | Full PT-BR UI/content | Explore + market launch | NEXT | Needs locale extraction from runtime strings and translation QA first. |
 | Daily/weekly Kona challenges | Collect + Return | NEXT | Depends on one canonical Passport state model. |
+| Room Totems + themed doors | Explore + Collect + Return | NEXT | Canonical room-access object replaces abstract level checks after launch; UI/3D/map consume one grant. |
+| Three-day Door Guess | Collect + Return + Community | NEXT | Structured deterministic guessing can award bounded early access without turning free text into opaque competitive scoring. |
+| 100-Find seasonal ranking | Collect + Return + Community | NEXT | Requires server-authoritative competitive events, anti-farming and a minimum real population before global rank appears. |
+| Athlete / brand Totem drops | Explore + Collect + Partnership | LATER | Valuable after canonical Totem/EventGrant contracts and disclosure/fairness rules are live. |
+| The Intern feed voice | Discover + Return | NEXT | Adds a stable, source-grounded editorial character to What Happens in Kona; serious/safety items override personality. |
 | Garage for multiple saved builds | Customize + Return + Share | NEXT | My Kona Setup V0 proves one composed race object first; a multi-build Garage should reuse that contract after Passport/profile consolidation. |
 | One additional bike-brand wing | Explore + platform proof | NEXT | Must prove brand #2 can be data-driven before scaling brands. |
 | Helmets collection/configurator | Collect + Customize | NEXT | Best first equipment category after item contract is stable. |
