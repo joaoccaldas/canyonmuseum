@@ -225,7 +225,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   const showProgress=async()=>{
     drawerKicker.textContent='USER STUDIO · PASSPORT';drawerTitle.textContent='Your progress';
     drawerBody.replaceChildren();
-    await renderProgressSurface(drawerBody,{settings});
+    await renderProgressSurface(drawerBody,{settings,admin:isAdmin});
     if(drawer.hidden)openDrawer();
   };
 
