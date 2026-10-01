@@ -21,6 +21,7 @@ try{
  assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
  await page.waitForSelector('.registration-avatar');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'avatar registration must not overflow horizontally');
  assert.match(await page.$eval('.registration-avatar',e=>e.textContent),/TRISUIT LAYOUT/i,'first visit begins with Race Self customization');
  await page.click('[data-reg-archetype="aero"]');
  await page.click('[data-reg-trisuit="aero-panel"]');
@@ -28,6 +29,7 @@ try{
  await page.waitForSelector('[data-set="intent"]');
  await page.click('[data-set="intent"]');
  await page.waitForSelector('[data-race-continue]');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'race-card registration step must not overflow');
  await page.click('[data-race-continue]');
  await page.waitForSelector('[data-set="bikeId"]');
  await page.click('[data-set="bikeId"]');
@@ -45,6 +47,7 @@ try{
  await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
  assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'personal 3D loads only after entering Me/User Studio');
  await page.click('[data-race-self-action="customize"]');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'avatar customization drawer must not overflow');
  await page.click('[data-avatar-archetype="renegade"]');
  await page.keyboard.press('Escape');
  await page.reload({waitUntil:'domcontentloaded'});
