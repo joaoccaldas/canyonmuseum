@@ -135,6 +135,20 @@ export function applyEvent(state, event) {
   if (credits) base.ledger.push({ id, delta: credits, reason: event.type });
   if (discovery && !base.discoveries.includes(discovery)) base.discoveries.push(discovery);
   if (event.discovery && !base.discoveries.includes(event.discovery)) base.discoveries.push(String(event.discovery));
+  const completedCollections=[];
+  for(const collection of COLLECTIONS){
+    const completionId='collection-complete:'+collection.id;
+    if(base.seen.includes(completionId))continue;
+    const required=Number(collection.required)||1;
+    if(collectionCount(base,collection.id)<required)continue;
+    base.seen.push(completionId);
+    const reward=collection.reward||{};
+    const bonusXp=Math.max(0,Number(reward.xp)||0),bonusCredits=Math.max(0,Number(reward.credits)||0);
+    base.xp+=bonusXp;
+    if(bonusCredits)base.ledger.push({id:completionId,delta:bonusCredits,reason:'COLLECTION_COMPLETED'});
+    if(reward.badge&&!base.badges.includes(reward.badge))base.badges.push(reward.badge);
+    completedCollections.push({id:collection.id,xp:bonusXp,credits:bonusCredits,badge:reward.badge||null});
+  }
   withLevel(base);
   const opened = [];
   for (const unlock of UNLOCKS) {
@@ -146,7 +160,7 @@ export function applyEvent(state, event) {
   }
   base.history.push({ id, type: event.type, xp, credits });
   if (base.history.length > 200) base.history.splice(0, base.history.length - 200);
-  return { state: base, granted: { id, xp, credits, unlocks: opened } };
+  return { state: base, granted: { id, xp, credits, unlocks: opened, collections: completedCollections } };
 }
 
 export function migratePassport({ passport = null, finds = [] } = {}) {
