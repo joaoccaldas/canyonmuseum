@@ -54,6 +54,8 @@ async function capture(vp,state,theme){
      const fn={discover:'explore',garage:'garage',plan:'plan',feed:'feed',travel:'travel'}[state];
      const switched=await p.evaluate(async fn=>{const shell=window.__konaShell;if(!shell||typeof shell[fn]!=='function')return false;await shell[fn]();return true;},fn);
      if(!switched)throw new Error('could not enter requested state: '+state);
+     if(state==='feed')await p.waitForFunction(()=>document.querySelector('.companion-story,.companion-empty'),{timeout:15000});
+     if(state==='travel')await p.waitForSelector('.companion-arrival',{timeout:15000});
    }
  }
  await p.evaluate(()=>document.fonts.ready);
