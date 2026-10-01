@@ -4,7 +4,7 @@ body.entry-quest .kona-bottom-nav{display:none!important}
 body.entry-landing #intro,
 body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!important}
 #intro.kona-entry{
-  min-height:100dvh;isolation:isolate;overflow:hidden;
+  min-height:100vh;min-height:100dvh;isolation:isolate;overflow:hidden;
   background:var(--brand-bg,#071116);color:#f8f5ef;
   padding:max(22px,env(safe-area-inset-top)) max(20px,4vw) max(20px,env(safe-area-inset-bottom))
 }
@@ -13,7 +13,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry::before{content:"";position:absolute;inset:0;z-index:-3;background:linear-gradient(90deg,rgba(4,12,17,.94) 0%,rgba(4,12,17,.82) 34%,rgba(4,12,17,.36) 62%,rgba(4,12,17,.60) 100%)}
 #intro.kona-entry::after{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,rgba(7,17,22,.06),rgba(7,17,22,.14) 44%,rgba(7,17,22,.88))}
 #intro.kona-entry .intro-inner{
-  width:min(100%,1320px);min-height:calc(100dvh - 44px);margin:auto;
+  width:min(100%,1320px);min-height:calc(100vh - 44px);min-height:calc(100dvh - 44px);margin:auto;
   display:grid;grid-template-columns:minmax(0,.92fr) minmax(420px,1.08fr);grid-template-areas:"copy product" "actions product";
   gap:0 clamp(30px,5vw,76px);align-items:center
 }
