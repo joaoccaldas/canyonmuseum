@@ -12,6 +12,7 @@
   --fs-title:clamp(28px,1.6vw + 18px,46px); --fs-display:clamp(40px,4.5vw + 16px,108px);
   --lh-body:1.62; --radius-s:10px; --radius-m:14px; --radius-l:22px;
 }
+[hidden]{display:none!important}
 html{font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 body{font-family:var(--sans)}
 button,input,select,textarea{font-family:inherit}
