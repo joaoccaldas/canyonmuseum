@@ -8,7 +8,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { buildPier, pierWalkable, PIER, ordinal } from './pier.js';
-import { buildKonaRaceCenter, konaCenterWalkable, KONA_CENTER_BOUNDS } from './kona-center.js';
+import { buildKonaRaceCenter, konaCenterWalkable, KONA_CENTER_BOUNDS, KONA_CENTER_OVERVIEW } from './kona-center.js';
 import { initAppShell } from './app-shell.js';
 import { buildHalloween, hweenWalkable, HDOOR, HROOM } from './halloween.js';
 import { buildSanctuary, sanctuaryWalkable, SDOOR, SROOM } from './sanctuary.js';
@@ -880,7 +880,8 @@ heritage.forEach((p, i) => {
 
 // ------------------------------------------------------------------ the Kona Pier: Kona by Year
 const pier = KY ? buildPier({ scene, data: KY, lettering, canvasTex, M, WYLD, FONT, SERIF, lite, coarse, pickables, obstacles }) : null;
-const konaCenter = KONA_CENTER_DATA ? buildKonaRaceCenter({ scene, data: KONA_CENTER_DATA, lettering, FONT, SERIF, lite, pickables, obstacles }) : null;
+let konaCenter = null;
+const ensureKonaCenter = () => konaCenter || (konaCenter = buildKonaRaceCenter({ scene, data: KONA_CENTER_DATA, lettering, FONT, SERIF, lite, pickables, obstacles }));
 // ------------------------------------------------------------------ Lava Night: the Halloween room by the entrance
 const hween = buildHalloween({ scene, canvasTex, lettering, lightPool, basaltTex, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x0 });
 hall.add(hween.sign);
@@ -1470,7 +1471,7 @@ $('railInner').innerHTML = PIECES.map((p, i) => `<button class="chip${p.glb ? ''
 if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona" data-room="kona" aria-label="Kona Champions room"><span class="n">K</span><span><small>${KONA.titles.length} TITLES</small><b>Kona Champions</b></span></button>`);
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
-if (konaCenter) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona-center" data-room="kona-center" aria-label="Kona Race Center athlete orientation"><span class="n">◎</span><span><small>2026 · ATHLETE VIEW</small><b>Kona Race Center</b></span></button>`);
+if (KONA_CENTER_DATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip kona-center" data-room="kona-center" aria-label="Kona Race Center athlete orientation"><span class="n">◎</span><span><small>2026 · ATHLETE VIEW</small><b>Kona Race Center</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
 for (const r of [...brandRooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip brand" data-room="${esc(r.desc.id)}" aria-label="${esc(r.desc.name)}"><span class="n" style="background:${esc(r.desc.theme?.accent || '#c9a13b')};-webkit-background-clip:text;background-clip:text;color:transparent">${esc(r.desc.name.slice(0, 1))}</span><span><small>${r.products.length} PRODUCT${r.products.length > 1 ? 'S' : ''}</small><b>${esc(r.desc.name)}</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
@@ -1482,9 +1483,9 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
   const AREA_COLOR = { hall: '#eadfca', sanctuary: '#d7c7e6', hween: '#f0a86c', kona: '#e2b27c', wyld: '#ffc4dd', pier: '#cfe4e2', stair: '#dcd6cb', nave: '#ece6da', ...Object.fromEntries(brandRooms.map(r => [r.desc.id, r.desc.theme?.accent || '#c9a13b'])) };
   const R = (id, name, sub, rect, floor, color, extra = {}) => ({ id, name, sub, x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1, floor, color, ...extra });
   const liveAreas = [
-    ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), ...(konaCenter ? ['kona-center'] : []), 'stair', 'nave'].map(id => {
-      const w = WORDS[id], rect = { hall: HALL, sanctuary: SROOM, hween: HROOM, kona: ROOM, wyld: WROOM, pier: pier && { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, 'kona-center': konaCenter && KONA_CENTER_BOUNDS, stair: { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, nave: { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 } }[id];
-      return R(id, id==='kona-center'?'Kona Race Center':(w?.short || id), id==='kona-center'?'Pier · transition · Aliʻi finish · hot corner':(w?.sub || ''), rect, w?.floor || 'ground', id==='kona-center'?'#59bad4':AREA_COLOR[id], id === 'stair' || id === 'nave' ? { layer: 0 } : (id==='kona-center'?{overview:konaCenter?.overview}:{}));
+    ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), ...(KONA_CENTER_DATA ? ['kona-center'] : []), 'stair', 'nave'].map(id => {
+      const w = WORDS[id], rect = { hall: HALL, sanctuary: SROOM, hween: HROOM, kona: ROOM, wyld: WROOM, pier: pier && { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, 'kona-center': KONA_CENTER_DATA && KONA_CENTER_BOUNDS, stair: { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, nave: { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 } }[id];
+      return R(id, id==='kona-center'?'Kona Race Center':(w?.short || id), id==='kona-center'?'Pier · transition · Aliʻi finish · hot corner':(w?.sub || ''), rect, w?.floor || 'ground', id==='kona-center'?'#59bad4':AREA_COLOR[id], id === 'stair' || id === 'nave' ? { layer: 0 } : (id==='kona-center'?{overview:KONA_CENTER_OVERVIEW}:{}));
     }),
     ...brandRooms.map(r => R(r.desc.id, r.desc.name, r.desc.kicker || '', r.bounds, 'ground', r.desc.theme?.accent || '#c9a13b')),
     ...galleries.bays.map(b => R('bay-' + b.id, b.title, b.sub, { x0: 8.4, x1: 14.8, z0: b.z - 1.8, z1: b.z + 1.8 }, 'upper', b.floor, { layer: 1, ink: /^#(1|0)/.test(b.floor) ? '#fbf9f5' : '#12181d', kind: 'bay' })),
@@ -1496,6 +1497,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
 
   function prepareRoom(id){
     if(id==='pier'){pier?.load?.();loadPierBike();}
+    else if(id==='kona-center'){ensureKonaCenter();}
     else if(id==='hween') loadHweenBike();
     else if(brandRooms.some(r=>r.desc.id===id)) loadBrand();
   }
