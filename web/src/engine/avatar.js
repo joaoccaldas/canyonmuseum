@@ -17,12 +17,6 @@ export const AVATAR_PRESENTATIONS=Object.freeze([
   Object.freeze({id:'prefer-not',label:'Prefer not to answer'}),
 ]);
 export const AVATAR_PRESENTATION_IDS=Object.freeze(AVATAR_PRESENTATIONS.map(x=>x.id));
-export const AVATAR_PRESENTATIONS=Object.freeze([
-  Object.freeze({id:'male',label:'Male'}),
-  Object.freeze({id:'female',label:'Female'}),
-  Object.freeze({id:'prefer-not',label:'Prefer not to answer'}),
-]);
-export const AVATAR_PRESENTATION_IDS=Object.freeze(AVATAR_PRESENTATIONS.map(x=>x.id));
 
 export const AVATAR_SLOTS=Object.freeze(['skin','hair','trisuit','top','bottoms','shoes','accessory','tattoo']);
 
@@ -152,9 +146,6 @@ export function patchAvatarItem(styleInput,slot,patch={}){
 
 export function setAvatarArchetype(styleInput,archetype){
   return normaliseAvatarStyle({...normaliseAvatarStyle(styleInput),archetype});
-}
-export function setAvatarPresentation(styleInput,presentation){
-  return normaliseAvatarStyle({...normaliseAvatarStyle(styleInput),presentation});
 }
 export function setAvatarPresentation(styleInput,presentation){
   return normaliseAvatarStyle({...normaliseAvatarStyle(styleInput),presentation});
