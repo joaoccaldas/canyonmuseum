@@ -1,14 +1,12 @@
-// ui/home.js — calm daily/personal Home. No Three.js or world runtime.
-// Home is the shell's navigation surface. Race Self is a deep experience entered explicitly.
+// ui/home.js: calm daily/personal Home. No Three.js or world runtime.
+// Home is the shell's navigation surface. Race Self is entered explicitly.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
-import { ensureProgression } from '../engine/progression.js';
+import { ensureProgression, applyStoredEvent, readProgression } from '../engine/progression.js';
 import { discoveryHorizon } from '../engine/discovery.js';
-import { applyStoredEvent, ensureProgression } from '../engine/progression.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
 const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/86400000);return Number.isFinite(n)?Math.max(0,n):null};
 
 function avatarPreview(styleInput){
@@ -32,10 +30,10 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
   const races=Array.isArray(snapshot.race_history)?snapshot.race_history.length:0;
   let progression={level:1,level_name:'Visitor'};try{progression=ensureProgression();}catch(_){ }
   const horizon=discoveryHorizon(progression,4);
-  const nudges=['The wind is doing something suspicious.','A bike in the archive is judging your tyre pressure.','Someone in Kona just said “easy spin”. Interpret carefully.','Today’s challenge: learn one thing you did not come here for.'];
+  const nudges=['A bike in the archive is judging your tyre pressure.','Imagine an easy spin. Now imagine agreeing on what easy means.','Today’s detour: learn one thing you did not come here for.','An empty display shelf is a perfectly respectable beginning.'];
   const dayKey=new Date().toISOString().slice(0,10),nudge=nudges[Math.abs([...dayKey].reduce((a,c)=>a+c.charCodeAt(0),0))%nudges.length];
   const nudgesEnabled=!!profile?.get?.().notifications?.enabled;
-  const horizonHtml=horizon.map(item=>'<article class="home-horizon-card '+(item.unlocked?'is-revealed':'is-locked')+'"><div class="home-horizon-silhouette"><span>'+esc(item.silhouette)+'</span></div><small>'+(item.unlocked?'UNLOCKED':'LEVEL '+item.level)+'</small><h4>'+esc(item.unlocked?item.reveal:item.tease)+'</h4><p>'+(item.unlocked?'Now visible in KONA.':'Almost visible. Keep exploring.')+'</p></article>').join('');
+  const horizonHtml=horizon.map(item=>'<article class="home-horizon-card '+(item.unlocked?'is-revealed':'is-locked')+'"><div class="home-horizon-silhouette"><span>'+esc(item.silhouette)+'</span></div><small>'+(item.unlocked?'MILESTONE REACHED':'LEVEL '+item.level)+'</small><h4>'+esc(item.unlocked?item.reveal:item.tease)+'</h4><p>Reward preview. Availability is shown in Progress.</p></article>').join('');
 
   root.innerHTML=
     '<section class="kona-hero-card artifact artifact--hero home-today">'+
@@ -53,7 +51,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
     '<section class="home-postcard artifact artifact--photo">'+
       '<div class="home-postcard-photo" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" loading="lazy" decoding="async"></div>'+
       '<div class="home-postcard-copy"><small>KAILUA-KONA · HAWAIʻI</small><h3>Not just a race.</h3><p>Roads, lava, people, machines and strange little details worth finding.</p><button type="button" class="kona-link-btn" data-home-discover>Discover something →</button></div>'+
-    '</section>'+ 
+    '</section>'+
     (nudgesEnabled?'<section class="home-nudge artifact artifact--label"><div><small>KONA NUDGE · +5 XP</small><h3>'+esc(nudge)+'</h3><p>No urgency. No streak panic. Just a small reason to look around.</p></div><button type="button" class="kona-link-btn" data-home-nudge>Read it. Apparently this counts.</button></section>':'')+
     '<section class="home-horizon artifact artifact--label"><div class="home-horizon-head"><div><small>OVER THE HORIZON</small><h3>There is always something else.</h3></div><span class="t-data">LVL '+esc(progression.level)+'</span></div><div class="home-horizon-grid">'+horizonHtml+'</div><p class="t-hand">Curiosity is a training plan too.</p></section>';
 
@@ -61,5 +59,16 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
   root.querySelector('[data-home-garage]')?.addEventListener('click',()=>openGarage?.());
   root.querySelector('[data-home-discover]')?.addEventListener('click',()=>openDiscover?.());
   root.querySelector('[data-home-plan]')?.addEventListener('click',()=>openPlan?.());
-  root.querySelector('[data-home-nudge]')?.addEventListener('click',e=>{const id='nudge:'+dayKey,already=ensureProgression().seen.includes(id);applyStoredEvent({type:'NUDGE_OPENED',id,subject:dayKey});e.currentTarget.textContent=already?'Already collected. Still weird.':'5 XP. That was suspiciously easy.';e.currentTarget.disabled=true;});
+  root.querySelector('[data-home-nudge]')?.addEventListener('click',e=>{
+    const button=e.currentTarget,id='nudge:'+dayKey;
+    try {
+      const already=ensureProgression().seen.includes(id);
+      applyStoredEvent({type:'NUDGE_OPENED',id,subject:dayKey});
+      if(!readProgression()?.seen.includes(id)) throw new Error('save-failed');
+      button.textContent=already?'Already collected. Still weird.':'5 XP. Saved on this device.';
+      button.disabled=true;
+    } catch {
+      button.textContent='Could not save the reward. Tap to try again.';
+    }
+  });
 }

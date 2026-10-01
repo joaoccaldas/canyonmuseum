@@ -1,39 +1,49 @@
-// engine/race-history.js — user relationships to canonical Race Cards.
-// Physical persistence stays in storage.js; catalog metadata is never duplicated here.
+// Canonical personal race relationships. Metadata stays in the race catalog.
 import { readStorage, writeStorage } from './storage.js';
 
-export const RACE_RELATIONSHIPS=Object.freeze(['completed','registered','interested']);
-const cleanRelation=r=>RACE_RELATIONSHIPS.includes(r)?r:'interested';
-
-export function readRaceHistory(storage=globalThis.localStorage){
-  try{
-    const v=JSON.parse(readStorage('raceHistory',storage)||'[]');
-    return Array.isArray(v)?v.filter(x=>x&&typeof x.race_id==='string').map(x=>({
-      race_id:x.race_id,
-      relationship:cleanRelation(x.relationship),
-      selected_at:typeof x.selected_at==='string'?x.selected_at:null,
-      result:x.result&&typeof x.result==='object'?{
-        finish_time_seconds:Number.isFinite(+x.result.finish_time_seconds)?+x.result.finish_time_seconds:null,
-        bib:x.result.bib==null?null:String(x.result.bib).slice(0,20)
-      }:null
-    })):[];
-  }catch{return[]}
+export const RACE_RELATIONSHIPS = Object.freeze(['completed', 'registered', 'interested']);
+const cleanRelation = value => RACE_RELATIONSHIPS.includes(value) ? value : 'interested';
+const cleanId = value => typeof value === 'string' && value.trim().length <= 240 ? value.trim() : '';
+function cleanResult(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const seconds = value.finish_time_seconds;
+  return {
+    finish_time_seconds: seconds != null && seconds !== '' && Number.isFinite(Number(seconds)) && Number(seconds) >= 0 ? Number(seconds) : null,
+    bib: value.bib == null ? null : String(value.bib).slice(0, 20),
+  };
 }
-export function writeRaceHistory(rows,storage=globalThis.localStorage){
-  const out=[]; const seen=new Set();
-  for(const x of Array.isArray(rows)?rows:[]){
-    if(!x?.race_id||seen.has(x.race_id)) continue;
-    seen.add(x.race_id);
-    out.push({race_id:String(x.race_id),relationship:cleanRelation(x.relationship),selected_at:x.selected_at||new Date().toISOString(),result:x.result||null});
+function normalize(rows) {
+  const out = [], seen = new Set();
+  for (const row of Array.isArray(rows) ? rows : []) {
+    const id = cleanId(row?.race_id);
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    out.push({race_id: id, relationship: cleanRelation(row.relationship), selected_at: typeof row.selected_at === 'string' ? row.selected_at : null, result: cleanResult(row.result)});
   }
-  writeStorage('raceHistory',JSON.stringify(out),storage);
   return out;
 }
-export function setRaceRelationship(raceId,relationship,storage=globalThis.localStorage){
-  const rows=readRaceHistory(storage).filter(x=>x.race_id!==raceId);
-  rows.push({race_id:raceId,relationship:cleanRelation(relationship),selected_at:new Date().toISOString(),result:null});
-  return writeRaceHistory(rows,storage);
+export function readRaceHistory(storage = globalThis.localStorage) {
+  try { return normalize(JSON.parse(readStorage('raceHistory', storage) || '[]')); }
+  catch { return []; }
 }
-export function removeRace(raceId,storage=globalThis.localStorage){
-  return writeRaceHistory(readRaceHistory(storage).filter(x=>x.race_id!==raceId),storage);
+export function writeRaceHistory(rows, storage = globalThis.localStorage) {
+  const out = normalize(rows).map(row => ({...row, selected_at: row.selected_at || new Date().toISOString()}));
+  if (!writeStorage('raceHistory', JSON.stringify(out), storage)) {
+    throw new Error('Could not save your races on this device. Your previous race cards were kept.');
+  }
+  return out;
+}
+export function setRaceRelationship(raceId, relationship, storage = globalThis.localStorage) {
+  const id = cleanId(raceId);
+  if (!id) throw new Error('Choose a valid race.');
+  if (!RACE_RELATIONSHIPS.includes(relationship)) throw new Error('Choose Completed, Registered or Interested.');
+  const rows = readRaceHistory(storage);
+  const existing = rows.find(row => row.race_id === id);
+  if (existing?.relationship === relationship) return rows;
+  // Changing a label must not erase the athlete's time, bib or original selection date.
+  if (existing) return writeRaceHistory(rows.map(row => row.race_id === id ? {...row, relationship} : row), storage);
+  return writeRaceHistory([...rows, {race_id: id, relationship, selected_at: new Date().toISOString(), result: null}], storage);
+}
+export function removeRace(raceId, storage = globalThis.localStorage) {
+  return writeRaceHistory(readRaceHistory(storage).filter(row => row.race_id !== raceId), storage);
 }

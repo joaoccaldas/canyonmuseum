@@ -6,7 +6,6 @@ test('P0 entry has no static Three.js or GLB dependency',()=>{
  assert.equal(/three(?:\.module)?\.js|from ['"]three/.test(entry+html),false);
  assert.equal(/\.glb['"]/.test(entry+html),false);
 });
-
 test('hall runtime is requested only inside explicit openMuseum function',()=>{
  const occurrences=[...entry.matchAll(/loadScript\('app\/hall\.js'\)/g)];
  assert.equal(occurrences.length,1);
@@ -15,13 +14,13 @@ test('hall runtime is requested only inside explicit openMuseum function',()=>{
  assert.ok(start>=0&&end>start);
  assert.ok(entry.slice(start,end).includes("loadScript('app/hall.js')"));
 });
-
-test('first entry starts lightweight avatar registration before the app',()=>{
- assert.match(entry,/buildButton\?\.addEventListener\('click', \(\) => paintQuest\('avatar'\)\)/);
+test('first entry starts optional lightweight questions before avatar setup',()=>{
+ assert.match(entry,/buildButton\?\.addEventListener\('click', \(\) => paintQuest\('questions'\)\)/);
+ assert.match(entry,/renderOnboardingQuestions/);
+ assert.match(entry,/onSkip:\(\)=>paintQuest\('avatar'\)/);
  assert.match(entry,/renderAvatarRegistration/);
  assert.match(entry,/setEntryMode\('quest'\)/);
 });
-
 test('avatar completion enters Home without loading hall runtime',()=>{
  const avatar=entry.slice(entry.indexOf("if(step==='avatar')"),entry.indexOf("if(step==='save')"));
  assert.match(avatar,/enterApp\('home'\)/);
