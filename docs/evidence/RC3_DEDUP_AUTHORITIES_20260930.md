@@ -26,3 +26,6 @@ This evidence-only commit changes no runtime behavior. It triggers browser/relea
 
 Synchronized generated head: `b18a596c71865b0eebfa1999e4d0ff72f007365b`.
 This evidence-only commit triggers the full PR release gates against the synchronized RC3 tree.
+
+Synchronized generated head: `15aa2fba5f3e7eaf9e8b4dde8033c4313ae3287f`.
+Shared hidden-state ownership fixed in consumer CSS. This evidence-only commit triggers final RC3 release verification.
