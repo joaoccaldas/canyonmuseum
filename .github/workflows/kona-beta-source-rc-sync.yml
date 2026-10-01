@@ -28,6 +28,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: generated-sync-${{ inputs.target_ref || github.ref_name }}
@@ -93,3 +94,12 @@ jobs:
           if git diff --cached --quiet; then echo "outputs current"; exit 0; fi
           git commit -m "build: sync deterministic outputs"
           git push origin HEAD:"$TARGET"
+      - name: Certify generated SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ inputs.target_ref || github.ref_name }}
+        run: |
+          for workflow in release-security.yml checks.yml integration-contract.yml app-seal.yml visual-evidence-v2.yml ui-interaction-audit.yml; do
+            echo "dispatching $workflow on $TARGET"
+            gh workflow run "$workflow" --ref "$TARGET"
+          done
