@@ -112,7 +112,7 @@ try {
   document.body.classList.add('nogl');
   $('fallbackList').innerHTML = PIECES.map(p => p.viewer
     ? `<li><a href="${esc(p.viewer)}"><b>${esc(p.name)}</b> · ${esc(p.years)}</a></li>`
-    : `<li style="opacity:.6;padding:16px 18px">${esc(p.name)} · ${esc(p.years)} — not modelled</li>`).join('');
+    : `<li class="fallback-lost">${esc(p.name)} · ${esc(p.years)} — not modelled</li>`).join('');
   throw e;
 }
 let qualityDpr = RS.dpr;
@@ -1046,7 +1046,8 @@ async function loadAll() {
   for (const p of order) {
     try { await loadBike(p); } catch (e) { console.warn('bike failed', p.key, e); }
     loaded++;
-    $('loadstate').innerHTML = loaded < modelled.length ? `Unpacking the collection · ${loaded} / ${modelled.length}<i><b style="width:${loaded / modelled.length * 100}%"></b></i>` : `${modelled.length} bikes on display · ${PIECES.length - modelled.length} lost generations remembered`;
+    $('loadstate').innerHTML = loaded < modelled.length ? `Unpacking the collection · ${loaded} / ${modelled.length}<i><b data-load-progress></b></i>` : `${modelled.length} bikes on display · ${PIECES.length - modelled.length} lost generations remembered`;
+    $('loadstate').querySelector('[data-load-progress]')?.style.setProperty('--load-p',String(loaded / modelled.length));
     if (loaded === 1) { const b = $('enterBtn'); if (b && !document.body.classList.contains('walking')) { b.disabled = false; } passportProgress(); }
   }
 }
@@ -1159,7 +1160,7 @@ function openChamp(c) {
     .map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
   const m = KONA.machines.find(x => x.generation === c.generation);
   $('cMedia').innerHTML = `<figure class="c-photo"><img src="${esc(c.photo.src)}" alt="${esc(c.athlete)} — ${esc(c.photoCaption)}" referrerpolicy="no-referrer"><figcaption>${esc(c.photoCaption)}<br><a href="${esc(c.photo.page)}" target="_blank" rel="noopener">© ${esc(c.photo.author)} · ${esc(c.photo.license)} ↗</a></figcaption></figure>`
-    + (m ? `<p class="c-note" style="margin-top:14px"><b class="c-spec">${esc(m.name)}</b>${esc(m.text)} The size-M study of that generation stands in this room.</p>` : '')
+    + (m ? `<p class="c-note c-note-spaced"><b class="c-spec">${esc(m.name)}</b>${esc(m.text)} The size-M study of that generation stands in this room.</p>` : '')
     + `<a class="c-src" href="${esc(c.source)}" target="_blank" rel="noopener">Race record ↗</a>`;
   const next = champs[(c.index + 1) % champs.length];
   $('cActions').innerHTML = `<button class="btn primary" id="cNextChamp">Next: ${esc(String(next.year))} <span aria-hidden="true">→</span></button><button class="btn ghost" id="cHall">Back to the hall</button>`;
@@ -1193,7 +1194,7 @@ function openBrand(p) {
   $('cNote').textContent = p.text || '';
   $('cStats').hidden = !p.stats;
   if (p.stats) $('cStats').innerHTML = p.stats.map(([b, s]) => `<div><b>${esc(b)}</b><small>${esc(s)}</small></div>`).join('');
-  $('cMedia').innerHTML = (p.legal ? `<p class="c-view" style="opacity:.7">${esc(p.legal)}</p>` : '')
+  $('cMedia').innerHTML = (p.legal ? `<p class="c-view c-view-muted">${esc(p.legal)}</p>` : '')
     + (p.source ? `<a class="c-src" href="${esc(p.source)}" target="_blank" rel="noopener">Official specification ↗</a>` : '');
   $('cActions').innerHTML = (p.buy ? `<a class="btn primary" href="${esc(p.buy)}" target="_blank" rel="noopener">Where to buy <span aria-hidden="true">→</span></a>` : '')
     + `<button class="btn ghost" id="cBrandOut">Keep walking</button>`;
@@ -1212,7 +1213,7 @@ function openWyld(v) {
   $('cName').textContent = v.name; $('cMat').textContent = v.sub; $('cNote').textContent = v.text;
   $('cStats').hidden = false; $('cStats').innerHTML = B.stats.map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
   const V = WROOMDATA.view;
-  $('cMedia').innerHTML = `<div class="c-dyes">${Object.entries(P2).map(([k, c]) => `<span style="background:${c}" title="${k} ${c}"></span>`).join('')}</div>`
+  $('cMedia').innerHTML = `<div class="c-dyes">${Object.entries(P2).map(([k, c]) => `<span style="--dye:${c}" title="${k} ${c}"></span>`).join('')}</div>`
     + `<p class="c-view">Through the window: ${esc(V.caption)}. <a href="${esc(V.page)}" target="_blank" rel="noopener">© ${esc(V.author)} · ${esc(V.license)} ↗</a> (${esc(V.changes)})</p>`;
   const next = wyldBikes[(v.index + 1) % wyldBikes.length];
   $('cActions').innerHTML = `<a class="btn primary" href="${esc(studioLink(v))}"><span class="long">Open in&nbsp;</span>3D studio <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextDye">Next<span class="long">:&nbsp;${esc(next.name.replace('WYLD ', ''))}</span> <span aria-hidden="true">→</span></button>`;
@@ -1313,7 +1314,7 @@ function openSanctuary(film) {
   $('cMat').textContent = film.sub;
   $('cNote').textContent = `${film.tagline} ${film.persona}.`;
   $('cStats').hidden = true;
-  const dyes = film.stops.map(c => `<span style="background:${c}" title="${c}"></span>`).join('');
+  const dyes = film.stops.map(c => `<span style="--dye:${c}" title="${c}"></span>`).join('');
   $('cMedia').innerHTML = `<div class="c-dyes">${dyes}</div><p class="c-view">${esc(film.tagline)}</p>`;
   const next = sanctuary.films[(film.index + 1) % sanctuary.films.length];
   $('cActions').innerHTML = `<a class="btn primary" href="https://joaoccaldas.github.io/ai/studio/wyld-store/bike-porn/#${esc(film.id)}">Watch the film <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextFilm">Next<span class="long">: ${esc(next.name)}</span></button>`;
@@ -1468,7 +1469,7 @@ if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
-for (const r of [...brandRooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip brand" data-room="${esc(r.desc.id)}" aria-label="${esc(r.desc.name)}"><span class="n" style="background:${esc(r.desc.theme?.accent || '#c9a13b')};-webkit-background-clip:text;background-clip:text;color:transparent">${esc(r.desc.name.slice(0, 1))}</span><span><small>${r.products.length} PRODUCT${r.products.length > 1 ? 'S' : ''}</small><b>${esc(r.desc.name)}</b></span></button>`);
+for (const r of [...brandRooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip brand" data-room="${esc(r.desc.id)}" aria-label="${esc(r.desc.name)}"><span class="n" style="--chip-accent:${esc(r.desc.theme?.accent || '#c9a13b')}">${esc(r.desc.name.slice(0, 1))}</span><span><small>${r.products.length} PRODUCT${r.products.length > 1 ? 'S' : ''}</small><b>${esc(r.desc.name)}</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
 for (const w of [...atlas.wings].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip atlas" data-room="wing-${esc(w.id)}" aria-label="${esc(w.name)}: ${esc(w.sub)}"><span class="n" aria-hidden="true">${w.features?.clock ? '⏱' : '✦'}</span><span><small>UPPER FLOOR · ${atlas.rooms.filter(r => r.wing === w.id).reduce((n, r) => n + r.bikes.length + r.art.length, 0)} WORKS</small><b>${esc(w.name)}</b></span></button>`);
 for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
