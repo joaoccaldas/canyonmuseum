@@ -333,7 +333,7 @@ body.return-moment-open{overflow:hidden}
 .finds-heading h3,.find-studio h3{font:400 clamp(32px,5vw,48px)/1.05 var(--brand-font-editorial);margin:12px 0}
 .finds-heading progress{width:100%;height:8px;accent-color:var(--brand-action)}
 .finds-filters button[aria-pressed="true"]{border-color:var(--brand-ink);background:var(--brand-ink);color:var(--brand-bg)}
-.finds-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--brand-space-2)}
+.ui-grid.finds-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--brand-space-2)}
 .find-card{display:flex;flex-direction:column;gap:8px;min-width:0;min-height:200px;padding:var(--brand-space-3);text-align:left;color:var(--brand-ink);cursor:pointer}
 .find-card b{overflow-wrap:anywhere;font:400 23px/1.1 var(--brand-font-editorial)}
 .find-card small,.find-card span{font:500 11px/1.4 var(--brand-font-data);color:var(--brand-muted)}
@@ -351,7 +351,7 @@ body.return-moment-open{overflow:hidden}
 .find-facts>div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;border-bottom:1px solid var(--brand-line);padding-bottom:8px}
 .find-facts dt{color:var(--brand-muted);font-size:13px}.find-facts dd{margin:0;font:500 13px/1.4 var(--brand-font-data)}
 .home-first-find svg{width:40px;height:32px}
-@media(min-width:900px){.finds-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:900px){.ui-grid.finds-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
 /* Arrival brief composes the canonical grid, label and bib artifacts. */
 .kona-travel-brief{align-items:start}.kona-travel-brief>section{min-width:0}
