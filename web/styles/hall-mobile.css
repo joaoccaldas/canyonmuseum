@@ -246,3 +246,9 @@ html.phone-fit #card{left:8px;right:auto;width:calc((100vw - 16px)/var(--fit))!i
   #card h2{font-size:29px!important}
   .c-note{font-size:12px!important}
 }
+
+
+/* RC7 touch contract: spatial chrome uses the same 48px minimum as the consumer app. */
+@media(max-width:760px),(pointer:coarse){
+  #konaWorld button,#konaWorld a[role="button"],#konaWorld header a,#tourPill button,#coachOk,.map-close{min-height:var(--brand-touch,48px);min-width:var(--brand-touch,48px)}
+}
