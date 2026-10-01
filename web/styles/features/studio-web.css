@@ -1,0 +1,15 @@
+/* STUDIO desktop/fine-pointer layout only. */
+
+@media (min-width:900px) at the end of this block.
+   Museum hall: web/styles/hall-web.css and hall-mobile.css. KONA shell phone: web/styles/shell-mobile.css */
+*{box-sizing:border-box;margin:0;padding:0}
+
+@media (min-width:900px){
+  :root{--sheet:100dvh}
+  .dock{left:auto;top:0;right:0;width:clamp(360px,30vw,460px);max-height:none;height:100dvh;border-radius:0;padding-top:max(64px,calc(env(safe-area-inset-top) + 56px))}
+  .dock.min{transform:translateX(calc(100% - 0px))}
+  .grab{display:none}
+  .fab{bottom:24px;right:calc(clamp(360px,30vw,460px) + 16px)}body.dock-min .fab{right:16px;bottom:24px}
+  .bar{padding-right:calc(clamp(360px,30vw,460px) + 12px)}
+  #toast{left:calc(50% - clamp(180px,15vw,230px))}
+}
