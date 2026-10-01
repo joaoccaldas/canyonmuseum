@@ -86,5 +86,5 @@ test('Home button means Home and Admin Assets stays a generated, Me-only capabil
 
 test('visual evidence covers launch, companion and museum-return states across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','sign-in','avatar-registration','home','user-studio','avatar-editor','discover','garage','plan','passport','feed','travel','museum-return-home','bike-studio']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','passport','feed','travel','museum-return-home','bike-studio']) assert.match(visual,new RegExp(view));
 });
