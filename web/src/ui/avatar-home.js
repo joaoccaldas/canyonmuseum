@@ -60,7 +60,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('collection','◇','Collection',summary.total+' things found')+
         menuItem('progress','☆','Progress','Badges, milestones & history')+
         menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
-        (isAdmin?menuItem('assets','▦','Asset Portfolio','All bikes, gear & room assets'):'')+
+        (isAdmin?menuItem('assets','▦','Asset Library','Bikes, gear, rooms, art & world assets'):'')+
         '<p class="studio-menu-note">Your history lives here.<br>The world stays out there.</p>'+
       '</nav>'+
       '<nav class="race-self-controls" aria-label="Your athlete"><small class="studio-menu-label">YOUR ATHLETE</small>'+
