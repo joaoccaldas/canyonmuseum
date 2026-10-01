@@ -27,3 +27,14 @@ test('Garage add is idempotent per product and relationship',()=>{
   assert.equal(again.added,false);
   assert.equal(readGarage(storage).length,1);
 });
+
+
+test('owned bike is locked until level 2 while dream remains open',()=>{
+  const storage=memory();
+  const locked=addToGarage('canyon-cfr-2027',{relationship:'owned',storage});
+  assert.equal(locked.locked,true);
+  assert.equal(readGarage(storage).length,0);
+  const p=emptyProgression();p.xp=40;p.level=2;p.level_name='Explorer';writeProgression(p,storage);
+  const owned=addToGarage('canyon-cfr-2027',{relationship:'owned',storage});
+  assert.equal(owned.added,true);
+});
