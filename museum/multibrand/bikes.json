@@ -1,0 +1,37 @@
+{
+ "schema_version": 1,
+ "title": "Multibrand performance bikes — original design/engineering studies",
+ "generator": "blender/multibrand/build.py (skeleton + frame_tubes + parts; themes.py liveries)",
+ "note": "Original reconstructed studies. Geometry comes from each brand's published geometry table for the model family (representative size); lateral tube widths, stay spread and hub widths are INFERRED. No photo trace. Not affiliated with or endorsed by any brand named. Each bike records its theme livery (kona / wyld / customizable / heritage / splatter / finish).",
+ "evidence_classes": {"G": "published geometry table", "I": "inferred lateral / mechanism dimension", "T": "theme/livery treatment"},
+ "bikes": [
+  {"key": "trek-speed-concept-kona", "brand": "Trek", "family": "Speed Concept", "name": "Speed Concept \"Kona\"", "year": 2027, "arch": "tri", "theme": "kona", "room": "trek-speed", "source": "Published Speed Concept geometry table (Trek)."},
+  {"key": "trek-madone-wyld", "brand": "Trek", "family": "Madone", "name": "Madone SLR \"Wyld\"", "year": 2025, "arch": "aero", "theme": "wyld-pink", "room": "trek-speed", "source": "Published Madone SLR geometry table (Trek)."},
+  {"key": "trek-domane-custom", "brand": "Trek", "family": "Domane", "name": "Domane SL \"Customizable\"", "year": 2024, "arch": "endurance", "theme": "customizable", "room": "trek-speed", "source": "Published Domane SL geometry table (Trek)."},
+  {"key": "trek-checkpoint-desert", "brand": "Trek", "family": "Checkpoint", "name": "Checkpoint SLR \"Desert\"", "year": 2023, "arch": "gravel", "theme": "desert", "room": "trek-speed", "source": "Published Checkpoint SLR geometry table (Trek)."},
+  {"key": "trek-us-postal-2004", "brand": "Trek", "family": "5500", "name": "5500 OCLV \"US Postal\"", "year": 2004, "arch": "classic", "theme": "heritage-trek", "room": "tour-history", "source": "2004 Trek OCLV geometry table (US Postal era)."},
+
+  {"key": "pinarello-bolide-kona", "brand": "Pinarello", "family": "Bolide", "name": "Bolide F \"Kona Night\"", "year": 2024, "arch": "tri", "theme": "night", "room": "pinarello", "source": "Published Bolide F geometry table (Pinarello)."},
+  {"key": "pinarello-dogma-wyld", "brand": "Pinarello", "family": "Dogma", "name": "Dogma F \"Wyld\"", "year": 2024, "arch": "aero", "theme": "wyld-pink", "room": "pinarello", "source": "Published Dogma F geometry table (Pinarello)."},
+  {"key": "pinarello-bolide-custom", "brand": "Pinarello", "family": "Bolide", "name": "Bolide F \"Customizable\"", "year": 2024, "arch": "tri", "theme": "customizable", "room": "pinarello", "source": "Published Bolide F geometry table (Pinarello)."},
+  {"key": "pinarello-dogma-splatter", "brand": "Pinarello", "family": "Dogma", "name": "Dogma \"Splatter\"", "year": 1993, "arch": "aero", "theme": "splatter", "room": "pinarello", "source": "Dogma aero-road silhouette study; published family geometry."},
+
+  {"key": "felt-ia-kona", "brand": "Felt", "family": "IA", "name": "IA FRD \"Kona\"", "year": 2022, "arch": "tri", "theme": "kona", "room": "felt-aero", "source": "Published IA FRD geometry table (Felt)."},
+  {"key": "felt-ia-wyld", "brand": "Felt", "family": "IA", "name": "IA \"Wyld Mint\"", "year": 2022, "arch": "tri", "theme": "wyld-mint", "room": "felt-aero", "source": "Published IA geometry table (Felt)."},
+  {"key": "felt-ia-custom", "brand": "Felt", "family": "IA", "name": "IA \"Customizable\"", "year": 2022, "arch": "tri", "theme": "customizable", "room": "felt-aero", "source": "Published IA geometry table (Felt)."},
+
+  {"key": "canyon-speedmax-kona", "brand": "Canyon", "family": "Speedmax", "name": "Speedmax CFR \"Kona Lava\"", "year": 2027, "arch": "tri", "theme": "kona", "room": "canyon-speed", "source": "Speedmax CFR geometry table (Canyon)."},
+  {"key": "canyon-speedmax-wyld", "brand": "Canyon", "family": "Speedmax", "name": "Speedmax CFR \"Wyld Mint\"", "year": 2027, "arch": "tri", "theme": "wyld-mint", "room": "canyon-speed", "source": "Speedmax CFR geometry table (Canyon)."},
+  {"key": "canyon-speedmax-custom", "brand": "Canyon", "family": "Speedmax", "name": "Speedmax CFR \"Customizable\"", "year": 2027, "arch": "tri", "theme": "customizable", "room": "canyon-speed", "source": "Speedmax CFR geometry table (Canyon)."},
+
+  {"key": "tdf-steel-1937", "brand": "Tour de France", "family": "Machines of the Tour", "name": "\"La Course\" steel", "year": 1937, "arch": "classic", "theme": "heritage-canyon", "room": "tour-history", "era": "1930s", "source": "Era road-race geometry study (steel, rim brake, 32-spoke)."},
+  {"key": "tdf-molteni-1972", "brand": "Tour de France", "family": "Machines of the Tour", "name": "Era classic", "year": 1972, "arch": "classic", "theme": "splatter", "room": "tour-history", "era": "1960s-70s", "source": "Era lightweight road-racing study."},
+  {"key": "tdf-aero-1989", "brand": "Tour de France", "family": "Machines of the Tour", "name": "Final-stage aero era", "year": 1989, "arch": "classic", "theme": "heritage-trek", "room": "tour-history", "era": "1980s", "source": "Late-1980s aero/TT-era study."},
+  {"key": "tdf-carbon-1999", "brand": "Tour de France", "family": "Machines of the Tour", "name": "Early carbon era", "year": 1999, "arch": "classic", "theme": "heritage-trek", "room": "tour-history", "era": "1990s", "source": "Early-carbon frame study."},
+  {"key": "tdf-aero-2013", "brand": "Tour de France", "family": "Machines of the Tour", "name": "Modern aero era", "year": 2013, "arch": "aero", "theme": "moss", "room": "tour-history", "era": "2010s", "source": "Aero + electronic shifting era study."},
+  {"key": "tdf-monocoque-2022", "brand": "Tour de France", "family": "Machines of the Tour", "name": "Current monocoque", "year": 2022, "arch": "aero", "theme": "pearl", "room": "tour-history", "era": "2020s", "source": "Integrated superbike era study."},
+  {"key": "tdf-2027-wyld", "brand": "Tour de France", "family": "Machines of the Tour", "name": "\"2027\" aero study", "year": 2027, "arch": "aero", "theme": "wyld-mint", "room": "tour-history", "era": "2020s", "source": "Forward aero study."},
+  {"key": "tdf-2027-kona", "brand": "Tour de France", "family": "Machines of the Tour", "name": "2027 tri study", "year": 2027, "arch": "tri", "theme": "kona", "room": "tour-history", "era": "2020s", "source": "Forward tri aero study."},
+  {"key": "breitling-watch", "brand": "Breitling", "family": "Endurance Pro", "name": "Endurance-style Chronograph", "year": 2026, "arch": "watch", "theme": "night", "room": "breitling", "source": "Original geometry study; the public partnership page is a reference for the story only."}
+ ]
+}
