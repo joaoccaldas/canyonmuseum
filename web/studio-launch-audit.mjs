@@ -43,7 +43,8 @@ try{
      const parent=e.parentElement,r=rect(e),pr=rect(parent);
      return {name:e.textContent.trim(),...r,scrollable:parent.scrollWidth>parent.clientWidth+1,parentRight:pr.right,parentBottom:pr.bottom,scrollLeft:parent.scrollLeft,scrollWidth:parent.scrollWidth,clientWidth:parent.clientWidth,offsetLeft:e.offsetLeft,offsetWidth:e.offsetWidth};
    });
-   const panel=document.querySelector('#konaPanel');\n   return {stage,menus,targets,projected,overflow:document.documentElement.scrollWidth>innerWidth,scrollHeight:panel?.scrollHeight||document.documentElement.scrollHeight,scrollTop:panel?.scrollTop||0,navVisible:!!document.querySelector('.kona-bottom-nav')&&getComputedStyle(document.querySelector('.kona-bottom-nav')).display!=='none',quest:!!document.querySelector('#konaQuest')};
+   const panel=document.querySelector('#konaPanel');
+   return {stage,menus,targets,projected,overflow:document.documentElement.scrollWidth>innerWidth,scrollHeight:panel?.scrollHeight||document.documentElement.scrollHeight,scrollTop:panel?.scrollTop||0,navVisible:!!document.querySelector('.kona-bottom-nav')&&getComputedStyle(document.querySelector('.kona-bottom-nav')).display!=='none',quest:!!document.querySelector('#konaQuest')};
   });
   assert.ok(!layout.quest,`${width}: onboarding gate appeared`);
   assert.ok(!layout.overflow,`${width}: horizontal overflow`);
