@@ -144,7 +144,7 @@ for(const id of selected){
       await click('[data-studio-home]');await waitHome();
       await click('[data-first-find]');const earned=await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')));
       assert.ok(earned.discoveries.includes('find:shore:lava'));await click('[data-home-finds]');
-      await p.waitForSelector('[data-find]');assert.equal((await p.$$('[data-find]')).length,100);
+      await p.waitForSelector('[data-find]');assert.equal((await p.$('[data-find]')).length,100);
       assert.equal(await p.$eval('#konaPanel',e=>e.scrollTop),0,'new collection route must start at its heading');
       for(const filter of ['hidden','trade','event','all']){await click('[data-find-filter="'+filter+'"]');assert.equal(await p.$eval('[data-find-filter="'+filter+'"]',e=>e.getAttribute('aria-pressed')),'true');assert.ok((await p.$$('[data-find]')).length>0);}
       await inventory('KONA Finds');await p.screenshot({path:path.join(out,prefix+'-finds.png')});
@@ -187,12 +187,18 @@ for(const id of selected){
       await p.evaluate(()=>window.__shareCancelled=true);await click('[data-share-progress]');await p.waitForFunction(()=>document.querySelector('[data-share-status]').textContent.includes('Not shared'));
       assert.equal(await p.$eval('[data-share-progress]',e=>e.disabled),false);await click('[data-hub-close]');
     });
-    await step('Feed shortcut, category buttons, search and RSS affordance work',async()=>{
+    await step('Kona Now shortcut, editorial cards, filters and RSS affordance work',async()=>{
       await click('[data-race-self-action="feed"]');await p.waitForSelector('.companion-page');
       await p.waitForSelector('[data-kind]',{timeout:45000});
-      const kinds=await p.$$eval('[data-kind]',els=>els.map(e=>e.dataset.kind));
+      assert.match(await text('#konaPanelTitle'),/Kona Now/);
+      const cards=await p.$eval('.companion-story',els=>els.map(card=>({visual:!!card.querySelector('.companion-thumbnail img,.companion-thumb-fallback'),summary:(card.querySelector('.companion-summary')?.textContent||'').trim(),source:card.querySelector('.companion-story-link')?.getAttribute('href')||''})));
+      assert.ok(cards.length>0,'Kona Now must render stories from live or saved sources');
+      assert.ok(cards.every(x=>x.visual),'Every story needs an image or branded visual fallback');
+      assert.ok(cards.every(x=>x.summary.length>20),'Every story needs a useful short summary');
+      assert.ok(cards.every(x=>/^https:\/\//.test(x.source)),'Every story needs a direct HTTPS source link');
+      const kinds=await p.$eval('[data-kind]',els=>els.map(e=>e.dataset.kind));
       for(const kind of kinds){await click('[data-kind="'+kind+'"]');assert.equal(await p.$eval('[data-kind="'+kind+'"]',e=>e.getAttribute('aria-pressed')),'true');}
-      await inventory('The Feed');await p.screenshot({path:path.join(out,prefix+'-feed.png')});
+      await inventory('Kona Now');await p.screenshot({path:path.join(out,prefix+'-feed.png')});
       const rss=await p.$('[data-personal-rss]');assert.ok(rss,'RSS affordance missing');
       const href=await rss.evaluate(e=>e.getAttribute('href'));assert.ok(href&&!href.startsWith('javascript:'));
       await click('.companion-page [data-back]');await p.waitForSelector('.race-self-experience');
