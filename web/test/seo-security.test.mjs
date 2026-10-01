@@ -20,6 +20,12 @@ test('every published page carries security, privacy and SEO metadata', () => {
     const ld = h.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
     assert.ok(ld, f); const o = JSON.parse(ld[1]); assert.equal(o['@context'], 'https://schema.org'); assert.match(o.disambiguatingDescription, /Not affiliated/);
     assert.doesNotMatch(h, /\/Users\/[a-z]+|@gmail\.com/, f);
+    if (f === 'index.html') {
+      const csp=h.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1]||'';
+      assert.doesNotMatch(csp,/script-src[^;]*'unsafe-inline'/,'KONA app CSP must reject inline executable scripts');
+      const executable=[...h.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!/\bsrc=/.test(m[1])&&!/application\/ld\+json/i.test(m[1]));
+      assert.equal(executable.length,0,'index.html must contain no executable inline script');
+    }
   }
 });
 
