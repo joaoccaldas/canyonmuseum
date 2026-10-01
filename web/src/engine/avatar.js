@@ -2,7 +2,7 @@
 // One data model powers phone and desktop. UI and renderer are projections only.
 // New archetypes/items should be added here, not hard-coded into screen code.
 
-export const AVATAR_SCHEMA_VERSION=4;
+export const AVATAR_SCHEMA_VERSION=5;
 
 export const AVATAR_ARCHETYPES=Object.freeze([
   Object.freeze({id:'minecraft',label:'Minecraft',note:'Block-built, playful and instantly readable.',shape:'voxel',animation:'bounce'}),
@@ -11,6 +11,12 @@ export const AVATAR_ARCHETYPES=Object.freeze([
   Object.freeze({id:'islander',label:'Islander',note:'Relaxed Kona explorer with a softer, sun-ready silhouette.',shape:'islander',animation:'sway'}),
 ]);
 export const AVATAR_ARCHETYPE_IDS=Object.freeze(AVATAR_ARCHETYPES.map(x=>x.id));
+export const AVATAR_PRESENTATIONS=Object.freeze([
+  Object.freeze({id:'male',label:'Male'}),
+  Object.freeze({id:'female',label:'Female'}),
+  Object.freeze({id:'prefer-not',label:'Prefer not to answer'}),
+]);
+export const AVATAR_PRESENTATION_IDS=Object.freeze(AVATAR_PRESENTATIONS.map(x=>x.id));
 
 export const AVATAR_SLOTS=Object.freeze(['skin','hair','trisuit','top','bottoms','shoes','accessory','tattoo']);
 
@@ -85,6 +91,7 @@ const itemFor=(slot,id)=>AVATAR_ITEMS[slot]?.find(x=>x.id===id)||AVATAR_ITEMS[sl
 export const defaultAvatarStyle=()=>({
   v:AVATAR_SCHEMA_VERSION,
   archetype:'minecraft',
+  presentation:'prefer-not',
   accent:'#e8471c',
   items:{
     skin:{id:'bronze',color:null,overlay:null},
@@ -118,6 +125,7 @@ export function normaliseAvatarStyle(value){
   return {
     v:AVATAR_SCHEMA_VERSION,
     archetype:AVATAR_ARCHETYPE_IDS.includes(o.archetype)?o.archetype:d.archetype,
+    presentation:AVATAR_PRESENTATION_IDS.includes(o.presentation)?o.presentation:(AVATAR_PRESENTATION_IDS.includes(o.gender)?o.gender:d.presentation),
     accent:hex(o.accent)||d.accent,
     items,
   };
@@ -138,4 +146,7 @@ export function patchAvatarItem(styleInput,slot,patch={}){
 
 export function setAvatarArchetype(styleInput,archetype){
   return normaliseAvatarStyle({...normaliseAvatarStyle(styleInput),archetype});
+}
+export function setAvatarPresentation(styleInput,presentation){
+  return normaliseAvatarStyle({...normaliseAvatarStyle(styleInput),presentation});
 }
