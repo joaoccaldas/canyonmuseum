@@ -1,34 +1,49 @@
 # Vercel go-live gate
 
-Release candidate: PR #132 / `refactor/rc8-go-live-final-20261001`.
+Release candidate: PR #135 / `refactor/user-studio-feed-travel-20261001`.
 
-This file exists to bind the final release checks to the post-generated-output tree.
+This file binds release claims to the actual launch branch and its final immutable PR head. Do not copy a candidate SHA into this document as a durable truth: the release SHA is the PR head that passes the complete certification matrix and is then verified in production.
 
 ## Verified source contracts
 
 - User Studio has one persistent escape control and routes through the canonical `enterApp('me')` path.
 - Standalone Bike Studio returns through `index.html?view=me`.
-- Vercel static delivery keeps `index.html`, `manifest.webmanifest`, and `sw.js` revalidating.
+- Static delivery keeps `index.html`, `manifest.webmanifest`, and `sw.js` revalidating.
 - No catch-all Vercel rewrite shadows static assets.
+- Generated app/pages are rebuilt in CI and the committed deterministic outputs must remain unchanged.
 
-## Deployment shape
+## Intended Vercel deployment shape
 
-KONA is deployed as a static site from the repository root.
+KONA is a static site rooted at the repository root.
 
-Vercel project settings:
+Expected Vercel project settings:
 - Framework preset: Other
 - Root directory: `.`
 - Build command: none
 - Output directory override: none
 
-The first Vercel hostname must be added to the Supabase Auth redirect allow-list before magic-link sign-in is treated as production-verified.
+A Vercel deployment of the current PR #135 candidate is not production evidence until the deployed source SHA and sealed files are verified against the certified PR head.
+
+Magic-link sign-in is not production-verified until the active production hostname is present in the Supabase Auth redirect allow-list.
+
+## Current deployment boundary
+
+Production must not be described as running the PR #135 candidate before that exact candidate is deployed and its receipt is checked.
+
+The GitHub Pages environment currently permits only the authorised production branches. A rejected pre-merge branch deployment is not a product failure and is not production verification.
 
 ## Release rule
 
-Do not declare production ready unless unit/asset/brand/P0, security, integration, app release seal, deterministic output sync, and Visual Evidence V2 are green on the same final SHA. Physical mobile install remains a device gate.
+Do not declare production ready unless all of the following are green on the same final source SHA:
 
-## Post-sync verification trigger
+- unit/asset/brand/P0 and Museum checks
+- release security gate
+- integration contract
+- app release seal
+- deterministic generated-output verification
+- Visual Evidence V2 across the required viewport matrix
+- UI interaction evidence across phone, landscape and desktop
 
-Deterministic outputs were synchronized at `16646d22e56f75c8e22ce03f2eeb078b1c2c180f`. This documentation-only commit intentionally triggers the final release matrix on the sealed output tree without changing runtime source or generated assets.
+After CI, verify the deployed production receipt and sealed file hashes against that same SHA.
 
-Mobile User Studio strip and standalone-page escape routes were sealed into deterministic outputs at `472fad7ffa7fe16e7e4ebb85426647a7c1264b26`. The following docs-only commit is the final same-tree release verification trigger.
+Physical iPhone/Android install, safe-area, keyboard and reopen/persistence checks remain a separate device gate and must not be inferred from browser emulation.
