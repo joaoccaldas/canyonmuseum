@@ -1,7 +1,7 @@
 // ui/me.js — RaceIdentity + Progress projection.
 // Personal truth comes from canonical game state; this surface owns no persistence.
 import { readGameState, gameProgress } from '../engine/game-state.js';
-import { ensureProgression } from '../engine/progression.js';
+import { ensureProgression, LEVELS } from '../engine/progression.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 import { renderRaceBadges } from './race-cards.js';
@@ -40,12 +40,17 @@ export async function renderProgressSurface(root,{settings}={}) {
   try { ensureProgression(); } catch (_) { /* Progress remains readable without repair */ }
   const snapshot = readGameState();
   const p = gameProgress(snapshot);
+  const current=LEVELS.find(x=>x.level===p.level)||LEVELS[0];
+  const next=LEVELS.find(x=>x.level===Math.min(10,p.level+1));
+  const from=current.xp,to=next?.xp??current.xp,span=Math.max(1,to-from),pct=next?Math.max(0,Math.min(100,Math.round(((p.xp-from)/span)*100))):100;
+  const ladder=LEVELS.map(row=>'<article class="progress-level '+(row.level<=p.level?'is-open':'is-locked')+'"><div><small>LEVEL '+row.level+'</small><b>'+esc(row.name)+'</b><span>'+esc(row.unlock)+'</span></div><em>'+(row.level<p.level?'UNLOCKED':row.level===p.level?'YOU ARE HERE':row.status==='live'?'NEXT':'OVER THE HORIZON')+'</em></article>').join('');
   root.innerHTML = await raceIdentityMarkup(snapshot)+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Progress</h3><small>'+esc(p.levelName||'Visitor')+'</small></div>'+
       '<div class="kona-list"><article><i>XP</i><div><b>'+p.xp+' XP</b><span>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds</span></div></article>'+
       '<article><i>↗</i><div><b>'+p.streak+' day streak</b><span>Progress follows what you actually explore.</span></div></article>'+
       (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Earned as you explore KONA.</span></div></article>':'')+
-      '</div></section>'+
+      '</div><div class="progress-next"><div><small>'+(next?'NEXT · LEVEL '+next.level:'MAX LEVEL')+'</small><b>'+(next?esc(next.unlock):'You found the top of this particular mountain.')+'</b></div><span>'+pct+'%</span></div><div class="progress-next-bar"><i style="width:'+pct+'%"></i></div></section>'+
+    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Level road</h3><small>1 → 10</small></div><div class="progress-levels">'+ladder+'</div></section>'+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Your collection</h3><small>Every discovery counts</small></div><div class="kona-place-grid">'+
       '<article><small>Bikes</small><b>'+p.bikes+'</b><span>visited</span></article>'+
       '<article><small>Kona years</small><b>'+p.konaYears+'</b><span>discovered</span></article>'+
