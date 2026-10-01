@@ -1,4 +1,5 @@
 // landing.js — the Speedmax Museum, Kona. A sunlit, walkable gallery along "the Queen K":
+import { roomAccess } from './engine/access.js';
 // every Speedmax generation on a lava-stone plinth in timeline order, the two MY2027
 // flagships in an apse facing the ocean. Walk (WASD / tap the floor), look (drag),
 // visit a bike (click / tap / 1–9), then step into its full 3D studio.
@@ -1480,9 +1481,12 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     const to=candidates.find(p=>walkable(p.x,p.z))||overview.to;
     return {...overview,to};
   }
+  const accessForRoom=id=>roomAccess(id,{admin:globalThis.__konaAccess?.admin===true});
   const go = id => {
     const area=liveAreas.find(a=>a.id===id);
     if(!area) return;
+    const gate=accessForRoom(id);
+    if(!gate.unlocked){toast(`Level ${gate.requiredLevel} · keep exploring to unlock ${area.name}`);return;}
     if (!started) enter();
     tourEnd(false); closeCard(); prepareRoom(id);
     const ov=safeOverview(area); if(!ov) return;
@@ -1493,7 +1497,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     toast(`${area.name} · room overview`);
   };
   window.__museumGo = go;
-  window.__map = initMap({ areas, go, button: $('mapBtn'), pose: () => ({ x: P.x, z: P.z, yaw: P.yaw, floor: P.y > 3.3 ? 'upper' : 'ground' }) });
+  window.__map = initMap({ areas, go, access:accessForRoom, button: $('mapBtn'), pose: () => ({ x: P.x, z: P.z, yaw: P.yaw, floor: P.y > 3.3 ? 'upper' : 'ground' }) });
 
   const where = $('where'); let lastWhere = null, wingHinted = (() => { try { return localStorage.getItem('speedmax.atlas.hint') === '1'; } catch (_) { return false; } })();
   where?.addEventListener('click', () => window.__map.open());
