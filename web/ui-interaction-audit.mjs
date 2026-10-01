@@ -70,7 +70,7 @@ for(const id of selected){
       await click('[data-reg-archetype="aero"]');await click('[data-reg-trisuit="aero-panel"]');
       await click('[data-reg-continue]');await p.waitForSelector('.onboarding-handoff');await inventory('install-rotate-handoff');await p.screenshot({path:path.join(out,prefix+'-handoff.png')});await click('[data-handoff-continue]');await waitHome();
       await p.waitForSelector('.kona-tour');
-      for(let i=0;i<4;i++)await click('[data-tour-next]');
+      for(let i=0;i<4;i++){assert.equal(await p.$eval('.tour-target',e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(e).visibility!=='hidden'}),true,'tour must highlight a visible control');await click('[data-tour-next]');}
       await p.waitForFunction(()=>!document.querySelector('.kona-tour'));
       assert.equal(await p.evaluate(()=>localStorage.getItem('kona.onboarding.v1')),'seen');
     });
