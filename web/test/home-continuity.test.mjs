@@ -20,5 +20,5 @@ test('Race Self does not duplicate global app navigation',()=>{
 });
 test('five-tab app shell remains the only top-level map',()=>{
   for(const tab of ['home','discover','garage','plan','me']) assert.match(shell,new RegExp('data-tab="'+tab+'"'));
-  assert.equal((shell.match(/data-tab=/g)||[]).length,5);
+  assert.equal((shell.match(/data-tab=\"/g)||[]).length,5);
 });
