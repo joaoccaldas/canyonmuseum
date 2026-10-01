@@ -100,3 +100,22 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
 @media(max-width:599px){.studio-heading .studio-save-state{display:none}}
 
 @media(max-width:379px){.studio-wordmark span{display:none}}
+
+/* RC8 customization containment */
+.hub-drawer,.hub-drawer [data-hub-body],.avatar-builder,.avatar-slot,.avatar-archetypes,.avatar-item-tools,.avatar-options{min-width:0;max-width:100%}
+.hub-drawer{width:auto;max-width:calc(100vw - 24px)}
+.hub-drawer [data-hub-body]{overflow-x:hidden}
+.avatar-archetype-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.avatar-archetype,.avatar-options button,.avatar-item-tools label,.avatar-item-tools button{min-width:0;max-width:100%;overflow:hidden}
+.avatar-archetype b,.avatar-archetype span,.avatar-options span,.avatar-slot-title span,.avatar-builder-note{overflow-wrap:anywhere}
+.avatar-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.avatar-options button{width:100%;flex:none}
+.avatar-item-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+.avatar-item-tools label,.avatar-item-tools button{width:100%;flex:none}
+.avatar-upload{grid-column:1/-1}
+@media(max-width:420px){
+  .hub-drawer{inset:auto 8px max(8px,env(safe-area-inset-bottom));max-width:calc(100vw - 16px);padding:16px}
+  .hub-drawer-head{top:-16px;margin:-16px -16px 16px;padding:16px}
+  .avatar-archetype-grid,.avatar-options,.avatar-item-tools{grid-template-columns:1fr}
+  .avatar-upload{grid-column:auto}
+}
