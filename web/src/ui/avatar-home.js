@@ -1,5 +1,5 @@
-// ui/avatar-home.js — immersive Race Self surface.
-// Race Self is personal depth inside the app, never a second navigation authority.
+// ui/avatar-home.js — canonical User Studio surface.
+// Both the persistent user menu and the Me tab enter this same game-style studio.
 // Avatar building is a projection over engine/avatar.js; mobile and desktop share this exact UI.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
@@ -10,6 +10,7 @@ import {
   avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype,
 } from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
+import { renderPassportSurface } from './me.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -29,7 +30,7 @@ function readImage(file){
   });
 }
 
-export async function renderAvatarHome(root,{profile,settings,onBack}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -47,17 +48,17 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   root.innerHTML=
     '<section class="race-self-experience">'+
       '<div class="race-self-stage-wrap">'+
-        '<canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D Race Self"></canvas>'+
+        '<canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D User Studio"></canvas>'+
         '<button type="button" class="race-self-back" data-race-self-back aria-label="Back to Home">←</button>'+
-        '<div class="race-self-identity"><small>YOUR RACE SELF</small><h2>'+esc(goal)+'</h2><p>'+esc(intent)+' · '+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
+        '<div class="race-self-identity"><small>YOUR USER STUDIO</small><h2>'+esc(goal)+'</h2><p>'+esc(intent)+' · '+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
       '</div>'+
-      '<nav class="race-self-controls" aria-label="Race Self controls">'+
-        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Avatar</b><small>Build your character</small></span></button>'+
-        '<a href="'+studioHref+'"><i>△</i><span><b>Bike</b><small>Choose in 3D</small></span></a>'+
-        '<button type="button" data-race-self-action="races"><i>◉</i><span><b>Races</b><small>'+raceCount+' badges</small></span></button>'+
+      '<nav class="race-self-controls" aria-label="User Studio menu">'+
+        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Avatar</b><small>Build character</small></span></button>'+
+        '<a href="'+studioHref+'"><i>△</i><span><b>Bike</b><small>Choose in 3D</small></span></a>'+        '<button type="button" data-race-self-action="gear"><i>◇</i><span><b>Gear</b><small>Your equipment</small></span></button>'+
+        '<button type="button" data-race-self-action="races"><i>◉</i><span><b>Races</b><small>'+raceCount+' badges</small></span></button>'+        '<button type="button" data-race-self-action="passport"><i>★</i><span><b>Passport</b><small>XP & badges</small></span></button>'+
         '<button type="button" data-race-self-action="settings"><i>⚙</i><span><b>Settings</b><small>'+(summary.total||0)+' collected</small></span></button>'+
       '</nav>'+
-      '<section class="hub-drawer" data-hub-drawer hidden><div class="hub-drawer-head"><div><small data-hub-kicker>SELF</small><h3 data-hub-title>Your Race Self</h3></div><button type="button" data-hub-close aria-label="Close">×</button></div><div data-hub-body></div></section>'+
+      '<section class="hub-drawer" data-hub-drawer hidden><div class="hub-drawer-head"><div><small data-hub-kicker>USER STUDIO</small><h3 data-hub-title>Your athlete</h3></div><button type="button" data-hub-close aria-label="Close">×</button></div><div data-hub-body></div></section>'+
     '</section>';
 
   let stageApi=null;
@@ -153,14 +154,23 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   };
 
   const showRaces=()=>{
-    drawerKicker.textContent='RACES';drawerTitle.textContent='Your race cards';
+    drawerKicker.textContent='USER STUDIO · RACES';drawerTitle.textContent='Your race cards';
     const host=document.createElement('div');
     drawerBody.replaceChildren(host);
     renderRacePicker(host,{onChange:()=>{}});
     drawer.hidden=false;
   };
 
+  const showPassport=async()=>{
+    drawerKicker.textContent='USER STUDIO · PASSPORT';drawerTitle.textContent='Your progress';
+    drawerBody.replaceChildren();
+    await renderPassportSurface(drawerBody,{settings});
+    drawer.hidden=false;
+  };
+
   root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
+  root.querySelector('[data-race-self-action="gear"]')?.addEventListener('click',()=>openGarage?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
+  root.querySelector('[data-race-self-action="passport"]')?.addEventListener('click',showPassport);
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
 }
