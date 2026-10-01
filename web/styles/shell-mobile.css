@@ -4,6 +4,7 @@
    Hall chrome on a phone: hall-mobile.css */
 @media(max-width:760px){
   .kona-bottom-nav{display:grid}
+  .kona-panel-head>button{display:none}
   body.kona-panel-open{overflow:hidden}
   body.kona-panel-open>#konaWorld,body.kona-panel-open>#intro{visibility:hidden}
   body.touch #intro{padding-bottom:calc(102px + var(--safe-b))}
