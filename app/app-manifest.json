@@ -1,5 +1,5 @@
 {
- "version": "920e43a1b281",
+ "version": "459290dfef8b",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -21,11 +21,11 @@
  ],
  "files": {
   "index.html": "xWNvuedUXkA84KtjytFlnrI+dJmsXUFcOLPoLWRne4Q=",
-  "app/kona-core.js": "IgOljsPm4rYmq/aCDVxSyJk288IVVfihhoOF6UAD9y8=",
+  "app/kona-core.js": "sXUBU9T5QpKd9Jsdf9n/rvdAxLzROVOgAxKigAk7eaU=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
-  "web/styles/entry-visual-v2.css": "z7zslW5J09s3NFdWV3a8BGNzBhk61z5da80cr744ScE=",
+  "web/styles/entry-visual-v2.css": "G+NbiLOFM3yu8iK6AF/bynZJrHPegGfvPjFZlEkQ9o8=",
   "web/styles/system.css": "WB4CoRKT0RSaz/rSnFvXpWFK53ED2L6VqfIlG6KDx94=",
   "web/styles/shell-mobile.css": "PZ/L8Wol/Kc1+ib2/J0Bv9yBX5RnpBOV3EdgshM4nvc=",
   "web/styles/race-self.css": "oi0IeFCf1ciAtCTsZDfkFxdQKqd+8snteWnu4oJxhZs=",
