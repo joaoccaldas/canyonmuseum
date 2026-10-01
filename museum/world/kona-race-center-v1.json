@@ -310,5 +310,27 @@
     "The 2026 race venue is confirmed at Kailua Pier.",
     "Transition and finish-zone geometry is based on the latest detailed official Kona venue map currently available (2025) and should be updated when the 2026 Athlete Guide is published.",
     "The model is designed for athlete orientation and expected flow, not precise surveying or emergency navigation."
-  ]
+  ],
+  "overview_camera": {
+    "position": {
+      "x": 88,
+      "y": 34,
+      "z": -122
+    },
+    "target": {
+      "x": 58,
+      "y": 1.5,
+      "z": -84
+    },
+    "note": "Elevated orientation view used before first-person exploration."
+  },
+  "explore_spawn": {
+    "x": 80,
+    "z": -108,
+    "face": {
+      "x": 58,
+      "y": 1.6,
+      "z": -84
+    }
+  }
 }
