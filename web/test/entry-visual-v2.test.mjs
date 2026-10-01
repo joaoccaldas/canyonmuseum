@@ -14,8 +14,9 @@ test('mobile landing keeps CTA ahead of optional product depth',()=>{
   assert.match(mobile,/entry-product-nav[\s\S]{0,100}display:none/);
   assert.match(mobile,/entry-race-clock[\s\S]{0,100}display:none/);
 });
-test('mobile entry uses small viewport height and a single authored order rule',()=>{
-  assert.match(css,/min-height:100svh/);
-  assert.equal((css.match(/entry-actions-wrap\{order:2/g)||[]).length,1);
-  assert.equal((css.match(/entry-product\{order:3/g)||[]).length,1);
+test('mobile entry uses small viewport height and one resolved hierarchy',()=>{
+  const mobile=css.slice(css.indexOf('@media(max-width:899px){'),css.indexOf('@media(max-width:360px){'));
+  assert.match(mobile,/min-height:100svh/);
+  assert.equal((mobile.match(/order:2/g)||[]).length,1);
+  assert.equal((mobile.match(/order:3/g)||[]).length,1);
 });
