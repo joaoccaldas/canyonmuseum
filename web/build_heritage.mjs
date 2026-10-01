@@ -13,7 +13,7 @@ const pageCss=[
   fs.readFileSync(path.join(root,'brand/tokens.css'),'utf8'),
   fs.readFileSync(path.join(root,'brand/themes.css'),'utf8'),
   fs.readFileSync(path.join(root,'web/styles/heritage.css'),'utf8')
-].join('\n').replace(/<\\/style/gi,'<\\\\/style');
+].join('\n').replaceAll('</style','<\\/style');
 const glb = fs.readFileSync(process.env.GLB).toString('base64');
 const profile = JSON.parse(fs.readFileSync(process.env.BIKE_PROFILE, 'utf8'));
 // Measured results come from this build's own reports, never from hand-typed numbers.
