@@ -738,7 +738,8 @@
       "legendary": 9,
       "mythic": 10
     },
-    "note": "Deterministic per session/date for testability; never paid; one-time reward per relic."
+    "note": "Deterministic per session/date for testability; never paid; one-time reward per relic.",
+    "start_visit": 4
   },
   "visibility_policy": {
     "public_product_information": "always",
