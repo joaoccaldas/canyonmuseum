@@ -20,6 +20,30 @@ const plain=(color,roughness=.72)=>new THREE.MeshStandardMaterial({color,roughne
 const box=(w,h,d,m,x=0,y=0,z=0)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);return o;};
 const sphere=(r,m,x=0,y=0,z=0,s=1)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(r,20,14),m);o.position.set(x,y,z);o.scale.y=s;return o;};
 const cyl=(rt,rb,h,m,x=0,y=0,z=0)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,18),m);o.position.set(x,y,z);return o;};
+function raceKit(style){
+  const trisuit=avatarItem(style,'trisuit'),separates=trisuit.layout==='separates';
+  return {
+    trisuit,
+    top:separates?avatarItem(style,'top'):trisuit,
+    bottoms:separates?avatarItem(style,'bottoms'):trisuit,
+    accent:trisuit.accentColor||style.accent,
+  };
+}
+function addTrisuitLayout(g,style,shape='block'){
+  const kit=raceKit(style),tri=kit.trisuit;if(tri.layout==='separates'||tri.layout==='blank')return;
+  const m=plain(kit.accent,.52);
+  if(shape==='block'){
+    if(tri.layout==='classic')g.add(box(.035,.62,.016,m,0,1.12,.151));
+    if(tri.layout==='panel'){g.add(box(.12,.62,.016,m,-.18,1.12,.151),box(.12,.62,.016,m,.18,1.12,.151));}
+    if(tri.layout==='split')g.add(box(.50,.09,.016,m,0,1.18,.151),box(.50,.05,.016,m,0,.58,.141));
+    if(tri.layout==='stripe'){const stripe=box(.10,.78,.016,m,.11,1.04,.151);stripe.rotation.z=-.18;g.add(stripe);}
+  }else{
+    const stripe=box(tri.layout==='panel'?.30:.055,.58,.018,m,tri.layout==='panel'?.13:0,1.18,.165);
+    if(tri.layout==='stripe')stripe.rotation.z=-.18;
+    if(tri.layout==='split'){stripe.scale.x=1.55;stripe.scale.y=.16;}
+    g.add(stripe);
+  }
+}
 
 function addFace(g,y=1.78,z=.27,scale=1){
   const dark=plain('#15191b',.82),white=plain('#f4f1e8',.8);
@@ -73,9 +97,9 @@ function pixelFabric(item){
   t.magFilter=THREE.NearestFilter;t.minFilter=THREE.NearestFilter;m.map=t;return m;
 }
 function minecraftAvatar(style){
-  const g=new THREE.Group(),skin=pixelFabric(avatarItem(style,'skin'));
-  const top=pixelFabric(avatarItem(style,'top')),bottoms=pixelFabric(avatarItem(style,'bottoms'));
-  const shoes=pixelFabric(avatarItem(style,'shoes')),accent=plain(style.accent,.6);
+  const g=new THREE.Group(),skin=pixelFabric(avatarItem(style,'skin')),kit=raceKit(style);
+  const top=pixelFabric(kit.top),bottoms=pixelFabric(kit.bottoms);
+  const shoes=pixelFabric(avatarItem(style,'shoes')),accent=plain(kit.accent,.6);
   const foam=plain('#eee9de',.9),rubber=plain('#181e23',.94),seam=plain('#656e75',.8);
   const head=box(.52,.52,.52,skin,0,1.72,0),torso=box(.52,.72,.28,top,0,1.10,0);
   const armL=box(.19,.70,.22,skin,-.36,1.10,0),armR=box(.19,.70,.22,skin,.36,1.10,0);
@@ -101,42 +125,41 @@ function minecraftAvatar(style){
   g.add(box(.025,.045,.018,foam,0,1.39,.16));
   // Tiny geometric K mark, deliberately not a texture or external brand asset.
   g.add(box(.015,.06,.015,foam,-.15,1.29,.15),box(.045,.014,.015,foam,-.12,1.30,.15),box(.045,.014,.015,foam,-.12,1.27,.15));
-  addFace(g);addHairAndAccessory(g,style,'block');addTattoo(g,style,[armL,armR]);
+  addTrisuitLayout(g,style,'block');addFace(g);addHairAndAccessory(g,style,'block');addTattoo(g,style,[armL,armR]);
   g.name='minecraft-triathlete';return g;
 }
 function renegadeAvatar(style){
-  const g=new THREE.Group(),skin=material(avatarItem(style,'skin'),.88),top=material(avatarItem(style,'top'),.62);
-  const bottoms=material(avatarItem(style,'bottoms'),.7),shoes=material(avatarItem(style,'shoes'),.58);
+  const kit=raceKit(style),g=new THREE.Group(),skin=material(avatarItem(style,'skin'),.88),top=material(kit.top,.62);
+  const bottoms=material(kit.bottoms,.7),shoes=material(avatarItem(style,'shoes'),.58);
   g.add(sphere(.285,skin,0,1.78,0,1.03));
   const chest=box(.58,.62,.31,top,0,1.18,0);chest.scale.set(1,.98,.95);g.add(chest);
   const armL=cyl(.12,.105,.68,skin,-.39,1.19,0),armR=cyl(.12,.105,.68,skin,.39,1.19,0);armL.rotation.z=-.08;armR.rotation.z=.08;g.add(armL,armR);
   const legL=cyl(.135,.12,.72,bottoms,-.16,.48,0),legR=cyl(.135,.12,.72,bottoms,.16,.48,0);g.add(legL,legR);
   g.add(box(.25,.15,.40,shoes,-.16,.09,.08),box(.25,.15,.40,shoes,.16,.09,.08));
-  addFace(g,1.80,.276,.92);addHairAndAccessory(g,style,'round');addTattoo(g,style,[armL,armR]);
+  addTrisuitLayout(g,style,'round');addFace(g,1.80,.276,.92);addHairAndAccessory(g,style,'round');addTattoo(g,style,[armL,armR]);
   const brow=box(.38,.035,.025,plain('#191715'),0,1.895,.278);brow.rotation.z=-.025;g.add(brow);
   return g;
 }
 function aeroAvatar(style){
-  const g=new THREE.Group(),skin=material(avatarItem(style,'skin'),.86),top=material(avatarItem(style,'top'),.48);
-  const bottoms=material(avatarItem(style,'bottoms'),.58),shoes=material(avatarItem(style,'shoes'),.42);
+  const kit=raceKit(style),g=new THREE.Group(),skin=material(avatarItem(style,'skin'),.86),top=material(kit.top,.48);
+  const bottoms=material(kit.bottoms,.58),shoes=material(avatarItem(style,'shoes'),.42);
   g.add(sphere(.255,skin,0,1.82,0,1.08));
   const torso=cyl(.255,.20,.72,top,0,1.16,0);g.add(torso);
   const armL=cyl(.085,.075,.71,skin,-.31,1.15,0),armR=cyl(.085,.075,.71,skin,.31,1.15,0);g.add(armL,armR);
   g.add(cyl(.105,.09,.74,bottoms,-.12,.45,0),cyl(.105,.09,.74,bottoms,.12,.45,0));
   g.add(box(.21,.12,.40,shoes,-.12,.075,.09),box(.21,.12,.40,shoes,.12,.075,.09));
-  addFace(g,1.83,.251,.83);addHairAndAccessory(g,style,'round');addTattoo(g,style,[armL,armR]);
-  const stripe=box(.035,.66,.018,plain(style.accent,.38),0,1.16,.155);g.add(stripe);
+  addTrisuitLayout(g,style,'round');addFace(g,1.83,.251,.83);addHairAndAccessory(g,style,'round');addTattoo(g,style,[armL,armR]);
   return g;
 }
 function islanderAvatar(style){
-  const g=new THREE.Group(),skin=material(avatarItem(style,'skin'),.92),top=material(avatarItem(style,'top'),.78);
-  const bottoms=material(avatarItem(style,'bottoms'),.82),shoes=material(avatarItem(style,'shoes'),.8);
+  const kit=raceKit(style),g=new THREE.Group(),skin=material(avatarItem(style,'skin'),.92),top=material(kit.top,.78);
+  const bottoms=material(kit.bottoms,.82),shoes=material(avatarItem(style,'shoes'),.8);
   g.add(sphere(.29,skin,0,1.78,0,1.04));
   const torso=box(.50,.65,.30,top,0,1.14,0);torso.scale.x=.95;g.add(torso);
   const armL=cyl(.10,.09,.65,skin,-.34,1.15,0),armR=cyl(.10,.09,.65,skin,.34,1.15,0);armL.rotation.z=-.05;armR.rotation.z=.05;g.add(armL,armR);
   g.add(cyl(.12,.105,.68,bottoms,-.14,.46,0),cyl(.12,.105,.68,bottoms,.14,.46,0));
   g.add(box(.24,.12,.36,shoes,-.14,.075,.075),box(.24,.12,.36,shoes,.14,.075,.075));
-  addFace(g,1.80,.286,.94);addHairAndAccessory(g,style,'round');addTattoo(g,style,[armL,armR]);
+  addTrisuitLayout(g,style,'round');addFace(g,1.80,.286,.94);addHairAndAccessory(g,style,'round');addTattoo(g,style,[armL,armR]);
   return g;
 }
 export function buildAvatar(styleInput={}){
