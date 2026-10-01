@@ -1,4 +1,5 @@
-import { readStorage, writeStorage } from './engine/storage.js';
+import { readPassportState, savePassportState } from './engine/passport-state.js';
+import { applyStoredEvent, ensureProgression } from './engine/progression.js';
 // The Museum Passport: a reason to come back.
 // Stamps for every bike, Kona year, room and night experience you visit; XP and levels; a daily
 // streak with a Kona fact of the day; badges for finishing collections; hidden collectibles in the
@@ -35,10 +36,9 @@ const today = () => new Date().toISOString().slice(0, 10);
 const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
 
 function load() {
-  try { const s = JSON.parse(readStorage('passport') || 'null'); if (s?.v === 1) return s; } catch (_) { }
-  return { v: 1, profile: null, stamps: {}, xp: 0, streak: 0, best: 0, last: null, badges: {} };
+  return readPassportState();
 }
-function save(s) { try { writeStorage('passport', JSON.stringify(s)); } catch (_) { } }
+function save(s) { try { Object.assign(s, savePassportState(s)); } catch (_) { } }
 export const levelOf = xp => { let i = 0; while (i + 1 < LEVELS.length && xp >= LEVELS[i + 1][0]) i++; return { i, name: LEVELS[i][1], from: LEVELS[i][0], to: LEVELS[i + 1]?.[0] ?? null }; };
 
 const CSS = `
@@ -68,6 +68,7 @@ const CSS = `
 
 export function createPassport() {
   let s = load();
+  ensureProgression();
   const listeners = new Set();
   // daily visit: streak and a daily bonus
   const t = today();
@@ -91,6 +92,7 @@ export function createPassport() {
       if (s.stamps[id]) return false;
       const before = levelOf(s.xp).i;
       s.stamps[id] = { at: Date.now(), label }; s.xp += xp; checkBadges(); save(s);
+      try { applyStoredEvent({ type: id.startsWith('find:') ? 'FIND_DISCOVERED' : 'PRODUCT_VIEWED', subject: id, id: id.startsWith('find:') ? `FIND_DISCOVERED:${id}` : `passport:${id}`, discovery: id }); } catch (_) { }
       const lv = levelOf(s.xp);
       toast(lv.i > before ? '⭐' : '🎟️', lv.i > before ? `Level up: ${lv.name}` : `Stamped: ${label}`, `+${xp} XP · ${s.xp} XP`);
       listeners.forEach(f => f(s)); return true;

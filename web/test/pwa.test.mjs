@@ -91,8 +91,8 @@ test('native package includes the current app runtime and style trees', () => {
 
 test('Experiences and app Passport share canonical storage', () => {
   const passport=fs.readFileSync(path.join(root,'web/src/passport.js'),'utf8');
-  assert.match(passport,/readStorage\('passport'\)/);
-  assert.match(passport,/writeStorage\('passport'/);
+  assert.match(passport,/readPassportState\(\)/);
+  assert.match(passport,/savePassportState\(s\)/);
   assert.doesNotMatch(passport,/localStorage\.(?:getItem|setItem)\(['"]speedmax\.passport/);
 });
 

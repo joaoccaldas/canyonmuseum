@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // Generated admin-safe asset projection. Sources remain canonical museum registries.
+import {contentVisible} from '../web/src/engine/event-visibility.js';
 import fs from 'node:fs';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
@@ -19,7 +20,7 @@ const roomMap=new Map();
 const roomSource=new Map();
 const order=[];
 const addRoom=r=>{
-  if(!r?.id)return null;
+  if(!r?.id||!contentVisible(r))return null;
   const row={id:r.id,name:r.name||r.short||r.id,floor:r.floor||'unassigned',floor_name:floors[r.floor]||r.floor||'Unassigned',kind:r.kind||'room'};
   if(!roomMap.has(row.id)){roomMap.set(row.id,row);order.push(row.id);}
   else Object.assign(roomMap.get(row.id),row);

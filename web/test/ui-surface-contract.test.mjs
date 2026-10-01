@@ -14,6 +14,7 @@ const me=fs.readFileSync(new URL('../src/ui/me.js',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url),'utf8');
 const registration=fs.readFileSync(new URL('../src/ui/avatar-registration.js',import.meta.url),'utf8');
+const onboarding=fs.readFileSync(new URL('../src/ui/onboarding-questions.js',import.meta.url),'utf8');
 const admin=fs.readFileSync(new URL('../src/ui/admin-assets.js',import.meta.url),'utf8');
 const adminBuild=fs.readFileSync(new URL('../../tools/build_admin_assets.mjs',import.meta.url),'utf8');
 
@@ -40,7 +41,7 @@ test('Home is lightweight while User Studio owns personal depth and tour replay'
   assert.match(home,/data-home-self/);
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
-  for(const control of ['Avatar','Bike Studio','Races','Settings','Quick tour']) assert.match(avatarHome,new RegExp(control));
+  for(const control of ['Avatar','Bike Studio','Races','Settings','Quick tour','The Feed','Travel to Kona']) assert.match(avatarHome,new RegExp(control));
   assert.doesNotMatch(avatarHome,/Canyon Museum|Discover Kona|Race week/);
   assert.match(avatarHome,/Collection/);
   assert.match(avatarHome,/Progress/);
@@ -65,13 +66,21 @@ test('Progress owns no independent persistence and keeps Passport compatibility 
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('entry has fast first-run avatar setup, direct Home and replayable contextual onboarding',()=>{
+test('entry has questions, avatar, install handoff and replayable contextual onboarding',()=>{
   assert.match(entry,/function enterApp\(first = 'home'\)/);
-  assert.match(entry,/paintQuest\('avatar'\)/);
+  assert.match(entry,/function firstRunStep\(\)/);
+  assert.match(entry,/paintQuest\(firstRunStep\(\)\)/);
+  assert.match(entry,/renderOnboardingQuestions/);
   assert.match(entry,/renderAvatarRegistration/);
-  assert.match(entry,/onContinue:\(\)=>enterApp\('home'\)/);
+  assert.match(entry,/onContinue:\(\)=>paintQuest\('install'\)/);
+  assert.match(entry,/if\(step==='install'\)/);
+  assert.match(entry,/data-install-app/);
+  assert.match(entry,/Turn your phone sideways/);
+  assert.match(onboarding,/What brings you to Kona/);
+  assert.match(onboarding,/ONBOARDING_ANSWER/);
   assert.doesNotMatch(entry,/data-race-picker/);
   assert.match(shell,/tour:replayTour/);
+  assert.match(shell,/initReturnJourney/);
   assert.match(shell,/writeStorage\('onboarding','seen'\)/);
   assert.match(registration,/TRISUIT LAYOUT/);
   assert.match(registration,/data-reg-overlay/);
@@ -88,5 +97,5 @@ test('Home button means Home and Admin Assets stays a generated, Me-only capabil
 
 test('visual evidence covers launch, companion and museum-return states across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','bike-studio']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','sign-in','onboarding-profile','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','bike-studio']) assert.match(visual,new RegExp(view));
 });

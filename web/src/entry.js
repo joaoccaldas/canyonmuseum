@@ -1,5 +1,6 @@
 // KONA entry. HTML is already on screen. This file does not import Three.js.
 // The museum runtime loads only after the visitor chooses to explore.
+import { mountCountdown } from './ui/countdown.js';
 import { renderEntryProductStage } from './ui/visual-primitives.js';
 import { createProfile, QUALITY, AVATARS } from './engine/profile.js';
 import { initSettings } from './ui/settings.js';
@@ -9,6 +10,7 @@ import { initAppShell } from './app-shell.js';
 import { readStorage } from './engine/storage.js';
 import { decodeShare, questLabels } from './quest.js';
 import { renderAvatarRegistration } from './ui/avatar-registration.js';
+import { renderOnboardingQuestions } from './ui/onboarding-questions.js';
 
 const intro = document.getElementById('intro');
 const authReturned = consumeAuthCallback();
@@ -27,7 +29,7 @@ const settingsUI = initSettings({
   onQuality:id=>window.__konaWorldSettings?.onQuality?.(id) ?? true,
   onSound:on=>window.__konaWorldSettings?.onSound?.(on),
   onMotion:()=>window.__konaWorldSettings?.onMotion?.() ?? true,
-  sync:{available:true,start:async()=>{settingsUI.close();await enterApp('me');document.querySelector('[data-race-self-action=passport]')?.click();}},
+  sync:{available:true,start:async()=>{settingsUI.close();await enterApp('me');document.querySelector('[data-race-self-action=progress]')?.click();}},
 });
 window.__konaSettingsUI = settingsUI;
 
@@ -56,7 +58,7 @@ function loadStyle(href,group='app') {
     link.rel='stylesheet'; link.href=href; link.dataset.styleScope=group;
     if(!managedStyles.has(group))managedStyles.set(group,new Set());
     managedStyles.get(group).add(link);
-    link.onload=()=>{syncManagedStyles();resolve(link);}; link.onerror=()=>reject(new Error(href));
+    link.onload=()=>{syncManagedStyles();resolve(link);}; link.onerror=()=>{loads.delete(key);managedStyles.get(group)?.delete(link);link.remove();reject(new Error(href));};
     document.head.append(link);syncManagedStyles();
   });
   loads.set(key,pending);
@@ -68,7 +70,7 @@ function loadScript(src) {
     const s = document.createElement('script');
     s.src = src;
     s.onload = () => resolve();
-    s.onerror = () => reject(new Error(src));
+    s.onerror = () => { loads.delete(src); s.remove(); reject(new Error(src)); };
     document.body.append(s);
   });
   loads.set(src, pending);
@@ -91,24 +93,14 @@ const ensureWorldShell = () => {
       const t=document.createElement('template'); t.innerHTML=html.trim();
       const anchor=document.getElementById('appSheet');
       document.body.insertBefore(t.content,anchor||document.body.firstChild);
-    });
+    }).catch(error=>{worldShellReady=null;throw error;});
   return worldShellReady;
 };
 let museumDataReady = null;
-const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js'));
+const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js').catch(error=>{museumDataReady=null;throw error;}));
 
-function daysUntil(iso) {
-  const n = Math.ceil((new Date(iso + 'T12:00:00') - Date.now()) / 86400000);
-  return Number.isFinite(n) ? Math.max(0, n) : null;
-}
-
-function paintCount() {
-  const el = document.getElementById('konaCount');
-  const event = window.__ENTRY_EVENT || {};
-  if (!el || !event.date) return;
-  const days = daysUntil(event.date);
-  el.textContent = days === 0 ? 'Race day in Kona' : days === 1 ? 'Kona in 1 day' : `Kona in ${days} days`;
-}
+let disposeCount=null;
+function paintCount(){disposeCount?.();const host=document.querySelector('.entry-race-clock');if(host)disposeCount=mountCountdown(host,window.__ENTRY_EVENT||{});}
 
 let opening = null;
 function openMuseum(room) {
@@ -116,7 +108,8 @@ function openMuseum(room) {
   const btn = document.getElementById('enterBtn');
   if (btn && !window.__museum) btn.innerHTML = 'Opening the coast…';
   if (!opening) {
-    opening = ensureWorldShell()
+    opening = Promise.resolve(window.__konaShell?.accessReady)
+      .then(() => ensureWorldShell())
       .then(() => ensureMuseumData())
       .then(() => loadScript('app/hall.js'))
       .then(() => window.__museum?.enter?.())
@@ -162,12 +155,29 @@ function paintQuest(step) {
   const host = questHost();
   if (!host) return;
   host.hidden = false;
+  if(step==='questions'){
+    renderOnboardingQuestions(host,{onDone:()=>paintQuest('avatar'),onSkip:()=>paintQuest('avatar')});
+    return;
+  }
   if(step==='avatar'){
     renderAvatarRegistration(host,{
       profile,
       onBack:()=>{setEntryMode('landing');host.hidden=true;document.getElementById('buildSelf')?.focus();},
-      onContinue:()=>enterApp('home')
+      onContinue:()=>paintQuest('install')
     });
+    return;
+  }
+  if(step==='install'){
+    const landscape=matchMedia('(orientation: landscape)').matches;
+    host.innerHTML='<section class="onboarding-handoff">'+
+      '<div class="onboarding-handoff-copy"><p class="eyebrow">ONE TINY THING</p><h2>Make KONA feel less like a browser.</h2><p>Then turn your phone sideways when the world gets serious.</p></div>'+
+      '<div class="onboarding-handoff-grid">'+
+        '<article class="onboarding-tip install-tip"><span class="handoff-mark">↓</span><small>01 · INSTALL</small><h3>Put KONA on your phone.</h3><p>If our arrow points somewhere stupid: sorry. Browsers move things.</p><button type="button" class="btn-primary" data-install-app>Install KONA</button></article>'+
+        '<article class="onboarding-tip rotate-tip '+(landscape?'is-landscape':'')+'"><div class="phone-rotate" aria-hidden="true"><i></i><b>↻</b></div><small>02 · ROTATE</small><h3>'+(landscape?'Perfect. Keep it sideways.':'Turn your phone sideways.')+'</h3><p>The 3D world is much better there. Sorry. We’re learning to build a real app.</p></article>'+
+      '</div>'+
+      '<div class="quest-nav"><button type="button" class="btn-primary" data-handoff-continue>Fine. Show me KONA →</button></div>'+
+    '</section>';
+    host.querySelector('[data-handoff-continue]')?.addEventListener('click',()=>enterApp('home'));
     return;
   }
   if(step==='save'){
@@ -197,6 +207,10 @@ function existingRaceIdentity() {
     return value?.entity_type === 'race-identity' && value?.event_id ? value : null;
   } catch (_) { return null; }
 }
+function firstRunStep() {
+  try { return readStorage('onboardingCards') === 'seen' ? 'avatar' : 'questions'; }
+  catch (_) { return 'questions'; }
+}
 
 document.getElementById('entrySignIn')?.addEventListener('click', () => paintQuest('save'));
 
@@ -217,7 +231,7 @@ if (returningVisit) {
   }
   if (note) note.textContent = 'Your RaceIdentity stays private on this device unless you choose to save or share it.';
 } else {
-  buildButton?.addEventListener('click', () => paintQuest('avatar'));
+  buildButton?.addEventListener('click', () => paintQuest(firstRunStep()));
 }
 renderEntryProductStage(document.getElementById('entryProductStage'), {profile});
 entryDataReady.then(data=>{ window.__ENTRY_DATA=data||{}; window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
@@ -226,12 +240,12 @@ function paintShared(draft){
   const host=questHost(); if(!host) return;
   const labels=questLabels(draft);
   host.innerHTML=`<p class="eyebrow">A Kona setup</p><h2>${labels.bike}</h2><p>${labels.shoe}</p><p>${labels.goal}</p><p class="kona-note">Someone shared this setup with you. Build yours to make it your own.</p><button class="btn primary" id="buildShared" type="button">Build yours</button>`;
-  host.querySelector('#buildShared')?.addEventListener('click',()=>paintQuest('avatar'));
+  host.querySelector('#buildShared')?.addEventListener('click',()=>paintQuest(firstRunStep()));
 }
 const q = new URLSearchParams(location.search);
 const shared=decodeShare(q.get('kona'));
 if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
 else if (authReturned && existingRaceIdentity()) enterApp('home');
-else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=passport]')?.click());
-else if (['home','garage','collection','discover','plan','me','feed','travel'].includes(q.get('view'))) enterApp(q.get('view'));
+else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=progress]')?.click());
+else if (returningVisit && ['home','garage','collection','discover','plan','me','feed','travel'].includes(q.get('view'))) enterApp(q.get('view'));

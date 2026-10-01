@@ -5,6 +5,7 @@
 // window.__* names the scenes already read.
 // app/studio-catalog.js loads only on Studio.html, after museum-data.js, because the
 // studio product list (museum/catalog/products.json) is not the public catalog.
+import { eventEnabled, contentVisible } from './src/engine/event-visibility.js';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -137,13 +138,13 @@ export async function assembleMuseumData() {
   return {
     pieces,
     kona: readJson('museum/kona_champions.json'),
-    wyldroom: readJson('museum/wyld_room.json'),
+    wyldroom: eventEnabled('wyld') ? readJson('museum/wyld_room.json') : null,
     konayears: readJson('museum/kona_years.json'),
     atlas: readJson('museum/atlas/bikes.json'),
     skins,
     wings,
-    films: readJson('museum/themes/films.json'),
-    rooms: readJson('museum/world/rooms.json'),
+    films: {...readJson('museum/themes/films.json'),films:readJson('museum/themes/films.json').films.filter(contentVisible)},
+    rooms: {...readJson('museum/world/rooms.json'),areas:readJson('museum/world/rooms.json').areas.filter(contentVisible)},
     art,
     event: readJson('integrations/sources/kona-2026.ironman.json'),
     island: readJson('museum/kona/island-guide.json'),

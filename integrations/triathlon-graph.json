@@ -9,8 +9,8 @@
     "remote_writes": false
   },
   "counts": {
-    "nodes": 71,
-    "edges": 54
+    "nodes": 66,
+    "edges": 49
   },
   "nodes": [
     {
@@ -465,67 +465,12 @@
       "representation": "provisional"
     },
     {
-      "id": "edition-film-sunny-side",
-      "kind": "product",
-      "public": true,
-      "label": "WYLD Dye",
-      "source_records": [
-        "museum/themes/films.json"
-      ],
-      "product_type": "bike",
-      "representation": "provisional"
-    },
-    {
       "id": "edition-film-sanctuary",
       "kind": "product",
       "public": true,
       "label": "Stained Glass",
       "source_records": [
         "museum/themes/films.json"
-      ],
-      "product_type": "bike",
-      "representation": "provisional"
-    },
-    {
-      "id": "edition-wyld-dye",
-      "kind": "product",
-      "public": true,
-      "label": "WYLD Dye",
-      "source_records": [
-        "museum/wyld_room.json"
-      ],
-      "product_type": "bike",
-      "representation": "provisional"
-    },
-    {
-      "id": "edition-wyld-tide",
-      "kind": "product",
-      "public": true,
-      "label": "WYLD Tide",
-      "source_records": [
-        "museum/wyld_room.json"
-      ],
-      "product_type": "bike",
-      "representation": "provisional"
-    },
-    {
-      "id": "edition-wyld-sheer",
-      "kind": "product",
-      "public": true,
-      "label": "WYLD Sheer",
-      "source_records": [
-        "museum/wyld_room.json"
-      ],
-      "product_type": "bike",
-      "representation": "provisional"
-    },
-    {
-      "id": "edition-wyld-night",
-      "kind": "product",
-      "public": true,
-      "label": "WYLD Night",
-      "source_records": [
-        "museum/wyld_room.json"
       ],
       "product_type": "bike",
       "representation": "provisional"
@@ -1071,57 +1016,12 @@
       ]
     },
     {
-      "from": "edition-film-sunny-side",
-      "relationship": "manufactured_by",
-      "to": "brand-canyon",
-      "evidence": "provisional",
-      "source_records": [
-        "museum/themes/films.json"
-      ]
-    },
-    {
       "from": "edition-film-sanctuary",
       "relationship": "manufactured_by",
       "to": "brand-canyon",
       "evidence": "provisional",
       "source_records": [
         "museum/themes/films.json"
-      ]
-    },
-    {
-      "from": "edition-wyld-dye",
-      "relationship": "manufactured_by",
-      "to": "brand-canyon",
-      "evidence": "provisional",
-      "source_records": [
-        "museum/wyld_room.json"
-      ]
-    },
-    {
-      "from": "edition-wyld-tide",
-      "relationship": "manufactured_by",
-      "to": "brand-canyon",
-      "evidence": "provisional",
-      "source_records": [
-        "museum/wyld_room.json"
-      ]
-    },
-    {
-      "from": "edition-wyld-sheer",
-      "relationship": "manufactured_by",
-      "to": "brand-canyon",
-      "evidence": "provisional",
-      "source_records": [
-        "museum/wyld_room.json"
-      ]
-    },
-    {
-      "from": "edition-wyld-night",
-      "relationship": "manufactured_by",
-      "to": "brand-canyon",
-      "evidence": "provisional",
-      "source_records": [
-        "museum/wyld_room.json"
       ]
     },
     {

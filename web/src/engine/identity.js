@@ -221,11 +221,16 @@ export function syncIdentityFromSetup(setup, products, storage = globalThis.loca
       setup: { ...(previousIdentity?.setup || {}), ...projectedSetup },
     };
 
-    writeStorage('userEquipment', JSON.stringify(mergedEquipment), storage);
-    writeStorage('raceIdentity', JSON.stringify(identity), storage);
+    const beforeEquipment = readStorage('userEquipment', storage), beforeIdentity = readStorage('raceIdentity', storage);
+    if (!writeStorage('userEquipment', JSON.stringify(mergedEquipment), storage)) throw new Error('Equipment save failed');
+    if (!writeStorage('raceIdentity', JSON.stringify(identity), storage)) {
+      writeStorage('userEquipment', beforeEquipment, storage);
+      writeStorage('raceIdentity', beforeIdentity, storage);
+      throw new Error('Identity save failed');
+    }
     return { equipment: mergedEquipment, identity };
   } catch {
-    return graph;
+    return { ...graph, persisted: false };
   }
 }
 

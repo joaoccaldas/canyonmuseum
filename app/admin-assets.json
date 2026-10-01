@@ -1,7 +1,7 @@
 {
  "schema_version": 2,
  "generated_by": "tools/build_admin_assets.mjs",
- "count": 110,
+ "count": 104,
  "rooms": [
   {
    "id": "hall",
@@ -30,13 +30,6 @@
    "floor": "ground",
    "floor_name": "Ground floor",
    "kind": "trophy"
-  },
-  {
-   "id": "wyld",
-   "name": "The WYLD Room",
-   "floor": "ground",
-   "floor_name": "Ground floor",
-   "kind": "themed"
   },
   {
    "id": "pier",
@@ -1300,35 +1293,6 @@
    ]
   },
   {
-   "id": "edition-film-sunny-side",
-   "kind": "product",
-   "type": "bike",
-   "brand": "Canyon",
-   "name": "WYLD Dye",
-   "family": "Speedmax",
-   "year": 2027,
-   "category": "triathlon",
-   "material": "",
-   "glb": "assets/museum/speedmax_web.glb",
-   "image": "",
-   "facts": [
-    {
-     "cls": "I",
-     "text": "A Speedmax CFR in the Sunny Side · The Babysitter livery, as shown in the Sanctuary. The frame is the CFR model; only the paint is the edition's."
-    }
-   ],
-   "stats": [],
-   "locations": [
-    {
-     "id": "sanctuary",
-     "name": "The Sanctuary",
-     "floor": "ground",
-     "floor_name": "Ground floor",
-     "kind": "chapel"
-    }
-   ]
-  },
-  {
    "id": "edition-film-sanctuary",
    "kind": "product",
    "type": "bike",
@@ -1354,122 +1318,6 @@
      "floor": "ground",
      "floor_name": "Ground floor",
      "kind": "chapel"
-    }
-   ]
-  },
-  {
-   "id": "edition-wyld-dye",
-   "kind": "product",
-   "type": "bike",
-   "brand": "Canyon",
-   "name": "WYLD Dye",
-   "family": "Speedmax",
-   "year": 2027,
-   "category": "triathlon",
-   "material": "",
-   "glb": "assets/museum/speedmax_web.glb",
-   "image": "",
-   "facts": [
-    {
-     "cls": "I",
-     "text": "A Speedmax CFR in the Hand-dyed pink × aqua livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
-    }
-   ],
-   "stats": [],
-   "locations": [
-    {
-     "id": "wyld",
-     "name": "The WYLD Room",
-     "floor": "ground",
-     "floor_name": "Ground floor",
-     "kind": "themed"
-    }
-   ]
-  },
-  {
-   "id": "edition-wyld-tide",
-   "kind": "product",
-   "type": "bike",
-   "brand": "Canyon",
-   "name": "WYLD Tide",
-   "family": "Speedmax",
-   "year": 2027,
-   "category": "triathlon",
-   "material": "",
-   "glb": "assets/museum/speedmax_web.glb",
-   "image": "",
-   "facts": [
-    {
-     "cls": "I",
-     "text": "A Speedmax CFR in the Tighter bands, rolling in livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
-    }
-   ],
-   "stats": [],
-   "locations": [
-    {
-     "id": "wyld",
-     "name": "The WYLD Room",
-     "floor": "ground",
-     "floor_name": "Ground floor",
-     "kind": "themed"
-    }
-   ]
-  },
-  {
-   "id": "edition-wyld-sheer",
-   "kind": "product",
-   "type": "bike",
-   "brand": "Canyon",
-   "name": "WYLD Sheer",
-   "family": "Speedmax",
-   "year": 2027,
-   "category": "triathlon",
-   "material": "",
-   "glb": "assets/museum/speedmax_web.glb",
-   "image": "",
-   "facts": [
-    {
-     "cls": "I",
-     "text": "A Speedmax CFR in the Candy tint over bare carbon livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
-    }
-   ],
-   "stats": [],
-   "locations": [
-    {
-     "id": "wyld",
-     "name": "The WYLD Room",
-     "floor": "ground",
-     "floor_name": "Ground floor",
-     "kind": "themed"
-    }
-   ]
-  },
-  {
-   "id": "edition-wyld-night",
-   "kind": "product",
-   "type": "bike",
-   "brand": "Canyon",
-   "name": "WYLD Night",
-   "family": "Speedmax",
-   "year": 2027,
-   "category": "triathlon",
-   "material": "",
-   "glb": "assets/museum/speedmax_web.glb",
-   "image": "",
-   "facts": [
-    {
-     "cls": "I",
-     "text": "A Speedmax CFR in the Same hues, after dark livery, as shown in the WYLD Room. The frame is the CFR model; only the paint is the edition's."
-    }
-   ],
-   "stats": [],
-   "locations": [
-    {
-     "id": "wyld",
-     "name": "The WYLD Room",
-     "floor": "ground",
-     "floor_name": "Ground floor",
-     "kind": "themed"
     }
    ]
   },
@@ -2616,39 +2464,6 @@
      "floor": "ground",
      "floor_name": "Ground floor",
      "kind": "trophy"
-    }
-   ]
-  },
-  {
-   "id": "room:wyld",
-   "kind": "world",
-   "type": "room",
-   "brand": "KONA World",
-   "name": "The WYLD Room",
-   "year": "",
-   "category": "themed",
-   "material": "",
-   "glb": "",
-   "image": "",
-   "facts": [
-    {
-     "text": "Four hand-dyed liveries"
-    }
-   ],
-   "stats": [],
-   "preview": {
-    "kind": "room",
-    "floor": "#12181d",
-    "accent": "#ff6a00",
-    "fog": "#0b1116"
-   },
-   "locations": [
-    {
-     "id": "wyld",
-     "name": "The WYLD Room",
-     "floor": "ground",
-     "floor_name": "Ground floor",
-     "kind": "themed"
     }
    ]
   },

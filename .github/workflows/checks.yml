@@ -5,6 +5,7 @@ name: Museum checks
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -41,9 +44,10 @@ jobs:
           for i in {1..20}; do curl -fsS http://127.0.0.1:8744/ >/dev/null && break; sleep 0.5; done
           CHROME_PATH=/usr/bin/google-chrome node web/p0-journey-smoke.mjs http://127.0.0.1:8744/
           CHROME_PATH=/usr/bin/google-chrome node web/studio-launch-audit.mjs http://127.0.0.1:8744
+          CHROME_PATH=/usr/bin/google-chrome node web/launch-regression-browser.mjs http://127.0.0.1:8744/
           CHROME_PATH=/usr/bin/google-chrome node web/install-launch-audit.mjs http://127.0.0.1:8744
       - name: Built pages are up to date
         run: |
           node tools/build_pages.mjs
-          git diff --stat --exit-code -- museum/catalog/products.json docs/ROOMS.md '*.html' 'web/dist/*.html' app/kona-core.js app/admin-assets.json app/admin-asset-preview.js app/race-self-stage.js app/museum-data.js app/hall.js app/studio.js app/studio-catalog.js \
+          git diff --stat --exit-code -- museum/catalog/products.json museum/entry-catalog.json integrations/public-catalog.json integrations/triathlon-graph.json docs/ROOMS.md '*.html' 'web/dist/*.html' app/kona-core.js app/admin-assets.json app/admin-asset-preview.js app/race-self-stage.js app/collectible-stage.js app/museum-data.js app/hall.js app/studio.js app/studio-catalog.js \
             || { echo "::error::built pages/bundles are stale: run node tools/build_pages.mjs and commit all generated outputs"; exit 1; }

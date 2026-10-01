@@ -50,6 +50,9 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
         el('div', { class: 'set-row' }, el('span', {}, 'Ambient sound'), seg('Sound', p.sound ? 'on' : 'off', [['off', 'Off'], ['on', 'On']], v => { profile.set({ sound: v === 'on' }); onSound(v === 'on'); })),
         el('div', { class: 'set-row' }, el('span', {}, '3D movement'), seg('Travel', p.travel, [['teleport', 'Teleport'], ['walk', 'Walk']], v => profile.set({ travel: v }))),
         el('div', { class: 'set-row' }, el('span', {}, 'Motion'), seg('Motion', p.motion, [['auto', 'Auto'], ['full', 'Full'], ['reduced', 'Reduced']], v => { profile.set({ motion: v }); reloadNeeded = onMotion(v) || reloadNeeded; }))),
+      el('section', {}, el('h4', {}, 'KONA nudges'),
+        el('div', { class: 'set-row' }, el('span', {}, 'Tiny optional reasons to come back'), seg('KONA nudges', p.notifications?.enabled?'on':'off', [['off','Off'],['on','On']], v => profile.set({ notifications:{...p.notifications,enabled:v==='on'} }))),
+        el('p', { class: 'set-note' }, 'For now these are in-app nudges only. Opening one can earn a small, one-time XP reward. No push permission is requested yet.')),
       el('section', {}, el('h4', {}, 'Account & sync'),
         sync?.available
           ? el('div', { class: 'set-row' }, el('span', {}, p.sync ? `Signed in as ${p.sync.email}` : 'Sign in to sync your KONA progress across devices.'), el('button', { type: 'button', class: 'btn ghost', onclick: () => sync.start() }, 'Open account'))

@@ -114,7 +114,7 @@ export function createRaceSetupStore(storage = globalThis.localStorage) {
     },
     save(setup, products) {
       const clean = normaliseRaceSetup({ ...setup, updated_at:Date.now() }, products);
-      try { writeStorage('raceSetup',JSON.stringify(clean),storage); } catch (_) { }
+      if (!writeStorage('raceSetup',JSON.stringify(clean),storage)) throw new Error('Your setup could not be saved. Free device storage and try again.');
       return clean;
     },
     clear() { try { removeStorage('raceSetup',storage); } catch (_) { } },

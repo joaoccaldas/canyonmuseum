@@ -8,3 +8,6 @@
 .garage-bike-mark{position:absolute;z-index:1;right:20px;top:26px;width:min(46%,220px);fill:none;stroke:color-mix(in srgb,var(--brand-mist) 76%,transparent);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 8px 18px rgba(0,0,0,.25))}
 .garage-setup-media img{filter:saturate(.82) contrast(1.02)}
 @media(max-width:430px){.garage-bike-mark{right:12px;top:20px;width:44%;opacity:.86}}
+
+.garage-level-note{max-width:34rem;margin:10px 0 0;color:var(--brand-muted);font:550 12px/1.5 var(--brand-font-ui)}
+.garage-setup-copy .kona-primary:disabled{opacity:.62;cursor:not-allowed}

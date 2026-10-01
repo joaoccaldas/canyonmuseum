@@ -1,7 +1,7 @@
 // ui/avatar-home.js — canonical User Studio surface.
 // Both the persistent user menu and the Me tab enter this same game-style studio.
 // Avatar building is a projection over engine/avatar.js; mobile and desktop share this exact UI.
-import { readGameState } from '../engine/game-state.js';
+import { readGameState, gameProgress } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
@@ -11,6 +11,8 @@ import {
 } from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
 import { renderProgressSurface } from './me.js';
+import { avatarItemAccess } from '../engine/access.js';
+import { shareProgress, whatsappProgressUrl, safeAppUrl, progressShareText } from '../growth/social-share.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -30,7 +32,7 @@ function readImage(file){
   });
 }
 
-export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openCollection,openTour,openAssets,isAdmin=false,isCurrent=()=>true}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openCollection,openTour,openAssets,openFeed,openTravel,isAdmin=false,isCurrent=()=>true}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -49,7 +51,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   const menuItem=(action,mark,title,note)=>'<button type="button" data-race-self-action="'+action+'"><i aria-hidden="true">'+mark+'</i><span><b>'+title+'</b><small>'+note+'</small></span><em aria-hidden="true">↗</em></button>';
   root.innerHTML=
     '<section class="race-self-experience" aria-label="User Studio">'+
-      '<header class="studio-heading"><a href="index.html" class="studio-wordmark" aria-label="KONA title screen">KONA<span>USER STUDIO</span></a><button class="studio-install" data-install-app type="button">Install app</button><span class="studio-save-state" role="status">● Saved on this device</span></header>'+
+      '<header class="studio-heading"><a href="index.html" class="studio-wordmark" aria-label="KONA title screen">KONA<span>USER STUDIO</span></a><button type="button" class="btn-text studio-home" data-studio-home>← Home</button><button class="studio-install" data-install-app type="button">Install app</button><span class="studio-save-state" role="status">● Saved on this device</span></header>'+
       '<div class="race-self-stage-wrap">'+
         '<div class="race-self-identity"><small>YOUR ATHLETE. YOUR STRANGE LITTLE UNIVERSE.</small><h1>Build the version of you that hasn’t raced yet.</h1><p>Make it yours. Then go find something you weren’t looking for.</p></div>'+
         '<div class="studio-canvas-frame"><canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D User Studio"></canvas><p class="studio-stage-status" role="status">Preparing your athlete…</p></div>'+
@@ -59,7 +61,10 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('races','◉','Races',raceCount+' race badges')+
         menuItem('collection','◇','Collection',summary.total+' things found')+
         menuItem('progress','☆','Progress','Badges, milestones & history')+
+        menuItem('share','↗','Share KONA','Progress card, WhatsApp & more')+
         menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
+        menuItem('feed','≋','The Feed','News, YouTube & your RSS sources')+
+        menuItem('travel','⌁','Travel to Kona','Island guide, arrivals & local stops')+
         (isAdmin?menuItem('assets','▦','Asset Library','Bikes, gear, rooms, art & world assets'):'')+
         '<p class="studio-menu-note">Your history lives here.<br>The world stays out there.</p>'+
       '</nav>'+
@@ -110,7 +115,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
       else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
     }
   };
-  root.addEventListener('keydown',handleKey);
+  document.addEventListener('keydown',handleKey);
   root.querySelector('[data-hub-close]')?.addEventListener('click',closeDrawer);
 
   const commitStyle=next=>{
@@ -136,9 +141,10 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     ).join('');
     const rows=AVATAR_SLOTS.map(slot=>{
       const selected=avatarItem(avatarStyle,slot);
-      const options=(AVATAR_ITEMS[slot]||[]).map(item=>
-        '<button type="button" data-avatar-item="'+slot+':'+item.id+'" class="'+(selected.id===item.id?'on':'')+'" style="--slot-color:'+(item.color||'#777')+'"><i></i><span>'+esc(item.label)+'</span></button>'
-      ).join('');
+      const options=(AVATAR_ITEMS[slot]||[]).map(item=>{
+        const gate=avatarItemAccess(slot,item.id,{admin:isAdmin});
+        return '<button type="button" data-avatar-item="'+slot+':'+item.id+'" class="'+(selected.id===item.id?'on':'')+(gate.unlocked?'':' locked')+'" style="--slot-color:'+(item.color||'#777')+'"'+(gate.unlocked?'':' disabled aria-label="'+esc(item.label)+' · unlocks at Level '+gate.requiredLevel+'"')+'><i></i><span>'+esc(item.label)+(gate.unlocked?'':' · LVL '+gate.requiredLevel)+'</span></button>';
+      }).join('');
       const overlay=avatarStyle.items[slot]?.overlay;
       return '<section class="avatar-slot" data-avatar-slot-card="'+slot+'">'+
         '<div class="avatar-slot-title"><small>'+slot.toUpperCase()+'</small><span>'+esc(selected.label||selected.id)+'</span></div>'+
@@ -219,16 +225,46 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   const showProgress=async()=>{
     drawerKicker.textContent='USER STUDIO · PASSPORT';drawerTitle.textContent='Your progress';
     drawerBody.replaceChildren();
-    await renderProgressSurface(drawerBody,{settings});
+    await renderProgressSurface(drawerBody,{settings,admin:isAdmin});
     if(drawer.hidden)openDrawer();
   };
 
+  const showShare=()=>{
+    const progress=gameProgress(readGameState());
+    const wa=whatsappProgressUrl(progress);
+    drawerKicker.textContent='USER STUDIO · SHARE';drawerTitle.textContent='Share your KONA';
+    drawerBody.innerHTML='<section class="kona-section artifact artifact--label share-studio">'+
+      '<div class="kona-section-head"><h3>Give someone the rabbit hole.</h3><small>PRIVATE BY DEFAULT</small></div>'+
+      '<p class="kona-source-note">'+esc(progressShareText(progress))+'</p>'+
+      '<div class="share-studio-actions"><button type="button" class="kona-primary" data-share-progress>Share to apps…</button>'+
+      (wa?'<a class="btn-secondary" data-share-whatsapp href="'+esc(wa)+'" target="_blank" rel="noopener noreferrer">WhatsApp</a>':'')+
+      '<button type="button" class="btn-secondary" data-share-copy>Copy clean link</button></div>'+
+      '<p class="kona-source-note" data-share-status>On phones, the system share sheet can offer Instagram, WhatsApp, Messages and any compatible app. No email, account ID or private local state is included.</p>'+
+    '</section>';
+    if(drawer.hidden)openDrawer();
+    const status=drawerBody.querySelector('[data-share-status]');
+    drawerBody.querySelector('[data-share-progress]')?.addEventListener('click',async e=>{
+      const button=e.currentTarget;button.disabled=true;const result=await shareProgress(progress);
+      status.textContent=result.ok?(result.method==='clipboard'?'Share sheet unavailable. KONA link copied.':'Share sheet opened safely.'):(result.reason==='cancelled'?'Not shared. Nothing left KONA.':'Sharing is unavailable here. Use WhatsApp or copy the link.');
+      button.disabled=false;
+    });
+    drawerBody.querySelector('[data-share-copy]')?.addEventListener('click',async e=>{
+      const url=safeAppUrl();if(!url)return;
+      const button=e.currentTarget;
+      try{await navigator.clipboard.writeText(url);status.textContent='Clean KONA link copied.';button.textContent='Copied';}catch{status.textContent='Could not copy automatically. Use Share to apps… instead.';}
+    });
+  };
+
+  root.querySelector('[data-studio-home]')?.addEventListener('click',()=>onBack?.());
   root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
   root.querySelector('[data-race-self-action="tour"]')?.addEventListener('click',()=>openTour?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
   root.querySelector('[data-race-self-action="collection"]')?.addEventListener('click',()=>openCollection?.());
   root.querySelector('[data-race-self-action="progress"]')?.addEventListener('click',showProgress);
+  root.querySelector('[data-race-self-action="share"]')?.addEventListener('click',showShare);
+  root.querySelector('[data-race-self-action="feed"]')?.addEventListener('click',()=>openFeed?.());
+  root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
-  return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();root.removeEventListener('keydown',handleKey);};
+  return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();document.removeEventListener('keydown',handleKey);};
 }

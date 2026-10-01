@@ -1,7 +1,7 @@
-name: Speedmax Museum Android App
+name: KONA Android App
 
 # Builds the Android app (Capacitor shell bundling the museum), boots it on an emulator as a
-# smoke test, then publishes the APK to the website at downloads/SpeedmaxMuseum.apk together
+# smoke test, then publishes the APK to the website at downloads/KONA.apk together
 # with app/android-version.json (version, size, SHA-256), which installed apps check over
 # HTTPS to offer the update. Android installs an update only if it is signed with the same key.
 #
@@ -17,7 +17,26 @@ on:
       - '*_Museum.html'
       - 'Canyon_Collection.html'
       - 'assets/**'
-      - 'app/icons/**'
+      - 'app/kona-core.js'
+      - 'app/viewport.js'
+      - 'app/world-shell.html'
+      - 'app/race-self-stage.js'
+      - 'app/entry-data.json'
+      - 'app/admin-assets.json'
+      - 'app/admin-asset-preview.js'
+      - 'app/museum-data.js'
+      - 'app/hall.js'
+      - 'app/studio.js'
+      - 'app/studio-catalog.js'
+      - 'web/src/**'
+      - 'web/styles/**'
+      - 'web/build_landing.mjs'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - 'tools/build_app.mjs'
+      - 'brand/**'
+      - 'integrations/**'
+      - 'manifest.webmanifest'
       - 'app/native/**'
       - '.github/workflows/android.yml'
   workflow_dispatch:
@@ -26,7 +45,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: speedmax-android
+  group: kona-android
   cancel-in-progress: false
 
 jobs:
@@ -51,6 +70,14 @@ jobs:
       - uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+      - name: Install web build dependencies
+        working-directory: .
+        run: npm ci --prefix web --no-audit --no-fund
+      - name: Build current KONA web runtime
+        working-directory: .
+        run: |
+          node web/build_landing.mjs
+          node tools/build_app.mjs
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Prepare signing key
@@ -77,18 +104,18 @@ jobs:
           export SPEEDMAX_VERSION_NAME="1.${{ github.run_number }}"
           npm run sync
           (cd android && ./gradlew assembleRelease --no-daemon)
-          cp android/app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/SpeedmaxMuseum.apk"
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$GITHUB_WORKSPACE/SpeedmaxMuseum.apk"
-          sha=$(sha256sum "$GITHUB_WORKSPACE/SpeedmaxMuseum.apk" | cut -d' ' -f1)
-          bytes=$(stat -c %s "$GITHUB_WORKSPACE/SpeedmaxMuseum.apk")
-          printf '{"versionCode":%s,"versionName":"%s","apk":"downloads/SpeedmaxMuseum.apk","sha256":"%s","bytes":%s}\n' \
+          cp android/app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/KONA.apk"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$GITHUB_WORKSPACE/KONA.apk"
+          sha=$(sha256sum "$GITHUB_WORKSPACE/KONA.apk" | cut -d' ' -f1)
+          bytes=$(stat -c %s "$GITHUB_WORKSPACE/KONA.apk")
+          printf '{"versionCode":%s,"versionName":"%s","apk":"downloads/KONA.apk","sha256":"%s","bytes":%s}\n' \
             "$SPEEDMAX_VERSION_CODE" "$SPEEDMAX_VERSION_NAME" "$sha" "$bytes" > "$GITHUB_WORKSPACE/android-version.json"
           cat "$GITHUB_WORKSPACE/android-version.json"
       - uses: actions/upload-artifact@v4
         with:
-          name: SpeedmaxMuseum-apk
+          name: KONA-apk
           path: |
-            SpeedmaxMuseum.apk
+            KONA.apk
             android-version.json
           if-no-files-found: error
 
@@ -98,7 +125,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: SpeedmaxMuseum-apk
+          name: KONA-apk
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -112,7 +139,7 @@ jobs:
           arch: x86_64
           disable-animations: true
           script: |
-            adb install -r SpeedmaxMuseum.apk
+            adb install -r KONA.apk
             adb shell am start -W -n com.caldasstudio.speedmaxmuseum/.MainActivity
             sleep 25
             adb shell pidof com.caldasstudio.speedmaxmuseum
@@ -122,7 +149,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: SpeedmaxMuseum-smoke-test
+          name: KONA-smoke-test
           path: |
             launch.png
             logcat.txt
@@ -137,17 +164,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: SpeedmaxMuseum-apk
+          name: KONA-apk
           path: ${{ runner.temp }}/apk
       - name: Commit APK to the website
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p downloads app
-          cp "$RUNNER_TEMP/apk/SpeedmaxMuseum.apk" downloads/SpeedmaxMuseum.apk
+          cp "$RUNNER_TEMP/apk/KONA.apk" downloads/KONA.apk
           cp "$RUNNER_TEMP/apk/android-version.json" app/android-version.json
-          node -e "const fs=require('fs');const p='app/android-version.json';const v=JSON.parse(fs.readFileSync(p,'utf8'));v.published=true;v.apk=v.apk||'downloads/SpeedmaxMuseum.apk';fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n')"
-          git add -f downloads/SpeedmaxMuseum.apk app/android-version.json
+          node -e "const fs=require('fs');const p='app/android-version.json';const v=JSON.parse(fs.readFileSync(p,'utf8'));v.published=true;v.apk=v.apk||'downloads/KONA.apk';fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n')"
+          git add -f downloads/KONA.apk app/android-version.json
           if git diff --cached --quiet; then echo "APK unchanged"; exit 0; fi
           git commit -m "build(app): publish Android app [skip ci]"
           for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && break; sleep 5; done

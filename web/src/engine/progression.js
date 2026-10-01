@@ -1,86 +1,48 @@
+import { contentVisible } from './event-visibility.js';
 import { readStorage, writeStorage, storageKey } from './storage.js';
-// Progression V1. Access, XP, collection and Kona Credits stay separate.
-// Rewards come from events. UI code does not add XP itself.
-// Rarity is fixed on the collectible. Nothing here is random or paid.
+import { readPassportState } from './passport-state.js';
+import { PROGRESSION_CONFIG, RELIC_REGISTRY, UNLOCK_REGISTRY, FIND_REGISTRY } from '../generated/game-config.js';
+// Progression runtime is generated from museum/game/*.json.
+// JSON registries are the source of truth; UI code never owns reward values.
 
 export const PROGRESSION_KEY = storageKey('progression');
+export const TIERS = Object.freeze(['visitor','passport','athlete']);
+export const LEVELS = Object.freeze((PROGRESSION_CONFIG.levels||[]).map(row=>{const summary=(row.summary||'').replace(/\s*\+\s*WYLD/g,'');return Object.freeze({...row,summary,unlock:summary,rewards:(row.rewards||[]).filter(contentVisible)});}));
+export const EVENTS = Object.freeze(PROGRESSION_CONFIG.events||{});
+const RARITY = Object.freeze(PROGRESSION_CONFIG.rarity_rewards||{});
+export const COLLECTIBLES = Object.freeze([...(FIND_REGISTRY.items||[]),...(RELIC_REGISTRY.relics||[])].map(x=>Object.freeze({...x})));
+export const UNLOCKS = Object.freeze((UNLOCK_REGISTRY.unlocks||[]).map(x=>Object.freeze({...x})));
+export const COLLECTIONS = Object.freeze((PROGRESSION_CONFIG.collections||[]).map(x=>Object.freeze({...x})));
+export const SURPRISE_POLICY = Object.freeze(PROGRESSION_CONFIG.surprise_policy||{});
+export const RANKING_POLICY = Object.freeze(PROGRESSION_CONFIG.ranking_policy||{});
+export const ADMIN_POLICY = Object.freeze(PROGRESSION_CONFIG.admin_policy||{});
 
-export const TIERS = ['visitor', 'passport', 'athlete'];
-
-export const LEVELS = [
-  { level: 1, name: 'Visitor', xp: 0 },
-  { level: 2, name: 'Explorer', xp: 40 },
-  { level: 3, name: 'Collector', xp: 100 },
-  { level: 4, name: 'Racer', xp: 200 },
-  { level: 5, name: 'Kona Rookie', xp: 350 },
-  { level: 6, name: 'Lava Runner', xp: 550 },
-  { level: 7, name: 'Queen K Veteran', xp: 800 },
-  { level: 8, name: 'Archivist', xp: 1100 },
-  { level: 9, name: 'Legend', xp: 1500 },
-  { level: 10, name: 'Kahuna', xp: 2000 },
-];
-
-export const EVENTS = {
-  FIRST_VISIT: { xp: 25, credits: 0 },
-  PRODUCT_VIEWED: { xp: 5, credits: 0 },
-  PRODUCT_EXPLODED: { xp: 10, credits: 0 },
-  ROOM_ENTERED: { xp: 0, credits: 0 },
-  ROOM_COMPLETED: { xp: 25, credits: 40 },
-  EQUIPMENT_ADDED: { xp: 15, credits: 0 },
-  DREAM_EQUIPMENT_ADDED: { xp: 10, credits: 0 },
-  RACE_IDENTITY_CREATED: { xp: 100, credits: 200 },
-  SETUP_SHARED: { xp: 0, credits: 0 },
-  REFERRAL_ACTIVATED: { xp: 150, credits: 250 },
-  CHALLENGE_COMPLETED: { xp: 50, credits: 80 },
-  STRAVA_CONNECTED: { xp: 20, credits: 0 },
-  PASSPORT_CREATED: { xp: 250, credits: 500 },
-  FIND_DISCOVERED: { xp: 0, credits: 0 },
-  CURRENCY_SPENT: { xp: 0, credits: 0 },
+const relicById=id=>(RELIC_REGISTRY.relics||[]).find(x=>x.id===id)||null;
+const collectionCount=(state,id)=>{
+  const relics=(RELIC_REGISTRY.relics||[]).filter(x=>x.collection===id);
+  const found=new Set(state?.discoveries||[]);
+  return relics.filter(x=>found.has(x.id)).length;
 };
-
-const RARITY = {
-  common: { xp: 50, credits: 80 },
-  uncommon: { xp: 80, credits: 150 },
-  rare: { xp: 200, credits: 400 },
-  epic: { xp: 750, credits: 1200 },
-  legendary: { xp: 1500, credits: 2500 },
-  mythic: { xp: 2000, credits: 4000 },
-};
-
-// Nine night-experience finds, plus the five shoreline objects already in the hall.
-// Each reward is fixed. Finding one twice does not pay twice.
-export const COLLECTIBLES = [
-  { id: 'find:lava:raven', name: 'The raven', rarity: 'uncommon', place: 'lava' },
-  { id: 'find:lava:gel', name: 'Pumpkin-spice gel', rarity: 'common', place: 'lava' },
-  { id: 'find:lava:spoke', name: 'The golden spoke', rarity: 'epic', place: 'lava' },
-  { id: 'find:camp13:whistle', name: 'The counselor’s whistle', rarity: 'uncommon', place: 'camp13' },
-  { id: 'find:camp13:flashlight', name: 'A flashlight', rarity: 'common', place: 'camp13' },
-  { id: 'find:camp13:mini-mask', name: 'Mini goalie mask keyring', rarity: 'rare', place: 'camp13' },
-  { id: 'find:tunnel:tuft', name: 'A wool tuft', rarity: 'uncommon', place: 'tunnel' },
-  { id: 'find:tunnel:wand', name: 'The smoke wand', rarity: 'rare', place: 'tunnel' },
-  { id: 'find:tunnel:stopwatch', name: 'A stopwatch, still running', rarity: 'legendary', place: 'tunnel' },
-  { id: 'find:shore:plumeria', name: 'A plumeria', rarity: 'common', place: 'shore' },
-  { id: 'find:shore:cowrie', name: 'A cowrie', rarity: 'uncommon', place: 'shore' },
-  { id: 'find:shore:lava', name: 'A lava stone', rarity: 'common', place: 'shore' },
-  { id: 'find:shore:coral', name: 'Black coral', rarity: 'rare', place: 'shore' },
-  { id: 'find:shore:bib', name: 'A race bib', rarity: 'epic', place: 'shore' },
-];
-
-export const UNLOCKS = [
-  {
-    id: 'unlock:arrival-badge',
-    requirements: [{ type: 'tier', min: 'passport' }],
-    reward: { type: 'badge', id: 'arrival' },
-  },
-  {
-    id: 'unlock:archive-frame',
-    requirements: [
-      { type: 'level', min: 4 },
-      { type: 'collection', prefix: 'find:', count: 5 },
-    ],
-    reward: { type: 'cosmetic', id: 'frame:archive' },
-  },
-];
+export function levelRewards(level){
+  return Object.freeze([...(LEVELS.find(x=>x.level===Number(level))?.rewards||[])].map(x=>Object.freeze({...x})));
+}
+export function visibleProgression(state,{admin=false}={}){
+  const level=admin&&ADMIN_POLICY.full_visibility?LEVELS.at(-1)?.level||10:Math.max(1,Number(state?.level)||1);
+  const levels=LEVELS.map(row=>Object.freeze({...row,unlocked:admin||row.level<=level}));
+  const rewards=levels.flatMap(row=>(row.rewards||[]).map(reward=>Object.freeze({...reward,level:row.level,unlocked:admin||row.level<=level})));
+  return Object.freeze({level,levels,rewards,admin:!!admin});
+}
+export function rewardUnlocked(state,reward,{admin=false}={}){
+  if(!contentVisible(reward))return false;
+  if(admin&&ADMIN_POLICY.bypass_progression_visibility)return true;
+  if(!reward)return false;
+  const source=LEVELS.find(row=>(row.rewards||[]).some(x=>x.type===reward.type&&x.id===reward.id));
+  if(source)return (Number(state?.level)||1)>=source.level;
+  return (state?.unlocks||[]).some(id=>{
+    const unlock=UNLOCKS.find(x=>x.id===id);
+    return unlock?.reward?.type===reward.type&&unlock?.reward?.id===reward.id;
+  });
+}
 
 const tierRank = t => Math.max(0, TIERS.indexOf(t));
 
@@ -106,6 +68,7 @@ export function emptyProgression() {
     ledger: [],
     credits: 0,
     history: [],
+    acquisitions: [],
   };
 }
 
@@ -113,16 +76,28 @@ export function collectibleById(id) {
   return COLLECTIBLES.find(c => c.id === id) || null;
 }
 
+export function collectibleReward(itemOrId){
+  const item=typeof itemOrId==='string'?collectibleById(itemOrId):itemOrId;
+  if(!item)return Object.freeze({xp:0,credits:0});
+  const pay=RARITY[item.rarity]||RARITY.common||{xp:0,credits:0};
+  return Object.freeze({xp:Math.max(0,Number(pay.xp)||0),credits:Math.max(0,Number(pay.credits)||0)});
+}
+
 function countPrefix(state, prefix) {
-  return state.discoveries.filter(id => id.startsWith(prefix)).length;
+  return (state.discoveries||[]).filter(id => id.startsWith(prefix)).length;
 }
 
 export function canUnlock(state, unlock) {
   if (!state || !unlock || state.unlocks.includes(unlock.id)) return false;
-  return unlock.requirements.every(req => {
+  return (unlock.requirements||[]).every(req => {
     if (req.type === 'level') return state.level >= req.min;
     if (req.type === 'tier') return tierRank(state.access_tier) >= tierRank(req.min);
-    if (req.type === 'collection') return countPrefix(state, req.prefix || req.id || '') >= req.count;
+    if (req.type === 'collection') {
+      if(req.prefix)return countPrefix(state,req.prefix)>=Number(req.count||1);
+      const collection=COLLECTIONS.find(x=>x.id===req.id);
+      const required=Number(req.count||collection?.required||1);
+      return collectionCount(state,req.id)>=required;
+    }
     return false;
   });
 }
@@ -144,13 +119,21 @@ export function applyEvent(state, event) {
   let xp = EVENTS[event.type].xp;
   let credits = EVENTS[event.type].credits;
   let discovery = null;
-  if (event.type === 'FIND_DISCOVERED') {
+  if (event.type === 'FIND_DISCOVERED' || event.type === 'FIND_ACQUIRED') {
     const item = collectibleById(event.subject);
     if (!item) return { state: base, granted: null, error: 'unknown-collectible' };
+    if (base.discoveries.includes(item.id)) return { state: base, granted: null, duplicate: true };
     const pay = RARITY[item.rarity] || RARITY.common;
     xp = pay.xp;
     credits = pay.credits;
     discovery = item.id;
+    const method = event.type === 'FIND_DISCOVERED'
+      ? 'hidden'
+      : ['hidden','trade','event'].includes(event.method) ? event.method : item.acquisition || 'hidden';
+    base.acquisitions = Array.isArray(base.acquisitions) ? base.acquisitions : [];
+    if (!base.acquisitions.some(x=>x.item_id===item.id)) {
+      base.acquisitions.push({ item_id:item.id, method, at:String(event.at||new Date().toISOString()) });
+    }
   }
   if (event.type === 'CURRENCY_SPENT') {
     const cost = Math.abs(Number(event.amount) || 0);
@@ -168,6 +151,20 @@ export function applyEvent(state, event) {
   if (credits) base.ledger.push({ id, delta: credits, reason: event.type });
   if (discovery && !base.discoveries.includes(discovery)) base.discoveries.push(discovery);
   if (event.discovery && !base.discoveries.includes(event.discovery)) base.discoveries.push(String(event.discovery));
+  const completedCollections=[];
+  for(const collection of COLLECTIONS){
+    const completionId='collection-complete:'+collection.id;
+    if(base.seen.includes(completionId))continue;
+    const required=Number(collection.required)||1;
+    if(collectionCount(base,collection.id)<required)continue;
+    base.seen.push(completionId);
+    const reward=collection.reward||{};
+    const bonusXp=Math.max(0,Number(reward.xp)||0),bonusCredits=Math.max(0,Number(reward.credits)||0);
+    base.xp+=bonusXp;
+    if(bonusCredits)base.ledger.push({id:completionId,delta:bonusCredits,reason:'COLLECTION_COMPLETED'});
+    if(reward.badge&&!base.badges.includes(reward.badge))base.badges.push(reward.badge);
+    completedCollections.push({id:collection.id,xp:bonusXp,credits:bonusCredits,badge:reward.badge||null});
+  }
   withLevel(base);
   const opened = [];
   for (const unlock of UNLOCKS) {
@@ -179,7 +176,7 @@ export function applyEvent(state, event) {
   }
   base.history.push({ id, type: event.type, xp, credits });
   if (base.history.length > 200) base.history.splice(0, base.history.length - 200);
-  return { state: base, granted: { id, xp, credits, unlocks: opened } };
+  return { state: base, granted: { id, xp, credits, unlocks: opened, collections: completedCollections } };
 }
 
 export function migratePassport({ passport = null, finds = [] } = {}) {
@@ -219,7 +216,10 @@ export function migratePassport({ passport = null, finds = [] } = {}) {
 export function readProgression(storage = globalThis.localStorage) {
   try {
     const raw = JSON.parse(readStorage('progression',storage) || 'null');
-    if (raw?.schema === 'progression-v1') return withLevel(raw);
+    if (raw?.schema === 'progression-v1') {
+      if(!Array.isArray(raw.acquisitions))raw.acquisitions=[];
+      return withLevel(raw);
+    }
   } catch (_) { /* keep going into migration */ }
   return null;
 }
@@ -234,7 +234,7 @@ export function ensureProgression(storage = globalThis.localStorage) {
   if (existing) return existing;
   let passport = null;
   let finds = [];
-  try { passport = JSON.parse(readStorage('passport',storage) || 'null'); } catch (_) {}
+  passport = readPassportState(storage);
   try { finds = JSON.parse(readStorage('finds',storage) || '[]'); } catch (_) {}
   return writeProgression(migratePassport({ passport, finds }), storage);
 }

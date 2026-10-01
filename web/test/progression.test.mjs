@@ -5,15 +5,17 @@ import { applyEvent, canUnlock, migratePassport, levelFor, COLLECTIBLES, UNLOCKS
 test('xp maps onto named levels and does not skip the table', () => {
   assert.equal(levelFor(0).name, 'Visitor');
   assert.equal(levelFor(40).name, 'Explorer');
+  assert.ok(levelFor(40).rewards.some(r=>r.type==='bike'&&r.id==='canyon-cfr-2027'));
   assert.equal(levelFor(2000).name, 'Kahuna');
   assert.equal(levelFor(99999).level, 10);
 });
 
-test('the nine night finds are collectibles with fixed rarity', () => {
-  const night = COLLECTIBLES.filter(c => c.place !== 'shore');
+test('legacy night finds remain intact while V2 relic registry expands collectibles', () => {
+  const night = COLLECTIBLES.filter(c => ['find:lava:','find:camp13:','find:tunnel:'].some(prefix=>c.id.startsWith(prefix)));
   assert.equal(night.length, 9);
   assert.equal(new Set(night.map(c => c.id)).size, 9);
-  assert.ok(night.every(c => ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic'].includes(c.rarity)));
+  assert.ok(COLLECTIBLES.filter(c=>c.id.startsWith('relic:')).length>=20);
+  assert.ok(COLLECTIBLES.every(c => ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic'].includes(c.rarity)));
 });
 
 test('a find pays once and a repeat event does not', () => {
@@ -62,4 +64,15 @@ test('unlocks follow requirements and do not reopen', () => {
   const granted = applyEvent(state, { type: 'ROOM_COMPLETED', subject: 'hall' });
   assert.ok(granted.state.unlocks.includes('unlock:archive-frame'));
   assert.equal(canUnlock(granted.state, unlock), false);
+});
+
+
+test('three onboarding answers reach level 2 exactly once',()=>{
+  let state=emptyProgression();
+  for(const q of ['intent','history','energy']) state=applyEvent(state,{type:'ONBOARDING_ANSWER',id:'onboarding:'+q,subject:q}).state;
+  assert.equal(state.xp,45);
+  assert.equal(state.level,2);
+  const duplicate=applyEvent(state,{type:'ONBOARDING_ANSWER',id:'onboarding:intent',subject:'intent'});
+  assert.equal(duplicate.duplicate,true);
+  assert.equal(duplicate.state.xp,45);
 });

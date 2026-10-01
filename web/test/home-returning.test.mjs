@@ -9,9 +9,12 @@ test('returning Home reads canonical RaceIdentity through storage adapter',()=>{
   assert.match(source,/Continue your Kona/);
 });
 
-test('first visit enters avatar setup and then Home without the old questionnaire gate',()=>{
-  assert.match(source,/paintQuest\('avatar'\)/);
-  assert.match(source,/onContinue:\(\)=>enterApp\('home'\)/);
+test('first visit follows questions, avatar and install handoff before Home',()=>{
+  assert.match(source,/step==='questions'/);
+  assert.match(source,/paintQuest\(firstRunStep\(\)\)/);
+  assert.match(source,/onDone:\(\)=>paintQuest\('avatar'\)/);
+  assert.match(source,/onContinue:\(\)=>paintQuest\('install'\)/);
+  assert.match(source,/data-handoff-continue[\s\S]*enterApp\('home'\)/);
   assert.doesNotMatch(source,/paintQuest\('intent'\)/);
 });
 

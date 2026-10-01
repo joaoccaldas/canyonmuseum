@@ -1,3 +1,4 @@
+import { contentVisible } from '../web/src/engine/event-visibility.js';
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,7 +30,7 @@ function productCapabilities(p) {
 }
 
 const products = productsSrc.products
-  .filter(p => safeId(p.id) && allowedProductTypes.has(p.type))
+  .filter(p => safeId(p.id) && allowedProductTypes.has(p.type) && p.public !== false && contentVisible(p))
   .map(p => ({
     schema_version: 1,
     id: p.id,

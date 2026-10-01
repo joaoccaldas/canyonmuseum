@@ -1,5 +1,6 @@
 // The studio: the catalogue is generated, complete and deduplicated; looks survive a round trip through
 // a link; hostile links are rejected; filtering is predictable; the studio holds more than the museum.
+import {contentVisible} from '../src/engine/event-visibility.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -56,5 +57,5 @@ test('rooms registry: every named product exists, every area has a name, every b
     for (const p of a.exhibits?.products || []) assert.ok(ids.has(p), `${a.id}: ${p}`);
   }
   for (const p of CAT.products) assert.equal(p.museum, p.where.length > 0, p.id);
-  assert.ok(CAT.products.filter(p => p.origin === 'museum-edition' && p.edition === 'film').length === J('museum/themes/films.json').films.length, 'every film bike is in the studio');
+  assert.ok(CAT.products.filter(p => p.origin === 'museum-edition' && p.edition === 'film').length === J('museum/themes/films.json').films.filter(contentVisible).length, 'every enabled film bike is in the studio');
 });
