@@ -5,7 +5,7 @@
 @media(max-width:899px){
   .kona-bottom-nav{display:grid}
   body.kona-panel-open{overflow:hidden}
-  body.kona-panel-open>#konaWorld,body.kona-panel-open>#intro{visibility:hidden}
+  body.kona-panel-open>#intro{visibility:hidden}
   body.touch #intro{padding-bottom:calc(102px + env(safe-area-inset-bottom))}
 }
 @media(max-width:380px){.kona-place-grid{grid-template-columns:1fr}.kona-section{padding:14px}}

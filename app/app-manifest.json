@@ -1,5 +1,5 @@
 {
- "version": "f3e588b71b8a",
+ "version": "1a335c360a40",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -34,8 +34,8 @@
   "integrations/public-catalog.json": "W1xJL5pT+cwjQLj4y9Kg7X4JorCf+4XAF8AHKzF5CuU=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
   "web/styles/entry.css": "LQsskesFiPDl/ep3hn+JhPMvX6cfS4Wb1xIXWEcJvtQ=",
-  "web/styles/system.css": "QWy4qaxnlpqR+tjl6Ce0Sjb3wRMmm2QNM9yDH2clJLY=",
-  "web/styles/shell-mobile.css": "uiSmh71U2wvcacfMCAP77k9Dedf78/4C32Vi0dUg5Ks=",
+  "web/styles/system.css": "jKC3upikCZA6fO84bJVvn9zk+9rh9Bin6adlGF0UXJE=",
+  "web/styles/shell-mobile.css": "kt5DBDeglxFiMu2rTibzPhjqMWwMJKLRIMP5DSw+/Sg=",
   "web/styles/home.css": "M2QUd913oyU1YuRybHiuaPh6VSJUEJninKnS85efSig=",
   "web/styles/garage.css": "wm+HmyfZlvpb01WwKcB91XvG88Q8exKaG0hW8k70Xss=",
   "web/styles/race-self.css": "tP47vCCxGL1vKRyRlIJsTB2SGYhWz7QICAUVoR1E6ww=",

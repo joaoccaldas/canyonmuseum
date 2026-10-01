@@ -36,6 +36,8 @@ code,kbd,pre,samp{font-family:var(--mono)}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
 /* The story is the front door. The hall canvas stays out of the first paint. */
+body.kona-panel-open>#konaWorld{visibility:hidden}
+body:has(#konaShell):not(.museum-open)>#konaWorld{display:none}
 body:has(#konaShell):not(.museum-open) > header,
 body:has(#konaShell):not(.museum-open) > #hall,
 body:has(#konaShell):not(.museum-open) > #joy,
