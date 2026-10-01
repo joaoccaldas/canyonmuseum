@@ -35,11 +35,13 @@ test('feature styles are route-loaded but still staged and precached',()=>{
  for(const name of ['home.css','garage.css','race-self.css','companion.css','admin-assets.css'])assert.match(shell,new RegExp(name.replace('.','\\.')));
 });
 
-test('museum styles remain lazy and integrity sealed',()=>{
+test('museum styles remain lazy, sealed and fully disabled outside the world',()=>{
  for(const rel of ['web/styles/hall-web.css','web/styles/hall-mobile.css']){
   assert.ok(!landing.includes('href="'+rel+'"'),rel+' must stay out of initial landing');
   assert.ok(build.includes("'"+rel+"'"),rel+' must remain integrity sealed');
  }
+ assert.match(entry,/link\.disabled=disabled/);
+ assert.match(entry,/link\.sheet\)link\.sheet\.disabled=disabled/);
 });
 
 test('viewport runtime is first-paint, staged and PWA core',()=>{
