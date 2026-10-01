@@ -81,7 +81,7 @@ export function initKonaShell({ profile, settings, enter }) {
     leaveRaceSelf();
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
-    await renderGarageSurface(body);
+    await renderGarageSurface(body,{openRaceSelf:raceSelf});
   }
 
   function plan(){
