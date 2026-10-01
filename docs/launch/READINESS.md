@@ -21,7 +21,7 @@ The first-run tour does not repeat automatically, but can be replayed from User 
 - Plan = race-week utility
 - Me = User Studio / Race Self / Passport
 
-**Kona Now** (`?view=feed`) and Travel are exploration destinations inside User Studio. They are not extra public tabs.
+**Kona Now** has a lightweight three-story preview on Home and a full customizable destination from User Studio (`?view=feed`). Travel remains a User Studio destination. Neither becomes an extra public tab.
 
 ## Brand / responsive convergence
 
