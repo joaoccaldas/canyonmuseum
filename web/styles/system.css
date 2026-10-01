@@ -13,6 +13,8 @@
   --lh-body:1.62; --radius-s:10px; --radius-m:14px; --radius-l:22px;
 }
 [hidden]{display:none!important}
+*{box-sizing:border-box}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
 html{font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 body{font-family:var(--sans)}
 button,input,select,textarea{font-family:inherit}
