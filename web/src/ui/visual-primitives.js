@@ -5,13 +5,13 @@ import { AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
 export function avatarPreviewMarkup(styleInput,{className='visual-avatar'}={}){
   const s=normaliseAvatarStyle(styleInput);
   const skin=AVATAR_COLORS.skin[s.skin], hair=AVATAR_COLORS.hair[s.hair], top=AVATAR_COLORS.top[s.top], bottoms=AVATAR_COLORS.bottoms[s.bottoms], shoes=AVATAR_COLORS.shoes[s.shoes];
-  return '<div class="'+className+'" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
+  return '<div class="visual-avatar '+className+'" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
     '<i class="va-hair"></i><i class="va-head"></i><i class="va-body"></i><i class="va-arm l"></i><i class="va-arm r"></i><i class="va-leg l"></i><i class="va-leg r"></i><i class="va-shoe l"></i><i class="va-shoe r"></i>'+
   '</div>';
 }
 
 export function bikeMarkSvg(className='visual-bike-mark'){
-  return '<svg class="'+className+'" viewBox="0 0 180 92" aria-hidden="true"><circle cx="38" cy="66" r="23"/><circle cx="142" cy="66" r="23"/><path d="M38 66 72 31l28 35H64l36-35 42 35M72 31h38m-10 0 14-14m-10 0h24"/></svg>';
+  return '<svg class="visual-bike-mark '+className+'" viewBox="0 0 180 92" aria-hidden="true"><circle cx="38" cy="66" r="23"/><circle cx="142" cy="66" r="23"/><path d="M38 66 72 31l28 35H64l36-35 42 35M72 31h38m-10 0 14-14m-10 0h24"/></svg>';
 }
 
 export function renderEntryProductStage(host,{profile}={}){
