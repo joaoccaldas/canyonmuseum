@@ -29,7 +29,7 @@ test('Discover is lightweight before optional 3D',()=>{
   assert.match(discover,/Enter the world/);
 });
 
-test('Garage and Passport resolve Product presentation from the shared public projection',()=>{
+test('Garage and Progress resolve Product presentation from the shared public projection',()=>{
   assert.match(garage,/getPublicProduct/);
   assert.match(me,/getPublicProduct/);
   assert.doesNotMatch(garage,/BIKES|SHOES|questLabels/);
@@ -41,8 +41,9 @@ test('Home is lightweight while User Studio owns personal depth and tour replay'
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
   for(const control of ['Avatar','Bike Studio','Races','Settings','Quick tour']) assert.match(avatarHome,new RegExp(control));
-  assert.match(avatarHome,/Canyon Museum/);
-  assert.match(avatarHome,/openDiscover/);
+  assert.doesNotMatch(avatarHome,/Canyon Museum|Discover Kona|Race week/);
+  assert.match(avatarHome,/Collection/);
+  assert.match(avatarHome,/Progress/);
   assert.match(avatarHome,/openTour/);
   assert.match(avatarHome,/race-self-controls/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
@@ -56,9 +57,10 @@ test('Plan is lightweight and independent of museum globals',()=>{
   assert.doesNotMatch(shell,/__EVENT|__ISLAND/);
 });
 
-test('Passport owns no independent persistence',()=>{
+test('Progress owns no independent persistence and keeps Passport compatibility only as an API alias',()=>{
   assert.match(me,/race_identity/);
-  assert.match(me,/Passport/);
+  assert.match(me,/renderProgressSurface/);
+  assert.match(me,/renderPassportSurface/);
   assert.doesNotMatch(me,/localStorage|writeStorage/);
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
@@ -86,5 +88,5 @@ test('Home button means Home and Admin Assets stays a generated, Me-only capabil
 
 test('visual evidence covers launch, companion and museum-return states across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','passport','feed','travel','museum-return-home','bike-studio']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','bike-studio']) assert.match(visual,new RegExp(view));
 });
