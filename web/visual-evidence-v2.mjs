@@ -42,7 +42,7 @@ async function capture(vp,state,theme){
    if(state==='home'){
      // Returning users land here. No personal/world 3D should be required.
    }else if(['collection','find-studio'].includes(state)){
-     await p.click('[data-first-find]');await p.click('[data-home-finds]');await p.waitForSelector('[data-find]');
+     await p.$eval('[data-first-find]',e=>e.scrollIntoView({block:'center',behavior:'instant'}));await p.click('[data-first-find]');await p.waitForFunction(()=>document.querySelector('[data-first-find]')?.disabled);await p.$eval('[data-home-finds]',e=>e.scrollIntoView({block:'center',behavior:'instant'}));await p.click('[data-home-finds]');await p.waitForSelector('[data-find]');
      if(state==='find-studio'){await p.click('[data-find="find:shore:lava"]');await p.waitForSelector('.find-studio');}
    }else if(['user-studio','avatar-editor','progress'].includes(state)){
      const switched=await p.evaluate(async()=>{const shell=window.__konaShell;if(!shell?.me)return false;await shell.me();return true;});
