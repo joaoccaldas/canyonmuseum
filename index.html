@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!--harden:start-->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org; connect-src 'self' data: blob: https://mtvpnoqwjpoqaiocrklq.supabase.co https://upload.wikimedia.org https://thumb.wikimedia.org; media-src 'self' data: blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org; connect-src 'self' data: blob: https://mtvpnoqwjpoqaiocrklq.supabase.co https://upload.wikimedia.org https://thumb.wikimedia.org; media-src 'self' data: blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://joaoccaldas.github.io/canyonmuseum/">
@@ -15,22 +15,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"KONA · Race the version of yourself","description":"Build your race identity, prepare for race week, explore triathlon machines, people, places and stories, and enter the immersive 3D world when you choose.","url":"https://joaoccaldas.github.io/canyonmuseum/","image":"https://joaoccaldas.github.io/canyonmuseum/assets/share/museum.jpg","inLanguage":"en","isAccessibleForFree":true,"publisher":{"@type":"Person","name":"João Caldas","url":"https://joaoccaldas.github.io/ai/"},"about":[{"@type":"Thing","name":"Canyon Speedmax"},{"@type":"SportsEvent","name":"IRONMAN World Championship","location":"Kailua-Kona, Hawaii"}],"disambiguatingDescription":"An independent, unofficial fan and research project. Not affiliated with, endorsed by or sponsored by Canyon Bicycles GmbH. Canyon and Speedmax are trademarks of their owners."}</script>
 <!--harden:end-->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script>
-(function(){
-  function fit(){
-    var html=document.documentElement;
-    var short=Math.min(screen.width||1e5,screen.height||1e5);
-    var landscape=innerWidth>innerHeight;
-    var physical=landscape?Math.max(screen.width||innerWidth,screen.height||innerHeight):short;
-    var ratio=innerWidth/Math.max(1,physical);
-    var on=short<=500&&ratio>1.3;
-    html.classList.toggle('phone-fit',on);
-    html.classList.toggle('physical-phone',short<=600);
-    html.style.setProperty('--fit',on?ratio.toFixed(3):'1');
-  }
-  fit(); addEventListener('resize',fit); addEventListener('orientationchange',function(){setTimeout(fit,200)});
-})();
-</script>
+<script src="app/viewport.js"></script>
 <title>KONA · Race the version of yourself</title>
 <meta name="description" content="Build your race identity, prepare for race week, explore triathlon machines, people, places and stories, and enter the immersive 3D world when you choose.">
 <meta name="theme-color" content="#f4efe7">
@@ -42,9 +27,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="KONA">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <!-- Source styles stay external: index.html is a thin shell. Order is tokens → shared shell → personal surfaces → entry authority. -->
-<!--design-system:start--><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap"><link rel="stylesheet" href="brand/tokens.css"><link rel="stylesheet" href="brand/themes.css"><link rel="stylesheet" href="brand/artifacts.css"><link rel="stylesheet" href="brand/typography.css"><link rel="stylesheet" href="web/styles/system.css"><link rel="stylesheet" href="web/styles/components.css"><link rel="stylesheet" href="web/styles/shell-mobile.css"><link rel="stylesheet" href="web/styles/home.css"><link rel="stylesheet" href="web/styles/garage.css"><link rel="stylesheet" href="web/styles/race-self.css"><link rel="stylesheet" href="web/styles/admin-assets.css"><link rel="stylesheet" href="web/styles/companion.css"><link rel="stylesheet" href="web/styles/entry-visual-v2.css"><!--design-system:end-->
+<!--design-system:start--><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300..800&display=swap"><link rel="stylesheet" href="brand/tokens.css"><link rel="stylesheet" href="brand/themes.css"><link rel="stylesheet" href="brand/artifacts.css"><link rel="stylesheet" href="brand/typography.css"><link rel="stylesheet" href="web/styles/system.css"><link rel="stylesheet" href="web/styles/components.css"><link rel="stylesheet" href="web/styles/shell-mobile.css"><link rel="stylesheet" href="web/styles/entry.css"><!--design-system:end-->
 </head>
 <body>
 <section id="intro" class="kona-entry">
@@ -77,18 +61,6 @@
   </div>
 </section>
 
-<div id="appSheet" hidden role="dialog" aria-modal="true" aria-labelledby="appSheetTitle"><div>
-  <button class="close" aria-label="Close">×</button>
-  <img src="assets/pwa/icon-v3-192.png" alt="">
-  <h3 id="appSheetTitle">KONA, on your phone</h3>
-  <p>Install KONA as a lightweight app. The 3D world stays optional and loads only when you enter it.</p>
-  <button class="opt" type="button" data-pwa-action hidden><b>Install KONA now</b><small>Use Chrome's native app-install prompt.</small></button>
-  <div class="opt" data-pwa hidden><b>Add KONA to your phone</b><small>Chrome: menu ⋮ → Install app / Add to Home screen. KONA then opens full-screen from your Home screen.</small></div>
-  <a class="opt" data-apk hidden href="#" download>Android app (APK)<small></small></a>
-  <div class="opt" data-apk-unavailable hidden><b>Native Android download</b><small>Not published yet. The signed APK release channel is not configured, so use the PWA install above.</small></div>
-  <div class="opt" data-ios hidden>On iPhone or iPad<small>Tap the Share button, then “Add to Home Screen”.</small></div>
-</div></div>
-<div id="updateBar" hidden role="status" aria-live="polite"><span></span><button type="button"></button><button type="button" class="later" aria-label="Later">×</button></div>
 
 <script src="app/kona-core.js" defer></script>
 </body>

@@ -7,7 +7,10 @@
     const short=Math.min(sw,sh);
     const landscape=innerWidth>innerHeight;
     const physical=landscape?Math.max(sw,sh):short;
-    const desktopViewPhone=short<=500&&innerWidth>820;
+    const vv=globalThis.visualViewport;
+    const visualW=vv?.width||innerWidth,visualH=vv?.height||innerHeight;
+    const splitOrFolded=visualW<Math.min(innerWidth,physical)*.72;
+    const desktopViewPhone=short<=500&&innerWidth>820&&!splitOrFolded&&visualH>=260;
     const fit=desktopViewPhone?Math.max(1,innerWidth/Math.max(1,physical)):1;
     html.classList.toggle('phone-fit',desktopViewPhone);
     html.classList.toggle('physical-phone',short<=600);
