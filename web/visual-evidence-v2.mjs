@@ -131,7 +131,7 @@ for(const r of report){
  if(r.state==='user-studio'&&!/Build the version of you|YOUR ATHLETE|USER STUDIO/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: User Studio content missing`);
  if(r.state==='avatar-editor'&&!/Your character|Minecraft|Customize/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: avatar editor missing`);
  if(r.state==='garage'&&!/Garage|equipment/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Garage content detected`);
- if(r.state==='feed'&&!/THE FEED|rabbit hole|Triathlon/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Feed content detected`);
+ if(r.state==='feed'&&!/What's going on in Kona|Kona Now|Athlete camera/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Kona Now content detected`);
  if(r.state==='travel'&&!/TRAVEL|Kona International|island/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Travel content detected`);
  if(r.state==='museum-return-home'&&r.metrics.museumStylesEnabled)violations.push(`${r.viewport}/${r.theme}: museum CSS remained enabled after returning Home`);
  if(['feed','travel'].includes(r.state)&&r.metrics.companionHeroPosition==='fixed')violations.push(`${r.viewport}/${r.theme}/${r.state}: museum header styling leaked into companion page`);
