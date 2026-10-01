@@ -7,6 +7,7 @@ import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
+import { renderFeed, renderTravel } from './companion.js';
 import { renderAdminAssets } from './admin-assets.js';
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 
@@ -45,9 +46,9 @@ export function initKonaShell({ profile, settings, enter }) {
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
   const setActive=id=>shell.querySelectorAll('[data-tab]').forEach(x=>(x.classList.toggle('on',x.dataset.tab===id),x.setAttribute('aria-current',x.dataset.tab===id?'page':'false')));
   let disposeStudio=null, studioRequest=0;
-  const leaveRaceSelf=()=>{studioRequest++;disposeStudio?.();disposeStudio=null;document.body.classList.remove('race-self-open');};
+  const leaveRaceSelf=()=>{panel.classList.remove('companion-panel');studioRequest++;disposeStudio?.();disposeStudio=null;document.body.classList.remove('race-self-open');};
   const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
-  shell.querySelector('#konaPanelClose').onclick=close;
+  shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
 
   function now(){
     leaveRaceSelf();
@@ -77,6 +78,8 @@ export function initKonaShell({ profile, settings, enter }) {
       openGarage:garage,
       openDiscover:explore,
       openPlan:plan,
+      openFeed:feed,
+      openTravel:travel,
       isCurrent:()=>request===studioRequest,
       openMuseum:()=>{ close(); enter?.(); },
       openCollection:collection,
@@ -85,6 +88,15 @@ export function initKonaShell({ profile, settings, enter }) {
     });
     if(request===studioRequest) disposeStudio=cleanup; else cleanup?.();
   }
+
+  function companion(view){
+    leaveRaceSelf();
+    title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
+    panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
+    document.body.classList.add('kona-panel-open');setActive('discover');
+    disposeStudio=(view==='feed'?renderFeed:renderTravel)(body,{back:raceSelf});
+  }
+  const feed=()=>companion('feed'),travel=()=>companion('travel');
 
   async function collection(){
     leaveRaceSelf();
@@ -149,5 +161,5 @@ export function initKonaShell({ profile, settings, enter }) {
     }
   };
   syncUserMenu(profile?.get?.()); profile?.subscribe?.(syncUserMenu);
-  return { now, raceSelf, garage, plan, me, explore, collection, adminAssets, close };
+  return { now, raceSelf, garage, plan, me, explore, collection, feed, travel, adminAssets, close };
 }
