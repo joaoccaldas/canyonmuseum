@@ -36,7 +36,7 @@ syncIdentityFromSetup(raceSetup, CAT.products);
 const canvas = $('stage');
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ canvas, antialias: !RS.lite, powerPreference: 'high-performance' }); }
-catch (e) { document.body.innerHTML = '<p style="color:#fff;padding:40px;font:16px system-ui">This browser cannot show 3D. <a style="color:#5fd8d3" href="./">Back to the museum</a></p>'; throw e; }
+catch (e) { document.body.innerHTML = '<p class="studio-fallback">This browser cannot show 3D. <a href="./">Back to the museum</a></p>'; throw e; }
 renderer.setPixelRatio(RS.dpr); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = RS.shadows; renderer.shadowMap.type = THREE.PCFShadowMap;
 const scene = new THREE.Scene();
