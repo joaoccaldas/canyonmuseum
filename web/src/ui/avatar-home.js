@@ -1,11 +1,11 @@
-// ui/avatar-home.js — game-style personal hub.
-// Canonical state stays in RaceIdentity/UserEquipment/RaceHistory/Progression.
-// This surface is a launcher + personal 3D projection, not a second state store.
+// ui/avatar-home.js — immersive Race Self surface.
+// Race Self is personal depth inside the app, never a second navigation authority.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
 import { AVATAR_OPTIONS, AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
+import { renderRacePicker } from './race-cards.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -16,12 +16,7 @@ async function equipped(snapshot,equipmentId){
   return getPublicProduct(productId(row.product_id));
 }
 
-const tile=(id,icon,title,note,{href='',accent='ocean'}={})=>
-  href
-    ? '<a class="hub-tile '+accent+'" href="'+href+'" data-hub="'+id+'"><i>'+icon+'</i><b>'+title+'</b><span>'+note+'</span></a>'
-    : '<button type="button" class="hub-tile '+accent+'" data-hub="'+id+'"><i>'+icon+'</i><b>'+title+'</b><span>'+note+'</span></button>';
-
-export async function renderAvatarHome(root,{profile,settings,onBack,openMuseum,openCollection}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -35,27 +30,20 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openMuseum,
   const shoeTitle=shoe?.name||shoe?.label||shoe?.model||'Choose shoes';
   const studioHref=bike?'Studio.html?p='+encodeURIComponent(bike.id)+'#setup':'Studio.html#setup';
   const raceCount=(snapshot.race_history||[]).length;
-  const itemCount=summary.total||0;
 
   root.innerHTML=
-    '<section class="player-hub">'+
-      '<header class="hub-topbar">'+
-        '<button type="button" class="hub-back" data-hub-back aria-label="Back to Home">‹</button>'+
-        '<div class="hub-player"><i style="--avatar:'+esc(accent)+'"></i><div><small>RACE SELF</small><b>'+esc(p.name||'Player')+'</b></div></div>'+
-        '<div class="hub-stats"><span><small>ITEMS</small><b>'+itemCount+'</b></span><span><small>RACES</small><b>'+raceCount+'</b></span></div>'+
-        '<button type="button" class="hub-settings" data-hub="settings" aria-label="Settings">⚙</button>'+
-      '</header>'+
-      '<div class="hub-stage-wrap">'+
-        '<canvas class="hub-stage" data-race-self-stage aria-label="Interactive 3D Race Self hub"></canvas>'+
-        '<div class="hub-stage-copy"><small>'+esc(intent)+'</small><h2>'+esc(goal)+'</h2><p>'+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
+    '<section class="race-self-experience">'+
+      '<div class="race-self-stage-wrap">'+
+        '<canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D Race Self"></canvas>'+
+        '<button type="button" class="race-self-back" data-race-self-back aria-label="Back to Home">←</button>'+
+        '<div class="race-self-identity"><small>YOUR RACE SELF</small><h2>'+esc(goal)+'</h2><p>'+esc(intent)+' · '+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
       '</div>'+
-      '<section class="hub-launcher" aria-label="Race Self actions">'+
-        tile('self','●','Customize','Avatar and kit',{accent:'lime'})+
-        tile('bike','△','Bike Studio','Build your setup',{href:studioHref,accent:'lava'})+
-        tile('world','◎','3D World','Walk the deeper world',{accent:'ocean'})+
-        tile('collection','✦','Collection','Things you found',{accent:'lilac'})+
-        tile('games','▶','Games','Experiences and challenges',{href:'Experiences.html',accent:'hibiscus'})+
-      '</section>'+
+      '<nav class="race-self-controls" aria-label="Race Self controls">'+
+        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Customize</b><small>Avatar & kit</small></span></button>'+
+        '<a href="'+studioHref+'"><i>△</i><span><b>Bike</b><small>'+esc(bikeTitle)+'</small></span></a>'+
+        '<button type="button" data-race-self-action="races"><i>◉</i><span><b>Races</b><small>'+raceCount+' badges</small></span></button>'+
+        '<button type="button" data-race-self-action="settings"><i>⚙</i><span><b>Settings</b><small>'+(summary.total||0)+' collected</small></span></button>'+
+      '</nav>'+
       '<section class="hub-drawer" data-hub-drawer hidden><div class="hub-drawer-head"><div><small data-hub-kicker>SELF</small><h3 data-hub-title>Your Race Self</h3></div><button type="button" data-hub-close aria-label="Close">×</button></div><div data-hub-body></div></section>'+
     '</section>';
 
@@ -73,6 +61,8 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openMuseum,
     document.body.append(script);
   }
 
+  root.querySelector('[data-race-self-back]')?.addEventListener('click',()=>onBack?.());
+
   const drawer=root.querySelector('[data-hub-drawer]');
   const drawerBody=root.querySelector('[data-hub-body]');
   const drawerTitle=root.querySelector('[data-hub-title]');
@@ -87,16 +77,14 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openMuseum,
       return '<button type="button" data-avatar-slot="'+slot+'" data-avatar-value="'+v+'" class="'+(style[slot]===v?'on':'')+'" style="--slot-color:'+color+'"><i></i><span>'+v.replace(/-/g,' ')+'</span></button>';
     }).join('')+'</div></section>';
     drawerKicker.textContent='SELF';drawerTitle.textContent='Customize your avatar';
-    drawerBody.innerHTML=
-      '<div class="hub-self-grid avatar-builder">'+
-        optionRow('skin',AVATAR_OPTIONS.skin)+
-        optionRow('hair',AVATAR_OPTIONS.hair)+
-        optionRow('top',AVATAR_OPTIONS.top)+
-        optionRow('bottoms',AVATAR_OPTIONS.bottoms)+
-        optionRow('shoes',AVATAR_OPTIONS.shoes)+
-        optionRow('accessory',AVATAR_OPTIONS.accessory)+
-        '<section><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
-        '<section><small>GEAR</small><b>'+esc(bikeTitle)+'</b><span>'+esc(shoeTitle)+'</span></section>'+
+    drawerBody.innerHTML='<div class="hub-self-grid avatar-builder">'+
+      optionRow('skin',AVATAR_OPTIONS.skin)+
+      optionRow('hair',AVATAR_OPTIONS.hair)+
+      optionRow('top',AVATAR_OPTIONS.top)+
+      optionRow('bottoms',AVATAR_OPTIONS.bottoms)+
+      optionRow('shoes',AVATAR_OPTIONS.shoes)+
+      optionRow('accessory',AVATAR_OPTIONS.accessory)+
+      '<section><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
       '</div>';
     drawer.hidden=false;
     drawerBody.querySelectorAll('[data-avatar-slot]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -108,21 +96,21 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openMuseum,
     drawerBody.querySelectorAll('[data-avatar]').forEach(btn=>btn.addEventListener('click',()=>{
       const nextAccent=btn.dataset.avatar;
       avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,accent:nextAccent});
-      profile?.set?.({avatar:nextAccent,avatarStyle});
+      profile.set({avatar:nextAccent,avatarStyle});
       stageApi?.setAvatarStyle?.(avatarStyle);
       drawerBody.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('on',x===btn));
-      const marker=root.querySelector('.hub-player i'); if(marker) marker.style.setProperty('--avatar',nextAccent);
     }));
   };
 
+  const showRaces=()=>{
+    drawerKicker.textContent='RACES';drawerTitle.textContent='Your race cards';
+    const host=document.createElement('div');
+    drawerBody.replaceChildren(host);
+    renderRacePicker(host,{onChange:()=>{}});
+    drawer.hidden=false;
+  };
 
-  root.querySelector('[data-hub-back]')?.addEventListener('click',()=>onBack?.());
-  root.querySelectorAll('[data-hub]').forEach(el=>el.addEventListener('click',e=>{
-    if(el.tagName==='A') return;
-    const id=el.dataset.hub;
-    if(id==='world') openMuseum?.();
-    else if(id==='collection') openCollection?.();
-    else if(id==='self') showSelf();
-    else if(id==='settings') settings?.open?.();
-  }));
+  root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
+  root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
+  root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
 }

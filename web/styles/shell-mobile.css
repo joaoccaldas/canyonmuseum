@@ -39,41 +39,39 @@ html.phone-fit #intro.kona-entry,
 html.phone-fit .kona-panel{height:calc(100dvh / var(--fit));max-height:calc(100dvh / var(--fit))}
 html.phone-fit #appSheet>div{zoom:var(--fit);width:min(420px,calc((100vw - 24px)/var(--fit)))}
 
-/* Race Self game hub — one full-screen stage with overlay launcher. */
+/* Race Self immersive depth. App navigation remains outside this surface. */
 body.race-self-open .kona-panel{padding:0!important;background:#091016!important;color:#f8f5ef;overflow:hidden}
 body.race-self-open .kona-panel-head,
 body.race-self-open .kona-bottom-nav{display:none!important}
 body.race-self-open .kona-panel-body{padding:0!important;max-width:none!important;width:100%;height:100dvh;margin:0}
-.player-hub{position:relative;width:100%;height:100dvh;overflow:hidden;background:#091016;color:#f8f5ef}
-.hub-stage-wrap{position:absolute;inset:0;overflow:hidden;background:
-  radial-gradient(circle at 72% 18%,rgba(19,138,143,.17),transparent 32%),
-  radial-gradient(circle at 15% 38%,rgba(232,71,28,.11),transparent 28%),#091016}
-.hub-stage{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.hub-topbar{position:absolute;z-index:7;left:0;right:0;top:0;display:flex;align-items:center;gap:8px;padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 7px max(10px,env(safe-area-inset-left));background:linear-gradient(180deg,rgba(7,16,21,.92),rgba(7,16,21,.42),transparent)}
-.hub-back{width:48px;height:48px;min-width:48px;min-height:48px;border-radius:12px;border:1px solid #ffffff18;background:#ffffff0c;color:#fff;font-size:28px;line-height:1}
-.hub-player{display:flex;align-items:center;gap:8px;min-width:0}.hub-player>i{width:34px;height:34px;border-radius:10px;background:var(--avatar);box-shadow:0 0 0 1px #ffffff22;flex:0 0 auto}
-.hub-player div{display:grid;gap:2px;min-width:0}.hub-player small,.hub-stats small{font:750 7px/1 var(--sans);letter-spacing:.14em;color:#86cfd0}.hub-player b{font:650 12px/1 var(--sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px}
-.hub-stats{margin-left:auto;display:flex;gap:5px}.hub-stats span{min-width:44px;padding:5px 7px;border:1px solid #ffffff14;border-radius:10px;background:#ffffff0a;text-align:center}.hub-stats b{display:block;margin-top:2px;font:700 12px/1 var(--sans)}
-.hub-settings{width:48px;height:48px;min-width:48px;min-height:48px;border-radius:12px;border:1px solid #ffffff18;background:#ffffff0c;color:#fff;font-size:18px}
-.hub-stage-copy{position:absolute;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:4;pointer-events:none;text-shadow:0 2px 16px #000}
-.hub-stage-copy small{font:800 8px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#72d3d6}.hub-stage-copy h2{margin:3px 0 2px;font:400 clamp(27px,7vw,38px)/.92 var(--serif);letter-spacing:-.035em}.hub-stage-copy p{font:500 10px/1.3 var(--sans);color:#d6e0e2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:82vw}
-.hub-launcher{position:absolute;z-index:8;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:74px;align-content:start;gap:6px;padding:7px max(7px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));background:linear-gradient(180deg,rgba(9,16,22,.2),rgba(9,16,22,.94) 13%,#10191e 35%);border-top:1px solid #ffffff10;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.hub-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;width:100%;height:76px;min-width:0;min-height:76px;padding:6px;border:1px solid #ffffff12;border-radius:13px;color:#f8f5ef;text-align:left;text-decoration:none;overflow:hidden;background:linear-gradient(145deg,#18252b,#10191e)}
-.hub-tile i{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:#ffffff12;font:700 13px/1 var(--sans);font-style:normal;margin-bottom:auto}.hub-tile b{font:650 9.5px/1.05 var(--sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.hub-tile span{display:none}
-.hub-tile.lava{background:linear-gradient(145deg,#452017,#1a1514)}.hub-tile.ocean{background:linear-gradient(145deg,#10343c,#101b20)}.hub-tile.lime{background:linear-gradient(145deg,#2c3d1d,#151b12)}.hub-tile.lilac{background:linear-gradient(145deg,#302847,#17141e)}.hub-tile.hibiscus{background:linear-gradient(145deg,#422033,#1c1318)}
+.race-self-experience{position:relative;width:100%;height:100dvh;overflow:hidden;background:#091016;color:#f8f5ef}
+.race-self-stage-wrap{position:absolute;inset:0 0 92px;background:
+  radial-gradient(circle at 70% 20%,rgba(19,138,143,.16),transparent 33%),
+  radial-gradient(circle at 14% 42%,rgba(232,71,28,.11),transparent 30%),#091016}
+.race-self-stage{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.race-self-back{position:absolute;z-index:8;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));width:48px;height:48px;min-width:48px;min-height:48px;border-radius:14px;border:1px solid #ffffff1a;background:#071116aa;color:#fff;font-size:22px;backdrop-filter:blur(10px)}
+.race-self-identity{position:absolute;z-index:5;left:14px;right:14px;bottom:14px;text-shadow:0 2px 18px #000}
+.race-self-identity small{font:800 8px/1 var(--sans);letter-spacing:.17em;color:#72d3d6}
+.race-self-identity h2{font:400 clamp(32px,9vw,48px)/.9 var(--serif);letter-spacing:-.04em;margin:5px 0 3px}
+.race-self-identity p{font:500 10px/1.35 var(--sans);color:#d4dfe1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.race-self-controls{position:absolute;z-index:9;left:0;right:0;bottom:0;height:92px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding-bottom:env(safe-area-inset-bottom);background:#10191ef5;border-top:1px solid #ffffff12}
+.race-self-controls>a,.race-self-controls>button{min-width:0;min-height:58px;padding:8px 5px;color:#fff;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px;text-align:left}
+.race-self-controls i{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:#ffffff10;font-style:normal;flex:0 0 auto}
+.race-self-controls span{display:grid;gap:2px;min-width:0}.race-self-controls b{font:650 10px/1 var(--sans)}
+.race-self-controls small{font:500 8px/1.2 var(--sans);color:#95a4a9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:68px}
 .hub-drawer{position:fixed;z-index:80;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));max-height:72dvh;padding:12px;border-radius:20px;background:rgba(248,245,239,.98);color:#12181d;box-shadow:0 -18px 60px #0008;overflow:auto;overscroll-behavior:contain}
 .hub-drawer[hidden]{display:none!important}.hub-drawer-head{position:sticky;top:-12px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-12px -12px 10px;padding:12px;background:rgba(248,245,239,.98);border-bottom:1px solid #12181d16}
-.hub-drawer-head small{font:800 8px/1 var(--sans);letter-spacing:.16em;color:#138a8f}.hub-drawer-head h3{margin-top:3px;font:400 27px/1 var(--serif)}.hub-drawer-head button{width:48px;height:48px;min-width:48px;min-height:48px;border-radius:50%;border:1px solid #12181d22;font-size:22px}
+.hub-drawer-head small{font:800 8px/1 var(--sans);letter-spacing:.16em;color:#138a8f}.hub-drawer-head h3{margin-top:3px;font:400 27px/1 var(--serif)}
+.hub-drawer-head button{width:48px;height:48px;min-width:48px;min-height:48px;border-radius:50%;border:1px solid #12181d22;font-size:22px}
 .hub-self-grid{display:grid;grid-template-columns:1fr;gap:10px}.hub-self-grid section{padding:12px;border:1px solid #12181d18;border-radius:14px}.hub-self-grid small{display:block;margin-bottom:7px;font:800 8px/1 var(--sans);letter-spacing:.14em;color:#68747a}
 .hub-swatches,.avatar-options{display:flex;flex-wrap:wrap;gap:8px}.hub-swatches button{width:48px;height:48px;min-width:48px;min-height:48px;border-radius:50%;border:3px solid transparent;background:var(--swatch)}.hub-swatches button.on{box-shadow:0 0 0 3px #12181d}
 .avatar-options button{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:8px;min-width:110px;min-height:48px;padding:7px 10px;border:1px solid #12181d18;border-radius:12px;background:#fff;text-align:left}.avatar-options button.on{border-color:#12181d;box-shadow:inset 0 0 0 1px #12181d}.avatar-options i{width:28px;height:28px;border-radius:8px;background:var(--slot-color)}.avatar-options span{text-transform:capitalize;font-size:11px}
-@media(max-width:350px){.hub-launcher{gap:4px;padding-inline:4px;grid-auto-rows:68px}.hub-tile{height:68px;min-height:68px;padding:5px}.hub-player b{max-width:68px}.hub-stats span{min-width:38px;padding-inline:3px}.hub-stage-copy{bottom:calc(88px + env(safe-area-inset-bottom))}}
+@media(max-width:360px){.race-self-controls small{display:none}.race-self-controls>a,.race-self-controls>button{flex-direction:column;gap:4px;text-align:center}}
 @media(min-width:760px){
-  .hub-stage-wrap{right:38%;border-right:1px solid #ffffff10}
-  .hub-topbar{right:38%}
-  .hub-stage-copy{right:42%;bottom:28px}
-  .hub-launcher{left:62%;top:12px;right:12px;bottom:12px;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(104px,1fr);background:transparent;border:0;backdrop-filter:none;padding:0}
-  .hub-tile{height:auto;min-height:104px;padding:12px}.hub-tile i{width:34px;height:34px;font-size:17px}.hub-tile b{font-size:14px}.hub-tile span{display:block;margin-top:4px;font-size:9px;color:#b9c5c8}
+  .race-self-stage-wrap{right:320px;bottom:0;border-right:1px solid #ffffff12}
+  .race-self-controls{left:auto;top:0;width:320px;height:100%;grid-template-columns:1fr;grid-template-rows:repeat(4,100px);align-content:center;padding:24px;background:#10191e}
+  .race-self-controls>a,.race-self-controls>button{justify-content:flex-start;padding:14px;border-bottom:1px solid #ffffff10}
+  .race-self-controls b{font-size:14px}.race-self-controls small{font-size:10px;max-width:200px}
 }
 /* RC1 touch invariant: all primary phone interactions in Home/Garage are at least 48px. */
 .kona-list a,.kona-list button,.race-card-actions button,.race-picker button,.race-picker input,

@@ -12,11 +12,11 @@ test('Home is the shell surface and Race Self is entered explicitly',()=>{
   assert.match(home,/data-home-self/);
   assert.doesNotMatch(home,/race-self-stage\.js|\.glb|THREE/);
 });
-test('Race Self does not duplicate global app navigation',()=>{
-  for(const duplicate of ['Garage','Discover','Plan','Races']) {
-    assert.doesNotMatch(raceSelf,new RegExp("tile\\([^\\n]+['\"]"+duplicate+"['\"]"));
-  }
-  for(const deep of ['Customize','Bike Studio','3D World','Collection','Games']) assert.match(raceSelf,new RegExp(deep));
+test('Race Self exposes contextual personal controls, not a second app map',()=>{
+  for(const duplicate of ['3D World','Collection','Games','Garage','Discover','Plan']) assert.doesNotMatch(raceSelf,new RegExp(duplicate));
+  for(const control of ['Customize','Bike','Races','Settings']) assert.match(raceSelf,new RegExp(control));
+  assert.doesNotMatch(raceSelf,/hub-launcher/);
+  assert.match(raceSelf,/race-self-controls/);
 });
 test('five-tab app shell remains the only top-level map',()=>{
   for(const tab of ['home','discover','garage','plan','me']) assert.match(shell,new RegExp('data-tab="'+tab+'"'));

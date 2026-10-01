@@ -50,10 +50,12 @@ try{
  assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Something worth doing today|What matters next/i,'post-onboarding state should be calm Home');
  assert.ok(await page.$eval('[data-tab="home"]',e=>e.classList.contains('on')),'Home nav should be active after reveal');
  await page.click('[data-home-self]');
- await page.waitForSelector('.player-hub',{timeout:8000});
+ await page.waitForSelector('.race-self-experience',{timeout:8000});
  await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]'),{timeout:5000});
  await new Promise(r=>setTimeout(r,500));
  assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load only after explicit user action');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Customize|Bike|Races|Settings/i,'Race Self should expose contextual personal controls only');
+ assert.doesNotMatch(await page.$eval('#konaPanelBody',e=>e.textContent),/3D World|Collection|Games|Garage|Discover/i,'Race Self must not duplicate global app navigation');
  const identity=await page.evaluate(()=>localStorage.getItem('kona.raceIdentity.v1')||localStorage.getItem('speedmax.raceIdentity.v1'));
  assert.ok(identity,'RaceIdentity must persist locally before registration');
  await page.reload({waitUntil:'domcontentloaded'});
