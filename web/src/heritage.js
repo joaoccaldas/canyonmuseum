@@ -18,10 +18,10 @@ $('#name').innerHTML = `${esc(B.family)}<br><span>${esc(B.name)}</span>`;
 $('#lede').textContent = B.lede;
 const stats = (B.stats || []).map(s => `<div><b>${esc(s.value)}</b><small>${esc(s.label)}</small></div>`).join('');
 $('#paneExhibit').innerHTML = `<div class="stat">${stats}</div>
-  <h2>Generation</h2><p style="margin:0 0 6px;color:var(--muted)">${esc(B.story)}</p>
+  <h2>Generation</h2><p class="heritage-copy heritage-copy-tight">${esc(B.story)}</p>
   <h2>Specification · ${esc(B.years)}</h2><dl class="kv">${(B.spec || []).map(r => `<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl>
   <h2>Geometry · size ${esc(B.size)}</h2><dl class="kv">${(B.geometry || []).map(r => `<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl>`;
-$('#paneEvidence').innerHTML = `<h2>How this model was made</h2><p style="margin:0 0 12px;color:var(--muted)">${esc(B.method)}</p>
+$('#paneEvidence').innerHTML = `<h2>How this model was made</h2><p class="heritage-copy heritage-copy-wide">${esc(B.method)}</p>
   <h2>Measured against the photo</h2><dl class="kv">${(B.checks || []).map(r => `<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join('')}</dl>
   <h2>Inferred or uncertain</h2>${(B.uncertainties || []).map(u => `<p class="note">${esc(u)}</p>`).join('')}
   <h2>Sources</h2>${(B.sources || []).map(s => `<a class="src" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}<small>${esc(s.url)}</small></a>`).join('')}`;
