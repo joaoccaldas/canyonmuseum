@@ -12,9 +12,9 @@ test('Home is the shell surface and Race Self is entered explicitly',()=>{
   assert.match(home,/data-home-self/);
   assert.doesNotMatch(home,/race-self-stage\.js|\.glb|THREE/);
 });
-test('User Studio is personal depth with world shortcuts and personal controls',()=>{
-  for(const destination of ['Canyon Museum','Discover Kona','Race week','Passport']) assert.match(raceSelf,new RegExp(destination));
-  for(const control of ['Avatar','Bike','Races','Settings']) assert.match(raceSelf,new RegExp(control));
+test('User Studio is personal depth only; global destinations stay in the app shell',()=>{
+  for(const personal of ['Avatar','Bike Studio','Races','Collection','Progress','Settings']) assert.match(raceSelf,new RegExp(personal));
+  assert.doesNotMatch(raceSelf,/Canyon Museum|Discover Kona|Race week|Travel to Kona|The Feed/);
   assert.doesNotMatch(raceSelf,/hub-launcher/);
   assert.match(raceSelf,/race-self-controls/);
 });
