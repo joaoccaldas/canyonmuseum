@@ -42,7 +42,7 @@ export function initMap({ areas, pose, go, button }) {
         if (tall) t.setAttribute('transform', `rotate(-90 ${cx} ${-cz})`);
         t.textContent = a.status==='future' ? `FUTURE · ${a.name}` : a.name; g.appendChild(t);
       }
-      if (a.go !== false) { g.style.cursor = 'pointer'; g.addEventListener('click', () => pick(a)); }
+      if (a.go !== false) { g.classList.add('interactive'); g.addEventListener('click', () => pick(a)); }
       svg.appendChild(g);
     }
     const me = document.createElementNS(NS, 'g'); me.setAttribute('class', 'map-me');
@@ -50,7 +50,11 @@ export function initMap({ areas, pose, go, button }) {
     const arrow = document.createElementNS(NS, 'path'); arrow.setAttribute('d', `M0 ${-unit * 1.9} L${unit * 1.2} ${unit * 1.2} L0 ${unit * .5} L${-unit * 1.2} ${unit * 1.2}Z`); me.appendChild(arrow);
     svg.appendChild(me);
     root.querySelectorAll('.map-tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.floor === floor));
-    list.innerHTML = on.map(a => a.go === false ? `<li class="future"><div><i style="background:${a.color || '#5d6870'}"></i><span><b>${a.name}</b><small>${a.sub || 'Future level · locked'}</small></span></div></li>` : `<li><button data-id="${a.id}"><i style="background:${a.color || '#e9e2d6'}"></i><span><b>${a.name}</b>${a.sub ? `<small>${a.sub}</small>` : ''}</span></button></li>`).join('');
+    list.innerHTML = on.map(a => a.go === false ? `<li class="future" data-map-id="${a.id}"><div><i></i><span><b>${a.name}</b><small>${a.sub || 'Future level · locked'}</small></span></div></li>` : `<li data-map-id="${a.id}"><button data-id="${a.id}"><i></i><span><b>${a.name}</b>${a.sub ? `<small>${a.sub}</small>` : ''}</span></button></li>`).join('');
+    list.querySelectorAll('[data-map-id]').forEach(row=>{
+      const a=areas.find(x=>x.id===row.dataset.mapId);
+      row.querySelector('i')?.style.setProperty('--map-color',a?.color || (a?.go===false?'#5d6870':'#e9e2d6'));
+    });
     list.querySelectorAll('button').forEach(b => b.addEventListener('click', () => pick(areas.find(a => a.id === b.dataset.id))));
   }
   const inside = (a, p) => a.floor === p.floor && a.go !== false && p.x >= Math.min(a.x0, a.x1) && p.x <= Math.max(a.x0, a.x1) && p.z >= Math.min(a.z0, a.z1) && p.z <= Math.max(a.z0, a.z1);
@@ -59,7 +63,7 @@ export function initMap({ areas, pose, go, button }) {
     raf = requestAnimationFrame(tick);
     const p = pose(), me = svg.querySelector('.map-me');
     if (!me) return;
-    me.style.display = p.floor === floor ? '' : 'none';
+    me.classList.toggle('off',p.floor !== floor);
     me.setAttribute('transform', `translate(${p.x} ${-p.z}) rotate(${180 + p.yaw * 180 / Math.PI})`);
     const h = here(p);
     svg.querySelectorAll('.map-area').forEach(g => g.classList.toggle('here', g.dataset.id === h?.id));
