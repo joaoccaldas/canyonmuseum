@@ -7,3 +7,16 @@ test('landing renders a real hero image element',()=>assert.match(html,/class="e
 test('bottom app navigation is hidden until app entry',()=>{assert.match(css,/body\.entry-landing \.kona-bottom-nav/);assert.match(css,/body\.entry-quest \.kona-bottom-nav/);});
 test('quest hides landing content instead of appending below it',()=>assert.match(css,/intro-inner> :not\(#konaQuest\).*display:none/));
 test('entry mode is explicit on body for visual/runtime evidence',()=>assert.match(js,/body\.dataset\.entryMode/));
+test('mobile landing keeps CTA ahead of optional product depth',()=>{
+  const mobile=css.slice(css.indexOf('@media(max-width:899px){'),css.indexOf('@media(max-width:360px){'));
+  assert.match(mobile,/entry-actions-wrap[^}]*order:2/);
+  assert.match(mobile,/entry-product[^}]*order:3/);
+  assert.match(mobile,/entry-product-nav[\s\S]{0,100}display:none/);
+  assert.match(mobile,/entry-race-clock[\s\S]{0,100}display:none/);
+});
+test('mobile entry uses small viewport height and one resolved hierarchy',()=>{
+  const mobile=css.slice(css.indexOf('@media(max-width:899px){'),css.indexOf('@media(max-width:360px){'));
+  assert.match(mobile,/min-height:100svh/);
+  assert.equal((mobile.match(/order:2/g)||[]).length,1);
+  assert.equal((mobile.match(/order:3/g)||[]).length,1);
+});
