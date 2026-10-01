@@ -15,11 +15,15 @@ Landing → **Continue your Kona** → Home.
 The first-run tour does not repeat automatically, but can be replayed from User Studio.
 
 ### Navigation
-- Home = contextual return surface
-- Discover = places, stories, machines and entry to immersive worlds
-- Garage = equipment
-- Plan = race-week utility
-- Me = User Studio / Race Self / Passport
+Internal route IDs remain `home / discover / garage / plan / me`. The mobile labels are intentionally task-oriented:
+
+- **Home** = what matters now
+- **Explore** = places, stories, machines and entry to immersive worlds
+- **Gear** = bike, kit and setup
+- **Race** = race-week plan, weather and logistics
+- **You** = User Studio / Race Self / Passport
+
+On mobile the global five-tab bar remains visible inside User Studio. Studio-specific actions are organized below the athlete stage instead of replacing global navigation.
 
 **Kona Now** has a lightweight three-story preview on Home and a full customizable destination from User Studio (`?view=feed`). Travel remains a User Studio destination. Neither becomes an extra public tab.
 
