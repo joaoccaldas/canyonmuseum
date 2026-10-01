@@ -30,7 +30,7 @@ function readImage(file){
   });
 }
 
-export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openCollection,openTour,openAssets,isAdmin=false,isCurrent=()=>true}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openCollection,openTour,openAssets,openFeed,openTravel,isAdmin=false,isCurrent=()=>true}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -60,6 +60,8 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('collection','◇','Collection',summary.total+' things found')+
         menuItem('progress','☆','Progress','Badges, milestones & history')+
         menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
+        menuItem('feed','≋','The Feed','News, YouTube & your RSS sources')+
+        menuItem('travel','⌁','Travel to Kona','Island guide, arrivals & local stops')+
         (isAdmin?menuItem('assets','▦','Asset Library','Bikes, gear, rooms, art & world assets'):'')+
         '<p class="studio-menu-note">Your history lives here.<br>The world stays out there.</p>'+
       '</nav>'+
@@ -228,6 +230,8 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
   root.querySelector('[data-race-self-action="collection"]')?.addEventListener('click',()=>openCollection?.());
   root.querySelector('[data-race-self-action="progress"]')?.addEventListener('click',showProgress);
+  root.querySelector('[data-race-self-action="feed"]')?.addEventListener('click',()=>openFeed?.());
+  root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
   return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();root.removeEventListener('keydown',handleKey);};
