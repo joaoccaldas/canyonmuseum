@@ -15,6 +15,7 @@ const home = read('web/src/ui/home.js');
 const me = read('web/src/ui/me.js');
 const landingTemplate = read('web/landing.template.html');
 const landingBuild = read('web/build_landing.mjs');
+const entry = read('web/src/entry.js');
 const harden = read('tools/harden_pages.mjs');
 const sync = read('.github/workflows/kona-beta-source-rc-sync.yml');
 
@@ -42,10 +43,12 @@ test('semantic brand tokens and artifact grammar are source files', () => {
   assert.match(me, /artifact--label/);
 });
 
-test('landing index stays a thin shell with external shared styles', () => {
+test('landing index stays a thin consumer shell and world styles remain lazy', () => {
   assert.doesNotMatch(landingTemplate, /__HALL_WEB_CSS__|__HALL_MOBILE_CSS__/);
-  assert.match(landingTemplate, /web\/styles\/hall-web\.css/);
+  assert.doesNotMatch(landingTemplate, /web\/styles\/hall-(?:web|mobile)\.css/);
   assert.match(landingTemplate, /brand\/tokens\.css/);
+  assert.match(entry, /loadStyle\('web\/styles\/hall-web\.css'\)/);
+  assert.match(entry, /loadStyle\('web\/styles\/hall-mobile\.css'\)/);
   assert.doesNotMatch(landingBuild, /packCss/);
   assert.doesNotMatch(harden, /<style id="design-system">/);
   assert.match(harden, /brand\/themes\.css/);

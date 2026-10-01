@@ -96,7 +96,16 @@ test('persistence adapter survives reload and is isolated from profile state', (
   assert.equal(reloaded.slots.bike.product_id, saved.slots.bike.product_id);
   assert.equal(reloaded.slots.bike.configuration.look, 'persist');
   assert.match(db.get('speedmax.profile.v1'), /Ana/);
-  assert.equal(RACE_SETUP_KEY, 'speedmax.raceSetup.v1');
+  assert.equal(RACE_SETUP_KEY, 'kona.raceSetup.v1');
+});
+
+test('legacy RaceSetup storage migrates through canonical storage authority',()=>{
+  const old = JSON.stringify({ version:1, event:'kona-2026', bike:{ productId:bike.id, look:'legacy', scene:'kona' } });
+  const db=new Map([['speedmax.raceSetup.v1',old]]);
+  const storage={getItem:k=>db.get(k)??null,setItem:(k,v)=>db.set(k,v),removeItem:k=>db.delete(k)};
+  const loaded=createRaceSetupStore(storage).load(CAT.products);
+  assert.equal(loaded.slots.bike.product_id,bike.id);
+  assert.equal(db.get('kona.raceSetup.v1'),old);
 });
 
 test('empty setup stays empty and share encoding is omitted', () => {

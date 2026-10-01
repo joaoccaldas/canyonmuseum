@@ -5,13 +5,7 @@
 @media(max-width:760px){
   .kona-bottom-nav{display:grid}
   body.kona-panel-open{overflow:hidden}
-  body.kona-panel-open>header,body.kona-panel-open>#hall,body.kona-panel-open>#rail,body.kona-panel-open>#joy,body.kona-panel-open>#card,body.kona-panel-open>#intro{visibility:hidden}
-  body.touch.walking #rail{bottom:76px}
-  body.touch #joy{bottom:calc(150px + var(--safe-b))}
-  body.touch #card{bottom:calc(86px + var(--safe-b));max-height:62dvh}
-  body.touch header{padding-bottom:0}
-  body.touch header nav{display:none}
-  body.touch header .logo{background:color-mix(in srgb,var(--kona-surface-strong) 82%,transparent);border-color:var(--kona-line);color:var(--kona-text)}
+  body.kona-panel-open>#konaWorld,body.kona-panel-open>#intro{visibility:hidden}
   body.touch #intro{padding-bottom:calc(102px + var(--safe-b))}
 }
 @media(max-width:380px){.kona-place-grid{grid-template-columns:1fr}.kona-panel{padding-left:12px;padding-right:12px}.kona-section{padding:14px}}
