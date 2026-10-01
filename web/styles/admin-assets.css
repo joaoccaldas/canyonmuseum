@@ -18,7 +18,7 @@
 .asset-card{overflow:hidden;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius);background:var(--brand-surface);box-shadow:var(--artifact-shadow)}
 .asset-thumb{position:relative;aspect-ratio:16/10;overflow:hidden;background:
   linear-gradient(145deg,color-mix(in srgb,var(--brand-ocean) 12%,var(--brand-surface)),var(--brand-surface))}
-.asset-thumb img{width:100%;height:100%;display:block;object-fit:cover}
+.asset-thumb img{width:100%;height:100%;display:block;object-fit:cover}.asset-thumb:has(>img) .asset-thumb-fallback{display:none}.asset-thumb-3d{position:absolute;inset:0;background:linear-gradient(145deg,color-mix(in srgb,var(--brand-ocean) 8%,var(--brand-surface)),var(--brand-surface))}.asset-thumb-3d::after{content:'3D';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:800 28px/1 var(--brand-font-data);letter-spacing:.16em;color:color-mix(in srgb,var(--brand-ink) 18%,transparent)}
 .asset-thumb-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:16px}
 .asset-thumb-fallback small{font:700 10px/1 var(--brand-font-data);letter-spacing:.12em;text-transform:uppercase;color:var(--brand-muted)}
 .asset-thumb-fallback b{font:400 clamp(30px,8vw,54px)/.86 var(--brand-font-editorial);max-width:12ch}
