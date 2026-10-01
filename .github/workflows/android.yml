@@ -17,8 +17,23 @@ on:
       - '*_Museum.html'
       - 'Canyon_Collection.html'
       - 'assets/**'
-      - 'app/**'
+      - 'app/kona-core.js'
+      - 'app/viewport.js'
+      - 'app/world-shell.html'
+      - 'app/race-self-stage.js'
+      - 'app/entry-data.json'
+      - 'app/admin-assets.json'
+      - 'app/admin-asset-preview.js'
+      - 'app/museum-data.js'
+      - 'app/hall.js'
+      - 'app/studio.js'
+      - 'app/studio-catalog.js'
+      - 'web/src/**'
       - 'web/styles/**'
+      - 'web/build_landing.mjs'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - 'tools/build_app.mjs'
       - 'brand/**'
       - 'integrations/**'
       - 'manifest.webmanifest'
@@ -55,6 +70,14 @@ jobs:
       - uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+      - name: Install web build dependencies
+        working-directory: .
+        run: npm ci --prefix web --no-audit --no-fund
+      - name: Build current KONA web runtime
+        working-directory: .
+        run: |
+          node web/build_landing.mjs
+          node tools/build_app.mjs
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Prepare signing key
