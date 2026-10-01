@@ -9,7 +9,7 @@ const pageCss=[
  fs.readFileSync(path.join(root,'brand/tokens.css'),'utf8'),
  fs.readFileSync(path.join(root,'brand/themes.css'),'utf8'),
  fs.readFileSync(path.join(root,'web/styles/product-intake-proof.css'),'utf8')
-].join('\n').replace(/<\\/style/gi,'<\\\\/style');
+].join('\n').replaceAll('</style','<\\/style');
 const buttons=data.rooms.map(r=>`<button data-room="${r.id}">${r.title}</button>`).join('');
 const html=fs.readFileSync(path.join(root,'web/product-intake-proof.template.html'),'utf8')
  .replace('__PRODUCT_INTAKE_CSS__',()=>pageCss)
