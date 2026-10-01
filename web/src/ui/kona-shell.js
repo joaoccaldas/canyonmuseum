@@ -153,8 +153,8 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('',null);
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
-    if(entryDataReady) await entryDataReady.catch(()=>null);
-    renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
+    const readyData = entryDataReady ? await entryDataReady.catch(()=>null) : null;
+    renderPlanSurface(body,{data:readyData || window.__ENTRY_DATA || { event:facts().event }});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
   }
 
