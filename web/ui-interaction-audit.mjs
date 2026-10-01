@@ -58,7 +58,9 @@ for(const id of selected){
       assert.equal(data.answers.answers['kona-intent'],'dreaming');assert.equal(data.answers.completed,true);
       assert.equal(data.progress.xp,45);assert.equal(data.progress.level,2);
       await click('[data-reg-back]');await click('#buildSelf');
-      for(const answer of ['dreaming','never','ocean'])await click('[data-onboarding-answer="'+answer+'"]');
+      await p.waitForSelector('.registration-avatar');
+      assert.equal(await p.$('[data-onboarding-question]'),null,'one-time onboarding cards must not replay');
+      assert.equal(await p.evaluate(()=>localStorage.getItem('kona.onboarding.cards.v1')),'seen');
       assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')).xp),45);
     });
     await step('avatar registration choices persist and first-run tour can finish',async()=>{
