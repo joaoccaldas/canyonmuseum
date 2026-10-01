@@ -65,3 +65,20 @@ html.phone-fit #loader div{zoom:var(--fit)}
 
 /* Shared interaction floor; semantic brand tokens are prepended by the builder. */
 button,a[role="button"]{min-height:var(--brand-touch,48px)}
+
+/* RC6 KONA semantic bridge */
+:root{
+  --bg:var(--brand-bg,#071116);
+  --ink:var(--brand-ink,#f5f3ee);
+  --muted:var(--brand-muted,#b4c0c8);
+  --dim:var(--brand-faint,#7f929e);
+  --line:var(--brand-line,rgba(238,247,250,.13));
+  --glass:var(--brand-surface-glass,rgba(12,25,32,.90));
+  --glass2:var(--brand-surface-glass-strong,#0d1920);
+  --accent:var(--brand-accent-2,#39c8ef);
+  --sans:var(--brand-font-ui,'Manrope',system-ui,sans-serif);
+  --mono:var(--brand-font-data,ui-monospace,monospace);
+}
+.back,.tabs button,.chip,.toggle-panel{min-height:var(--brand-touch,48px)}
+.panel{border-radius:var(--brand-sheet-radius,24px)}
+.stat div,.src{border-radius:var(--brand-control-radius,12px)}
