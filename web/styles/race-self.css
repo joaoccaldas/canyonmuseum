@@ -1,15 +1,15 @@
 /* User Studio owns its stage, menus and editor at compact <600, medium 600–899, wide >=900. */
-body.race-self-open .kona-panel{padding:0;background:var(--brand-stage-bg,#0b1115);color:var(--brand-stage-ink,#f8f5ef);overflow:auto}
+body.race-self-open .kona-panel{padding:0;background:var(--brand-stage-bg,var(--brand-lava));color:var(--brand-stage-ink,var(--brand-mist));overflow:auto}
 body.race-self-open .kona-panel-head,body.race-self-open .kona-bottom-nav,body.race-self-open .kona-user-menu{display:none}
 body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:100%;margin:0;display:block}
-.race-self-experience{--stage-ink:#f8f5ef;--stage-muted:#adbec5;--stage-line:#ffffff20;position:relative;isolation:isolate;display:grid;grid-template-rows:64px minmax(220px,1fr) auto auto;min-height:100dvh;height:100dvh;background:radial-gradient(ellipse at 50% 40%,#24383e 0%,#101d25 40%,#091116 80%);color:var(--stage-ink);font-family:var(--sans);padding:0 max(16px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(16px,env(safe-area-inset-left));gap:0 24px}
+.race-self-experience{--stage-ink:var(--brand-mist);--stage-muted:color-mix(in srgb,var(--brand-mist) 72%,transparent);--stage-line:color-mix(in srgb,var(--brand-mist) 13%,transparent);position:relative;isolation:isolate;display:grid;grid-template-rows:64px minmax(220px,1fr) auto auto;min-height:100dvh;height:100dvh;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--brand-basalt) 86%,var(--brand-ocean)) 0%,color-mix(in srgb,var(--brand-lava) 78%,var(--brand-basalt)) 40%,var(--brand-lava) 80%);color:var(--stage-ink);font-family:var(--sans);padding:0 max(16px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(16px,env(safe-area-inset-left));gap:0 24px}
 .studio-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--stage-line);padding-top:env(safe-area-inset-top)}
 .studio-wordmark{min-height:48px;min-width:48px;display:flex;gap:16px;align-items:center;font:800 22px/1 var(--sans);letter-spacing:.14em;color:inherit;text-decoration:none}
 .studio-wordmark span{font:600 11px/1.4 var(--sans);letter-spacing:.15em;color:var(--stage-muted);border-left:1px solid var(--stage-line);padding-left:16px}
-.studio-save-state{font:500 12px/1.4 var(--sans);color:#bbd6ce}
+.studio-save-state{font:500 12px/1.4 var(--sans);color:var(--brand-success)}
 .race-self-stage-wrap{position:relative;min-width:0;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;text-align:center}
 .race-self-identity{padding:20px 0 0;pointer-events:none}
-.race-self-identity small{font:700 10px/1.4 var(--sans);letter-spacing:.18em;color:#92d9d6}
+.race-self-identity small{font:700 10px/1.4 var(--sans);letter-spacing:.18em;color:var(--brand-discovery)}
 .race-self-identity h1{font:400 clamp(32px,3.8vw,60px)/1.05 var(--serif);letter-spacing:-.025em;margin:6px 0 8px;text-wrap:balance}
 .race-self-identity p{font:500 13px/1.5 var(--sans);color:var(--stage-muted);margin:0}
 .studio-canvas-frame{position:relative;min-height:0;min-width:0}
@@ -22,10 +22,10 @@ body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:
 .studio-destinations{grid-template-columns:repeat(2,minmax(0,1fr))}
 .race-self-controls{grid-template-columns:repeat(5,minmax(0,1fr))}
 .studio-menu-label{grid-column:1/-1;color:var(--stage-muted);font:700 10px/1.5 var(--sans);letter-spacing:.16em;margin-bottom:3px}
-.studio-destinations>button,.race-self-controls>button,.race-self-controls>a{display:flex;align-items:center;gap:12px;min-width:0;min-height:56px;padding:10px;border:1px solid transparent;border-radius:12px;background:#ffffff06;color:inherit;text-decoration:none;text-align:left;font:500 13px/1.4 var(--sans);cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
-.studio-destinations>button:first-of-type{background:#deeece;color:#15252a;border-color:#deeece}
-.studio-destinations>button:is(:hover,:focus-visible),.race-self-controls>:is(a,button):not(:disabled):is(:hover,:focus-visible){border-color:#b9dcca;background:#ffffff14}
-.studio-destinations>button:first-of-type:is(:hover,:focus-visible){background:#f0ffde;color:#15252a}
+.studio-destinations>button,.race-self-controls>button,.race-self-controls>a{display:flex;align-items:center;gap:12px;min-width:0;min-height:56px;padding:10px;border:1px solid transparent;border-radius:12px;background:color-mix(in srgb,var(--brand-mist) 3%,transparent);color:inherit;text-decoration:none;text-align:left;font:500 13px/1.4 var(--sans);cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.studio-destinations>button:first-of-type{background:color-mix(in srgb,var(--brand-progress) 22%,var(--brand-surface));color:var(--brand-ink);border-color:color-mix(in srgb,var(--brand-progress) 30%,var(--brand-line))}
+.studio-destinations>button:is(:hover,:focus-visible),.race-self-controls>:is(a,button):not(:disabled):is(:hover,:focus-visible){border-color:color-mix(in srgb,var(--brand-discovery) 42%,var(--stage-line));background:color-mix(in srgb,var(--brand-mist) 8%,transparent)}
+.studio-destinations>button:first-of-type:is(:hover,:focus-visible){background:color-mix(in srgb,var(--brand-progress) 32%,var(--brand-surface));color:var(--brand-ink)}
 .studio-destinations i,.race-self-controls i{flex:0 0 26px;display:grid;place-items:center;font:400 22px/1 var(--sans);font-style:normal}
 .studio-destinations span,.race-self-controls span{display:grid;min-width:0;gap:4px}
 .studio-destinations b,.race-self-controls b{font:700 13px/1.25 var(--sans)}
@@ -36,9 +36,9 @@ body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:
 .race-self-controls small:not(.studio-menu-label),.race-self-controls em,.studio-destinations small:not(.studio-menu-label){display:none}
 .race-self-controls :disabled{opacity:.6;cursor:default}
 .race-self-controls mark{display:block;width:max-content;margin:4px auto 0;padding:3px 5px;border:1px solid var(--stage-line);border-radius:4px;background:transparent;color:inherit;font:700 10px/1 var(--sans);text-transform:uppercase;letter-spacing:.08em}
-.race-self-experience :focus-visible{outline:2px solid #b8eddf;outline-offset:4px}
+.race-self-experience :focus-visible{outline:2px solid var(--brand-discovery);outline-offset:4px}
 /* One editor surface. Underlying menus are inert while it is open. */
-.hub-drawer{position:fixed;z-index:80;inset:auto 12px max(12px,env(safe-area-inset-bottom));max-height:82dvh;padding:20px;border-radius:var(--brand-sheet-radius,20px);background:var(--brand-surface);color:var(--brand-ink);border:1px solid var(--brand-line);box-shadow:0 0 0 100vmax #0008,0 18px 60px #0007;overflow:auto;overscroll-behavior:contain}
+.hub-drawer{position:fixed;z-index:80;inset:auto 12px max(12px,env(safe-area-inset-bottom));max-height:82dvh;padding:20px;border-radius:var(--brand-sheet-radius,20px);background:var(--brand-surface);color:var(--brand-ink);border:1px solid var(--brand-line);box-shadow:0 0 0 100vmax rgba(0,0,0,.53),0 18px 60px rgba(0,0,0,.47);overflow:auto;overscroll-behavior:contain}
 .hub-drawer[hidden]{display:none}
 .hub-drawer-head{position:sticky;top:-20px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-20px -20px 20px;padding:20px;background:var(--brand-surface);border-bottom:1px solid var(--brand-line)}
 .hub-drawer-head small{font:700 11px/1.4 var(--sans);letter-spacing:.13em;color:var(--brand-muted)}
@@ -94,9 +94,9 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
  .studio-stage-caption{padding-bottom:4px}
 }
 
-.studio-save-state.save-failed{font-size:12px;color:#ffc195}.studio-save-state.save-failed::after{content:none}
+.studio-save-state.save-failed{font-size:12px;color:var(--brand-ember)}.studio-save-state.save-failed::after{content:none}
 
-.studio-install{margin-left:auto;min-height:48px;padding:0 12px;border:1px solid #ffffff26;border-radius:99px;background:transparent;color:#dce8e9;font:600 11px var(--brand-font-ui);cursor:pointer}
+.studio-install{margin-left:auto;min-height:48px;padding:0 12px;border:1px solid color-mix(in srgb,var(--brand-mist) 16%,transparent);border-radius:99px;background:transparent;color:var(--brand-mist);font:600 11px var(--brand-font-ui);cursor:pointer}
 @media(max-width:599px){.studio-heading .studio-save-state{display:none}}
 
 @media(max-width:379px){
