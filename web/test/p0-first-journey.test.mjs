@@ -4,7 +4,7 @@ const html=fs.readFileSync(new URL('../landing.template.html',import.meta.url),'
 const harden=fs.readFileSync(new URL('../../tools/harden_pages.mjs',import.meta.url),'utf8');
 
 test('landing exposes build and sign-in without requiring 3D',()=>{assert.match(html,/id="buildSelf"/);assert.match(html,/id="entrySignIn"/);});
-test('onboarding is a dedicated visual state',()=>assert.match(entry,/setEntryMode\('quest'\)/));
+test('onboarding is a dedicated visual state and begins with avatar/trisuit setup',()=>{assert.match(entry,/setEntryMode\('quest'\)/);assert.match(entry,/paintQuest\('avatar'\)/);assert.match(entry,/renderAvatarRegistration/);});
 test('reveal has exactly one primary continuation into Home',()=>{assert.match(entry,/id="enterKona">Enter KONA/);assert.match(entry,/enterKona[\s\S]{0,220}enterApp\('home'\)/);});
 test('race search is part of registration and save/sign-in remains optional',()=>{assert.match(entry,/data-race-picker/);assert.match(entry,/Save across devices/);});
 test('CSP allows the exact public Supabase project used by auth adapter',()=>assert.match(harden,/connect-src[^\n]*https:\/\/mtvpnoqwjpoqaiocrklq\.supabase\.co/));
