@@ -15,7 +15,7 @@ cp integrations/companion/feed.json integrations/companion/rss.xml integrations/
 mkdir -p _site/integrations
 cp integrations/public-catalog.json integrations/ironman-races-2016-2026.json _site/integrations/
 mkdir -p _site/web/styles _site/brand
-cp web/styles/hall-web.css web/styles/hall-mobile.css web/styles/studio.css web/styles/experience.css web/styles/collection.css web/styles/entry-visual-v2.css web/styles/system.css web/styles/components.css web/styles/admin-assets.css web/styles/shell-mobile.css web/styles/race-self.css web/styles/companion.css web/styles/home.css web/styles/garage.css _site/web/styles/
+cp web/styles/hall-web.css web/styles/hall-mobile.css web/styles/studio.css web/styles/experience.css web/styles/collection.css web/styles/entry.css web/styles/system.css web/styles/components.css web/styles/admin-assets.css web/styles/shell-mobile.css web/styles/race-self.css web/styles/companion.css web/styles/home.css web/styles/garage.css _site/web/styles/
 cp brand/tokens.css brand/themes.css brand/artifacts.css brand/typography.css _site/brand/
 if [ -d downloads ]; then rsync -a downloads/ _site/downloads/; fi
 rsync -a assets/ _site/assets/ --exclude reference/
