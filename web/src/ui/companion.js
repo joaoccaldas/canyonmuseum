@@ -16,8 +16,10 @@ const storySummary=(item,publisher)=>{
 };
 const storyVisual=(item,publisher)=>{
  const thumb=safeURL(item?.thumbnail);
- return thumb
-  ?'<img src="'+esc(thumb)+'" loading="lazy" decoding="async" alt="" width="640" height="360" referrerpolicy="no-referrer">'
+ let supported='';
+ try{const u=new URL(thumb);if(u.hostname==='i.ytimg.com'||u.origin===location.origin)supported=thumb;}catch{}
+ return supported
+  ?'<img src="'+esc(supported)+'" loading="lazy" decoding="async" alt="" width="640" height="360" referrerpolicy="no-referrer">'
   :'<span class="companion-thumb-fallback" aria-hidden="true"><b>'+esc(labels[item?.kind]||'KONA')+'</b><em>'+esc(publisher?.name||'Original source')+'</em></span>';
 };
 const balancedPreview=data=>{
