@@ -51,3 +51,16 @@ body.entry-quest #intro{padding-bottom:calc(24px + var(--safe-b,0px))!important}
 #intro.quest-active .race-id-meta dd{margin:5px 0 0;color:#f8f5ef;font:650 14px/1.25 var(--sans,system-ui)}
 #intro.quest-active .race-id-stamp{position:absolute;right:16px;top:58px;transform:rotate(7deg);padding:6px 8px;border:1px solid #ff6427;border-radius:999px;color:#ff7b38;font:800 9px/1 var(--sans,system-ui);letter-spacing:.14em}
 #intro.quest-active .race-id-reward{margin:8px 0 16px;color:#ff7b38;font:800 10px/1.2 var(--sans,system-ui);letter-spacing:.13em;text-transform:uppercase}
+
+
+/* Entry-owned functional primitives formerly leaked from system.css. */
+#intro.kona-entry{align-items:flex-start;overflow:auto;padding-top:max(28px,env(safe-area-inset-top));padding-bottom:calc(108px + env(safe-area-inset-bottom))}
+#intro.kona-entry h1{font-size:clamp(46px,8vw,92px)}
+.kona-count{margin:0 0 12px;font:700 13px/1.3 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--brand-accent)}
+.kona-intents{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.kona-intents button{min-height:48px;padding:0 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--brand-ink) 18%,transparent);background:transparent;color:inherit;font:700 13px/1 var(--sans)}
+.kona-intents button.on{background:var(--brand-ink);color:var(--brand-bg)}
+.kona-note{max-width:36rem;color:var(--brand-muted)}
+#konaQuest h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,56px);line-height:1;margin:8px 0}
+#konaQuest input{width:100%;max-width:360px;min-height:48px;margin:8px 0;padding:12px 14px;border-radius:12px;border:1px solid var(--brand-line);background:transparent;color:inherit}
+#konaQuest .btn{margin-right:8px;margin-top:8px}
