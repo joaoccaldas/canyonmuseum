@@ -46,9 +46,10 @@ async function capture(vp,state,theme){
    const primary=els.filter(x=>x.matches('.primary,[data-primary=true]'));
    const small=els.map(x=>{const r=x.getBoundingClientRect();return{tag:x.tagName,text:(x.textContent||'').trim().slice(0,50),w:r.width,h:r.height};}).filter(x=>x.w<48||x.h<48);
    const intro=document.getElementById('intro');
+   const nav=document.querySelector('.kona-bottom-nav');
    const activeNav=[...document.querySelectorAll('.kona-bottom-nav .on,.kona-bottom-nav [aria-current="page"]')].map(x=>(x.textContent||'').trim());
    const visibleText=(document.body.innerText||'').replace(/\s+/g,' ').trim().slice(0,600);
-   return{scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,activeNav,visibleText};
+   return{scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText};
  });
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const name=`${vp.id}-${theme}-${state}`;await p.screenshot({path:path.join(out,name+'.png'),fullPage:false});
@@ -72,6 +73,8 @@ for(const r of report){
  if(r.viewport!=='desktop' && ['home','raceSelf','garage'].includes(r.state) && r.metrics.smallTargets.length) violations.push(`${r.viewport}/${r.theme}/${r.state}: touch targets below 48px: ${r.metrics.smallTargets.map(x=>x.text||x.tag).join(', ')}`);
  if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);
  if(r.state==='me' && !/Me|Passport|XP|Credits/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: no Me/Passport content detected`);
+ if(r.viewport!=='desktop' && ['home','discover','garage','plan','me'].includes(r.state) && !r.metrics.navVisible) violations.push(`${r.viewport}/${r.theme}/${r.state}: canonical bottom navigation not visible`);
+ if(r.viewport!=='desktop' && r.state==='raceSelf' && r.metrics.navVisible) violations.push(`${r.viewport}/${r.theme}/raceSelf: global navigation should recede inside Race Self`);
 }
 if(violations.length){console.error(violations.join('\n'));process.exitCode=1}
 console.log(`visual evidence: ${report.length} captures, ${violations.length} blocking violations`);
