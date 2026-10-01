@@ -40,7 +40,11 @@ function syncManagedStyles(){
   const museumActive=document.body.classList.contains('museum-open')&&!document.body.classList.contains('kona-panel-open');
   for(const [group,links] of managedStyles){
     const enabled=group==='museum' ? museumActive : group.startsWith('feature:') ? group===activeFeatureStyle : true;
-    for(const link of links)link.disabled=!enabled;
+    for(const link of links){
+      const disabled=!enabled;
+      link.disabled=disabled;
+      if(link.sheet)link.sheet.disabled=disabled;
+    }
   }
 }
 async function featureStyle(name,href){
