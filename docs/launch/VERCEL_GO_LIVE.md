@@ -6,13 +6,13 @@ This file binds deployment verification to the actual PR head. Do not hard-code 
 
 ## Deployment authority
 
-The currently proven production path is GitHub Pages:
+The currently proven production host is GitHub Pages:
 
-- Workflow: `.github/workflows/pages.yml` (`Deploy KONA`).
-- Trigger: push to `main`.
-- The workflow requires successful certification for the exact source SHA before publishing.
-- Last observed successful production deployment before this candidate: `e8b78b1a118065376fff52662fb727837aa6c483`.
 - Observed Pages URL: `https://joaoccaldas.github.io/canyonmuseum/`.
+- Last observed successful production deployment before this candidate: `e8b78b1a118065376fff52662fb727837aa6c483`.
+- The observed successful publish for that SHA was GitHub's managed Pages/Jekyll `pages-build-deployment` pipeline.
+- The repository also contains `.github/workflows/pages.yml` (`Deploy KONA`), which stages an explicit allowlisted site and, on the active launch branch, requires exact-SHA certification before publishing.
+- These are two different publication models. Before the next production release, GitHub Pages settings and the repository workflow must be consolidated so exactly one pipeline owns production. Until that cutover is proven, do not describe the custom workflow as the live deployment authority.
 
 The repository also contains `vercel.json` and a Vercel release-contract test. Those prove static-delivery compatibility only. The connected Vercel account currently exposes no KONA/canyonmuseum project, so a Vercel production deployment is **not verified** and must not be reported as live evidence.
 
