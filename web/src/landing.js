@@ -1926,7 +1926,7 @@ async function shareView(title) {
   if (!blob) { toast('Could not capture this view'); return; }
   const url = location.origin + location.pathname + (here ? `?room=${encodeURIComponent(here.id)}` : '');
   const slug = String(title || here?.name || 'museum').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const r = await shareImage(blob, { title: title || 'Speedmax Museum', text: `${title ? title + ' · ' : ''}Speedmax Museum, Kona`, url, filename: `speedmax-${slug}.jpg` });
+  const r = await shareImage(blob, { title: title || 'KONA', text: `${title ? title + ' · ' : ''}KONA, Kailua-Kona`, url, filename: `kona-${slug}.jpg` });
   toast({ shared: 'Shared', link: 'Link shared', saved: 'Image saved to your device', cancelled: 'Not shared' }[r]);
 }
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
