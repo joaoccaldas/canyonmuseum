@@ -48,6 +48,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
         '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open User Studio <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Open Garage</button></div>'+
       '</div>'+
     '</section>'+
+    '<section class="home-kona-now-shell" data-home-kona-now aria-label="What’s going on in Kona"><div class="home-kona-now-loading"><small>KONA NOW · PEOPLE / PLACES / PROGRESS</small><h3>What\'s going on in Kona?</h3><p>Checking athlete cameras and the island pulse…</p></div></section>'+
     '<section class="home-postcard artifact artifact--photo">'+
       '<div class="home-postcard-photo" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" loading="lazy" decoding="async"></div>'+
       '<div class="home-postcard-copy"><small>KAILUA-KONA · HAWAIʻI</small><h3>Not just a race.</h3><p>Roads, lava, people, machines and strange little details worth finding.</p><button type="button" class="kona-link-btn" data-home-discover>Discover something →</button></div>'+
