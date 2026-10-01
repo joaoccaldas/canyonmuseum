@@ -70,7 +70,9 @@ async function capture(vp,state,theme){
    const stage=document.querySelector('.studio-canvas-frame');const sr=stage?.getBoundingClientRect?.();
    const museumLinks=[...document.querySelectorAll('link[data-style-scope="museum"]')];
    const companionHero=document.querySelector('.companion-hero');
-   return{stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText};
+   const reg=document.querySelector('.registration-avatar'),regCopy=document.querySelector('.registration-avatar-copy'),regPreview=document.querySelector('.registration-avatar-preview');
+   const rr=reg?.getBoundingClientRect?.(),rc=regCopy?.getBoundingClientRect?.(),rp=regPreview?.getBoundingClientRect?.();
+   return{registration:rr&&rc&&rp?{w:rr.width,copyW:rc.width,previewW:rp.width,overlap:Math.max(0,Math.min(rc.right,rp.right)-Math.max(rc.left,rp.left))}:null,stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText};
  });
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const personal3D=requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
@@ -91,6 +93,10 @@ for(const r of report){
  if(!['landing','sign-in','avatar-registration'].includes(r.state)&&r.metrics.introVisible)violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
  if(r.state==='sign-in'&&!/Sign in or create your account/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: sign-in form missing`);
  if(r.state==='avatar-registration'&&!/TRISUIT LAYOUT|Who are we sending into the lava/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: avatar registration missing`);
+ if(r.state==='avatar-registration'&&r.viewport==='desktop'&&r.metrics.registration){
+   const a=r.metrics.registration;
+   if(a.w<900||a.copyW<420||a.previewW<340||a.overlap>1)violations.push(`desktop/${r.theme}: avatar registration grid collapsed ${Math.round(a.w)} total / ${Math.round(a.copyW)} copy / ${Math.round(a.previewW)} preview / ${Math.round(a.overlap)} overlap`);
+ }
  if(r.state==='onboarding-tour'&&!/MAKE IT YOURS|Start with your athlete/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: onboarding tour missing`);
  if(r.state==='home'&&!/YOUR RACE SELF|OVER THE HORIZON/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: Home discovery surface missing`);
  if(r.state==='user-studio'&&!/Build the version of you|YOUR ATHLETE|USER STUDIO/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: User Studio content missing`);
