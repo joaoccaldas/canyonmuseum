@@ -29,4 +29,6 @@ test('world shell is injected before museum runtime loads',()=>{
 test('build emits world shell as deterministic output',()=>{
   assert.match(build,/world-shell\.template\.html/);
   assert.match(build,/app\/world-shell\.html/);
+  assert.match(build,/src\/runtime\/viewport\.js/);
+  assert.match(build,/app\/viewport\.js/);
 });
