@@ -30,3 +30,5 @@ test('world interaction chrome remains world-owned',()=>{
   for(const selector of ['#joy','#rail','#tourPill']) assert.match(hall+hallMobile,new RegExp(selector.replace('#','\\#')));
   assert.doesNotMatch(shell,/#joy\{|#tourPill\{/);
 });
+
+// RC8 final rerun marker: validates frozen go-live candidate after source reconciliation.
