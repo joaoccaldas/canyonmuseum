@@ -13,6 +13,7 @@ import { readStorage, writeStorage } from './engine/storage.js';
 import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, questReady, relationshipFor } from './quest.js';
 import { shareRaceIdentity } from './growth/share.js';
 import { renderRacePicker } from './ui/race-cards.js';
+import { renderAvatarRegistration } from './ui/avatar-registration.js';
 
 const intro = document.getElementById('intro');
 const physicalPhone = coarse || Math.min(screen.width || 1e5, screen.height || 1e5) <= 600;
@@ -129,7 +130,7 @@ initAppShell();
 const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum });
 window.__konaShell = shell;
 
-function enterApp(first = 'me') {
+function enterApp(first = 'home') {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
   if (first === 'garage') return shell.garage?.();
@@ -137,7 +138,7 @@ function enterApp(first = 'me') {
   else if (first === 'discover') return shell.explore?.();
   else if (first === 'plan') return shell.plan?.();
   else if (first === 'me') return shell.me?.();
-  else return shell.me?.();
+  else return shell.now?.();
 }
 
 function paintIntent() {
@@ -182,18 +183,21 @@ function paintQuest(step) {
   const host = questHost();
   const draft = readQuest();
   if (!host) return;
+  if(step==='avatar'){
+    host.hidden=false;
+    renderAvatarRegistration(host,{profile,onBack:()=>{setEntryMode('landing');host.hidden=true;},onContinue:()=>paintQuest('intent')});
+    return;
+  }
   const choices = (items, key) => items.map(item => {
     const id = item.id || item;
     const label = item.label || item;
     const on = draft[key] === id ? ' on' : '';
     return `<button type="button" class="quest-choice${on}" data-set="${key}" data-value="${id}">${label}</button>`;
   }).join('');
-  const stepNo={intent:1,races:2,bike:3,shoe:4,goal:5};
-  const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 5"><span>${stepNo[step]} / 5</span><i style="--p:${stepNo[step]}"></i></div>` : '';
-  const backFor={races:'intent',bike:'races',shoe:'bike',goal:'shoe'};
-  const questNav = step === 'intent'
-    ? '<div class="quest-nav"><button type="button" class="btn text" data-quest-cancel>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>'
-    : '<div class="quest-nav"><button type="button" class="btn text" data-quest-back>Back</button><button type="button" class="btn text" data-quest-skip>Skip for now</button></div>';
+  const stepNo={intent:2,races:3,bike:4,shoe:5,goal:6};
+  const progress=stepNo[step] ? `<div class="quest-progress" aria-label="Step ${stepNo[step]} of 6"><span>${stepNo[step]} / 6</span><i style="--p:${stepNo[step]}"></i></div>` : '';
+  const backFor={intent:'avatar',races:'intent',bike:'races',shoe:'bike',goal:'shoe'};
+  const questNav = '<div class="quest-nav"><button type="button" class="btn-secondary" data-quest-back>Back</button><button type="button" class="btn-text" data-quest-skip>Skip for now</button></div>';
   const screens = {
     intent: `<p class="eyebrow">Why are you here?</p><div class="kona-intents">${choices(INTENTS, 'intent')}</div>`,
     races: `<p class="eyebrow">Your races</p><p class="kona-note">Search any IRONMAN or IRONMAN 70.3 edition from the last 10 years. These become badges in your Race Self, Garage and Studio.</p><div data-race-picker></div><button type="button" class="btn primary race-picker-continue" data-race-continue>Continue</button>`,
@@ -248,7 +252,7 @@ function paintQuest(step) {
   }
   if (step === 'save') {
     host.innerHTML = `<p class="eyebrow">Sign in or create your account</p><form id="saveForm"><input name="email" type="email" required placeholder="you@example.com" aria-label="Email address" autocomplete="email"><button class="btn primary" type="submit">Send sign-in link</button></form><button class="btn text" type="button" id="continueLocal">Continue without account</button><button class="btn text" type="button" id="backFromSave">Back</button><p class="kona-note" role="status" id="saveNote">New here? Your first link creates your account. No password needed. You can also continue without an account.</p>`;
-    host.querySelector('#continueLocal')?.addEventListener('click', enterApp);
+    host.querySelector('#continueLocal')?.addEventListener('click',()=>enterApp('home'));
     host.querySelector('#backFromSave')?.addEventListener('click',()=>{setEntryMode('landing');host.hidden=true;document.getElementById('entrySignIn')?.focus();});
     host.querySelector('#saveForm')?.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -271,8 +275,7 @@ function paintQuest(step) {
     renderRacePicker(host.querySelector('[data-race-picker]'));
     host.querySelector('[data-race-continue]')?.addEventListener('click',()=>paintQuest('bike'));
   }
-  host.querySelector('[data-quest-back]')?.addEventListener('click',()=>paintQuest(backFor[step]||'intent'));
-  host.querySelector('[data-quest-cancel]')?.addEventListener('click',()=>{ setEntryMode('landing'); host.hidden=true; });
+  host.querySelector('[data-quest-back]')?.addEventListener('click',()=>paintQuest(backFor[step]||'avatar'));
   host.querySelector('[data-quest-skip]')?.addEventListener('click',enterApp);
   host.querySelectorAll('[data-set]').forEach(button => button.addEventListener('click', () => {
     const next = readQuest();
@@ -309,7 +312,7 @@ if (existingIdentity) {
   }
   if (note) note.textContent = 'Your RaceIdentity stays private on this device unless you choose to save or share it.';
 } else {
-  buildButton?.addEventListener('click', () => enterApp());
+  buildButton?.addEventListener('click', () => paintQuest('avatar'));
 }
 renderEntryProductStage(document.getElementById('entryProductStage'), {profile});
 paintIntent();
@@ -319,11 +322,12 @@ function paintShared(draft){
   const host=questHost(); if(!host) return;
   const labels=questLabels(draft);
   host.innerHTML=`<p class="eyebrow">A Kona setup</p><h2>${labels.bike}</h2><p>${labels.shoe}</p><p>${labels.goal}</p><p class="kona-note">Someone shared this setup with you. Build yours to make it your own.</p><button class="btn primary" id="buildShared" type="button">Build yours</button>`;
-  host.querySelector('#buildShared')?.addEventListener('click',()=>paintQuest('intent'));
+  host.querySelector('#buildShared')?.addEventListener('click',()=>paintQuest('avatar'));
 }
 const q = new URLSearchParams(location.search);
 const shared=decodeShare(q.get('kona'));
 if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
+else if (authReturned && existingRaceIdentity()) enterApp('home');
 else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=passport]')?.click());
 else if (['home','garage','collection','discover','plan','me'].includes(q.get('view'))) enterApp(q.get('view'));
