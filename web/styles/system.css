@@ -295,3 +295,23 @@ body.return-moment-open{overflow:hidden}
 @media(min-width:900px){.kona-return-moment{place-items:center}.return-card{padding:28px}}
 @media(max-width:620px){.return-card{padding:20px}.return-card h3{font-size:clamp(34px,12vw,48px)}.return-reward-grid{grid-template-columns:1fr}.return-reward-grid article{min-height:92px}.return-actions{display:grid;grid-template-columns:1fr}.return-actions>*{width:100%}}
 @media(orientation:landscape) and (max-height:520px){.kona-return-moment{place-items:center;padding:10px}.return-card{width:min(760px,100%);max-height:calc(var(--vvh,100dvh) - 20px);padding:18px}.return-card h3{font-size:36px;margin-top:6px}.return-reward-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin:12px 0}.return-reward-grid article{min-height:88px}.return-actions{margin-top:12px}}
+
+
+/* Collectible surprises: one sparse edge object, then a compact reward card. */
+.kona-surprise-layer{position:fixed;z-index:1180;pointer-events:none;inset:0}
+.kona-surprise-layer[hidden]{display:none!important}
+.kona-surprise-layer[data-position="top-right"]{display:grid;place-items:start end;padding:max(92px,calc(env(safe-area-inset-top) + 76px)) max(16px,env(safe-area-inset-right)) 0 0}
+.kona-surprise-layer[data-position="lower-left"]{display:grid;place-items:end start;padding:0 0 calc(96px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.kona-surprise-layer[data-position="edge-center"]{display:grid;place-items:center start;padding-left:max(10px,env(safe-area-inset-left))}
+.surprise-find,.surprise-reward{pointer-events:auto}
+.surprise-find{width:94px;min-height:94px;padding:11px;border:1px solid var(--brand-line);border-radius:28px;background:color-mix(in srgb,var(--brand-surface) 94%,transparent);color:var(--brand-ink);box-shadow:0 22px 70px -30px rgba(0,0,0,.7);backdrop-filter:blur(18px);transform:rotate(-2deg);cursor:pointer}
+.surprise-find>span{display:block;font:400 42px/.9 var(--brand-font-editorial);color:var(--brand-action);animation:surprisePulse 2.4s ease-in-out infinite}
+.surprise-find>small{display:block;margin-top:6px;font:800 7px/1.25 var(--brand-font-data);letter-spacing:.08em}
+.surprise-reward{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:calc(88px + env(safe-area-inset-bottom));width:min(390px,calc(var(--vvw,100dvw) - 32px));padding:20px;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius);background:var(--brand-surface);color:var(--brand-ink);box-shadow:0 28px 90px -32px rgba(0,0,0,.72)}
+.surprise-reward>small{color:var(--brand-discovery);font:800 9px/1.2 var(--brand-font-data);letter-spacing:.16em}.surprise-reward h3{margin:8px 42px 8px 0;font:400 36px/.95 var(--brand-font-editorial)}.surprise-reward p{margin:0;color:var(--brand-muted);font:520 12px/1.5 var(--brand-font-ui)}
+.surprise-payout{display:flex;gap:8px;margin-top:16px}.surprise-payout b{padding:8px 10px;border-radius:999px;background:color-mix(in srgb,var(--brand-action) 12%,var(--brand-surface));color:var(--brand-action);font:800 11px/1 var(--brand-font-data)}
+.surprise-close{position:absolute;right:12px;top:12px;width:44px;height:44px;border:1px solid var(--brand-line);border-radius:50%;background:var(--brand-surface);color:var(--brand-ink);font-size:20px}
+@keyframes surprisePulse{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.08) rotate(7deg)}}
+@media(max-width:520px){.surprise-find{width:82px;min-height:82px;border-radius:24px}.surprise-reward{right:16px;left:16px;width:auto}}
+@media(orientation:landscape) and (max-height:520px){.kona-surprise-layer[data-position="top-right"]{padding-top:64px}.kona-surprise-layer[data-position="lower-left"]{padding-bottom:18px}.surprise-reward{bottom:14px;max-height:calc(var(--vvh,100dvh) - 28px);overflow:auto}}
+@media(prefers-reduced-motion:reduce){.surprise-find>span{animation:none}}
