@@ -216,3 +216,5 @@ html.phone-fit #loader .load{zoom:var(--fit);width:min(420px,calc(82vw / var(--f
 html.phone-fit #toast{zoom:var(--fit)}
 
 .ridebox-cadence{width:110px}.lab-upload-offset{margin-top:8px}.actions-tight{margin-top:6px}
+
+.passport-note{font-size:13.5px;color:var(--brand-muted);margin:6px 0 14px}.passport-collections{flex-wrap:wrap;gap:8px 16px;justify-content:flex-start}.passport-import{width:100%;margin-top:6px}.bar i[data-passport-progress]{width:var(--passport-p,0%)}
