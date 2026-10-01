@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install deterministic mesh toolchain
-        run: python -m pip install --disable-pip-version-check numpy trimesh
+        run: python -m pip install --disable-pip-version-check numpy scipy trimesh
       - name: Build catalogue and GLBs
         run: |
           python tools/next100_asset_catalog.py --out museum/assets/next100-v1.json
