@@ -17,10 +17,14 @@ function specs(a){
  return rows.slice(0,4);
 }
 
+function generatedPreview(a){
+ const p=a.preview;if(!p)return '';
+ return '<div class="asset-thumb-generated" style="--preview-floor:'+esc(p.floor||'#12181d')+';--preview-accent:'+esc(p.accent||'#ff6a00')+';--preview-fog:'+esc(p.fog||'#0b1116')+'"><i></i><span>'+esc(a.type||'asset')+'</span></div>';
+}
 function card(a){
  const loc=a.locations||[],img=firstImage(a);
  return '<article class="asset-card" data-asset-card data-type="'+esc(a.type)+'" data-brand="'+esc(a.brand)+'" data-year="'+esc(a.year)+'">'+
-   '<div class="asset-thumb">'+(img?'<img src="'+esc(img)+'" alt="" loading="lazy" decoding="async">':(a.glb?'<div class="asset-thumb-3d" data-admin-3d data-glb="'+esc(a.glb)+'"></div>':''))+
+   '<div class="asset-thumb">'+(img?'<img src="'+esc(img)+'" alt="" loading="lazy" decoding="async">':(a.glb?'<div class="asset-thumb-3d" data-admin-3d data-glb="'+esc(a.glb)+'"></div>':generatedPreview(a)))+
     '<div class="asset-thumb-fallback"><small>'+esc(a.type)+'</small><b>'+esc(a.brand||'KONA')+'</b><em>'+(a.glb?'3D asset':'thumbnail pending')+'</em></div></div>'+
    '<div class="asset-card-body">'+
     '<div class="asset-meta"><span>'+esc(a.brand||'Independent')+'</span><span>'+esc(a.year||a.kind)+'</span></div>'+
@@ -44,11 +48,14 @@ export async function renderAdminAssets(root){
    const brands=[...new Set(assets.map(a=>a.brand).filter(Boolean))].sort();
    const types=[...new Set(assets.map(a=>a.type).filter(Boolean))].sort();
    const years=[...new Set(assets.map(a=>String(a.year||'')).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
-   const missing=assets.filter(a=>!a.image).length;
+   const imageCount=assets.filter(a=>a.image).length;
+   const modelCount=assets.filter(a=>!a.image&&a.glb).length;
+   const generatedCount=assets.filter(a=>!a.image&&!a.glb&&a.preview).length;
+   const missing=assets.filter(a=>!a.image&&!a.glb&&!a.preview).length;
    const roomCount=new Set(assets.flatMap(a=>(a.locations||[]).map(x=>x.id))).size;
    status.remove();
    host.insertAdjacentHTML('beforeend',
-     '<div class="asset-summary"><span>'+assets.length+' assets</span><span>'+roomCount+' populated rooms</span><span>'+missing+' thumbnails to create</span></div>'+
+     '<div class="asset-summary"><span>'+assets.length+' assets</span><span>'+roomCount+' rooms</span><span>'+imageCount+' image previews</span><span>'+modelCount+' live 3D previews</span><span>'+generatedCount+' generated previews</span><span>'+missing+' missing previews</span></div>'+
      '<section class="asset-toolbar"><small>FILTER THE WORLD</small><div class="asset-filter-grid">'+
       '<label class="ui-field wide"><span>Search</span><input class="ui-input" data-asset-q type="search" placeholder="Bike, Nike, 2027, sculpture…"></label>'+
       '<label class="ui-field"><span>Type</span><select class="ui-select" data-asset-type><option value="">All types</option>'+types.map(v=>'<option>'+esc(v)+'</option>').join('')+'</select></label>'+
