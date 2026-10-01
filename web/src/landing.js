@@ -881,7 +881,29 @@ heritage.forEach((p, i) => {
 // ------------------------------------------------------------------ the Kona Pier: Kona by Year
 const pier = KY ? buildPier({ scene, data: KY, lettering, canvasTex, M, WYLD, FONT, SERIF, lite, coarse, pickables, obstacles }) : null;
 let konaCenter = null;
+let zoneOverview = null;
 const ensureKonaCenter = () => konaCenter || (konaCenter = buildKonaRaceCenter({ scene, data: KONA_CENTER_DATA, lettering, FONT, SERIF, lite, pickables, obstacles }), window.__konaCenter=konaCenter, konaCenter);
+function leaveKonaCenter(){
+  zoneOverview=null;
+  document.body.classList.remove('kona-center-zone','zone-overview');
+  konaCenter?.focus?.(false);
+  const hud=$('zoneHud'); if(hud) hud.hidden=true;
+}
+function enterKonaCenterOverview(){
+  const center=ensureKonaCenter();
+  center.focus?.(true);
+  document.body.classList.add('kona-center-zone','zone-overview');
+  zoneOverview=KONA_CENTER_DATA.overview_camera;
+  const hud=$('zoneHud');
+  if(hud){
+    hud.hidden=false;
+    $('zoneHudTitle').textContent='Kona Race Center';
+    $('zoneHudText').textContent='Kailua Pier · transition · hot corner · Aliʻi finish';
+  }
+  if($('coach')) $('coach').hidden=true;
+  const spawn=KONA_CENTER_DATA.explore_spawn;
+  if(spawn){P.x=spawn.x;P.z=spawn.z;P.vx=P.vz=0;path=null;}
+}
 // ------------------------------------------------------------------ Lava Night: the Halloween room by the entrance
 const hween = buildHalloween({ scene, canvasTex, lettering, lightPool, basaltTex, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x0 });
 hall.add(hween.sign);
@@ -1112,6 +1134,7 @@ const roomOf = (x, z) => {
   if (z > HALL.z0 - .15 && x > SROOM.x0 && x < SROOM.x1) return 'sanctuary';
   for (const r of brandRooms) if (r.walkable(x, z)) return r.desc.id;
   if (KY && pierWalkable(x, z)) return 'pier';
+  if (KONA_CENTER_DATA && konaCenterWalkable(x,z)) return 'kona-center';
   if (x >= WALK.x0 - .05) return 'hall';
   return z > -8.6 ? 'hween' : z > -26.1 ? 'champ' : 'wyld';
 };
@@ -1496,8 +1519,9 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
   const areas = withFutureLevels(liveAreas);
 
   function prepareRoom(id){
+    if(id==='kona-center'){enterKonaCenterOverview();return;}
+    if(document.body.classList.contains('kona-center-zone')) leaveKonaCenter();
     if(id==='pier'){pier?.load?.();loadPierBike();}
-    else if(id==='kona-center'){ensureKonaCenter();}
     else if(id==='hween') loadHweenBike();
     else if(brandRooms.some(r=>r.desc.id===id)) loadBrand();
   }
@@ -1522,9 +1546,11 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     if (!started) enter();
     tourEnd(false); closeCard(); prepareRoom(id);
     const ov=safeOverview(area); if(!ov) return;
-    const face=new THREE.Vector3(ov.face.x,ov.face.y,ov.face.z);
-    route(ov.to,face,null);
-    path.roomOverview=id;
+    if(id!=='kona-center'){
+      const face=new THREE.Vector3(ov.face.x,ov.face.y,ov.face.z);
+      route(ov.to,face,null);
+      path.roomOverview=id;
+    }
     document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.room===id));
     toast(`${area.name} · room overview`);
   };
@@ -1542,6 +1568,19 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     if ((id?.startsWith('atlas') || id?.startsWith('wing')) && !wingHinted) { wingHinted = true; try { localStorage.setItem('speedmax.atlas.hint', '1'); } catch (_) { } toast('Tap any bike or artwork for its story · M opens the world map'); }
   }, 350);
 }
+$('zoneExplore')?.addEventListener('click',()=>{
+  zoneOverview=null;
+  document.body.classList.remove('zone-overview');
+  const hud=$('zoneHud'); if(hud) hud.hidden=true;
+  const spawn=KONA_CENTER_DATA?.explore_spawn;
+  if(spawn){
+    P.x=spawn.x;P.z=spawn.z;P.vx=P.vz=0;
+    const face=spawn.face;
+    if(face){P.yaw=Math.atan2(-(face.x-P.x),-(face.z-P.z));P.pitch=-.08;}
+  }
+  canvas.focus({preventScroll:true});
+  haptic(8);
+});
 $('railInner').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; if (!started) enter(); tourEnd(false); haptic(8);
   if (b.dataset.room) { window.__museumGo?.(b.dataset.room); return; }
@@ -1823,6 +1862,11 @@ function frame(now) {
   camera.position.set(P.x, P.y + EYE + (reduce ? 0 : Math.sin(bob) * .045 * Math.min(1, moving)), P.z);
   fwd.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
   camera.lookAt(look.copy(camera.position).add(fwd));
+  if(zoneOverview?.position && zoneOverview?.target){
+    const p=zoneOverview.position,tgt=zoneOverview.target;
+    camera.position.set(p.x,p.y,p.z);
+    camera.lookAt(tgt.x,tgt.y,tgt.z);
+  }
   const cardOn = $('card').classList.contains('on'), W = innerWidth, H = innerHeight;
   shift += ((cardOn ? 1 : 0) - shift) * (1 - Math.exp(-dt * 4));
   if (shift > .002) { const dx = small ? 0 : W * .17 * shift, dy = small ? H * .23 * shift : 0; camera.setViewOffset(W + 2 * dx, H + 2 * dy, 2 * dx, 2 * dy, W, H); }
