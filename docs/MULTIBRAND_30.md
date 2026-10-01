@@ -14,7 +14,7 @@ lateral widths (same source discipline the manifest `uncertainties` record deman
 
 ## 1. What is in canyonmuseum today
 
-Canonical repo: `/Users/joao/Developer/speedmax-cfr-3d` → github.com/joaoccaldas/canyonmuseum
+Canonical repo: github.com/joaoccaldas/canyonmuseum
 (Pages live at https://joaoccaldas.github.io/canyonmuseum/). Local serve: `python3 -m http.server 8744`.
 
 ### Modelled (reference-study, GLB + viewer)
