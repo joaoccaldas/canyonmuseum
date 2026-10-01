@@ -11,7 +11,7 @@ const hall=read('web/styles/hall-web.css');
 const hallMobile=read('web/styles/hall-mobile.css');
 const studioTpl=read('web/studio.template.html');
 const studioCss=read('web/styles/studio.css');
-const artifact=read('web/styles/artifact.css');
+const artifact=read('brand/artifacts.css');
 
 test('canonical component geometry lives in brand tokens',()=>{
   for(const token of ['--brand-card-radius','--brand-sheet-radius','--brand-touch','--brand-mobile-gutter','--brand-surface-glass-strong']) assert.match(tokens,new RegExp(token));
