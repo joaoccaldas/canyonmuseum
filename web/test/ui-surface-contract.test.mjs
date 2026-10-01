@@ -66,13 +66,16 @@ test('Progress owns no independent persistence and keeps Passport compatibility 
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('entry has fast first-run avatar setup, direct Home and replayable contextual onboarding',()=>{
+test('entry has questions, avatar, install handoff and replayable contextual onboarding',()=>{
   assert.match(entry,/function enterApp\(first = 'home'\)/);
   assert.match(entry,/function firstRunStep\(\)/);
   assert.match(entry,/paintQuest\(firstRunStep\(\)\)/);
   assert.match(entry,/renderOnboardingQuestions/);
   assert.match(entry,/renderAvatarRegistration/);
-  assert.match(entry,/onContinue:\(\)=>enterApp\('home'\)/);
+  assert.match(entry,/onContinue:\(\)=>paintQuest\('install'\)/);
+  assert.match(entry,/if\(step==='install'\)/);
+  assert.match(entry,/data-install-app/);
+  assert.match(entry,/Turn your phone sideways/);
   assert.match(onboarding,/What brings you to Kona/);
   assert.match(onboarding,/ONBOARDING_ANSWER/);
   assert.doesNotMatch(entry,/data-race-picker/);
