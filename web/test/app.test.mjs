@@ -34,7 +34,7 @@ test('quality presets: low is lite and shadowless, high is full detail', () => {
 
 test('share caption scales with the image', () => {
   const a = captionLayout(800, { title: 'Lotus Type 108', place: 'Monocoque' }), b = captionLayout(2400, { title: 'x' });
-  assert.ok(b.height > a.height); assert.equal(a.lines[0], 'Lotus Type 108'); assert.match(a.lines[1], /Monocoque · Speedmax Museum/);
+  assert.ok(b.height > a.height); assert.equal(a.lines[0], 'Lotus Type 108'); assert.match(a.lines[1], /Monocoque · KONA · Kailua-Kona/);
 });
 
 test('every wing file is complete and every exhibit it names exists', () => {
