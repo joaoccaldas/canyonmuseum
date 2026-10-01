@@ -9,7 +9,7 @@ function readImage(file){
 }
 function preview(style){
   const skin=avatarItem(style,'skin'),hair=avatarItem(style,'hair'),tri=avatarItem(style,'trisuit'),shoes=avatarItem(style,'shoes');
-  return '<div class="registration-avatar-figure" style="--skin:'+esc(skin.color)+';--hair:'+esc(hair.color)+';--kit:'+esc(tri.color)+';--kit-accent:'+esc(tri.accentColor)+';--shoes:'+esc(shoes.color)+'">'+
+  return '<div class="registration-avatar-figure presentation-'+esc(style.presentation||'prefer-not')+'" style="--skin:'+esc(skin.color)+';--hair:'+esc(hair.color)+';--kit:'+esc(tri.color)+';--kit-accent:'+esc(tri.accentColor)+';--shoes:'+esc(shoes.color)+'">'+
     '<i class="raf-hair"></i><i class="raf-head"></i><i class="raf-body"></i><i class="raf-panel"></i><i class="raf-arm l"></i><i class="raf-arm r"></i><i class="raf-leg l"></i><i class="raf-leg r"></i><i class="raf-shoe l"></i><i class="raf-shoe r"></i></div>';
 }
 
