@@ -24,7 +24,7 @@ const icon = name => {
   return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+d+'"/></svg>';
 };
 
-export function initKonaShell({ profile, settings, enter, openUserStudio, featureStyle=async()=>{} }) {
+export function initKonaShell({ profile, settings, enter, openUserStudio, featureStyle=async()=>{}, entryDataReady=null }) {
   const facts = () => ({
     event: window.__ENTRY_EVENT || window.__ENTRY_DATA?.event || {},
   });
@@ -153,6 +153,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('',null);
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
+    if(entryDataReady) await entryDataReady.catch(()=>null);
     renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
   }
