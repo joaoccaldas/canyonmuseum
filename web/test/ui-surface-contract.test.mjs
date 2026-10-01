@@ -16,6 +16,7 @@ const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url
 const registration=fs.readFileSync(new URL('../src/ui/avatar-registration.js',import.meta.url),'utf8');
 const admin=fs.readFileSync(new URL('../src/ui/admin-assets.js',import.meta.url),'utf8');
 const adminBuild=fs.readFileSync(new URL('../../tools/build_admin_assets.mjs',import.meta.url),'utf8');
+const visualPrimitives=fs.readFileSync(new URL('../src/ui/visual-primitives.js',import.meta.url),'utf8');
 
 test('shell orchestrates Home, User Studio, Discover, Garage, Plan and companion surfaces',()=>{
   for(const marker of ['renderHomeSurface','renderAvatarHome','renderDiscoverSurface','renderGarageSurface','renderPlanSurface','renderFeed','renderTravel']) assert.match(shell,new RegExp(marker));
@@ -38,6 +39,9 @@ test('Garage and Passport resolve Product presentation from the shared public pr
 
 test('Home is lightweight while User Studio owns personal depth and tour replay',()=>{
   assert.match(home,/data-home-self/);
+  assert.match(home,/avatarPreviewMarkup/);
+  assert.match(visualPrimitives,/TRISUIT|trisuit|avatarItem\(s,'trisuit'\)/);
+  assert.doesNotMatch(home,/ha-head|ha-body|function avatarPreview/);
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
   for(const control of ['Avatar','Bike Studio','Races','Settings','Quick tour']) assert.match(avatarHome,new RegExp(control));
