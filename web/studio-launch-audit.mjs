@@ -11,6 +11,7 @@ try{
  const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  // Block service-worker reuse: verify the current build, not an earlier local release.
  await page.setBypassServiceWorker(true);
+ await page.evaluateOnNewDocument(()=>{try{localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}}));}catch{}});
  for(const [width,height] of [[390,844],[430,932],[768,1024],[1280,800],[1440,900],[844,390],[360,640]]){
   await page.setViewport({width,height,deviceScaleFactor:1});
   await page.goto(base,{waitUntil:'networkidle0'});
@@ -19,6 +20,8 @@ try{
   assert.ok(entry.bottom<=height,`${width}: entry CTA below fold: ${entry.bottom}`);
   if(width===390||width===1440)await page.screenshot({path:new URL(`landing-${width}.png`,out).pathname});
   await page.click('#buildSelf');
+  await page.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden);
+  await page.click('[data-tab="me"]');
   await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
   const layout=await page.evaluate(()=>{
    const canvas=document.querySelector('[data-race-self-stage]'),frame=canvas.__studioFrame;
@@ -47,7 +50,7 @@ try{
  await page.keyboard.press('Escape');
  assert.equal(await page.$eval('[data-hub-drawer]',e=>e.hidden),true);
  assert.equal(await page.$eval('[data-race-self-action="customize"]',e=>e===document.activeElement),true);
- await page.reload({waitUntil:'networkidle0'});await page.click('#buildSelf');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
+ await page.reload({waitUntil:'networkidle0'});await page.click('#buildSelf');await page.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden);await page.click('[data-tab="me"]');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
  assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.archetype),'aero');
  assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.items.top.id),'lava');
  await page.click('[data-race-self-action="customize"]');await page.screenshot({path:new URL('avatar-editor-phone.png',out).pathname});await page.keyboard.press('Escape');
