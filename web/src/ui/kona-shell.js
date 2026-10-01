@@ -24,13 +24,13 @@ const icon = name => {
   return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+d+'"/></svg>';
 };
 
-export function initKonaShell({ profile, settings, enter, featureStyle=async()=>{} }) {
+export function initKonaShell({ profile, settings, enter, openUserStudio, featureStyle=async()=>{} }) {
   const facts = () => ({
     event: window.__ENTRY_EVENT || window.__ENTRY_DATA?.event || {},
   });
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
-    '<button type="button" class="kona-user-menu" data-user-studio aria-label="Open User Studio"><i></i><span>Me</span></button>'+
+    '<button type="button" class="kona-user-menu" data-user-studio aria-label="Open User Studio" title="User Studio"><i></i><span>Studio</span></button>'+
     '<div id="konaPanel" class="kona-panel" hidden>'+
       '<div class="kona-panel-head"><div><small id="konaPanelEyebrow">KONA · BETA</small><h2 id="konaPanelTitle">Now</h2></div><button id="konaPanelClose" type="button" aria-label="Close">×</button></div>'+
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
@@ -189,7 +189,8 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
   shell.querySelector('[data-tab=garage]').onclick=garage;
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
-  shell.querySelector('[data-user-studio]').onclick=me;
+  const routeToUserStudio=()=>typeof openUserStudio==='function'?openUserStudio():me();
+  shell.querySelector('[data-user-studio]').onclick=routeToUserStudio;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!e.defaultPrevented&&!panel.hidden&&document.body.classList.contains('museum-open'))close();});
 
   const userMenu=shell.querySelector('[data-user-studio]');
@@ -197,7 +198,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
     applyBrandMode(p?.appearance||'auto');
     if(userMenu){
       userMenu.style.setProperty('--user-accent',p?.avatar||'#e8471c');
-      userMenu.querySelector('span').textContent=(p?.name||'Me').trim().split(/\s+/)[0].slice(0,12)||'Me';
+      userMenu.querySelector('span').textContent='Studio';
     }
   };
   syncUserMenu(profile?.get?.()); profile?.subscribe?.(syncUserMenu);
