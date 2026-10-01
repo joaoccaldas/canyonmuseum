@@ -30,7 +30,7 @@ function readImage(file){
   });
 }
 
-export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,openFeed,openTravel,openAssets,isAdmin=false,isCurrent=()=>true}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,openFeed,openTravel,openTour,openAssets,isAdmin=false,isCurrent=()=>true}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -61,6 +61,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('feed','≋','The Feed','Athletes, triathlon & island rabbit holes')+
         menuItem('travel','✦','Travel to Kona','Flights, local stops & getting around')+
         menuItem('plan','▤','Race week','What matters next, minus the spreadsheet energy')+
+        menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
         menuItem('passport','☆','Passport','Your progress & collection')+
         (isAdmin?menuItem('assets','▦','Asset Portfolio','All bikes, gear & room assets'):'')+
         '<p class="studio-menu-note">No prescribed route.<br>Curiosity usually works.</p>'+
@@ -223,6 +224,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   root.querySelector('[data-race-self-action="feed"]')?.addEventListener('click',()=>openFeed?.());
   root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="plan"]')?.addEventListener('click',()=>openPlan?.());
+  root.querySelector('[data-race-self-action="tour"]')?.addEventListener('click',()=>openTour?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
   root.querySelector('[data-race-self-action="passport"]')?.addEventListener('click',showPassport);
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
