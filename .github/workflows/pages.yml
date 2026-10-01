@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: '17 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -38,6 +40,15 @@ jobs:
         run: |
           (cd web && npm ci --ignore-scripts && npm test)
           node tools/validate-bikes.mjs
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Validate feed providers and refresh the dated fallback
+        run: |
+          deno test supabase/functions/companion/*_test.ts
+          deno run --allow-net --allow-read --allow-write --allow-env tools/refresh_companion.ts
 
       - name: Stage static site (allowlist — only what the pages load or link)
         run: |

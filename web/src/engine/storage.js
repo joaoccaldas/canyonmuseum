@@ -4,6 +4,8 @@
 export const STORAGE_VERSION = 1;
 
 const MAP = Object.freeze({
+  companion: { current: 'kona.companion.v1', legacy: [] },
+  companionCache: { current: 'kona.companion.cache.v1', legacy: [] },
   profile: { current: 'kona.profile.v1', legacy: ['speedmax.profile.v1'] },
   passport: { current: 'kona.passport.v1', legacy: ['speedmax.passport.v1'] },
   finds: { current: 'kona.finds.v1', legacy: ['speedmax.finds.v1'] },

@@ -16,7 +16,7 @@ const CSP = [
   "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",       // hall and studio load app/*.js; meshopt decoder is WebAssembly
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org",
+  "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org https://i.ytimg.com",
   "connect-src 'self' data: blob: https://mtvpnoqwjpoqaiocrklq.supabase.co https://upload.wikimedia.org https://thumb.wikimedia.org",
   "media-src 'self' data: blob:",
   "worker-src 'self' blob:",
@@ -51,7 +51,7 @@ const COMMON_DESIGN_LINKS = [
   'web/styles/system.css',
 ];
 const pageDesignLinks = file => file === 'index.html'
-  ? [...COMMON_DESIGN_LINKS, 'web/styles/shell-mobile.css', 'web/styles/home.css', 'web/styles/garage.css', 'web/styles/race-self.css', 'web/styles/entry-visual-v2.css']
+  ? [...COMMON_DESIGN_LINKS, 'web/styles/shell-mobile.css', 'web/styles/home.css', 'web/styles/garage.css', 'web/styles/race-self.css', 'web/styles/companion.css', 'web/styles/entry-visual-v2.css']
   : COMMON_DESIGN_LINKS;
 const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');

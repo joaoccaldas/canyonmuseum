@@ -5,8 +5,8 @@
 import {readStorage,writeStorage,removeStorage} from '../engine/storage.js';
 import { readGameState, writeGameState, GAME_STATE_SCHEMA_VERSION } from '../engine/game-state.js';
 
-const URL = 'https://mtvpnoqwjpoqaiocrklq.supabase.co';
-const KEY = 'sb_publishable_lVueu3GqNcPe4Z9KsChvJw_VfmnVi5u';
+import config from '../../../supabase/functions/companion/public-config.json' with {type:'json'};
+const URL=config.url, KEY=config.publishable_key;
 
 const json = async res => {
   const body = await res.text();

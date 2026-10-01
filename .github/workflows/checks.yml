@@ -25,6 +25,11 @@ jobs:
       - name: Unit tests
         run: npm test
         working-directory: web
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Companion provider contracts
+        run: deno test supabase/functions/companion/*_test.ts
       - name: Bike asset contract
         run: node tools/validate-bikes.mjs
       - name: Repository hygiene
