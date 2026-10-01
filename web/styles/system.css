@@ -245,3 +245,18 @@ html[data-theme="dark"]{
   .kona-discover-categories article:nth-child(odd),
   .kona-discover-categories article:nth-child(even){padding:14px 0;border-right:0}
 }
+
+
+/* Shared 2D visual primitives. Markup lives in ui/visual-primitives.js; surfaces only position/scale it. */
+.visual-avatar{position:relative;width:62px;height:128px}
+.visual-avatar i{position:absolute;display:block}
+.visual-avatar .va-head{width:34px;height:34px;left:14px;top:16px;background:var(--skin)}
+.visual-avatar .va-hair{width:36px;height:9px;left:13px;top:12px;background:var(--hair);z-index:2}
+.visual-avatar .va-body{width:44px;height:43px;left:9px;top:50px;background:var(--top)}
+.visual-avatar .va-arm{width:10px;height:42px;top:51px;background:var(--skin)}
+.visual-avatar .va-arm.l{left:-2px}.visual-avatar .va-arm.r{right:-2px}
+.visual-avatar .va-leg{width:17px;height:31px;top:93px;background:var(--bottoms)}
+.visual-avatar .va-leg.l{left:12px}.visual-avatar .va-leg.r{right:12px}
+.visual-avatar .va-shoe{width:19px;height:7px;top:121px;background:var(--shoes)}
+.visual-avatar .va-shoe.l{left:11px}.visual-avatar .va-shoe.r{right:11px}
+.visual-bike-mark{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
