@@ -59,7 +59,20 @@ try{
  await page.click('[data-race-self-action="discover"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Discover');await page.click('[data-user-studio]');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
  await page.click('[data-race-self-action="museum"]');await page.waitForFunction(()=>!!window.__museum,{timeout:60000});
  await page.waitForFunction(()=>document.body.classList.contains('walking'),{timeout:60000});
+ const hallLinks=await page.evaluate(()=>[...document.querySelectorAll('link[data-style-scope="museum"]')].map(l=>({href:l.getAttribute('href'),disabled:l.disabled})));
+ assert.ok(hallLinks.length>=2&&hallLinks.every(x=>x.disabled===false),'museum styles must be enabled inside museum');
  await page.screenshot({path:new URL('museum-phone.png',out).pathname});
+ await page.evaluate(()=>window.__konaShell.now());
+ await page.waitForFunction(()=>document.querySelector('#konaPanelTitle')?.textContent==='Home');
+ const afterMuseum=await page.evaluate(()=>({
+   overflow:document.documentElement.scrollWidth>innerWidth,
+   hall:[...document.querySelectorAll('link[data-style-scope="museum"]')].map(l=>l.disabled),
+   homeFont:getComputedStyle(document.querySelector('#konaPanelTitle')).fontFamily,
+   homeColor:getComputedStyle(document.querySelector('#konaPanelTitle')).color
+ }));
+ assert.equal(afterMuseum.overflow,false,'Home after museum must not overflow');
+ assert.ok(afterMuseum.hall.length>=2&&afterMuseum.hall.every(Boolean),'museum styles must be disabled on app surfaces');
+ assert.match(afterMuseum.homeFont,/Instrument Serif|Georgia/i,'Home editorial typography must survive museum round trip');
  assert.deepEqual(errors,[],'runtime errors');
  report.push({journeys:'avatar persistence, Escape/focus, Passport, Plan, Discover, museum',status:'PASS'});
  console.log(JSON.stringify(report,null,2));
