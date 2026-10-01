@@ -30,7 +30,7 @@ function readImage(file){
   });
 }
 
-export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,isCurrent=()=>true}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,openAssets,isAdmin=false,isCurrent=()=>true}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -60,6 +60,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('discover','◎','Discover Kona','Places, stories & race week')+
         menuItem('plan','▤','Race week','Your plan for the island')+
         menuItem('passport','☆','Passport','Your progress & collection')+
+        (isAdmin?menuItem('assets','▦','Asset Portfolio','All bikes, gear & room assets'):'')+
         '<p class="studio-menu-note">Start anywhere.<br>Your studio is always here.</p>'+
       '</nav>'+
       '<nav class="race-self-controls" aria-label="User Studio menu"><small class="studio-menu-label">MAKE IT YOURS</small>'+
@@ -216,6 +217,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   root.querySelector('[data-race-self-action="plan"]')?.addEventListener('click',()=>openPlan?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
   root.querySelector('[data-race-self-action="passport"]')?.addEventListener('click',showPassport);
+  root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
   return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();root.removeEventListener('keydown',handleKey);};
 }
