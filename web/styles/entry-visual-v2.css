@@ -102,7 +102,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .entry-actions{width:100%;display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
   #intro.kona-entry .entry-actions .btn{min-height:52px}
   #intro.kona-entry .entry-trust{margin-top:10px;font-size:9px}
-  #intro.kona-entry .entry-trust #entryInstall{display:none}
+  #intro.kona-entry .entry-trust #entryInstall{display:inline-flex;min-height:48px;padding:0 6px;border-bottom:0;text-decoration:underline;text-underline-offset:4px}
   #intro.kona-entry .entry-signin-note{margin-top:5px;font-size:9px}
 }
 @media(max-width:360px){
