@@ -5,10 +5,12 @@ import wyld from '../../../museum/wyld_room.json' with { type: 'json' };
 import { randomFamily, RANDOM_FAMILIES } from '../brand/runtime.js';
 import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
 
-export function avatarPreviewMarkup(styleInput,{className='visual-avatar'}={}){
+export function avatarPreviewMarkup(styleInput,{className=''}={}){
   const s=normaliseAvatarStyle(styleInput);
-  const [skin,hair,top,bottoms,shoes]=['skin','hair','top','bottoms','shoes'].map(slot=>avatarItem(s,slot).color);
-  return '<div class="visual-avatar '+className+'" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
+  const skin=avatarItem(s,'skin').color,hair=avatarItem(s,'hair').color,tri=avatarItem(s,'trisuit'),shoes=avatarItem(s,'shoes').color;
+  const top=tri.layout==='separates'?avatarItem(s,'top').color:tri.color;
+  const bottoms=tri.layout==='separates'?avatarItem(s,'bottoms').color:tri.color;
+  return '<div class="visual-avatar '+className+'" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+';--kit-accent:'+tri.accentColor+'">'+
     '<i class="va-hair"></i><i class="va-head"></i><i class="va-body"></i><i class="va-arm l"></i><i class="va-arm r"></i><i class="va-leg l"></i><i class="va-leg r"></i><i class="va-shoe l"></i><i class="va-shoe r"></i>'+
   '</div>';
 }
