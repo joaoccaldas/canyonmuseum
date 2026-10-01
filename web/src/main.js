@@ -29,6 +29,7 @@ const B2T = (v) => new THREE.Vector3(v[0], v[2], -v[1]);           // Blender (Z
 const R_WHEEL = .3395, R_RING = .0127/(2*Math.sin(Math.PI/(BIKE.chainring||50))), R_COG = .0127/(2*Math.sin(Math.PI/(BIKE.cog||14)));
 
 // ------------------------------------------------------------------ state
+if(!eventEnabled('wyld'))delete PRESETS.wyld;
 const DEFAULT_CFG = { preset: 'aurora', ...PRESETS.aurora, aerofuel: true, frontBottle: false, rearBottles: false, shield: true, rearDisc: false,
   rimBase: '#0b0b0c', rimText: '#d9d9d9', rimLabels: false, tyreText: '#6b6b6b', discColor: '#141416',
   ...PROFILE.defaultCfg };

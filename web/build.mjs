@@ -19,5 +19,5 @@ let template=tpl
 const html = template.replace('<head>','<head><script>window.__BIKE_PROFILE='+JSON.stringify(profile).replaceAll('<','\\u003c')+';</script>').replace('__GLB__', () => glb).replace('__APP__', () => '/* Speedmax study · three.js (MIT) bundled */\n' + app);
 const out = process.env.OUT_HTML || path.join(here, 'dist', 'index.html');
 fs.mkdirSync(path.dirname(out), { recursive: true });
-fs.writeFileSync(out, html);
+fs.writeFileSync(out, html.replace(/[ \t]+$/gm,''));
 console.log('wrote', out, (html.length / 1e6).toFixed(2), 'MB · app', (app.length / 1e3).toFixed(0), 'kB');
