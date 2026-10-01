@@ -16,7 +16,7 @@ test('User Studio keeps personal depth plus explicit companion shortcuts',()=>{
   for(const personal of ['Avatar','Bike Studio','Races','Collection','Progress','Settings']) assert.match(raceSelf,new RegExp(personal));
   assert.doesNotMatch(raceSelf,/Canyon Museum|Discover Kona|Race week/);
   assert.match(raceSelf,/Travel to Kona/);
-  assert.match(raceSelf,/The Feed/);
+  assert.match(raceSelf,/What's going on in Kona/);
   assert.doesNotMatch(raceSelf,/hub-launcher/);
   assert.match(raceSelf,/race-self-controls/);
 });
