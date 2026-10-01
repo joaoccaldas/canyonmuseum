@@ -69,10 +69,38 @@ try{
  const restored=await page.evaluate(()=>{
    const links=[...document.querySelectorAll('link[data-style-scope="museum"]')];
    const hero=document.querySelector('.companion-hero');
-   return {disabled:links.length===2&&links.every(x=>x.disabled),heroPosition:hero?getComputedStyle(hero).position:null,title:document.querySelector('#konaPanelTitle')?.textContent};
+   const positionRules=[];
+   if(hero){
+     for(const sheet of [...document.styleSheets]){
+       let rules=[];try{rules=[...sheet.cssRules];}catch{}
+       for(const rule of rules){
+         if(!rule.selectorText||!rule.style?.position)continue;
+         try{
+           if(hero.matches(rule.selectorText))positionRules.push({
+             href:sheet.href||'inline',
+             selector:rule.selectorText,
+             position:rule.style.position,
+             disabled:Boolean(sheet.disabled),
+             scope:sheet.ownerNode?.dataset?.styleScope||null
+           });
+         }catch{}
+       }
+     }
+   }
+   return {
+     disabled:links.length===2&&links.every(x=>x.disabled),
+     heroPosition:hero?getComputedStyle(hero).position:null,
+     title:document.querySelector('#konaPanelTitle')?.textContent,
+     positionRules,
+     styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(link=>({
+       href:link.getAttribute('href'),
+       disabled:Boolean(link.disabled),
+       scope:link.dataset.styleScope||null
+     }))
+   };
  });
  assert.equal(restored.disabled,true,'museum styles must be disabled after returning to an app surface');
- assert.notEqual(restored.heroPosition,'fixed');
+ assert.notEqual(restored.heroPosition,'fixed','Feed header inherited fixed positioning: '+JSON.stringify({rules:restored.positionRules,styles:restored.styles}));
  assert.match(restored.title||'',/Feed/i);
  await page.evaluate(()=>window.__konaShell.now());
  assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i);
