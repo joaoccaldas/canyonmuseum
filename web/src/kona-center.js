@@ -21,6 +21,8 @@ function line(points,color,width=.16){
 
 export function buildKonaRaceCenter(ctx){
   const {scene,data,lettering,FONT,SERIF,lite,pickables,obstacles}=ctx;
+  const legacyScene = scene.children.filter(o=>!o.isLight);
+  const legacyVisibility = new Map();
   const group=new THREE.Group();group.name='kona-race-center';scene.add(group);
 
   const asphalt=mat('#474b4e',.96), sidewalk=mat('#c9c3b8',.9), sand=mat('#d7c096',.95);
@@ -152,5 +154,14 @@ export function buildKonaRaceCenter(ctx){
     group,floors,bounds:KONA_CENTER_BOUNDS,
     overview:KONA_CENTER_OVERVIEW,
     data,
+    focus(on=true){
+      if(on){
+        for(const o of legacyScene){if(!legacyVisibility.has(o))legacyVisibility.set(o,o.visible);o.visible=false;}
+        group.visible=true;
+      }else{
+        for(const [o,v] of legacyVisibility)o.visible=v;
+        legacyVisibility.clear();
+      }
+    }
   };
 }
