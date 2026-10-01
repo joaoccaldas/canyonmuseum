@@ -29,7 +29,8 @@ async function capture(vp,state,theme){
    await p.click('#buildSelf');await p.waitForSelector('[data-onboarding-question]');await p.click('[data-onboarding-skip]');await p.waitForSelector('.registration-avatar');
  }else if(state==='onboarding-tour'){
    await p.click('#buildSelf');await p.waitForSelector('[data-onboarding-question]');await p.click('[data-onboarding-skip]');await p.waitForSelector('.registration-avatar');
-   await p.click('[data-reg-continue]');
+   await p.click('[data-reg-continue]');await p.waitForSelector('.onboarding-handoff');
+   await p.click('[data-handoff-continue]');
    await p.waitForSelector('.kona-tour');
  }else if(state==='bike-studio'){
    await p.goto(new URL('Studio.html',base).href,{waitUntil:'domcontentloaded'});
