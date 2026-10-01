@@ -20,8 +20,9 @@ Local browser evidence uses disposable profiles against a staged static artifact
 
 | Check | Evidence/status |
 |---|---|
-| Unit suite | 308 passed |
+| Unit suite | 309 passed |
 | Bike asset contract | 29 files, zero failures |
+| Full sealed-file staging integrity | Every core/lazy release file must exist and match its checksum; excludes unpublished reference captures |
 | Brand/source hygiene and integration contract | Passed |
 | Dependency audits | No reported production vulnerabilities in web or native lockfiles |
 | P0 journey | Fresh avatar/trisuit, tour, persistence, museum return, returning Home, mocked auth and installation controls passed |
@@ -53,4 +54,4 @@ Compatibility paths, product names, source records, hosting URLs, signing enviro
 
 ## Artifact receipt
 
-Final static seal: `b6ea928e6653`, 215 files, 24 core shell files, 53.7 MB including lazy assets. The consumer visual matrix used identical active entry/app bundles and styles before the isolated Collection stylesheet change. Direct Collection/route checks and service-worker checks cover the final staged artifact. CI must repeat the required checks against the final commit. Screenshots were inspected for representative narrow phone, phone landscape, tablet, desktop, Garage, User Studio, progress, landing rotation, secret silhouette and the full public-preview contact sheet. Automated geometry checks do not establish a universal aesthetic score or full accessibility certification.
+Final static seal: `ca5e3f57164d`, 214 files, 24 core shell files, 53.7 MB including lazy assets. The consumer visual matrix used identical active entry/app bundles and styles before the isolated Collection stylesheet change. Direct Collection/route checks and service-worker checks cover the final staged artifact. CI must repeat the required checks against the final commit. Screenshots were inspected for representative narrow phone, phone landscape, tablet, desktop, Garage, User Studio, progress, landing rotation, secret silhouette and the full public-preview contact sheet. Automated geometry checks do not establish a universal aesthetic score or full accessibility certification.
