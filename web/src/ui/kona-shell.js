@@ -100,15 +100,16 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     const next=body.cloneNode(false);body.replaceWith(next);body=next;
   };
   const close=()=>{routeToken++;surpriseLayer.close();leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
+  const beginSurface=()=>{panel.hidden=true;document.body.classList.add('kona-panel-open');};
   shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
 
   async function now(){
     await accessReady;
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('home','web/styles/home.css');
     if(request!==studioRequest)return;
     title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
+    panel.hidden=false;setActive('home');
     disposeStudio=renderHomeSurface(body,{
       event:facts().event,
       profile,
@@ -127,11 +128,11 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   }
 
   async function raceSelf(){
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('race-self','web/styles/race-self.css');
     if(request!==studioRequest)return;
     title.textContent='User Studio'; eyebrow.textContent='KONA · YOUR ATHLETE';
-    panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('me');
+    panel.hidden=false;document.body.classList.add('race-self-open');setActive('me');
     const admin=isAdminUser(await currentUser().catch(()=>null));
     if(request!==studioRequest)return;
     const cleanup=await renderAvatarHome(body,{
@@ -153,45 +154,45 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   }
 
   async function companion(view){
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('companion','web/styles/companion.css');
     if(request!==studioRequest)return;
     title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
     panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
-    document.body.classList.add('kona-panel-open');setActive('discover');
+    setActive('discover');
     disposeStudio=(view==='feed'?renderFeed:renderTravel)(body,{back:raceSelf});
   }
   const feed=()=>companion('feed'),travel=()=>companion('travel');
 
   async function collection(){
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('',null);
     if(request!==studioRequest)return;
     title.textContent='Collection'; eyebrow.textContent='KONA · CARDS & ITEMS';
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('');
+    panel.hidden=false;setActive('');
     disposeStudio=await renderCollectionSurface(body,{admin:accessContext.admin,onBack:raceSelf});
   }
 
   async function garage(){
     await accessReady;
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('garage','web/styles/garage.css');
     if(request!==studioRequest)return;
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
+    panel.hidden=false;setActive('garage');
     await renderGarageSurface(body,{admin:accessContext.admin});
     scheduleSurprise('garage');
   }
 
   async function plan(){
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('',null);
     if(request!==studioRequest)return;
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
     const readyData = entryDataReady ? await entryDataReady.catch(()=>null) : null;
     if(request!==studioRequest)return;
     disposeStudio=renderPlanSurface(body,{data:readyData || window.__ENTRY_DATA || { event:facts().event }});
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
+    panel.hidden=false;setActive('plan');
   }
 
   async function me(){
@@ -199,11 +200,11 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   }
 
   async function adminAssets(){
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('admin','web/styles/admin-assets.css');
     if(request!==studioRequest)return;
     title.textContent='Asset Portfolio';eyebrow.textContent='KONA · ADMIN';
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
+    panel.hidden=false;setActive('me');
     await renderAdminAssets(body);
   }
 
@@ -214,11 +215,11 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     enter?.(id);
   }
   async function explore(){
-    dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
+    dismissTour();leaveRaceSelf();const request=studioRequest;beginSurface();
     await featureStyle('',null);
     if(request!==studioRequest)return;
     title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
-    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
+    panel.hidden=false;setActive('discover');
     await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});
     scheduleSurprise('discover');
   }
