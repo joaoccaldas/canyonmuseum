@@ -45,7 +45,7 @@
       "article_hosts": [
         "bigislandnow.com"
       ],
-      "note": "Hawai\u02bbi Island news, including Kona",
+      "note": "Hawaiʻi Island news, including Kona",
       "verified_at": "2026-10-01"
     },
     {
@@ -77,12 +77,12 @@
       "article_hosts": [
         "www.youtube.com"
       ],
-      "note": "Team Charles-Barclay \u00b7 Lucy & Reece",
+      "note": "Team Charles-Barclay · Lucy & Reece",
       "verified_at": "2026-10-01"
     },
     {
       "id": "paula-findlay",
-      "name": "Paula Findlay \u00b7 TTL",
+      "name": "Paula Findlay · TTL",
       "kind": "video",
       "website": "https://www.youtube.com/@ThatTriathlonLife",
       "channel_id": "UC8Wjskc9fSkYLporjscGIBQ",
@@ -93,7 +93,7 @@
       "article_hosts": [
         "www.youtube.com"
       ],
-      "note": "That Triathlon Life \u00b7 Paula Findlay & Eric Lagerstrom",
+      "note": "That Triathlon Life · Paula Findlay & Eric Lagerstrom",
       "verified_at": "2026-10-01"
     },
     {
@@ -143,8 +143,40 @@
       "article_hosts": [
         "www.youtube.com"
       ],
-      "note": "Frodeno Going Mental \u00b7 official podcast",
+      "note": "Frodeno Going Mental · official podcast",
       "identity_source": "https://www.frodeno.com/",
+      "verified_at": "2026-10-01"
+    },
+    {
+      "id": "kristian-blummenfelt",
+      "name": "Kristian Blummenfelt",
+      "kind": "video",
+      "website": "https://www.youtube.com/@kristian.blummenfelt",
+      "channel_id": "UC3FUifepO8vXHtool8S1Z1g",
+      "feed_url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC3FUifepO8vXHtool8S1Z1g",
+      "feed_hosts": [
+        "www.youtube.com"
+      ],
+      "article_hosts": [
+        "www.youtube.com"
+      ],
+      "note": "Official athlete channel",
+      "verified_at": "2026-10-01"
+    },
+    {
+      "id": "laura-philipp",
+      "name": "Laura Philipp",
+      "kind": "video",
+      "website": "https://www.youtube.com/channel/UCkJ1Sgtqj909kXj_kApY3rA",
+      "channel_id": "UCkJ1Sgtqj909kXj_kApY3rA",
+      "feed_url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCkJ1Sgtqj909kXj_kApY3rA",
+      "feed_hosts": [
+        "www.youtube.com"
+      ],
+      "article_hosts": [
+        "www.youtube.com"
+      ],
+      "note": "Official athlete channel",
       "verified_at": "2026-10-01"
     }
   ]
