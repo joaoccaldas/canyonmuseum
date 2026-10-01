@@ -178,10 +178,35 @@ export function saveQuestIdentity(draft, storage = globalThis.localStorage) {
 export function syncIdentityFromSetup(setup, products, storage = globalThis.localStorage, options = {}) {
   const graph = projectSetup(setup, products, options);
   try {
-    writeStorage('userEquipment', JSON.stringify(graph.equipment), storage);
-    writeStorage('raceIdentity', JSON.stringify(graph.identity), storage);
-  } catch { /* private mode: the race setup key still holds the editable copy */ }
-  return graph;
+    const previousEquipment = JSON.parse(readStorage('userEquipment', storage) || '[]');
+    const previousIdentity = JSON.parse(readStorage('raceIdentity', storage) || 'null');
+
+    const projectedProducts = new Set(graph.equipment.map(row => row.product_id));
+    const preserved = Array.isArray(previousEquipment)
+      ? previousEquipment.filter(row => row?.product_id && !projectedProducts.has(row.product_id))
+      : [];
+    const mergedEquipment = [...preserved, ...graph.equipment];
+
+    const identity = {
+      ...graph.identity,
+      ...(previousIdentity && typeof previousIdentity === 'object' ? {
+        goal: previousIdentity.goal ?? graph.identity.goal,
+        intent: previousIdentity.intent ?? graph.identity.intent,
+        mode: previousIdentity.mode ?? graph.identity.mode,
+        style: previousIdentity.style ?? graph.identity.style,
+        avatar: previousIdentity.avatar ?? graph.identity.avatar,
+        visibility: previousIdentity.visibility ?? graph.identity.visibility,
+        share_slug: previousIdentity.share_slug ?? graph.identity.share_slug,
+      } : {}),
+      setup: { ...(previousIdentity?.setup || {}), ...graph.identity.setup },
+    };
+
+    writeStorage('userEquipment', JSON.stringify(mergedEquipment), storage);
+    writeStorage('raceIdentity', JSON.stringify(identity), storage);
+    return { equipment: mergedEquipment, identity };
+  } catch {
+    return graph;
+  }
 }
 
 /** Aggregate only. Refuses user ids and groups smaller than 10. */
