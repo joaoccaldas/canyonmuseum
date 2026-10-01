@@ -68,7 +68,8 @@ test('Progress owns no independent persistence and keeps Passport compatibility 
 
 test('entry has fast first-run avatar setup, direct Home and replayable contextual onboarding',()=>{
   assert.match(entry,/function enterApp\(first = 'home'\)/);
-  assert.match(entry,/paintQuest\('questions'\)/);
+  assert.match(entry,/function firstRunStep\(\)/);
+  assert.match(entry,/paintQuest\(firstRunStep\(\)\)/);
   assert.match(entry,/renderOnboardingQuestions/);
   assert.match(entry,/renderAvatarRegistration/);
   assert.match(entry,/onContinue:\(\)=>enterApp\('home'\)/);
@@ -76,6 +77,7 @@ test('entry has fast first-run avatar setup, direct Home and replayable contextu
   assert.match(onboarding,/ONBOARDING_ANSWER/);
   assert.doesNotMatch(entry,/data-race-picker/);
   assert.match(shell,/tour:replayTour/);
+  assert.match(shell,/initReturnJourney/);
   assert.match(shell,/writeStorage\('onboarding','seen'\)/);
   assert.match(registration,/TRISUIT LAYOUT/);
   assert.match(registration,/data-reg-overlay/);
