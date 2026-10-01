@@ -251,6 +251,7 @@ body.install-open{overflow:hidden}
 
 /* Persistent player control belongs to the app shell, not User Studio route CSS. */
 .kona-user-menu{position:fixed;z-index:42;top:max(14px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px;min-height:var(--brand-touch);padding:8px 16px;border:1px solid var(--brand-line);border-radius:12px;background:var(--brand-surface);color:var(--brand-ink);font:700 13px/1 var(--brand-font-ui);cursor:pointer}
+body.kona-panel-open .kona-user-menu{display:none}
 .kona-user-menu i{width:22px;height:26px;background:var(--user-accent);clip-path:polygon(25% 0,75% 0,75% 35%,100% 35%,100% 80%,75% 80%,75% 100%,25% 100%,25% 80%,0 80%,0 35%,25% 35%)}
 /* Global escape invariant: User Studio remains reachable from landing, onboarding, app panels and the loaded world. */
 

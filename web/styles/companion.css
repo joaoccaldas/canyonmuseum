@@ -69,7 +69,6 @@
 .companion-manager-status{min-height:24px}
 .companion-find{border-bottom:1px solid var(--brand-line);margin:4px 0 16px}
 .companion-find summary{min-height:48px;display:flex;align-items:center;cursor:pointer;font:650 12px var(--brand-font-ui)}
-body:has(.companion-panel) .kona-user-menu{display:none}
 @media(max-width:520px){.companion-hero{margin:8px 0 20px;padding:18px 0}.companion-hero h3{font-size:38px}.companion-hero p{font-size:14px;line-height:1.5}.companion-hero>small{display:none}.companion-tools{margin-bottom:12px}.companion-manager{margin:12px 0;padding:4px 0}.companion-freshness{font-size:11px}.companion-filters{padding:4px 0}}
 .companion-lead{display:none}
 @media(min-width:700px){.companion-hero:has(.companion-lead){display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:8px 24px}.companion-hero:has(.companion-lead) h3{font-size:48px;margin:4px 0}.companion-hero:has(.companion-lead) p{font-size:14px}.companion-lead{display:grid;grid-column:2;grid-row:1/4;gap:8px;align-self:center;font-size:12px;line-height:1.4}.companion-lead img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}.companion-lead span{font-size:10px;color:var(--brand-muted)}.companion-lead b{font-weight:650}}

@@ -75,6 +75,7 @@ for(const id of selected){
       assert.equal(await p.evaluate(()=>localStorage.getItem('kona.onboarding.v1')),'seen');
     });
     await step('Home actions and five-tab navigation reach their declared surfaces',async()=>{
+      assert.equal(await p.$eval('.kona-user-menu',e=>getComputedStyle(e).display),'none','panel navigation must not be covered by the floating Studio shortcut');
       for(const [selector,title] of [['[data-home-plan]','Plan'],['[data-home-garage]','Garage'],['[data-home-discover]','Discover']]){
         await click(selector);await p.waitForFunction(t=>document.querySelector('#konaPanelTitle')?.textContent===t,{},title);
         await inventory(title);await click('[data-tab="home"]');await waitHome();

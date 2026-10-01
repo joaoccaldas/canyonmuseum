@@ -4,7 +4,7 @@ import fs from 'node:fs';import path from 'node:path';
 const base=process.argv[2]||'http://127.0.0.1:8754/';
 const out=process.argv[3]||'visual-evidence-v2';fs.mkdirSync(out,{recursive:true});
 const chrome=process.env.CHROME_PATH;if(!chrome)throw new Error('CHROME_PATH required');
-const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const browser=await puppeteer.launch({executablePath:chrome,timeout:90000,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'landscape-phone',width:844,height:390},{id:'desktop',width:1440,height:900}];
 const states=['landing','sign-in','onboarding-profile','avatar-registration','install-handoff','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','collection','find-studio','bike-studio'];const report=[];
 fs.writeFileSync(path.join(out,'candidate.json'),JSON.stringify({source_sha:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),source_dirty:!!execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim(),bundle_sha256:createHash('sha256').update(fs.readFileSync('app/kona-core.js')).digest('hex'),generated_at:new Date().toISOString()},null,2)+'\n');
@@ -111,6 +111,8 @@ async function capture(vp,state,theme){
    const small=els.map(x=>{const r=x.getBoundingClientRect();return{tag:x.tagName,text:(x.textContent||'').trim().slice(0,50),w:r.width,h:r.height};}).filter(x=>x.w<targetMinimum||x.h<targetMinimum);
    const grid=document.querySelector('.finds-grid'),cards=grid?[...grid.querySelectorAll('[data-find]')].slice(0,2):[];
    const collectionGrid=grid?{display:getComputedStyle(grid).display,columns:getComputedStyle(grid).gridTemplateColumns.split(' ').length,sameFirstRow:cards.length===2&&Math.abs(cards[0].getBoundingClientRect().top-cards[1].getBoundingClientRect().top)<1}:null;
+   const back=document.querySelector('#konaPanelClose');
+   const backCovered=back&&visible(back)?(()=>{const r=back.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return !(hit===back||back.contains(hit))})():false;
    const intro=document.getElementById('intro');
    const nav=document.querySelector('.kona-bottom-nav');
    const tour=document.querySelector('.kona-tour');
@@ -124,7 +126,7 @@ async function capture(vp,state,theme){
    const enter=document.getElementById('buildSelf'),product=document.querySelector('#intro.kona-entry .entry-product');
    const er=enter?.getBoundingClientRect?.(),pr=product?.getBoundingClientRect?.();
    const rr=reg?.getBoundingClientRect?.(),rc=regCopy?.getBoundingClientRect?.(),rp=regPreview?.getBoundingClientRect?.();
-   return{panelScrollTop:document.querySelector('#konaPanel')?.scrollTop??0,targetMinimum,collectionGrid,museumControlsVisible:els.filter(x=>x.closest('#konaWorld')).length,landing:er?{ctaTop:er.top,ctaBottom:er.bottom,ctaLeft:er.left,ctaRight:er.right,ctaW:er.width,productTop:pr?.top??null,productBottom:pr?.bottom??null,productLeft:pr?.left??null,productRight:pr?.right??null,viewportH:innerHeight}:null,registration:rr&&rc&&rp?{w:rr.width,copyW:rc.width,previewW:rp.width,overlap:Math.max(0,Math.min(rc.right,rp.right)-Math.max(rc.left,rp.left))}:null,stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText,tourText};
+   return{panelBackCovered:backCovered,panelScrollTop:document.querySelector('#konaPanel')?.scrollTop??0,targetMinimum,collectionGrid,museumControlsVisible:els.filter(x=>x.closest('#konaWorld')).length,landing:er?{ctaTop:er.top,ctaBottom:er.bottom,ctaLeft:er.left,ctaRight:er.right,ctaW:er.width,productTop:pr?.top??null,productBottom:pr?.bottom??null,productLeft:pr?.left??null,productRight:pr?.right??null,viewportH:innerHeight}:null,registration:rr&&rc&&rp?{w:rr.width,copyW:rc.width,previewW:rp.width,overlap:Math.max(0,Math.min(rc.right,rp.right)-Math.max(rc.left,rp.left))}:null,stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText,tourText};
  },vp.id!=='desktop');
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const personal3D=requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
@@ -139,6 +141,7 @@ await browser.close();
 fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
 const violations=[];
 for(const r of report){
+ if(r.metrics.panelBackCovered)violations.push(`${r.viewport}/${r.theme}/${r.state}: panel back is covered`);
  if(r.state==='collection'&&r.metrics.panelScrollTop!==0)violations.push(`${r.viewport}/${r.theme}: new collection route retained old scroll position`);
  if(r.metrics.overflowX)violations.push(`${r.viewport}/${r.theme}/${r.state}: horizontal overflow`);
  if(r.state==='landing'&&r.heavyRequests.length)violations.push(`${r.viewport}/${r.theme}: heavy 3D requested on landing`);
@@ -169,6 +172,7 @@ for(const r of report){
  if(r.viewport!=='desktop'&&r.metrics.smallTargets.length)violations.push(`${r.viewport}/${r.theme}/${r.state}: touch targets below 48px: ${r.metrics.smallTargets.map(x=>x.text||x.tag).join(', ')}`);
  if(r.state==='plan'&&!/Plan|race week|Expo|October/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Plan content detected`);
  if(r.state==='progress'&&!/Progress|XP|Credits|milestones/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Progress content detected`);
+ if(r.metrics.panelBackCovered)violations.push(`${r.viewport}/${r.theme}/${r.state}: panel back is covered`);
  if(r.state==='collection'&&(!r.metrics.collectionGrid||r.metrics.collectionGrid.display!=='grid'||r.metrics.collectionGrid.columns!==(r.viewport==='desktop'?4:2)||!r.metrics.collectionGrid.sameFirstRow))violations.push(`${r.viewport}/${r.theme}: Finds cards are not arranged in the canonical responsive grid`);
  if(r.state==='bike-studio'&&!/Speedmax|Bikes/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: Bike Studio missing`);
 }
