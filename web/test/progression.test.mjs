@@ -11,8 +11,7 @@ test('xp maps onto named levels and does not skip the table', () => {
 });
 
 test('legacy night finds remain intact while V2 relic registry expands collectibles', () => {
-  const legacyNightPlaces=new Set(['lava','camp13','tunnel']);
-  const night = COLLECTIBLES.filter(c => c.id.startsWith('find:') && legacyNightPlaces.has(c.place));
+  const night = COLLECTIBLES.filter(c => ['find:lava:','find:camp13:','find:tunnel:'].some(prefix=>c.id.startsWith(prefix)));
   assert.equal(night.length, 9);
   assert.equal(new Set(night.map(c => c.id)).size, 9);
   assert.ok(COLLECTIBLES.filter(c=>c.id.startsWith('relic:')).length>=20);
