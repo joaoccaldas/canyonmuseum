@@ -1,5 +1,5 @@
 {
- "version": "5c335e5b5fa9",
+ "version": "f3e588b71b8a",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -59,7 +59,7 @@
   "app/admin-asset-preview.js": "M7xUJvAtQ4yOnFKybfxmp0dq7tlx1Z9BU/O1ES36Er8=",
   "web/styles/hall-web.css": "Q7W15Nren7SRgtjZXCjRLArwqwdMyqpAPCsC8xxU+GI=",
   "web/styles/hall-mobile.css": "ObjpeKeGeJGEpvVmhqM630sQOvy0Nfdny+AWeQXBBXk=",
-  "web/styles/studio.css": "Jy2ax8/lOF5xgznR/zdt0qG8elm9dSJA8zraK81ES2o=",
+  "web/styles/studio.css": "22xbEc5Rc6+4jMlagQftm53lL6tjpy2tV2U/ejiZwK4=",
   "web/styles/experience.css": "AfmOkRKFxbC3GgvRj9fLfy6euyeAzf/1eMHIDxiqjXY=",
   "web/styles/collection.css": "VOT+lHFB3ry9TcR7aujWEXWT2coiISfeIt+OZC/aPIQ=",
   "app/race-self-stage.js": "gUK1p8DwdxyINqrNzLNoyWoPD/Zy3zpSkoc0CiY/QLQ=",
