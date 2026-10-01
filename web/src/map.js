@@ -29,7 +29,8 @@ export function initMap({ areas, pose, go, button, access=()=>({unlocked:true,re
     svg.innerHTML = '';
     const unit = Math.max(maxX - minX, maxZ - minZ) / 60;
     for (const a of on.sort((p, q) => (p.layer || 0) - (q.layer || 0))) {
-      const gate=a.status==='future'?{unlocked:false,requiredLevel:null}:access(a.id);\n      const g = document.createElementNS(NS, 'g'); g.setAttribute('class', `map-area ${a.kind || ''} ${a.status === 'future' ? 'future' : gate.unlocked ? 'live' : 'locked'}`.trim()); g.dataset.id = a.id;
+      const gate=a.status==='future'?{unlocked:false,requiredLevel:null}:access(a.id);
+      const g = document.createElementNS(NS, 'g'); g.setAttribute('class', `map-area ${a.kind || ''} ${a.status === 'future' ? 'future' : gate.unlocked ? 'live' : 'locked'}`.trim()); g.dataset.id = a.id;
       const r = document.createElementNS(NS, 'rect');
       r.setAttribute('x', Math.min(a.x0, a.x1)); r.setAttribute('y', -Math.max(a.z0, a.z1)); r.setAttribute('width', Math.abs(a.x1 - a.x0)); r.setAttribute('height', Math.abs(a.z1 - a.z0));
       r.setAttribute('rx', unit * .6); r.setAttribute('fill', a.color || '#e9e2d6'); if(a.status==='future'){r.setAttribute('stroke-dasharray',`${unit*1.2} ${unit*.8}`);r.setAttribute('opacity','.72');} g.appendChild(r);
