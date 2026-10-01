@@ -59,3 +59,5 @@ html.phone-fit #loader div{zoom:var(--fit)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 .heritage-eyebrow-offset{margin-top:18px}
+
+.heritage-copy{color:var(--muted)}.heritage-copy-tight{margin:0 0 6px}.heritage-copy-wide{margin:0 0 12px}
