@@ -218,3 +218,10 @@ html.phone-fit #toast{zoom:var(--fit)}
 .ridebox-cadence{width:110px}.lab-upload-offset{margin-top:8px}.actions-tight{margin-top:6px}
 
 .passport-note{font-size:13.5px;color:var(--brand-muted);margin:6px 0 14px}.passport-collections{flex-wrap:wrap;gap:8px 16px;justify-content:flex-start}.passport-import{width:100%;margin-top:6px}.bar i[data-passport-progress]{width:var(--passport-p,0%)}
+
+
+#loadbar i{width:calc(var(--load-p,0) * 100%)}
+#tip{transform:translate(var(--tip-x,0),var(--tip-y,0))}
+canvas.hot{cursor:pointer}
+[data-preset] [data-preset-chip]{background:linear-gradient(135deg,var(--preset-frame) 55%,var(--preset-decal) 55%)}
+[data-preset] [data-preset-chip].wyld{background:linear-gradient(135deg,#ff3d8e,#ff8fbf 28%,#e9cde8 46%,#8fe7dc 66%,#5fd8d3)}
