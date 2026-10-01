@@ -87,3 +87,5 @@
   .race-self-controls>a,.race-self-controls>button{justify-content:flex-start;padding:16px 14px}
   .race-self-controls small{max-width:none}
 }
+
+.kona-account-email{width:100%;min-height:48px;padding:12px 14px;margin:8px 0;border:1px solid currentColor;border-radius:12px;background:transparent;color:inherit;font:inherit}
