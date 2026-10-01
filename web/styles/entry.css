@@ -219,3 +219,25 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .entry-product-stage{min-height:220px;height:calc(var(--vvh,100dvh) - 66px)}
   #intro.kona-entry .entry-product-nav,#intro.kona-entry .entry-race-clock{display:none}
 }
+
+
+/* KONA first-run questions: one thought at a time. */
+.onboarding-question{width:min(100%,760px);margin:0 auto;min-height:min(720px,calc(var(--vvh,100dvh) - 48px));display:grid;grid-template-rows:auto 1fr auto auto;gap:24px;align-content:center;padding:clamp(16px,4vw,34px) 0;color:var(--brand-mist)}
+.onboarding-progress{height:3px;border-radius:99px;overflow:hidden;background:color-mix(in srgb,var(--brand-mist) 14%,transparent)}
+.onboarding-progress span{display:block;height:100%;border-radius:inherit;background:var(--brand-action);transition:width .22s ease}
+.onboarding-question-copy{align-self:end;max-width:680px}
+.onboarding-question-copy .eyebrow{margin:0 0 12px;color:var(--brand-discovery);font:800 10px/1.3 var(--brand-font-ui);letter-spacing:.18em}
+.onboarding-question-copy h2{margin:0;color:var(--brand-mist);font:400 clamp(48px,9vw,86px)/.88 var(--brand-font-editorial);letter-spacing:-.04em;text-wrap:balance}
+.onboarding-question-copy>p:last-child{margin:18px 0 0;color:color-mix(in srgb,var(--brand-mist) 68%,transparent);font:500 13px/1.6 var(--brand-font-ui)}
+.onboarding-answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.onboarding-answer-grid button{min-height:68px;padding:14px 16px;border:1px solid color-mix(in srgb,var(--brand-mist) 16%,transparent);border-radius:16px;background:color-mix(in srgb,var(--brand-mist) 5%,transparent);color:var(--brand-mist);font:650 14px/1.35 var(--brand-font-ui);text-align:left;cursor:pointer}
+.onboarding-answer-grid button:is(:hover,:focus-visible){border-color:var(--brand-action);background:color-mix(in srgb,var(--brand-action) 11%,transparent)}
+.onboarding-reward{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:8px 14px;padding-top:6px;color:var(--brand-muted)}
+.onboarding-reward small{grid-column:1/-1;font:750 9px/1.2 var(--brand-font-ui);letter-spacing:.15em}
+.onboarding-reward b{color:var(--brand-action);font:800 14px/1 var(--brand-font-data)}
+.onboarding-reward span{font:550 11px/1.3 var(--brand-font-ui)}
+.onboarding-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid color-mix(in srgb,var(--brand-mist) 12%,transparent);padding-top:12px}
+.onboarding-actions .btn-text{min-height:48px;color:var(--brand-mist)}
+.onboarding-actions>span{font:700 10px/1 var(--brand-font-data);color:var(--brand-muted)}
+@media(max-width:620px){.onboarding-question{min-height:calc(var(--vvh,100dvh) - 32px);gap:18px}.onboarding-question-copy h2{font-size:clamp(46px,14vw,68px)}.onboarding-answer-grid{grid-template-columns:1fr}.onboarding-answer-grid button{min-height:60px}.onboarding-reward{grid-template-columns:auto 1fr}}
+@media(orientation:landscape) and (max-height:520px){.onboarding-question{min-height:auto;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-rows:auto 1fr auto;gap:10px 18px}.onboarding-progress{grid-column:1/-1}.onboarding-question-copy{align-self:start}.onboarding-question-copy h2{font-size:42px}.onboarding-answer-grid{grid-column:2;grid-row:2;grid-template-columns:1fr 1fr}.onboarding-answer-grid button{min-height:52px}.onboarding-reward{grid-column:1;grid-row:3}.onboarding-actions{grid-column:2;grid-row:3}}
