@@ -15,13 +15,17 @@ Landing → **Continue your Kona** → Home.
 The first-run tour does not repeat automatically, but can be replayed from User Studio.
 
 ### Navigation
-- Home = contextual return surface
-- Discover = places, stories, machines and entry to immersive worlds
-- Garage = equipment
-- Plan = race-week utility
-- Me = User Studio / Race Self / Passport
+Internal route IDs remain `home / discover / garage / plan / me`. The mobile labels are intentionally task-oriented:
 
-Feed and Travel are exploration destinations inside User Studio and support direct `?view=feed` / `?view=travel` routes. They are not a sixth public tab.
+- **Home** = what matters now
+- **Explore** = places, stories, machines and entry to immersive worlds
+- **Gear** = bike, kit and setup
+- **Race** = race-week plan, weather and logistics
+- **You** = User Studio / Race Self / Passport
+
+On mobile the global five-tab bar remains visible inside User Studio. Studio-specific actions are organized below the athlete stage instead of replacing global navigation.
+
+**Kona Now** has a lightweight three-story preview on Home and a full customizable destination from User Studio (`?view=feed`). Travel remains a User Studio destination. Neither becomes an extra public tab.
 
 ## Brand / responsive convergence
 
@@ -45,11 +49,13 @@ Feed and Travel are exploration destinations inside User Studio and support dire
 
 Home includes an **Over the Horizon** projection: partially obscured future bikes, gear, trisuits, rooms and rewards. Locked content is teased rather than fully revealed. This is a projection over progression, not a second inventory.
 
-## Feed + Travel
+## Kona Now + Travel
 
 - Live bounded Supabase companion service.
-- Customizable RSS/Atom and YouTube subscriptions.
-- Personalized RSS URL.
+- `Kona Now` presents athlete cameras, Kona/island signals and triathlon reporting as image-led editorial cards.
+- Each card keeps a direct original-source link; RSS/Atom descriptions are sanitized into short summaries and feed-provided thumbnails are preserved when safe.
+- Curated athlete channels include Lionel Sanders, Lucy Charles-Barclay, Paula Findlay / That Triathlon Life, Sam Laidlow, Sam Long, Jan Frodeno, Kristian Blummenfelt and Laura Philipp.
+- Customizable RSS/Atom and YouTube subscriptions remain local-first, with a personalized RSS URL.
 - Last successful feed can be retained for offline/delayed sources.
 - Travel uses the canonical Kona place registry plus clearly labeled external live flight/traffic providers.
 - Neither Feed nor Travel loads the 3D world.
