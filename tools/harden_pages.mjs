@@ -59,6 +59,7 @@ const pageDesignLinks = file => file === 'index.html'
 const FONTS = 'https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300..800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
+const GLOBAL_USER_STUDIO = '<!--global-user-studio:start--><a class="global-user-studio" href="index.html?view=me" aria-label="Open User Studio">USER STUDIO</a><!--global-user-studio:end-->';
 
 function block(p) {
   const url = SITE + (p.file === 'index.html' ? '' : p.file), img = SITE + p.image;
@@ -98,6 +99,10 @@ for (const p of PAGES) {
   const missing = pageDesignLinks(p.file).filter(href => !html.includes(`href="${href}"`))
     .map(href => `<link rel="stylesheet" href="${href}">`).join('');
   html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}${missing}<!--design-system:end-->\n</head>`);
+  html = html.replace(/<!--global-user-studio:start-->[\s\S]*?<!--global-user-studio:end-->\n?/g, '');
+  if (p.file !== 'index.html' && !html.includes('href="index.html?view=me"')) {
+    html = html.replace(/<body([^>]*)>/i, match => match + GLOBAL_USER_STUDIO);
+  }
   fs.writeFileSync(f, html);
 }
 
