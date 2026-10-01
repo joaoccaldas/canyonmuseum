@@ -11,7 +11,8 @@ try{
  const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  // Block service-worker reuse: verify the current build, not an earlier local release.
  await page.setBypassServiceWorker(true);
- await page.evaluateOnNewDocument(()=>{try{localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}}));}catch{}});
+ // This is the returning-user audit; p0-journey-smoke covers the fresh-user tour separately.
+ await page.evaluateOnNewDocument(()=>{try{localStorage.setItem('kona.onboarding.v1','seen');localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}}));}catch{}});
  for(const [width,height] of [[390,844],[430,932],[768,1024],[1280,800],[1440,900],[844,390],[360,640]]){
   await page.setViewport({width,height,deviceScaleFactor:1});
   await page.goto(base,{waitUntil:'networkidle0'});
@@ -86,10 +87,19 @@ try{
  assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.archetype),'aero');
  assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.items.top.id),'lava');
  await page.click('[data-race-self-action="customize"]');await page.screenshot({path:new URL('avatar-editor-phone.png',out).pathname});await page.keyboard.press('Escape');
- await page.click('[data-race-self-action="passport"]');await page.waitForSelector('[data-hub-drawer]:not([hidden])');await page.keyboard.press('Escape');
- await page.click('[data-race-self-action="plan"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Plan');await page.click('[data-user-studio]');await page.waitForSelector('[data-race-self-stage]');
- await page.click('[data-race-self-action="discover"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Discover');await page.click('[data-user-studio]');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
- await page.click('[data-race-self-action="museum"]');await page.waitForFunction(()=>!!window.__museum,{timeout:60000});
+ await page.click('[data-race-self-action="progress"]');await page.waitForSelector('[data-hub-drawer]:not([hidden])');
+ assert.equal(await page.$eval('[data-hub-title]',e=>e.textContent),'Your progress');await page.keyboard.press('Escape');
+ await page.click('[data-race-self-action="races"]');await page.waitForSelector('[data-hub-drawer]:not([hidden])');
+ assert.equal(await page.$eval('[data-hub-title]',e=>e.textContent),'Your race cards');await page.keyboard.press('Escape');
+ await page.click('[data-race-self-action="collection"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Collection');
+ await page.click('[data-tab="plan"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Plan');
+ await page.click('[data-tab="me"]');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
+ // User Studio is a full-screen surface. Its wordmark returns to the title screen;
+ // the consumer navigation is available again after continuing into Home.
+ await page.click('.studio-wordmark');await page.waitForSelector('#buildSelf');await page.click('#buildSelf');
+ await page.waitForFunction(()=>document.querySelector('#konaPanelTitle')?.textContent==='Home'&&!document.querySelector('#konaPanel')?.hidden);
+ await page.click('[data-tab="discover"]');await page.waitForFunction(()=>document.querySelector('#konaPanelTitle').textContent==='Discover');
+ await page.waitForSelector('[data-enter-world]');await page.click('[data-enter-world]');await page.waitForFunction(()=>!!window.__museum,{timeout:60000});
  await page.waitForFunction(()=>document.body.classList.contains('walking'),{timeout:60000});
  const hallLinks=await page.evaluate(()=>[...document.querySelectorAll('link[data-style-scope="museum"]')].map(l=>({href:l.getAttribute('href'),disabled:l.disabled})));
  assert.ok(hallLinks.length>=2&&hallLinks.every(x=>x.disabled===false),'museum styles must be enabled inside museum');
@@ -106,6 +116,6 @@ try{
  assert.ok(afterMuseum.hall.length>=2&&afterMuseum.hall.every(Boolean),'museum styles must be disabled on app surfaces');
  assert.match(afterMuseum.homeFont,/Instrument Serif|Georgia/i,'Home editorial typography must survive museum round trip');
  assert.deepEqual(errors,[],'runtime errors');
- report.push({journeys:'avatar persistence, Escape/focus, Progress, Plan, Discover, 3D World',status:'PASS'});
+ report.push({journeys:'avatar persistence, Escape/focus, Progress, Races, Collection, Plan, Discover, 3D World',status:'PASS'});
  console.log(JSON.stringify(report,null,2));
 }finally{fs.writeFileSync(new URL('studio-audit.json',out),JSON.stringify(report,null,2));await browser.close();}

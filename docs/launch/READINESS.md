@@ -27,6 +27,7 @@ Local browser evidence uses disposable profiles against a staged static artifact
 | Dependency audits | No reported production vulnerabilities in web or native lockfiles |
 | P0 journey | Fresh avatar/trisuit, tour, persistence, museum return, returning Home, mocked auth and installation controls passed |
 | Additional browser regressions | Sign-in/Back repeated at four sizes; mocked 200/429/500; delayed Studio navigation; legacy Passport route round-trip; read-only Studio and failed model save passed |
+| Returning User Studio | Seven sizes, projected athlete/control bounds, 125% text scale, avatar persistence, drawer focus/Escape, Progress, Races, Collection, Plan and visible exit/re-entry to the world passed in CI rendering mode |
 | Preview audit | All 46 images decoded; six silhouettes; return non-repeat; forced 404 fallback; zero heavy 3D requests on entry |
 | Direct route bounds | 15 cases across five sizes: Me, Garage and Collection; every visible Garage tab checked individually |
 | Stress | 20 Studio visits, 40 avatar changes, 24 bike switches; one canvas and stable model resources |
