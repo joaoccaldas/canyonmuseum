@@ -8,6 +8,12 @@ for (const k of ['GLB', 'BIKE_PROFILE', 'OUT_HTML']) if (!process.env[k]) throw 
 const res = await build({ entryPoints: [path.join(here, 'src/heritage.js')], bundle: true, format: 'iife', minify: true, write: false,
   target: 'es2020', legalComments: 'none' });
 const app = res.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
+const root=path.join(here,'..');
+const pageCss=[
+  fs.readFileSync(path.join(root,'brand/tokens.css'),'utf8'),
+  fs.readFileSync(path.join(root,'brand/themes.css'),'utf8'),
+  fs.readFileSync(path.join(root,'web/styles/heritage.css'),'utf8')
+].join('\n').replace(/<\\/style/gi,'<\\\\/style');
 const glb = fs.readFileSync(process.env.GLB).toString('base64');
 const profile = JSON.parse(fs.readFileSync(process.env.BIKE_PROFILE, 'utf8'));
 // Measured results come from this build's own reports, never from hand-typed numbers.
@@ -27,6 +33,7 @@ if (process.env.CHECKS_DIR) {
 }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const html = fs.readFileSync(path.join(here, 'heritage.template.html'), 'utf8')
+  .replace('__HERITAGE_CSS__', () => pageCss)
   .replace('__TITLE__', () => esc(profile.bike.pageTitle))
   .replace('<head>', () => '<head><script>window.__BIKE_PROFILE=' + JSON.stringify(profile).replaceAll('<', '\\u003c') + ';</script>')
   .replace('__GLB__', () => glb)
