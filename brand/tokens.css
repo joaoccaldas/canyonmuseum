@@ -19,6 +19,14 @@
   --brand-space-4:24px;
   --brand-space-5:32px;
   --brand-control-radius:12px;
+  --brand-card-radius:20px;
+  --brand-sheet-radius:24px;
+  --brand-panel-max:760px;
+  --brand-touch:48px;
+  --brand-mobile-gutter:12px;
+  --brand-desktop-gutter:24px;
+  --brand-surface-glass:color-mix(in srgb,var(--brand-surface) 94%,transparent);
+  --brand-surface-glass-strong:color-mix(in srgb,var(--brand-surface) 98%,transparent);
   --brand-pill-radius:999px;
   --artifact-edge:0px;
   --artifact-soft:10px;
