@@ -93,7 +93,7 @@ for(const r of report){
  if(r.state==='avatar-registration'&&!/TRISUIT LAYOUT|Who are we sending into the lava/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: avatar registration missing`);
  if(r.state==='onboarding-tour'&&!/MAKE IT YOURS|Start with your athlete/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: onboarding tour missing`);
  if(r.state==='home'&&!/YOUR RACE SELF|OVER THE HORIZON/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: Home discovery surface missing`);
- if(r.state==='user-studio'&&!/Your race starts here|USER STUDIO/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: User Studio content missing`);
+ if(r.state==='user-studio'&&!/Build the version of you|YOUR ATHLETE|USER STUDIO/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: User Studio content missing`);
  if(r.state==='avatar-editor'&&!/Your character|Minecraft|Customize/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: avatar editor missing`);
  if(r.state==='garage'&&!/Garage|equipment/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Garage content detected`);
  if(r.state==='feed'&&!/THE FEED|rabbit hole|Triathlon/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Feed content detected`);
