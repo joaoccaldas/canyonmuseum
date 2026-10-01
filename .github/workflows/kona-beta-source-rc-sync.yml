@@ -1,4 +1,5 @@
 name: Sync deterministic generated outputs
+# Release invariant: generated tree commits must run the full certification matrix.
 
 on:
   push:
