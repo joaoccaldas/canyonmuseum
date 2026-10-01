@@ -45,6 +45,114 @@
           "capabilities": ["inspect", "compare", "equip", "share", "buy"]
         }
       ]
+    },
+    {
+      "id": "trek-speed",
+      "name": "Trek · Speed",
+      "kicker": "Wind-tunnel race engineering",
+      "story": "Trek's race machines reconstructed from published geometry: aero monocoques, a triathlon Speed Concept, an endurance Domane and a gravel Checkpoint. An independent study.",
+      "kind": "brand",
+      "theme": { "wall": "#ececec", "wallRough": 0.85, "floor": "basalt", "accent": "#c8102e", "ceil": "#f5f5f5", "gloss": 0.6 },
+      "bounds": { "x0": -20.5, "x1": -8.5, "z0": -2.0, "z1": -14.0 },
+      "height": 4.6,
+      "door": { "wall": "east", "z0": -9.0, "z1": -6.6, "h": 3.2 },
+      "light": { "fillI": 19, "skyStrip": true, "accents": [ { "x": -14.5, "y": 3.2, "z": -7.0, "color": "#ffe9e0", "i": 6, "dist": 13 } ] },
+      "products": [
+        { "id": "multibrand-trek-speed-concept-kona", "brand": "Trek", "model": "Speed Concept \"Kona\"", "type": "bike", "year": 2027, "glb": "assets/multibrand/trek-speed-concept-kona/bike_web.glb", "sub": "Triathlon aero", "text": "Speed Concept reconstructed from published geometry, in a Kona lava finish. Independent study.", "source": "Published Trek geometry table.", "legal": "Independent reconstructed study from a public geometry table. Not affiliated with or endorsed by Trek.", "stats": [["~230 k", "triangles"], ["triathlon", "arch"], ["kona", "livery"]], "station": { "kind": "plinth", "x": -14.5, "z": -5.0, "rotY": 0.6, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-trek-madone-wyld", "brand": "Trek", "model": "Madone SLR \"Wyld\"", "type": "bike", "year": 2025, "glb": "assets/multibrand/trek-madone-wyld/bike_web.glb", "sub": "Aero road", "text": "Madone aero-road study in a wyld sheer finish.", "source": "Published Trek geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Trek.", "stats": [["aero", "arch"], ["wyld", "livery"]], "station": { "kind": "plinth", "x": -17.6, "z": -10.0, "rotY": 1.2, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-trek-domane-custom", "brand": "Trek", "model": "Domane SL \"Customizable\"", "type": "bike", "year": 2024, "glb": "assets/multibrand/trek-domane-custom/bike_web.glb", "sub": "Endurance", "text": "Domane endurance study with a three-zone customizable livery.", "source": "Published Trek geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Trek.", "stats": [["endurance", "arch"], ["customizable", "livery"]], "station": { "kind": "plinth", "x": -11.4, "z": -11.2, "rotY": 2.6, "top": 0 }, "capabilities": ["inspect", "customize", "share"] },
+        { "id": "multibrand-trek-checkpoint-desert", "brand": "Trek", "model": "Checkpoint SLR \"Desert\"", "type": "bike", "year": 2023, "glb": "assets/multibrand/trek-checkpoint-desert/bike_web.glb", "sub": "Gravel", "text": "Checkpoint gravel study in a desert fade.", "source": "Published Trek geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Trek.", "stats": [["gravel", "arch"], ["desert", "livery"]], "station": { "kind": "plinth", "x": -18.4, "z": -3.6, "rotY": 0.0, "top": 0 }, "capabilities": ["inspect", "share"] }
+      ]
+    },
+    {
+      "id": "pinarello",
+      "name": "Pinarello · Italian Speed",
+      "kicker": "Sculpted race machines",
+      "story": "Pinarello's Dogma and Bolide presented as editorial hero objects — reconstructed from published geometry as an independent study.",
+      "kind": "brand",
+      "kind": "brand",
+      "theme": { "wall": "#f2efe9", "wallRough": 0.8, "floor": "marble", "accent": "#9a0f2a", "ceil": "#faf7f2", "gloss": 0.7 },
+      "bounds": { "x0": 10.5, "x1": 22.5, "z0": -2.0, "z1": -14.0 },
+      "height": 5.0,
+      "door": { "wall": "west", "z0": -9.0, "z1": -6.6, "h": 3.4 },
+      "light": { "fillI": 20, "skyStrip": true, "accents": [ { "x": 14.5, "y": 3.2, "z": -7.0, "color": "#ffe9e0", "i": 7, "dist": 13 } ] },
+      "products": [
+        { "id": "multibrand-pinarello-bolide-kona", "brand": "Pinarello", "model": "Bolide F \"Kona Night\"", "type": "bike", "year": 2024, "glb": "assets/multibrand/pinarello-bolide-kona/bike_web.glb", "sub": "Triathlon aero", "text": "Bolide F study in a night-lava finish.", "source": "Published Pinarello geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Pinarello.", "stats": [["triathlon", "arch"], ["kona", "livery"]], "station": { "kind": "plinth", "x": 14.5, "z": -5.0, "rotY": -0.6, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-pinarello-dogma-wyld", "brand": "Pinarello", "model": "Dogma F \"Wyld\"", "type": "bike", "year": 2024, "glb": "assets/multibrand/pinarello-dogma-wyld/bike_web.glb", "sub": "Aero road", "text": "Dogma F aero-road study in a wyld-pink finish.", "source": "Published Pinarello geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Pinarello.", "stats": [["aero", "arch"], ["wyld", "livery"]], "station": { "kind": "plinth", "x": 17.6, "z": -10.0, "rotY": -1.2, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-pinarello-bolide-custom", "brand": "Pinarello", "model": "Bolide F \"Customizable\"", "type": "bike", "year": 2024, "glb": "assets/multibrand/pinarello-bolide-custom/bike_web.glb", "sub": "Triathlon aero", "text": "Bolide F study with a three-zone customizable livery.", "source": "Published Pinarello geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Pinarello.", "stats": [["triathlon", "arch"], ["customizable", "livery"]], "station": { "kind": "plinth", "x": 11.4, "z": -11.2, "rotY": -2.6, "top": 0 }, "capabilities": ["inspect", "customize", "share"] },
+        { "id": "multibrand-pinarello-dogma-splatter", "brand": "Pinarello", "model": "Dogma \"Splatter\"", "type": "bike", "year": 1993, "glb": "assets/multibrand/pinarello-dogma-splatter/bike_web.glb", "sub": "Aero road", "text": "Dogma aero-road silhouette study in a 90s splatter livery.", "source": "Dogma aero-road silhouette study (family geometry).", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Pinarello.", "stats": [["aero", "arch"], ["splatter", "livery"]], "station": { "kind": "plinth", "x": 18.4, "z": -3.6, "rotY": 0.0, "top": 0 }, "capabilities": ["inspect", "share"] }
+      ]
+    },
+    {
+      "id": "felt-aero",
+      "name": "Felt · Aero Lab",
+      "kicker": "Triathlon aero engineering",
+      "story": "Felt's IA triathlon machines, reconstructed from published geometry and presented as an aero lab study.",
+      "kind": "brand",
+      "theme": { "wall": "#eaeff4", "wallRough": 0.85, "floor": "basalt", "accent": "#0a3d7a", "ceil": "#f6f8fa", "gloss": 0.55 },
+      "bounds": { "x0": -20.5, "x1": -8.5, "z0": -18.0, "z1": -30.0 },
+      "height": 4.6,
+      "door": { "wall": "east", "z0": -25.0, "z1": -22.6, "h": 3.2 },
+      "light": { "fillI": 19, "skyStrip": true, "accents": [ { "x": -14.5, "y": 3.2, "z": -24.0, "color": "#e8f0ff", "i": 6, "dist": 13 } ] },
+      "products": [
+        { "id": "multibrand-felt-ia-kona", "brand": "Felt", "model": "IA FRD \"Kona\"", "type": "bike", "year": 2022, "glb": "assets/multibrand/felt-ia-kona/bike_web.glb", "sub": "Triathlon aero", "text": "IA FRD triathlon study in a Kona lava finish.", "source": "Published Felt IA FRD geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Felt.", "stats": [["triathlon", "arch"], ["kona", "livery"]], "station": { "kind": "plinth", "x": -14.5, "z": -21.0, "rotY": 0.6, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-felt-ia-wyld", "brand": "Felt", "model": "IA \"Wyld Mint\"", "type": "bike", "year": 2022, "glb": "assets/multibrand/felt-ia-wyld/bike_web.glb", "sub": "Triathlon aero", "text": "IA triathlon study in a wyld-mint finish.", "source": "Published Felt IA geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Felt.", "stats": [["triathlon", "arch"], ["wyld", "livery"]], "station": { "kind": "plinth", "x": -17.6, "z": -27.0, "rotY": 1.2, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-felt-ia-custom", "brand": "Felt", "model": "IA \"Customizable\"", "type": "bike", "year": 2022, "glb": "assets/multibrand/felt-ia-custom/bike_web.glb", "sub": "Triathlon aero", "text": "IA triathlon study with a three-zone customizable livery.", "source": "Published Felt IA geometry table.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Felt.", "stats": [["triathlon", "arch"], ["customizable", "livery"]], "station": { "kind": "plinth", "x": -11.4, "z": -27.6, "rotY": 2.6, "top": 0 }, "capabilities": ["inspect", "customize", "share"] }
+      ]
+    },
+    {
+      "id": "tour-history",
+      "name": "Machines of the Tour",
+      "kicker": "Bicycle evolution, 1930s → today",
+      "story": "A chronological walk through the Tour de France's machines — from lugged steel to fully integrated aero superbikes — all reconstructed as independent studies.",
+      "kind": "brand",
+      "theme": { "wall": "#f4f2ec", "wallRough": 0.85, "floor": "travertine", "accent": "#2a6a4a", "ceil": "#faf8f3", "gloss": 0.5 },
+      "bounds": { "x0": -20.5, "x1": -8.5, "z0": -34.0, "z1": -46.0 },
+      "height": 4.8,
+      "door": { "wall": "east", "z0": -42.0, "z1": -39.6, "h": 3.2 },
+      "light": { "fillI": 21, "skyStrip": true, "accents": [ { "x": -14.5, "y": 3.4, "z": -40.0, "color": "#e8ffe9", "i": 6, "dist": 14 } ] },
+      "products": [
+        { "id": "multibrand-tdf-steel-1937", "brand": "Tour de France", "model": "\"La Course\" steel", "type": "bike", "year": 1937, "glb": "assets/multibrand/tdf-steel-1937/bike_web.glb", "sub": "1930s · steel", "text": "Lugged-steel Tour machine, shallow rims and drop bars — the era's baseline.", "source": "Era road-race geometry study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["1930s", "era"], ["steel", "frame"]], "station": { "kind": "plinth", "x": -17.6, "z": -36.6, "rotY": 0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-tdf-molteni-1972", "brand": "Tour de France", "model": "Era classic", "type": "bike", "year": 1972, "glb": "assets/multibrand/tdf-molteni-1972/bike_web.glb", "sub": "1960s–70s · lightweight", "text": "Lightweight road-racing study of the golden era.", "source": "Era lightweight road-racing study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["1970s", "era"], ["classic", "arch"]], "station": { "kind": "plinth", "x": -11.4, "z": -37.6, "rotY": -0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-tdf-aero-1989", "brand": "Tour de France", "model": "Final-stage aero era", "type": "bike", "year": 1989, "glb": "assets/multibrand/tdf-aero-1989/bike_web.glb", "sub": "1980s · aero begins", "text": "Late-1980s time-trial/aero study — the aero age opens.", "source": "Late-1980s aero/TT-era study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["1980s", "era"], ["classic", "arch"]], "station": { "kind": "plinth", "x": -17.6, "z": -40.0, "rotY": 0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-tdf-carbon-1999", "brand": "Tour de France", "model": "Early carbon era", "type": "bike", "year": 1999, "glb": "assets/multibrand/tdf-carbon-1999/bike_web.glb", "sub": "1990s · carbon", "text": "Early carbon frame study at the turn of the millennium.", "source": "Early-carbon frame study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["1990s", "era"], ["classic", "arch"]], "station": { "kind": "plinth", "x": -11.4, "z": -41.0, "rotY": -0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-tdf-aero-2013", "brand": "Tour de France", "model": "Modern aero era", "type": "bike", "year": 2013, "glb": "assets/multibrand/tdf-aero-2013/bike_web.glb", "sub": "2010s · aero + electronic", "text": "Aero frames and electronic shifting — the modern Tour.", "source": "Aero + electronic shifting era study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["2010s", "era"], ["aero", "arch"]], "station": { "kind": "plinth", "x": -17.6, "z": -42.6, "rotY": 0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-tdf-monocoque-2022", "brand": "Tour de France", "model": "Current monocoque", "type": "bike", "year": 2022, "glb": "assets/multibrand/tdf-monocoque-2022/bike_web.glb", "sub": "2020s · integrated superbike", "text": "Fully integrated aero superbike of the current decade.", "source": "Integrated superbike era study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["2020s", "era"], ["aero", "arch"]], "station": { "kind": "plinth", "x": -11.4, "z": -43.6, "rotY": -0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-tdf-2027-wyld", "brand": "Tour de France", "model": "\"2027\" aero study", "type": "bike", "year": 2027, "glb": "assets/multibrand/tdf-2027-wyld/bike_web.glb", "sub": "2027 · forward aero", "text": "A forward look: next-generation aero-road in a wyld finish.", "source": "Forward aero study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["2027", "era"], ["aero", "arch"]], "station": { "kind": "plinth", "x": -17.6, "z": -45.0, "rotY": 0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-tdf-2027-kona", "brand": "Tour de France", "model": "\"2027\" tri study", "type": "bike", "year": 2027, "glb": "assets/multibrand/tdf-2027-kona/bike_web.glb", "sub": "2027 · forward tri", "text": "A forward time-trial study in the Kona finish.", "source": "Forward tri aero study.", "legal": "Independent reconstructed study. Not affiliated with the Tour de France.", "stats": [["2027", "era"], ["triathlon", "arch"]], "station": { "kind": "plinth", "x": -11.4, "z": -45.0, "rotY": -0.8, "top": 0 }, "capabilities": ["inspect", "compare", "share"] }
+      ]
+    },
+    {
+      "id": "canyon-speed",
+      "name": "Canyon · Speed Studio",
+      "kicker": "Speedmax CFR in themed liveries",
+      "story": "The Speedmax CFR flagship reconstructed in three liveries — Kona lava, Wyld mint, and a three-zone customizable finish. An independent study.",
+      "kind": "brand",
+      "theme": { "wall": "#f0ecec", "wallRough": 0.85, "floor": "basalt", "accent": "#c8102e", "ceil": "#f8f5f2", "gloss": 0.65 },
+      "bounds": { "x0": 24.5, "x1": 36.5, "z0": -2.0, "z1": -14.0 },
+      "height": 4.8,
+      "door": { "wall": "west", "z0": -9.0, "z1": -6.6, "h": 3.2 },
+      "light": { "fillI": 20, "skyStrip": true, "accents": [ { "x": 30.5, "y": 3.3, "z": -7.0, "color": "#ffe9e0", "i": 7, "dist": 13 } ] },
+      "products": [
+        { "id": "multibrand-canyon-speedmax-kona", "brand": "Canyon", "model": "Speedmax CFR \"Kona Lava\"", "type": "bike", "year": 2027, "glb": "assets/multibrand/canyon-speedmax-kona/bike_web.glb", "sub": "Flagship tri", "text": "Speedmax CFR study in the Kona lava finish.", "source": "Speedmax CFR geometry table (Canyon).", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Canyon.", "stats": [["triathlon", "arch"], ["kona", "livery"]], "station": { "kind": "plinth", "x": 30.5, "z": -5.0, "rotY": 0.6, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-canyon-speedmax-wyld", "brand": "Canyon", "model": "Speedmax CFR \"Wyld Mint\"", "type": "bike", "year": 2027, "glb": "assets/multibrand/canyon-speedmax-wyld/bike_web.glb", "sub": "Flagship tri", "text": "Speedmax CFR study in the Wyld mint finish.", "source": "Speedmax CFR geometry table (Canyon).", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Canyon.", "stats": [["triathlon", "arch"], ["wyld", "livery"]], "station": { "kind": "plinth", "x": 33.0, "z": -10.0, "rotY": 1.2, "top": 0 }, "capabilities": ["inspect", "compare", "share"] },
+        { "id": "multibrand-canyon-speedmax-custom", "brand": "Canyon", "model": "Speedmax CFR \"Customizable\"", "type": "bike", "year": 2027, "glb": "assets/multibrand/canyon-speedmax-custom/bike_web.glb", "sub": "Flagship tri", "text": "Speedmax CFR study with a three-zone customizable livery.", "source": "Speedmax CFR geometry table (Canyon).", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Canyon.", "stats": [["triathlon", "arch"], ["customizable", "livery"]], "station": { "kind": "plinth", "x": 27.0, "z": -11.0, "rotY": 2.6, "top": 0 }, "capabilities": ["inspect", "customize", "share"] }
+      ]
+    },
+    {
+      "id": "breitling",
+      "name": "Breitling · Endurance Pro",
+      "kicker": "Independent chronograph study",
+      "story": "A monumental original chronograph, a 2021→Kona-2026 timeline, and swim / bike / run portals. Independent study; not affiliated with or endorsed by Breitling. No logo, wordmark or product photograph is used.",
+      "kind": "brand",
+      "theme": { "wall": "#0d0f13", "wallRough": 0.9, "floor": "basalt", "accent": "#c8102e", "ceil": "#101318", "gloss": 0.75 },
+      "bounds": { "x0": 24.5, "x1": 36.5, "z0": -18.0, "z1": -30.0 },
+      "height": 5.4,
+      "door": { "wall": "west", "z0": -25.0, "z1": -23.0, "h": 3.6 },
+      "light": { "fillI": 14, "skyStrip": false, "accents": [ { "x": 30.5, "y": 3.6, "z": -24.0, "color": "#ffd9c9", "i": 8, "dist": 15 } ] },
+      "products": [
+        { "id": "multibrand-breitling-watch", "brand": "Breitling", "model": "Endurance-style Chronograph", "type": "watch", "year": 2026, "glb": "assets/multibrand/breitling-watch/watch_web.glb", "sub": "Chronograph study", "text": "Original titanium chronograph: case, bezel, dial, hands and bracelet. Independent study; not affiliated with or endorsed by Breitling.", "source": "Original geometry; the public partnership page is a reference for the story only.", "legal": "Independent reconstructed study. Not affiliated with or endorsed by Breitling. No logo, wordmark or product photo.", "stats": [["~7 k", "triangles"], ["titanium", "case"], ["chronograph", "type"]], "station": { "kind": "plinth", "x": 30.5, "z": -24.0, "rotY": 0.0, "top": 1.1 }, "capabilities": ["inspect", "share"] }
+      ]
     }
   ]
 }

@@ -52,6 +52,26 @@ for (const key of ['cfslx-2015', 'cfr-2019']) {
     skins: [], sources: [{ label: 'Build record', file: f }],
   });
 }
+// multibrand studies (Trek / Pinarello / Felt / Canyon themes / Tour de France) built by blender/multibrand
+if (exists('museum/multibrand/bikes.json')) {
+  for (const b of J('museum/multibrand/bikes.json').bikes) {
+    const isWatch = b.arch === 'watch';
+    const glb = isWatch ? `assets/multibrand/${b.key}/watch_web.glb` : `assets/multibrand/${b.key}/bike_web.glb`;
+    if (!exists(glb)) throw new Error(`multibrand GLB not built for ${b.key}: ${glb}`);
+    products.push({
+      id: `multibrand-${b.key}`, brand: b.brand, family: b.family, name: b.name, year: b.year, era: b.era || null,
+      type: isWatch ? 'watch' : 'bike', category: isWatch ? 'chronograph' : b.arch === 'tri' ? 'triathlon' : b.arch === 'gravel' ? 'gravel' : 'road',
+      origin: 'multibrand-study', glb, museum: true, theme: b.theme, arch: b.arch, room: b.room,
+      text: `Original ${b.brand} ${b.family} study — ${b.theme} livery.`,
+      facts: [
+        { cls: 'G', text: b.source },
+        { cls: 'T', text: `${b.theme} livery (PBR paint, clearcoat; not a recolour of another brand).` },
+        { cls: 'I', text: 'Lateral tube widths, stay spread and hub widths inferred; no photo trace.' }
+      ],
+      skins: [], sources: [{ label: 'Bike record', file: 'museum/multibrand/bikes.json' }, { label: 'Build', file: `assets/multibrand/${b.key}/receipts.json` }],
+    });
+  }
+}
 // everything built by blender/atlas_build.py
 for (const b of J('museum/atlas/bikes.json').bikes) {
   const origin = b.studio ? 'studio-design' : b.kind === 'type' ? 'type-study' : 'photo-rebuild';

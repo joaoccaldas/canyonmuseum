@@ -104,6 +104,102 @@
    }
   },
   {
+   "id": "trek-speed",
+   "floor": "ground",
+   "name": "Trek · Speed",
+   "short": "Trek",
+   "sub": "Wind-tunnel race engineering",
+   "kind": "performance",
+   "exhibits": {
+    "products": [
+     "multibrand-trek-speed-concept-kona",
+     "multibrand-trek-madone-wyld",
+     "multibrand-trek-domane-custom",
+     "multibrand-trek-checkpoint-desert"
+    ]
+   }
+  },
+  {
+   "id": "pinarello",
+   "floor": "ground",
+   "name": "Pinarello · Italian Speed",
+   "short": "Pinarello",
+   "sub": "Dogma and Bolide, hero machines",
+   "kind": "performance",
+   "exhibits": {
+    "products": [
+     "multibrand-pinarello-bolide-kona",
+     "multibrand-pinarello-dogma-wyld",
+     "multibrand-pinarello-bolide-custom",
+     "multibrand-pinarello-dogma-splatter"
+    ]
+   }
+  },
+  {
+   "id": "canyon-speed",
+   "floor": "ground",
+   "name": "Canyon · Speed Studio",
+   "short": "Speed Studio",
+   "sub": "Speedmax CFR in themed liveries",
+   "kind": "performance",
+   "exhibits": {
+    "products": [
+     "multibrand-canyon-speedmax-kona",
+     "multibrand-canyon-speedmax-wyld",
+     "multibrand-canyon-speedmax-custom"
+    ]
+   }
+  },
+  {
+   "id": "felt-aero",
+   "floor": "ground",
+   "name": "Felt · Aero Lab",
+   "short": "Felt",
+   "sub": "Triathlon aero engineering",
+   "kind": "performance",
+   "exhibits": {
+    "products": [
+     "multibrand-felt-ia-kona",
+     "multibrand-felt-ia-wyld",
+     "multibrand-felt-ia-custom"
+    ]
+   }
+  },
+  {
+   "id": "tour-history",
+   "floor": "ground",
+   "name": "Machines of the Tour",
+   "short": "Tour",
+   "sub": "Bicycle evolution, 1930s → today",
+   "kind": "timeline",
+   "exhibits": {
+    "products": [
+     "multibrand-tdf-steel-1937",
+     "multibrand-tdf-molteni-1972",
+     "multibrand-tdf-aero-1989",
+     "multibrand-tdf-carbon-1999",
+     "multibrand-tdf-aero-2013",
+     "multibrand-tdf-monocoque-2022",
+     "multibrand-tdf-2027-wyld",
+     "multibrand-tdf-2027-kona",
+     "multibrand-trek-us-postal-2004"
+    ]
+   }
+  },
+  {
+   "id": "breitling",
+   "floor": "ground",
+   "name": "Breitling · Endurance Pro",
+   "short": "Breitling",
+   "sub": "Independent chronograph study",
+   "kind": "chronograph",
+   "exhibits": {
+    "products": [
+     "multibrand-breitling-watch"
+    ]
+   }
+  },
+  {
    "id": "stair",
    "floor": "upper",
    "name": "The Glass Stair",

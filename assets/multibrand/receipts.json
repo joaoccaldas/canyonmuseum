@@ -1,0 +1,209 @@
+[
+ {
+  "id": "trek-speed-concept-kona",
+  "brand": "Trek",
+  "model": "Speed Concept \"Kona\"",
+  "theme": "kona",
+  "bike_web_glb": 906516,
+  "bike_lite_glb": 366948,
+  "bike_master_blend": 4913236
+ },
+ {
+  "id": "trek-madone-wyld",
+  "brand": "Trek",
+  "model": "Madone SLR \"Wyld\"",
+  "theme": "wyld-pink",
+  "bike_web_glb": 911100,
+  "bike_lite_glb": 364268,
+  "bike_master_blend": 4885898
+ },
+ {
+  "id": "trek-domane-custom",
+  "brand": "Trek",
+  "model": "Domane SL \"Customizable\"",
+  "theme": "customizable",
+  "bike_web_glb": 889412,
+  "bike_lite_glb": 358080,
+  "bike_master_blend": 4870210
+ },
+ {
+  "id": "trek-checkpoint-desert",
+  "brand": "Trek",
+  "model": "Checkpoint SLR \"Desert\"",
+  "theme": "desert",
+  "bike_web_glb": 889224,
+  "bike_lite_glb": 358524,
+  "bike_master_blend": 4867577
+ },
+ {
+  "id": "trek-us-postal-2004",
+  "brand": "Trek",
+  "model": "5500 OCLV \"US Postal\"",
+  "theme": "heritage-trek",
+  "bike_web_glb": 909860,
+  "bike_lite_glb": 358872,
+  "bike_master_blend": 4772722
+ },
+ {
+  "id": "pinarello-bolide-kona",
+  "brand": "Pinarello",
+  "model": "Bolide F \"Kona Night\"",
+  "theme": "night",
+  "bike_web_glb": 906492,
+  "bike_lite_glb": 366968,
+  "bike_master_blend": 4913412
+ },
+ {
+  "id": "pinarello-dogma-wyld",
+  "brand": "Pinarello",
+  "model": "Dogma F \"Wyld\"",
+  "theme": "wyld-pink",
+  "bike_web_glb": 911160,
+  "bike_lite_glb": 364272,
+  "bike_master_blend": 4885914
+ },
+ {
+  "id": "pinarello-bolide-custom",
+  "brand": "Pinarello",
+  "model": "Bolide F \"Customizable\"",
+  "theme": "customizable",
+  "bike_web_glb": 906432,
+  "bike_lite_glb": 364956,
+  "bike_master_blend": 4913128
+ },
+ {
+  "id": "pinarello-dogma-splatter",
+  "brand": "Pinarello",
+  "model": "Dogma \"Splatter\"",
+  "theme": "splatter",
+  "bike_web_glb": 911180,
+  "bike_lite_glb": 362324,
+  "bike_master_blend": 4886944
+ },
+ {
+  "id": "felt-ia-kona",
+  "brand": "Felt",
+  "model": "IA FRD \"Kona\"",
+  "theme": "kona",
+  "bike_web_glb": 906344,
+  "bike_lite_glb": 366928,
+  "bike_master_blend": 4913550
+ },
+ {
+  "id": "felt-ia-wyld",
+  "brand": "Felt",
+  "model": "IA \"Wyld Mint\"",
+  "theme": "wyld-mint",
+  "bike_web_glb": 906308,
+  "bike_lite_glb": 369556,
+  "bike_master_blend": 4913774
+ },
+ {
+  "id": "felt-ia-custom",
+  "brand": "Felt",
+  "model": "IA \"Customizable\"",
+  "theme": "customizable",
+  "bike_web_glb": 906284,
+  "bike_lite_glb": 364936,
+  "bike_master_blend": 4912192
+ },
+ {
+  "id": "canyon-speedmax-kona",
+  "brand": "Canyon",
+  "model": "Speedmax CFR \"Kona Lava\"",
+  "theme": "kona",
+  "bike_web_glb": 906476,
+  "bike_lite_glb": 366948,
+  "bike_master_blend": 4912150
+ },
+ {
+  "id": "canyon-speedmax-wyld",
+  "brand": "Canyon",
+  "model": "Speedmax CFR \"Wyld Mint\"",
+  "theme": "wyld-mint",
+  "bike_web_glb": 906440,
+  "bike_lite_glb": 369576,
+  "bike_master_blend": 4913680
+ },
+ {
+  "id": "canyon-speedmax-custom",
+  "brand": "Canyon",
+  "model": "Speedmax CFR \"Customizable\"",
+  "theme": "customizable",
+  "bike_web_glb": 906340,
+  "bike_lite_glb": 364756,
+  "bike_master_blend": 4912675
+ },
+ {
+  "id": "tdf-steel-1937",
+  "brand": "Tour de France",
+  "model": "\"La Course\" steel",
+  "theme": "heritage-canyon",
+  "bike_web_glb": 909788,
+  "bike_lite_glb": 358872,
+  "bike_master_blend": 4772934
+ },
+ {
+  "id": "tdf-molteni-1972",
+  "brand": "Tour de France",
+  "model": "Era classic",
+  "theme": "splatter",
+  "bike_web_glb": 909824,
+  "bike_lite_glb": 361512,
+  "bike_master_blend": 4773231
+ },
+ {
+  "id": "tdf-aero-1989",
+  "brand": "Tour de France",
+  "model": "Final-stage aero era",
+  "theme": "heritage-trek",
+  "bike_web_glb": 909780,
+  "bike_lite_glb": 358868,
+  "bike_master_blend": 4773531
+ },
+ {
+  "id": "tdf-carbon-1999",
+  "brand": "Tour de France",
+  "model": "Early carbon era",
+  "theme": "heritage-trek",
+  "bike_web_glb": 909804,
+  "bike_lite_glb": 358864,
+  "bike_master_blend": 4773846
+ },
+ {
+  "id": "tdf-aero-2013",
+  "brand": "Tour de France",
+  "model": "Modern aero era",
+  "theme": "moss",
+  "bike_web_glb": 911048,
+  "bike_lite_glb": 360420,
+  "bike_master_blend": 4885909
+ },
+ {
+  "id": "tdf-monocoque-2022",
+  "brand": "Tour de France",
+  "model": "Current monocoque",
+  "theme": "pearl",
+  "bike_web_glb": 911072,
+  "bike_lite_glb": 362308,
+  "bike_master_blend": 4886167
+ },
+ {
+  "id": "tdf-2027-wyld",
+  "brand": "Tour de France",
+  "model": "\"2027\" aero study",
+  "theme": "wyld-mint",
+  "bike_web_glb": 911088,
+  "bike_lite_glb": 364276,
+  "bike_master_blend": 4886869
+ },
+ {
+  "id": "tdf-2027-kona",
+  "brand": "Tour de France",
+  "model": "\"2027\" tri study",
+  "theme": "kona",
+  "bike_web_glb": 906372,
+  "bike_lite_glb": 366944,
+  "bike_master_blend": 4913132
+ }
+]
