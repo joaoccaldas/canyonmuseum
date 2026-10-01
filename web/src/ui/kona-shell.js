@@ -148,7 +148,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   async function companion(view){
     dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('companion','web/styles/companion.css');
-    title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
+    title.textContent=view==='feed'?'Kona Now':'Travel to Kona';eyebrow.textContent=view==='feed'?'KONA · PEOPLE / PLACES / PROGRESS':'KONA · EXPLORE MORE';
     panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
     document.body.classList.add('kona-panel-open');setActive('discover');
     disposeStudio=(view==='feed'?renderFeed:renderTravel)(body,{back:raceSelf});
