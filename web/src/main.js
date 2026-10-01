@@ -172,7 +172,7 @@ const meshesOf = {};         // part id -> meshes (nearest part ancestor)
 const explodables = [];      // {node, base, vec, delay}
 let wheelF, wheelR, crankset, chainNode, chain = null, discMesh = null, zippMesh=null;
 
-function progress(p, label) { $('#loadbar i').style.width = (p * 100).toFixed(0) + '%'; if (label) $('#loadlabel').textContent = label; }
+function progress(p, label) { $('#loadbar i')?.style.setProperty('--load-p',String(p)); if (label) $('#loadlabel').textContent = label; }
 
 progress(.15, 'Unpacking carbon…');
 loader.parse(GLB.buffer, '', gltf => {
@@ -305,7 +305,7 @@ const dims = new THREE.Group(); dims.visible = false; scene.add(dims);
 const dimLabels = [];
 function buildDims() {
   // The overlay is drawn from the CFR/SLX size-M geometry; other frames opt out.
-  if (PROFILE.dimsOverlay === false) { const b = $('#dimsBtn'); if (b) b.style.display = 'none'; return; }
+  if (PROFILE.dimsOverlay === false) { const b = $('#dimsBtn'); if (b) b.hidden = true; return; }
   const BB = new THREE.Vector3(0, .2645, .16), HT = new THREE.Vector3(.44, .7455, .16);
   const AR = new THREE.Vector3(-.41325, .3395, .16), AF = new THREE.Vector3(.59975, .3395, .16);
   const mat = new THREE.LineBasicMaterial({ color: 0x19b3ff, transparent: true, opacity: .95, depthTest: false });
@@ -471,8 +471,8 @@ canvas.addEventListener('pointermove', e => {
     const id = pick(e);
     if (id !== S.hover) { const prev = S.hover; S.hover = id; if (prev && prev !== S.sel) highlight(prev, false); applyGhost(); }
     const tip = $('#tip');
-    if (id && PARTS[id]) { tip.textContent = PARTS[id].name; tip.style.transform = `translate(${e.clientX + 14}px,${e.clientY + 14}px)`; tip.classList.add('on'); canvas.style.cursor = 'pointer'; }
-    else { tip.classList.remove('on'); canvas.style.cursor = ''; }
+    if (id && PARTS[id]) { tip.textContent = PARTS[id].name; tip.style.setProperty('--tip-x',(e.clientX + 14)+'px'); tip.style.setProperty('--tip-y',(e.clientY + 14)+'px'); tip.classList.add('on'); canvas.classList.add('hot'); }
+    else { tip.classList.remove('on'); canvas.classList.remove('hot'); }
   });
 });
 canvas.addEventListener('pointerleave', () => { $('#tip').classList.remove('on'); if (S.hover && S.hover !== S.sel) highlight(S.hover, false); S.hover = null; });
@@ -650,9 +650,18 @@ function buildUI() {
 
   // presets
   $('#presets').innerHTML = Object.entries(PRESETS).map(([k, p]) =>
-    `<button data-preset="${k}"><i style="${p.wyld?'background:linear-gradient(135deg,#ff3d8e,#ff8fbf 28%,#e9cde8 46%,#8fe7dc 66%,#5fd8d3)':`background:linear-gradient(135deg,${p.frame} 55%,${p.decal} 55%)`}"></i><strong>${p.name}</strong><span>${p.sub}</span></button>`).join('');
-  $('#swFrame').innerHTML = SWATCHES.map(c => `<button data-frame="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickFrame"></label>`;
-  $('#swDecal').innerHTML = DECALS.map(c => `<button data-decal="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickDecal"></label>`;
+    `<button data-preset="${k}"><i data-preset-chip></i><strong>${p.name}</strong><span>${p.sub}</span></button>`).join('');
+  $('[data-preset]').forEach(b=>{
+    const p=PRESETS[b.dataset.preset],chip=b.querySelector('[data-preset-chip]');
+    if(!chip)return;
+    chip.classList.toggle('wyld',!!p.wyld);
+    chip.style.setProperty('--preset-frame',p.frame||'#12181d');
+    chip.style.setProperty('--preset-decal',p.decal||'#f4efe7');
+  });
+  $('#swFrame').innerHTML = SWATCHES.map(c => `<button data-frame="${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickFrame"></label>`;
+  $('#swDecal').innerHTML = DECALS.map(c => `<button data-decal="${c}" aria-label="${c}"></button>`).join('') + `<label class="pick" title="Custom"><input type="color" id="pickDecal"></label>`;
+  $('[data-frame]').forEach(b=>b.style.setProperty('--c',b.dataset.frame));
+  $('[data-decal]').forEach(b=>b.style.setProperty('--c',b.dataset.decal));
   $$('[data-preset]').forEach(b => b.onclick = () => setCfg({ ...PRESETS[b.dataset.preset], preset: b.dataset.preset, wyld: !!PRESETS[b.dataset.preset].wyld }, true));
   $$('[data-frame]').forEach(b => b.onclick = () => setCfg({ frame: b.dataset.frame, wyld: false }));
   $$('[data-decal]').forEach(b => b.onclick = () => setCfg({ decal: b.dataset.decal }));
