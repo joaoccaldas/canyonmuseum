@@ -40,6 +40,8 @@ The visual storytelling catalogue is a product/brand north star, not release evi
 
 **Launch/current only when proved on #135:** local-first Race Self, Garage and race setup, the eligible bike catalogue, KONA Finds, sourced Feed/Travel surfaces, countdown, private sharing, responsive navigation, and the currently certified museum/runtime surfaces.
 
+**Canonical implementation names beat older concept copy:** avatar character types currently come from `web/src/engine/avatar.js` (Minecraft, Badass, Aero, Islander). Do not reintroduce Koa/Pele/Lono/Hina or any other older naming from visual concept documents unless the canonical schema is deliberately migrated.
+
 **Future or separately authorised until proved:** WYLD event/room exposure, Totem/door entitlements, seasonal/global rankings, NFC passports or physical member keys, verified athlete tiers, Strava-driven access, live wind telemetry, automated Intern operations, trading, affiliate/buy flows, and partner-specific commercial experiences.
 
 Do not use a vision document, mockup, schema, generated image, or product narrative as proof that a runtime capability exists. The authoritative chain is source → deterministic build → tests/evidence → exact-SHA deployment receipt.
