@@ -7,19 +7,20 @@ const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'desktop',width:1440,height:900}];
 const states=['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','passport','feed','travel','museum-return-home','bike-studio'];const report=[];
 // deterministic storage per capture: seed after origin exists, then reload exactly once.
-async function capture(vp,state,theme){
+async function capture(vp,state,theme,family=null){
  const p=await browser.newPage();p.setDefaultNavigationTimeout(180000);const requests=[];const errors=[];
  p.on('request',r=>requests.push(r.url()));p.on('pageerror',e=>errors.push(e.message));
  await p.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:vp.id==='desktop'?1:2,isMobile:vp.id!=='desktop',hasTouch:vp.id!=='desktop'});
  await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});
- await p.evaluate(({theme,state})=>{
-   localStorage.clear();
+ await p.evaluate(({theme,state,family})=>{
+   localStorage.clear();sessionStorage.clear();
    localStorage.setItem('kona.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));
+   if(theme==='random'&&family)sessionStorage.setItem('kona.brand.random-family.v1',family);
    if(!['landing','sign-in','avatar-registration','onboarding-tour'].includes(state)){
      localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}}));
      localStorage.setItem('kona.onboarding.v1','seen');
    }
- },{theme,state});
+ },{theme,state,family});
  await p.reload({waitUntil:'domcontentloaded'});await new Promise(r=>setTimeout(r,700));
  if(state==='sign-in'){
    await p.click('#entrySignIn');await p.waitForSelector('#saveForm');
@@ -78,13 +79,15 @@ async function capture(vp,state,theme){
  });
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const personal3D=requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
- const name=`${vp.id}-${theme}-${state}`;await p.screenshot({path:path.join(out,name+'.png'),fullPage:false});
- report.push({viewport:vp.id,theme,state,metrics,heavyRequests:heavy,personal3DRequests:personal3D,errors});
+ const themeId=family?`${theme}-${family}`:theme;
+ const name=`${vp.id}-${themeId}-${state}`;await p.screenshot({path:path.join(out,name+'.png'),fullPage:false});
+ report.push({viewport:vp.id,theme:themeId,state,metrics,heavyRequests:heavy,personal3DRequests:personal3D,errors});
  await p.close();
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
  console.log('Captured '+name);
 }
 for(const vp of viewports)for(const theme of ['light','dark','random'])for(const state of states)await capture(vp,state,theme);
+for(const vp of [viewports.find(v=>v.id==='390'),viewports.find(v=>v.id==='desktop')])for(const family of ['lava','ocean','hibiscus','lilac','lime'])await capture(vp,'home','random',family);
 await browser.close();
 fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
 const violations=[];
@@ -118,5 +121,5 @@ for(const r of report){
  if(r.state==='bike-studio'&&!/Speedmax|Bikes/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: Bike Studio missing`);
 }
 if(violations.length){console.error(violations.join('\n'));process.exitCode=1}
-// Random appearance is exercised in the full matrix; all five named families are validated by brand-hygiene and theme contracts.
+// Random appearance is exercised in the full matrix plus focused 390px/desktop captures for all five named families.
 console.log(`visual evidence: ${report.length} captures, ${violations.length} blocking violations`);
