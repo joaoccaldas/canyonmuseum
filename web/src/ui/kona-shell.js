@@ -51,9 +51,9 @@ export function initKonaShell({ profile, settings, enter }) {
     tourStarted=true;
     const steps=[
       {target:'[data-home-self]',kicker:'1 · MAKE IT YOURS',title:'Start with your Race Self',copy:'Build the voxel version of you, then connect the bike and gear you actually care about.'},
-      {target:'[data-tab="discover"]',kicker:'2 · LEARN KONA',title:'Discover the island',copy:'Use Discover for places, stories and race-week details. The immersive 3D world stays optional until you want it.'},
-      {target:'[data-tab="garage"]',kicker:'3 · BUILD THE SETUP',title:'Your gear lives here',copy:'Choose your bike in 3D now. Helmet, shoes, kit and more are being added next.'},
-      {target:'[data-tab="plan"]',kicker:'4 · MAKE IT USEFUL',title:'Turn curiosity into a plan',copy:'Plan keeps the practical race-week layer close when you need it.'}
+      {target:'[data-tab=discover]',kicker:'2 · LEARN KONA',title:'Discover the island',copy:'Use Discover for places, stories and race-week details. The immersive 3D world stays optional until you want it.'},
+      {target:'[data-tab=garage]',kicker:'3 · BUILD THE SETUP',title:'Your gear lives here',copy:'Choose your bike in 3D now. Helmet, shoes, kit and more are being added next.'},
+      {target:'[data-tab=plan]',kicker:'4 · MAKE IT USEFUL',title:'Turn curiosity into a plan',copy:'Plan keeps the practical race-week layer close when you need it.'}
     ];
     const card=document.createElement('aside'); card.className='kona-tour'; card.setAttribute('role','dialog'); card.setAttribute('aria-label','KONA quick tour');
     document.body.append(card);
