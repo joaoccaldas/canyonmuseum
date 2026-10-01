@@ -27,14 +27,14 @@ export function initReturnJourney({openProgress}={}){
   const save=(moment,action)=>{state=recordReturnMoment(state,moment,action);};
 
   function actions(moment){
-    root.querySelector('[data-return-close]')?.addEventListener('click',()=>{
+    const dismiss=()=>{
       if(moment==='install-teaser'||moment==='install-reminder')save(moment,'dismiss-install');
-      else if(moment==='annoyance-check')save(moment,'dismiss');
       else save(moment,'dismiss');
       close();
-    });
-    root.addEventListener('click',e=>{if(e.target===root)root.querySelector('[data-return-close]')?.click();},{once:true});
-    root.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();root.querySelector('[data-return-close]')?.click();}},{once:true});
+    };
+    root.querySelectorAll('[data-return-close]').forEach(button=>button.addEventListener('click',dismiss));
+    root.onclick=e=>{if(e.target===root)dismiss();};
+    root.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();dismiss();}};
   }
   function showRewards(){
     const moment='rewards';active=moment;save(moment,'shown');
