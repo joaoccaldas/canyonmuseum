@@ -30,7 +30,7 @@ function readImage(file){
   });
 }
 
-export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,openAssets,isAdmin=false,isCurrent=()=>true}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,openFeed,openTravel,openAssets,isAdmin=false,isCurrent=()=>true}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -57,8 +57,10 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
       '</div>'+
       '<nav class="studio-destinations" aria-label="Explore KONA"><small class="studio-menu-label">STEP INTO THE WORLD</small>'+
         menuItem('museum','↗','Canyon Museum','Walk through cycling history')+
-        menuItem('discover','◎','Discover Kona','Places, stories & race week')+
-        menuItem('plan','▤','Race week','Your plan for the island')+
+        menuItem('discover','◎','Discover Kona','Places, stories & things hiding nearby')+
+        menuItem('feed','≋','The Feed','Athletes, triathlon & island rabbit holes')+
+        menuItem('travel','✦','Travel to Kona','Flights, local stops & getting around')+
+        menuItem('plan','▤','Race week','What matters next, minus the spreadsheet energy')+
         menuItem('passport','☆','Passport','Your progress & collection')+
         (isAdmin?menuItem('assets','▦','Asset Portfolio','All bikes, gear & room assets'):'')+
         '<p class="studio-menu-note">Start anywhere.<br>Your studio is always here.</p>'+
@@ -218,6 +220,8 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
   root.querySelector('[data-race-self-action="museum"]')?.addEventListener('click',()=>openMuseum?.());
   root.querySelector('[data-race-self-action="discover"]')?.addEventListener('click',()=>openDiscover?.());
+  root.querySelector('[data-race-self-action="feed"]')?.addEventListener('click',()=>openFeed?.());
+  root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="plan"]')?.addEventListener('click',()=>openPlan?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
   root.querySelector('[data-race-self-action="passport"]')?.addEventListener('click',showPassport);
