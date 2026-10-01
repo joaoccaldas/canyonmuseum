@@ -27,12 +27,20 @@ if (desktopViewPhone) {
   document.documentElement.style.setProperty('--fit',ratio.toFixed(3));
 }
 const authReturned = consumeAuthCallback();
+const syncBrowserChrome = mode => {
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(!meta)return;
+  if(mode==='landing'||mode==='quest'){meta.content='#071116';return;}
+  const css=getComputedStyle(document.documentElement).getPropertyValue('--kona-bg').trim();
+  if(css)meta.content=css;
+};
 const setEntryMode = mode => {
   intro?.classList.toggle('quest-active', mode === 'quest');
   intro?.classList.toggle('app-ready', mode === 'app');
   document.body.classList.remove('entry-landing','entry-quest','entry-app');
   document.body.classList.add('entry-' + mode);
   document.body.dataset.entryMode = mode;
+  syncBrowserChrome(mode);
 };
 const profile = createProfile();
 window.__konaProfile = profile;
