@@ -11,7 +11,7 @@ test('mobile bottom navigation uses task labels while preserving canonical route
   for(const pair of [['home','Home'],['discover','Explore'],['garage','Gear'],['plan','Race'],['me','You']]){
     assert.match(shell,new RegExp('data-tab="'+pair[0]+'"[^>]*[\\s\\S]{0,220}<span>'+pair[1]+'<\\/span>'));
   }
-  assert.equal((shell.match(/data-tab="/g)||[]).length,5);
+  assert.equal((shell.match(/<button[^>]*data-tab="/g)||[]).length,5);
 });
 
 test('Home exposes one explicit four-step journey map',()=>{
