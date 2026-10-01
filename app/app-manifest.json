@@ -1,5 +1,5 @@
 {
- "version": "bc6afa7861ac",
+ "version": "d8e6faa47ba0",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -29,7 +29,7 @@
  "files": {
   "index.html": "iEoYHOG0uPtIxEXSqdaCgEwRVakbseM16CqCqsHJAnw=",
   "app/viewport.js": "sDvR++FCwr47Gl5gmxR2iVNUS3nhtW+sJfLBa8qcxc4=",
-  "app/kona-core.js": "djuUJKdmxdJavuRzHDLtxE62+wAKVo46PbLSZEp0yXM=",
+  "app/kona-core.js": "7UFuBCtPsVc8HydiK1cR5n1WfHyDHSuJTvRVxZbF0Uw=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
@@ -66,10 +66,10 @@
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "KKS1rQo6bo7DcNvLQ0KauUTq5Z32mu+FzOKdz7GpHXI=",
   "app/hall.js": "dpov0+G2A+gwA07IgyiKmu18/ukU9rMN7sF0SGG2JnE=",
-  "app/studio.js": "ufI2Rauf3T4jfOBqSeSZ1eeiwUuL1AlKIwQUq22tIUA=",
+  "app/studio.js": "6T9PscfckNEkBG194IgiNKzMA7tuNW6SDOyG7jg8LMs=",
   "app/studio-catalog.js": "Qj8rIu7C13w5fDmtGeLtuZmcl2S6tEN+XVDRHPYEZZ8=",
-  "Canyon_Collection.html": "t5Bt9xeChKHJOznLdwJCN8GjSgGlDbyLkllSpT6eXbc=",
-  "Experiences.html": "5NKyYS0z8EaJAbF6FsdgpPxFmKX1pv1Nwdi3Fr7UL8c=",
+  "Canyon_Collection.html": "Vj10T7ainYq+dBwIe1gMziQUzDYXTwXI5x4XEbL79fo=",
+  "Experiences.html": "Vf46k/cKxkq70sU7fLCYKe0Jj65432qs/m3DumG1huY=",
   "Speedmax_2007_Museum.html": "RJZz8XB/hBkQXWlecHOjcUrbEnUgGlJnGWKE0bTsYjs=",
   "Speedmax_AL_2011_Museum.html": "NhMx3uAqluRMMvbuYD51BCX+GwWofihbE8EyZwcTJUI=",
   "Speedmax_CF_2011_Museum.html": "2EbHA0C0oczED7HWHvyT8NQnxveHitGFqzzamrozxZk=",
