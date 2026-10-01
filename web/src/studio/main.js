@@ -13,6 +13,9 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { slotsOf, applySkin, skinProblems, skinFromFilm, skinFromWyld } from '../engine/skins.js';
 import { renderCard, bikeCard } from '../engine/card.js';
 import { createProfile, renderSettings, QUALITY, AVATARS } from '../engine/profile.js';
+import { ensureProgression } from '../engine/progression.js';
+import { productAccess } from '../engine/access.js';
+import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 import { captureView, shareImage } from '../engine/share.js';
 import { initSettings } from '../ui/settings.js';
 import { SCENES, encodeLook, decodeLook, productsFor } from './model.js';
@@ -23,6 +26,12 @@ import { renderRaceBadges } from '../ui/race-cards.js';
 const $ = id => document.getElementById(id);
 const CAT = window.__PRODUCTS, FILMS = window.__FILMS?.films || [], MSKINS = window.__SKINS?.skins || [], WYLD = window.__WYLDROOM?.variants || [], EVENTS = window.__EVENTS || [];
 const profile = createProfile();
+let adminAccess=false,pendingLockedProduct=null;
+const accessForProduct=product=>productAccess(product,{state:ensureProgression(),admin:adminAccess});
+currentUser().then(user=>{
+  const next=isAdminUser(user);
+  if(next&&!adminAccess){adminAccess=true;drawPanel();if(pendingLockedProduct){const p=pendingLockedProduct;pendingLockedProduct=null;show(p);}}
+}).catch(()=>{});
 const touch = matchMedia('(pointer: coarse)').matches || innerWidth < 760;
 const RS = renderSettings(profile.get().quality, { lite: touch, dpr: devicePixelRatio });
 const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -93,6 +102,18 @@ function trimModelCache(){
   }
 }
 async function show(product, lookIn) {
+  const gate=accessForProduct(product);
+  if(!gate.unlocked){
+    pendingLockedProduct=product;
+    current?.root?.traverse(o=>{for(const m of (Array.isArray(o.material)?o.material:[o.material]))m?.dispose?.();});
+    holder.clear();current=null;$('loading').hidden=true;
+    $('heroEyebrow').textContent='LOCKED · LEVEL '+gate.requiredLevel;
+    $('heroTitle').textContent=product.name;
+    $('heroSub').textContent='You can inspect the facts now. The 3D bike unlocks as you explore KONA.';
+    drawPanel();
+    return;
+  }
+  pendingLockedProduct=null;
   const token = ++loadToken; $('loading').hidden = false;
   $('heroEyebrow').textContent = [product.year || product.years || product.era, product.brand].filter(Boolean).join(' · ');
   $('heroTitle').textContent = product.name; $('heroSub').textContent = product.origin === 'studio-design' ? 'Studio design · only in the studio' : product.museum ? 'Also in the museum' : '';
@@ -155,10 +176,10 @@ function drawPanel() {
       Object.entries(ORIGIN).map(([k, v]) => chip(v, filter.origin === k, () => { filter.origin = filter.origin === k ? null : k; drawPanel(); }))));
     P.append(h('p', { class: 'count' }, `${list.length} of ${CAT.products.length} · ${CAT.studio_only} only in the studio`));
     P.append(h('div', { class: 'grid' }, list.map(p => {
-      const sw = p.skins?.[0]?.frame || '#8e979d';
-      return h('button', { type: 'button', class: 'prod', 'aria-current': String(current?.product === p), onclick: async () => { await show(p); saveCurrentToSetup({stay:true,announce:true}); if (innerWidth < 900) dock(true); } },
+      const sw = p.skins?.[0]?.frame || '#8e979d',gate=accessForProduct(p);
+      return h('button', { type: 'button', class: 'prod'+(gate.unlocked?'':' locked'), 'aria-current': String(current?.product === p), disabled:!gate.unlocked, 'aria-label':gate.unlocked?p.name:p.name+' · unlocks at Level '+gate.requiredLevel, onclick: gate.unlocked ? async () => { await show(p); saveCurrentToSetup({stay:true,announce:true}); if (innerWidth < 900) dock(true); } : null },
         h('i', { class: 'sw', style: `background:${sw}` }), h('small', {}, [p.year || p.years || p.era, p.brand].filter(Boolean).join(' · ')), h('b', {}, p.name),
-        p.origin === 'studio-design' ? h('span', { class: 'tag' }, 'Studio only') : event?.featured?.includes(p.id) ? h('span', { class: 'tag' }, event.name) : null);
+        !gate.unlocked ? h('span',{class:'tag'},'LEVEL '+gate.requiredLevel) : p.origin === 'studio-design' ? h('span', { class: 'tag' }, 'Studio only') : event?.featured?.includes(p.id) ? h('span', { class: 'tag' }, event.name) : null);
     })));
   } else if (tab === 'paint' && current) {
     const p = current.product, skins = p.skins || [];
