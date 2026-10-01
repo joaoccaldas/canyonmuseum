@@ -7,14 +7,14 @@ test('landing always exposes Build, Sign in and Install while Build is the local
   assert.match(html,/id="entryInstall"/);
 });
 test('one helper leaves intro and supports canonical consumer routes',()=>{
-  assert.match(entry,/function enterApp\(first = 'me'\)/);
+  assert.match(entry,/function enterApp\(first = 'home'\)/);
   assert.match(entry,/intro\?\.setAttribute\('hidden',''\)/);
   for(const route of ['garage','collection','discover','plan','me']) assert.match(entry,new RegExp("first === '"+route+"'"));
-  assert.match(entry,/shell\.me/);
+  assert.match(entry,/shell\.now/);assert.match(entry,/shell\.me/);
 });
-test('returning Continue uses canonical app-entry helper',()=>assert.match(entry,/Continue your Kona[\s\S]{0,220}addEventListener\('click', \(\) => enterApp\(\)\)/));
+test('returning Continue uses canonical Home entry',()=>assert.match(entry,/Continue your Kona[\s\S]{0,220}addEventListener\('click', \(\) => enterApp\(\)\)/));
 test('every onboarding screen can be escaped',()=>{
-  assert.match(entry,/data-quest-skip/);assert.match(entry,/data-quest-back/);assert.match(entry,/data-quest-cancel/);
+  assert.match(entry,/data-quest-skip/);assert.match(entry,/data-quest-back/);assert.match(entry,/renderAvatarRegistration/);
 });
 test('sign in is optional and exposes Continue without account',()=>{
   assert.match(entry,/Continue without account/);assert.match(entry,/continueLocal[^\n]+enterApp/);
