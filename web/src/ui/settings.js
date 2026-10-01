@@ -15,7 +15,7 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
     if (!chip) return;
     chip.querySelector('i').style.background = p.avatar;
     chip.querySelector('i').textContent = (p.name || '').trim().slice(0, 1).toUpperCase();
-    chip.querySelector('span').textContent = p.name ? p.name.split(' ')[0] : 'Profile';
+    chip.querySelector('span').textContent = p.name ? p.name.split(' ')[0] : 'Me';
   };
   paintChip(profile.get()); profile.subscribe(paintChip);
 
@@ -36,25 +36,25 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
         el('div', { class: 'set-me', style: `background:${p.avatar}` }, (p.name || '·').slice(0, 1).toUpperCase()),
         el('div', {}, el('small', {}, profile.exists ? 'Your profile' : 'Welcome'), el('h3', { id: 'settingsTitle' }, p.name || 'Create your profile')),
         el('button', { type: 'button', class: 'set-close', 'aria-label': 'Close', onclick: close }, '×')),
-      el('section', {}, el('h4', {}, 'Profile'),
+      el('section', {}, el('h4', {}, 'Account & profile'),
         el('label', { class: 'set-field' }, el('span', {}, 'Name'),
-          el('input', { type: 'text', value: p.name, maxlength: 40, placeholder: 'What should the museum call you?', autocomplete: 'nickname', onchange: e => { profile.set({ name: e.target.value }); draw(); } })),
+          el('input', { type: 'text', value: p.name, maxlength: 40, placeholder: 'What should KONA call you?', autocomplete: 'nickname', onchange: e => { profile.set({ name: e.target.value }); draw(); } })),
         el('div', { class: 'set-avas' }, avatars),
         el('p', { class: 'set-note' }, 'Stored on this device only. No account needed, nothing is sent anywhere.')),
-      el('section', {}, el('h4', {}, 'Display quality'),
+      el('section', {}, el('h4', {}, 'Appearance'),
         el('div', { class: 'set-opts' }, quality),
         reloadNeeded ? el('div', { class: 'set-reload' }, el('span', {}, 'Some changes apply after a reload.'), el('button', { type: 'button', class: 'btn primary', onclick: () => location.reload() }, 'Reload now')) : null,
         el('p', { class: 'set-note' }, `Now rendering: ${QUALITY[activeQuality()]?.label || 'Auto'}. Low keeps phones cool and saves data.`)),
       el('section', {}, el('h4', {}, 'Appearance'),
         el('div', { class: 'set-row' }, el('span', {}, 'Theme'), seg('Appearance', p.appearance, [['auto','Auto'],['light','Light'],['dark','Dark'],['random','Random']], v => { profile.set({ appearance:v }); applyBrandMode(v); }))),
-      el('section', {}, el('h4', {}, 'Sound and motion'),
+      el('section', {}, el('h4', {}, 'Experience'),
         el('div', { class: 'set-row' }, el('span', {}, 'Ambient sound'), seg('Sound', p.sound ? 'on' : 'off', [['off', 'Off'], ['on', 'On']], v => { profile.set({ sound: v === 'on' }); onSound(v === 'on'); })),
-        el('div', { class: 'set-row' }, el('span', {}, 'Moving between rooms'), seg('Travel', p.travel, [['teleport', 'Teleport'], ['walk', 'Walk']], v => profile.set({ travel: v }))),
+        el('div', { class: 'set-row' }, el('span', {}, '3D movement'), seg('Travel', p.travel, [['teleport', 'Teleport'], ['walk', 'Walk']], v => profile.set({ travel: v }))),
         el('div', { class: 'set-row' }, el('span', {}, 'Motion'), seg('Motion', p.motion, [['auto', 'Auto'], ['full', 'Full'], ['reduced', 'Reduced']], v => { profile.set({ motion: v }); reloadNeeded = onMotion(v) || reloadNeeded; }))),
       el('section', {}, el('h4', {}, 'Sync across devices'),
         sync?.available
-          ? el('div', { class: 'set-row' }, el('span', {}, p.sync ? `Signed in as ${p.sync.email}` : 'Sign in through Passport to back up or restore your progress.'), el('button', { type: 'button', class: 'btn ghost', onclick: () => sync.start() }, 'Open account'))
-          : el('p', { class: 'set-note' }, 'Use Passport in your User Studio to sign in and manage cloud backups. Your local profile is available here.')),
+          ? el('div', { class: 'set-row' }, el('span', {}, p.sync ? `Signed in as ${p.sync.email}` : 'Sign in to sync your KONA progress across devices.'), el('button', { type: 'button', class: 'btn ghost', onclick: () => sync.start() }, 'Open account'))
+          : el('p', { class: 'set-note' }, 'Sign in from Me to sync progress. Your profile stays local-first on this device.')),
       el('section', {}, el('h4', {}, 'Your data'),
         el('div', { class: 'set-row' },
           el('button', { type: 'button', class: 'btn ghost', onclick: () => { const b = new Blob([exportAppState()], { type: 'application/json' }); const u=URL.createObjectURL(b); const a = el('a', { href: u, download: 'kona-app-local-data.json' }); document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),0); } }, 'Export everything'),
