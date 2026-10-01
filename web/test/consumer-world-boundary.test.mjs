@@ -17,6 +17,7 @@ test('consumer index template contains no museum runtime DOM',()=>{
   assert.match(template,/id="intro"/);
   assert.doesNotMatch(template,/id="appSheet"|id="updateBar"/);
   assert.match(install,/ensureInstallSheet/);assert.match(appShell,/ensureUpdateBar/);
+  assert.match(template,/app\/viewport\.js/);
   assert.match(template,/app\/kona-core\.js/);
   assert.doesNotMatch(template,/hall-web\.css|hall-mobile\.css/);
 });
@@ -30,4 +31,6 @@ test('world shell is injected before museum runtime loads',()=>{
 test('build emits world shell as deterministic output',()=>{
   assert.match(build,/world-shell\.template\.html/);
   assert.match(build,/app\/world-shell\.html/);
+  assert.match(build,/src\/runtime\/viewport\.js/);
+  assert.match(build,/app\/viewport\.js/);
 });
