@@ -45,12 +45,14 @@ for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.t
 }
 
 const DESIGN_LINKS = [
-  'web/styles/system.css',
-  'web/styles/shell-mobile.css',
-  'brand/tokens.css',
-  'brand/themes.css',
-  'brand/artifacts.css',
-].map(href => `<link rel="stylesheet" href="${href}">`).join('');
+  '<link rel="stylesheet" href="web/styles/system.css">',
+  '<link rel="stylesheet" href="web/styles/shell-shared.css">',
+  '<link rel="stylesheet" href="web/styles/shell-web.css" media="(min-width:761px)">',
+  '<link rel="stylesheet" href="web/styles/shell-mobile.css" media="(max-width:760px), (pointer:coarse)">',
+  '<link rel="stylesheet" href="brand/tokens.css">',
+  '<link rel="stylesheet" href="brand/themes.css">',
+  '<link rel="stylesheet" href="brand/artifacts.css">',
+].join('');
 const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
