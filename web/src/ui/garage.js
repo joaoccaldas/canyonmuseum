@@ -25,7 +25,7 @@ async function raceSetupHero(){
   const goal=identity.goal?.label||identity.goal||'Your setup is still taking shape.';
   const title=bike?[bike.brand,bike.label||bike.name||bike.model].filter(Boolean).join(' '):'Your Garage is waiting.';
   const meta=bike?[bike.year,bike.family||bike.product_type].filter(Boolean).join(' · '):'Choose a bike when you are ready.';
-  const href=bike?'Studio.html?p='+encodeURIComponent(bike.id)+'#setup':'Studio.html#setup';
+  const href='Studio.html?from=garage'+(bike?'&p='+encodeURIComponent(bike.id):'')+'#setup';
   return {bike,title,meta,goal,href};
 }
 
@@ -73,7 +73,7 @@ export async function renderGarageSurface(root) {
           node('span','', product?.year ? String(product.year) : relationship)
         );
         const configure = node('a','', 'Configure →');
-        configure.href = 'Studio.html?p=' + encodeURIComponent(legacyId(item.product_id)) + '#setup';
+        configure.href = 'Studio.html?from=garage&p=' + encodeURIComponent(legacyId(item.product_id)) + '#setup';
         row.append(mark, wrap, configure);
         list.append(row);
       }
