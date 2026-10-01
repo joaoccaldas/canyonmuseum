@@ -3,7 +3,6 @@
 import { renderEntryProductStage } from './ui/visual-primitives.js';
 import { createProfile, QUALITY, AVATARS } from './engine/profile.js';
 import { initSettings } from './ui/settings.js';
-import { desktopViewPhone, coarse } from './detect.js';
 import { consumeAuthCallback } from './cloud/supabase-lite.js';
 import { initKonaShell } from './ui/kona-shell.js';
 import { initAppShell } from './app-shell.js';
@@ -12,17 +11,6 @@ import { decodeShare, questLabels } from './quest.js';
 import { renderAvatarRegistration } from './ui/avatar-registration.js';
 
 const intro = document.getElementById('intro');
-const physicalPhone = coarse || Math.min(screen.width || 1e5, screen.height || 1e5) <= 600;
-document.documentElement.classList.toggle('physical-phone', physicalPhone);
-document.body.classList.toggle('physical-phone', physicalPhone);
-if (desktopViewPhone) {
-  const short=Math.min(screen.width,screen.height);
-  const landscape=innerWidth>innerHeight;
-  const physical=landscape?Math.max(screen.width,screen.height):short;
-  const ratio=Math.max(1,innerWidth/Math.max(1,physical));
-  document.documentElement.classList.add('phone-fit');
-  document.documentElement.style.setProperty('--fit',ratio.toFixed(3));
-}
 const authReturned = consumeAuthCallback();
 const setEntryMode = mode => {
   intro?.classList.toggle('quest-active', mode === 'quest');
