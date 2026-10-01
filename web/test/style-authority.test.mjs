@@ -14,6 +14,8 @@ test('Race Self immersive surface has one stylesheet owner',()=>{
   assert.match(raceSelf,/\.race-self-controls/);
   assert.doesNotMatch(shell,/\.race-self-experience|\.race-self-controls|\.hub-drawer|\.avatar-options/);
   assert.doesNotMatch(system,/\.race-self-experience|\.race-self-controls/);
+  assert.match(system,/\.kona-user-menu/);
+  assert.doesNotMatch(raceSelf,/\.kona-user-menu/);
   assert.doesNotMatch(hall,/\.race-self-experience|\.race-self-controls/);
   assert.doesNotMatch(hallMobile,/\.race-self-experience|\.race-self-controls/);
   assert.doesNotMatch(entry,/\.race-self-experience|\.race-self-controls/);
