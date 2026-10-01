@@ -12,7 +12,7 @@
     "remote_writes": false
   },
   "counts": {
-    "products": 52,
+    "products": 75,
     "places": 9,
     "events": 1
   },
@@ -244,6 +244,650 @@
       ],
       "locations": [
         "kona"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-trek-speed-concept-kona",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Trek",
+      "label": "Speed Concept \"Kona\"",
+      "family": "Speed Concept",
+      "year": 2027,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/trek-speed-concept-kona/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-speed-concept-kona/receipts.json"
+      ],
+      "locations": [
+        "trek-speed"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-trek-madone-wyld",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Trek",
+      "label": "Madone SLR \"Wyld\"",
+      "family": "Madone",
+      "year": 2025,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/trek-madone-wyld/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-madone-wyld/receipts.json"
+      ],
+      "locations": [
+        "trek-speed"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-trek-domane-custom",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Trek",
+      "label": "Domane SL \"Customizable\"",
+      "family": "Domane",
+      "year": 2024,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/trek-domane-custom/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-domane-custom/receipts.json"
+      ],
+      "locations": [
+        "trek-speed"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-trek-checkpoint-desert",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Trek",
+      "label": "Checkpoint SLR \"Desert\"",
+      "family": "Checkpoint",
+      "year": 2023,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/trek-checkpoint-desert/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-checkpoint-desert/receipts.json"
+      ],
+      "locations": [
+        "trek-speed"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-trek-us-postal-2004",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Trek",
+      "label": "5500 OCLV \"US Postal\"",
+      "family": "5500",
+      "year": 2004,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/trek-us-postal-2004/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-us-postal-2004/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-pinarello-bolide-kona",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Pinarello",
+      "label": "Bolide F \"Kona Night\"",
+      "family": "Bolide",
+      "year": 2024,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/pinarello-bolide-kona/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-bolide-kona/receipts.json"
+      ],
+      "locations": [
+        "pinarello"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-pinarello-dogma-wyld",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Pinarello",
+      "label": "Dogma F \"Wyld\"",
+      "family": "Dogma",
+      "year": 2024,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/pinarello-dogma-wyld/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-dogma-wyld/receipts.json"
+      ],
+      "locations": [
+        "pinarello"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-pinarello-bolide-custom",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Pinarello",
+      "label": "Bolide F \"Customizable\"",
+      "family": "Bolide",
+      "year": 2024,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/pinarello-bolide-custom/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-bolide-custom/receipts.json"
+      ],
+      "locations": [
+        "pinarello"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-pinarello-dogma-splatter",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Pinarello",
+      "label": "Dogma \"Splatter\"",
+      "family": "Dogma",
+      "year": 1993,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/pinarello-dogma-splatter/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-dogma-splatter/receipts.json"
+      ],
+      "locations": [
+        "pinarello"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-felt-ia-kona",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Felt",
+      "label": "IA FRD \"Kona\"",
+      "family": "IA",
+      "year": 2022,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/felt-ia-kona/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-kona/receipts.json"
+      ],
+      "locations": [
+        "felt-aero"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-felt-ia-wyld",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Felt",
+      "label": "IA \"Wyld Mint\"",
+      "family": "IA",
+      "year": 2022,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/felt-ia-wyld/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-wyld/receipts.json"
+      ],
+      "locations": [
+        "felt-aero"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-felt-ia-custom",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Felt",
+      "label": "IA \"Customizable\"",
+      "family": "IA",
+      "year": 2022,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/felt-ia-custom/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-custom/receipts.json"
+      ],
+      "locations": [
+        "felt-aero"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-canyon-speedmax-kona",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Canyon",
+      "label": "Speedmax CFR \"Kona Lava\"",
+      "family": "Speedmax",
+      "year": 2027,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/canyon-speedmax-kona/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-kona/receipts.json"
+      ],
+      "locations": [
+        "canyon-speed"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-canyon-speedmax-wyld",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Canyon",
+      "label": "Speedmax CFR \"Wyld Mint\"",
+      "family": "Speedmax",
+      "year": 2027,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/canyon-speedmax-wyld/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-wyld/receipts.json"
+      ],
+      "locations": [
+        "canyon-speed"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-canyon-speedmax-custom",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Canyon",
+      "label": "Speedmax CFR \"Customizable\"",
+      "family": "Speedmax",
+      "year": 2027,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/canyon-speedmax-custom/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-custom/receipts.json"
+      ],
+      "locations": [
+        "canyon-speed"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-steel-1937",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "\"La Course\" steel",
+      "family": "Machines of the Tour",
+      "year": 1937,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-steel-1937/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-steel-1937/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-molteni-1972",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "Era classic",
+      "family": "Machines of the Tour",
+      "year": 1972,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-molteni-1972/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-molteni-1972/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-aero-1989",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "Final-stage aero era",
+      "family": "Machines of the Tour",
+      "year": 1989,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-aero-1989/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-aero-1989/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-carbon-1999",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "Early carbon era",
+      "family": "Machines of the Tour",
+      "year": 1999,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-carbon-1999/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-carbon-1999/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-aero-2013",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "Modern aero era",
+      "family": "Machines of the Tour",
+      "year": 2013,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-aero-2013/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-aero-2013/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-monocoque-2022",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "Current monocoque",
+      "family": "Machines of the Tour",
+      "year": 2022,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-monocoque-2022/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-monocoque-2022/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-2027-wyld",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "\"2027\" aero study",
+      "family": "Machines of the Tour",
+      "year": 2027,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-2027-wyld/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-2027-wyld/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "multibrand-tdf-2027-kona",
+      "object_type": "product",
+      "product_type": "bike",
+      "brand": "Tour de France",
+      "label": "2027 tri study",
+      "family": "Machines of the Tour",
+      "year": 2027,
+      "public": true,
+      "representation": "provisional",
+      "capabilities": [
+        "inspect",
+        "collect",
+        "share",
+        "equip",
+        "visit"
+      ],
+      "asset": "assets/multibrand/tdf-2027-kona/bike_web.glb",
+      "canonical_url": null,
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-2027-kona/receipts.json"
+      ],
+      "locations": [
+        "tour-history"
       ]
     },
     {

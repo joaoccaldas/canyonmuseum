@@ -1,11 +1,16 @@
 {
  "schema_version": 1,
  "generated_by": "tools/build_catalog.mjs",
- "count": 52,
- "in_museum": 44,
+ "count": 76,
+ "in_museum": 68,
  "studio_only": 8,
  "brands": [
   "Canyon",
+  "Trek",
+  "Pinarello",
+  "Felt",
+  "Tour de France",
+  "Breitling",
   "Colnago",
   "Obree",
   "Lotus",
@@ -383,6 +388,1158 @@
     {
      "id": "kona",
      "name": "Kona Champions"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-trek-speed-concept-kona",
+   "brand": "Trek",
+   "family": "Speed Concept",
+   "name": "Speed Concept \"Kona\"",
+   "year": 2027,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/trek-speed-concept-kona/bike_web.glb",
+   "museum": true,
+   "theme": "kona",
+   "arch": "tri",
+   "room": "trek-speed",
+   "text": "Original Trek Speed Concept study — kona livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published Speed Concept geometry table (Trek)."
+    },
+    {
+     "cls": "T",
+     "text": "kona livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/trek-speed-concept-kona/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "trek-speed",
+     "name": "Trek · Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-trek-madone-wyld",
+   "brand": "Trek",
+   "family": "Madone",
+   "name": "Madone SLR \"Wyld\"",
+   "year": 2025,
+   "era": null,
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/trek-madone-wyld/bike_web.glb",
+   "museum": true,
+   "theme": "wyld-pink",
+   "arch": "aero",
+   "room": "trek-speed",
+   "text": "Original Trek Madone study — wyld-pink livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published Madone SLR geometry table (Trek)."
+    },
+    {
+     "cls": "T",
+     "text": "wyld-pink livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/trek-madone-wyld/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "trek-speed",
+     "name": "Trek · Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-trek-domane-custom",
+   "brand": "Trek",
+   "family": "Domane",
+   "name": "Domane SL \"Customizable\"",
+   "year": 2024,
+   "era": null,
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/trek-domane-custom/bike_web.glb",
+   "museum": true,
+   "theme": "customizable",
+   "arch": "endurance",
+   "room": "trek-speed",
+   "text": "Original Trek Domane study — customizable livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published Domane SL geometry table (Trek)."
+    },
+    {
+     "cls": "T",
+     "text": "customizable livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/trek-domane-custom/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "trek-speed",
+     "name": "Trek · Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-trek-checkpoint-desert",
+   "brand": "Trek",
+   "family": "Checkpoint",
+   "name": "Checkpoint SLR \"Desert\"",
+   "year": 2023,
+   "era": null,
+   "type": "bike",
+   "category": "gravel",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/trek-checkpoint-desert/bike_web.glb",
+   "museum": true,
+   "theme": "desert",
+   "arch": "gravel",
+   "room": "trek-speed",
+   "text": "Original Trek Checkpoint study — desert livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published Checkpoint SLR geometry table (Trek)."
+    },
+    {
+     "cls": "T",
+     "text": "desert livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/trek-checkpoint-desert/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "trek-speed",
+     "name": "Trek · Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-trek-us-postal-2004",
+   "brand": "Trek",
+   "family": "5500",
+   "name": "5500 OCLV \"US Postal\"",
+   "year": 2004,
+   "era": null,
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/trek-us-postal-2004/bike_web.glb",
+   "museum": true,
+   "theme": "heritage-trek",
+   "arch": "classic",
+   "room": "tour-history",
+   "text": "Original Trek 5500 study — heritage-trek livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "2004 Trek OCLV geometry table (US Postal era)."
+    },
+    {
+     "cls": "T",
+     "text": "heritage-trek livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/trek-us-postal-2004/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-pinarello-bolide-kona",
+   "brand": "Pinarello",
+   "family": "Bolide",
+   "name": "Bolide F \"Kona Night\"",
+   "year": 2024,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/pinarello-bolide-kona/bike_web.glb",
+   "museum": true,
+   "theme": "night",
+   "arch": "tri",
+   "room": "pinarello",
+   "text": "Original Pinarello Bolide study — night livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published Bolide F geometry table (Pinarello)."
+    },
+    {
+     "cls": "T",
+     "text": "night livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/pinarello-bolide-kona/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "pinarello",
+     "name": "Pinarello · Italian Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-pinarello-dogma-wyld",
+   "brand": "Pinarello",
+   "family": "Dogma",
+   "name": "Dogma F \"Wyld\"",
+   "year": 2024,
+   "era": null,
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/pinarello-dogma-wyld/bike_web.glb",
+   "museum": true,
+   "theme": "wyld-pink",
+   "arch": "aero",
+   "room": "pinarello",
+   "text": "Original Pinarello Dogma study — wyld-pink livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published Dogma F geometry table (Pinarello)."
+    },
+    {
+     "cls": "T",
+     "text": "wyld-pink livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/pinarello-dogma-wyld/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "pinarello",
+     "name": "Pinarello · Italian Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-pinarello-bolide-custom",
+   "brand": "Pinarello",
+   "family": "Bolide",
+   "name": "Bolide F \"Customizable\"",
+   "year": 2024,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/pinarello-bolide-custom/bike_web.glb",
+   "museum": true,
+   "theme": "customizable",
+   "arch": "tri",
+   "room": "pinarello",
+   "text": "Original Pinarello Bolide study — customizable livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published Bolide F geometry table (Pinarello)."
+    },
+    {
+     "cls": "T",
+     "text": "customizable livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/pinarello-bolide-custom/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "pinarello",
+     "name": "Pinarello · Italian Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-pinarello-dogma-splatter",
+   "brand": "Pinarello",
+   "family": "Dogma",
+   "name": "Dogma \"Splatter\"",
+   "year": 1993,
+   "era": null,
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/pinarello-dogma-splatter/bike_web.glb",
+   "museum": true,
+   "theme": "splatter",
+   "arch": "aero",
+   "room": "pinarello",
+   "text": "Original Pinarello Dogma study — splatter livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Dogma aero-road silhouette study; published family geometry."
+    },
+    {
+     "cls": "T",
+     "text": "splatter livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/pinarello-dogma-splatter/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "pinarello",
+     "name": "Pinarello · Italian Speed"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-felt-ia-kona",
+   "brand": "Felt",
+   "family": "IA",
+   "name": "IA FRD \"Kona\"",
+   "year": 2022,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/felt-ia-kona/bike_web.glb",
+   "museum": true,
+   "theme": "kona",
+   "arch": "tri",
+   "room": "felt-aero",
+   "text": "Original Felt IA study — kona livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published IA FRD geometry table (Felt)."
+    },
+    {
+     "cls": "T",
+     "text": "kona livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/felt-ia-kona/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "felt-aero",
+     "name": "Felt · Aero Lab"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-felt-ia-wyld",
+   "brand": "Felt",
+   "family": "IA",
+   "name": "IA \"Wyld Mint\"",
+   "year": 2022,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/felt-ia-wyld/bike_web.glb",
+   "museum": true,
+   "theme": "wyld-mint",
+   "arch": "tri",
+   "room": "felt-aero",
+   "text": "Original Felt IA study — wyld-mint livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published IA geometry table (Felt)."
+    },
+    {
+     "cls": "T",
+     "text": "wyld-mint livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/felt-ia-wyld/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "felt-aero",
+     "name": "Felt · Aero Lab"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-felt-ia-custom",
+   "brand": "Felt",
+   "family": "IA",
+   "name": "IA \"Customizable\"",
+   "year": 2022,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/felt-ia-custom/bike_web.glb",
+   "museum": true,
+   "theme": "customizable",
+   "arch": "tri",
+   "room": "felt-aero",
+   "text": "Original Felt IA study — customizable livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Published IA geometry table (Felt)."
+    },
+    {
+     "cls": "T",
+     "text": "customizable livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/felt-ia-custom/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "felt-aero",
+     "name": "Felt · Aero Lab"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-canyon-speedmax-kona",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Speedmax CFR \"Kona Lava\"",
+   "year": 2027,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/canyon-speedmax-kona/bike_web.glb",
+   "museum": true,
+   "theme": "kona",
+   "arch": "tri",
+   "room": "canyon-speed",
+   "text": "Original Canyon Speedmax study — kona livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Speedmax CFR geometry table (Canyon)."
+    },
+    {
+     "cls": "T",
+     "text": "kona livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/canyon-speedmax-kona/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "canyon-speed",
+     "name": "Canyon · Speed Studio"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-canyon-speedmax-wyld",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Speedmax CFR \"Wyld Mint\"",
+   "year": 2027,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/canyon-speedmax-wyld/bike_web.glb",
+   "museum": true,
+   "theme": "wyld-mint",
+   "arch": "tri",
+   "room": "canyon-speed",
+   "text": "Original Canyon Speedmax study — wyld-mint livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Speedmax CFR geometry table (Canyon)."
+    },
+    {
+     "cls": "T",
+     "text": "wyld-mint livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/canyon-speedmax-wyld/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "canyon-speed",
+     "name": "Canyon · Speed Studio"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-canyon-speedmax-custom",
+   "brand": "Canyon",
+   "family": "Speedmax",
+   "name": "Speedmax CFR \"Customizable\"",
+   "year": 2027,
+   "era": null,
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/canyon-speedmax-custom/bike_web.glb",
+   "museum": true,
+   "theme": "customizable",
+   "arch": "tri",
+   "room": "canyon-speed",
+   "text": "Original Canyon Speedmax study — customizable livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Speedmax CFR geometry table (Canyon)."
+    },
+    {
+     "cls": "T",
+     "text": "customizable livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/canyon-speedmax-custom/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "canyon-speed",
+     "name": "Canyon · Speed Studio"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-steel-1937",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "\"La Course\" steel",
+   "year": 1937,
+   "era": "1930s",
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-steel-1937/bike_web.glb",
+   "museum": true,
+   "theme": "heritage-canyon",
+   "arch": "classic",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — heritage-canyon livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Era road-race geometry study (steel, rim brake, 32-spoke)."
+    },
+    {
+     "cls": "T",
+     "text": "heritage-canyon livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-steel-1937/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-molteni-1972",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "Era classic",
+   "year": 1972,
+   "era": "1960s-70s",
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-molteni-1972/bike_web.glb",
+   "museum": true,
+   "theme": "splatter",
+   "arch": "classic",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — splatter livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Era lightweight road-racing study."
+    },
+    {
+     "cls": "T",
+     "text": "splatter livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-molteni-1972/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-aero-1989",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "Final-stage aero era",
+   "year": 1989,
+   "era": "1980s",
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-aero-1989/bike_web.glb",
+   "museum": true,
+   "theme": "heritage-trek",
+   "arch": "classic",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — heritage-trek livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Late-1980s aero/TT-era study."
+    },
+    {
+     "cls": "T",
+     "text": "heritage-trek livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-aero-1989/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-carbon-1999",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "Early carbon era",
+   "year": 1999,
+   "era": "1990s",
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-carbon-1999/bike_web.glb",
+   "museum": true,
+   "theme": "heritage-trek",
+   "arch": "classic",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — heritage-trek livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Early-carbon frame study."
+    },
+    {
+     "cls": "T",
+     "text": "heritage-trek livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-carbon-1999/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-aero-2013",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "Modern aero era",
+   "year": 2013,
+   "era": "2010s",
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-aero-2013/bike_web.glb",
+   "museum": true,
+   "theme": "moss",
+   "arch": "aero",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — moss livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Aero + electronic shifting era study."
+    },
+    {
+     "cls": "T",
+     "text": "moss livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-aero-2013/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-monocoque-2022",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "Current monocoque",
+   "year": 2022,
+   "era": "2020s",
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-monocoque-2022/bike_web.glb",
+   "museum": true,
+   "theme": "pearl",
+   "arch": "aero",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — pearl livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Integrated superbike era study."
+    },
+    {
+     "cls": "T",
+     "text": "pearl livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-monocoque-2022/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-2027-wyld",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "\"2027\" aero study",
+   "year": 2027,
+   "era": "2020s",
+   "type": "bike",
+   "category": "road",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-2027-wyld/bike_web.glb",
+   "museum": true,
+   "theme": "wyld-mint",
+   "arch": "aero",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — wyld-mint livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Forward aero study."
+    },
+    {
+     "cls": "T",
+     "text": "wyld-mint livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-2027-wyld/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-tdf-2027-kona",
+   "brand": "Tour de France",
+   "family": "Machines of the Tour",
+   "name": "2027 tri study",
+   "year": 2027,
+   "era": "2020s",
+   "type": "bike",
+   "category": "triathlon",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/tdf-2027-kona/bike_web.glb",
+   "museum": true,
+   "theme": "kona",
+   "arch": "tri",
+   "room": "tour-history",
+   "text": "Original Tour de France Machines of the Tour study — kona livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Forward tri aero study."
+    },
+    {
+     "cls": "T",
+     "text": "kona livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/tdf-2027-kona/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "tour-history",
+     "name": "Machines of the Tour"
+    }
+   ]
+  },
+  {
+   "id": "multibrand-breitling-watch",
+   "brand": "Breitling",
+   "family": "Endurance Pro",
+   "name": "Endurance-style Chronograph",
+   "year": 2026,
+   "era": null,
+   "type": "watch",
+   "category": "chronograph",
+   "origin": "multibrand-study",
+   "glb": "assets/multibrand/breitling-watch/watch_web.glb",
+   "museum": true,
+   "theme": "night",
+   "arch": "watch",
+   "room": "breitling",
+   "text": "Original Breitling Endurance Pro study — night livery.",
+   "facts": [
+    {
+     "cls": "G",
+     "text": "Original geometry study; the public partnership page is a reference for the story only."
+    },
+    {
+     "cls": "T",
+     "text": "night livery (PBR paint, clearcoat; not a recolour of another brand)."
+    },
+    {
+     "cls": "I",
+     "text": "Lateral tube widths, stay spread and hub widths inferred; no photo trace."
+    }
+   ],
+   "skins": [],
+   "sources": [
+    {
+     "label": "Bike record",
+     "file": "museum/multibrand/bikes.json"
+    },
+    {
+     "label": "Build",
+     "file": "assets/multibrand/breitling-watch/receipts.json"
+    }
+   ],
+   "where": [
+    {
+     "id": "breitling",
+     "name": "Breitling · Endurance Pro"
     }
    ]
   },
