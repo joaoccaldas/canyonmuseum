@@ -41,7 +41,7 @@ export async function progressCardBlob(progress,{documentLike=globalThis.documen
   const metrics=[['XP',p.xp],['KONA CREDITS',p.credits],['DISCOVERIES',p.discoveries],['BADGES',p.badges]];
   metrics.forEach(([label,value],i)=>{const y=570+i*145;g.fillStyle=i%2?accent:action;g.font='800 28px Manrope, system-ui, sans-serif';g.fillText(label,72,y);g.fillStyle=ink;g.font='400 66px "Instrument Serif", Georgia, serif';g.fillText(String(value),72,y+68);});
   g.fillStyle=muted;g.font='500 28px Manrope, system-ui, sans-serif';g.fillText('Apparently wandering is a training plan.',72,1245);
-  return new Promise(resolve=>c.toBlob?.(resolve,'image/png')||resolve(null));
+  return new Promise(resolve=>{if(typeof c.toBlob==='function')c.toBlob(resolve,'image/png');else resolve(null);});
 }
 export async function shareProgress(progress,{navigatorLike=globalThis.navigator,locationLike=globalThis.location,documentLike=globalThis.document,FileCtor=globalThis.File}={}){
   const url=safeAppUrl(locationLike);if(!url)return{ok:false,reason:'invalid-url'};

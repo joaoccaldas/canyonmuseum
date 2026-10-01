@@ -1,3 +1,4 @@
+import {eventEnabled} from './engine/event-visibility.js';
 export const PROFILE=globalThis.__BIKE_PROFILE||{};
 // Spec data: Canyon.com product page 4524 (Speedmax CFR AXS, MY2027, read 2026-09-27).
 // Weights are the manufacturer's listed component weights where published.
@@ -105,6 +106,7 @@ export const PRESETS = {
   ...(PROFILE.presets || {}),
 };
 
+if(!eventEnabled('wyld'))delete PRESETS.wyld;
 if(PROFILE.bike?.key==='slx')Object.assign(PRESETS.aurora,{name:'Light Lavender',frame:'#cdc8dd',decal:'#ffffff',finish:'satin'});
 
 export const SWATCHES = ['#eceaf0', '#f4f6f8', '#141416', '#3a3d42', '#9aa3ad', '#e8471c', '#d9ff3f', '#1d6bff', '#15254a', '#4c5a3f', '#b0122e', '#f2c14e'];

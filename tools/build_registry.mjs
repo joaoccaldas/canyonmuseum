@@ -1,11 +1,12 @@
 // The museum registry: every area, named, with the bikes and works in it. Generated from data:
 // museum/world/rooms.json, museum/world/wings/*.json, museum/catalog/products.json, museum/art/*.json.
 // Writes docs/ROOMS.md (the human map). Run after tools/build_catalog.mjs.
+import {contentVisible} from '../web/src/engine/event-visibility.js';
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const J = f => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
-const rooms = J('museum/world/rooms.json'), cat = J('museum/catalog/products.json').products;
+const rooms = {...J('museum/world/rooms.json'),areas:J('museum/world/rooms.json').areas.filter(contentVisible)}, cat = J('museum/catalog/products.json').products;
 const wings = J('museum/world/wings/index.json').wings.map(f => J(`museum/world/wings/${f}`));
 const paint = Object.fromEntries(J('museum/art/paintings.json').paintings.map(p => [p.id, p])), sculpt = Object.fromEntries(J('museum/art/sculptures.json').sculptures.map(s => [s.id, s]));
 const at = id => cat.filter(p => p.where.some(w => w.id === id));

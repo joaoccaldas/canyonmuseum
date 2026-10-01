@@ -19,6 +19,8 @@ const MAP = Object.freeze({
   onboardingCards: { current: 'kona.onboarding.cards.v1', legacy: [] },
   returnJourney: { current: 'kona.returnJourney.v1', legacy: [] },
   surpriseState: { current: 'kona.surpriseState.v1', legacy: [] },
+  countdown: { current: 'kona.countdown.v1', legacy: [] },
+  entryPreview: { current: 'kona.entryPreview.v1', legacy: [] },
   otpCooldown: { current: 'kona.supabase.otp.cooldown.v1', legacy: [] },
   session: { current: 'kona.supabase.session.v1', legacy: ['kona.supabase.session.v1'] },
   companionSources: { current: 'kona.companion.sources.v1', legacy: [] },
@@ -30,6 +32,16 @@ export function storageKey(name) {
   const row = MAP[name];
   if (!row) throw new Error(`Unknown storage key: ${name}`);
   return row.current;
+}
+
+// Read every compatible record for state that needs a lossless merge.
+export function readStorageVersions(name, storage = globalThis.localStorage) {
+  const row = MAP[name];
+  if (!row) throw new Error(`Unknown storage key: ${name}`);
+  return [...new Set([...row.legacy, row.current])].flatMap(key => {
+    try { const value = storage?.getItem?.(key); return value == null ? [] : [value]; }
+    catch { return []; }
+  });
 }
 
 export function readStorage(name, storage = globalThis.localStorage) {

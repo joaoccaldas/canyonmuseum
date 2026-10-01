@@ -3,6 +3,7 @@
 // Domain modules own validation and behavior. storage.js owns physical browser keys.
 // This facade creates one backward-compatible snapshot for cloud sync and restore.
 import { readStorage, writeStorage } from './storage.js';
+import { readPassportState } from './passport-state.js';
 
 export const GAME_STATE_SCHEMA_VERSION = 1;
 
@@ -17,7 +18,7 @@ const readJson = (name, fallback, storage) => parse(readStorage(name, storage), 
 
 export function readGameState(storage = globalThis.localStorage) {
   const profile = readJson('profile', null, storage);
-  const passport = readJson('passport', { v:1, profile:null, stamps:{}, badges:{}, xp:0, streak:0, best:0, last:null }, storage);
+  const passport = readPassportState(storage);
   const finds = readJson('finds', {}, storage);
   const raceSetup = readJson('raceSetup', null, storage);
   const garage = readJson('garage', [], storage);

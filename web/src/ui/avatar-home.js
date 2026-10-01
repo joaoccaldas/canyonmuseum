@@ -51,7 +51,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   const menuItem=(action,mark,title,note)=>'<button type="button" data-race-self-action="'+action+'"><i aria-hidden="true">'+mark+'</i><span><b>'+title+'</b><small>'+note+'</small></span><em aria-hidden="true">↗</em></button>';
   root.innerHTML=
     '<section class="race-self-experience" aria-label="User Studio">'+
-      '<header class="studio-heading"><a href="index.html" class="studio-wordmark" aria-label="KONA title screen">KONA<span>USER STUDIO</span></a><button class="studio-install" data-install-app type="button">Install app</button><span class="studio-save-state" role="status">● Saved on this device</span></header>'+
+      '<header class="studio-heading"><a href="index.html" class="studio-wordmark" aria-label="KONA title screen">KONA<span>USER STUDIO</span></a><button type="button" class="btn-text studio-home" data-studio-home>← Home</button><button class="studio-install" data-install-app type="button">Install app</button><span class="studio-save-state" role="status">● Saved on this device</span></header>'+
       '<div class="race-self-stage-wrap">'+
         '<div class="race-self-identity"><small>YOUR ATHLETE. YOUR STRANGE LITTLE UNIVERSE.</small><h1>Build the version of you that hasn’t raced yet.</h1><p>Make it yours. Then go find something you weren’t looking for.</p></div>'+
         '<div class="studio-canvas-frame"><canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D User Studio"></canvas><p class="studio-stage-status" role="status">Preparing your athlete…</p></div>'+
@@ -115,7 +115,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
       else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
     }
   };
-  root.addEventListener('keydown',handleKey);
+  document.addEventListener('keydown',handleKey);
   root.querySelector('[data-hub-close]')?.addEventListener('click',closeDrawer);
 
   const commitStyle=next=>{
@@ -244,16 +244,18 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     if(drawer.hidden)openDrawer();
     const status=drawerBody.querySelector('[data-share-status]');
     drawerBody.querySelector('[data-share-progress]')?.addEventListener('click',async e=>{
-      e.currentTarget.disabled=true;const result=await shareProgress(progress);
+      const button=e.currentTarget;button.disabled=true;const result=await shareProgress(progress);
       status.textContent=result.ok?(result.method==='clipboard'?'Share sheet unavailable. KONA link copied.':'Share sheet opened safely.'):(result.reason==='cancelled'?'Not shared. Nothing left KONA.':'Sharing is unavailable here. Use WhatsApp or copy the link.');
-      e.currentTarget.disabled=false;
+      button.disabled=false;
     });
     drawerBody.querySelector('[data-share-copy]')?.addEventListener('click',async e=>{
       const url=safeAppUrl();if(!url)return;
-      try{await navigator.clipboard.writeText(url);status.textContent='Clean KONA link copied.';e.currentTarget.textContent='Copied';}catch{status.textContent='Could not copy automatically. Use Share to apps… instead.';}
+      const button=e.currentTarget;
+      try{await navigator.clipboard.writeText(url);status.textContent='Clean KONA link copied.';button.textContent='Copied';}catch{status.textContent='Could not copy automatically. Use Share to apps… instead.';}
     });
   };
 
+  root.querySelector('[data-studio-home]')?.addEventListener('click',()=>onBack?.());
   root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
   root.querySelector('[data-race-self-action="tour"]')?.addEventListener('click',()=>openTour?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
@@ -264,5 +266,5 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
-  return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();root.removeEventListener('keydown',handleKey);};
+  return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();document.removeEventListener('keydown',handleKey);};
 }

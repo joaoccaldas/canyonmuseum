@@ -33,6 +33,8 @@ jobs:
         run: |
           node tools/build_pages.mjs
           node tools/build_app.mjs
+      - name: Confirm committed generated artifacts
+        run: git diff --exit-code -- app sw.js '*.html' web/dist
       - name: Unit and consumer compilation contracts
         run: npm test
         working-directory: web

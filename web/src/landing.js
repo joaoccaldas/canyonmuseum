@@ -1,4 +1,5 @@
-// landing.js — the Speedmax Museum, Kona. A sunlit, walkable gallery along "the Queen K":
+// landing.js — KONA. A sunlit, walkable gallery along "the Queen K":
+import { eventEnabled } from './engine/event-visibility.js';
 import { roomAccess } from './engine/access.js';
 // every Speedmax generation on a lava-stone plinth in timeline order, the two MY2027
 // flagships in an apse facing the ocean. Walk (WASD / tap the floor), look (drag),
@@ -31,12 +32,14 @@ import { initArtWorld } from './artworld.js';
 import { microNoise } from './tex.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { coarse as dc, small as ds } from './detect.js';
+import { readPassportState, savePassportState } from './engine/passport-state.js';
+import { applyStoredEvent } from './engine/progression.js';
 
 const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
 const spinners = [];                                                 // slowly turning sculptures and hung bikes
 const KONA = window.__KONA || { titles: [], machines: [], scenery: [] };
-const WROOMDATA = window.__WYLDROOM || null;
+const WROOMDATA = eventEnabled('wyld') ? window.__WYLDROOM || null : null;
 const BRANDROOMS = window.__BRANDROOMS?.rooms || [];
 const KY = window.__KONAYEARS || null;                                // Kona by Year: the pier
 const WYLD = { pink: '#ff3d8e', blush: '#ff8fbf', lilac: '#e9cde8', mint: '#8fe7dc', aqua: '#5fd8d3' };
@@ -63,6 +66,7 @@ const ROOM = { x0: -19.3, x1: -7.3, z0: -8.8, z1: -25.6, h: 4.6 };
 // WYLD room, second doorway: a bright loft with a window onto Kailua Pier
 const WDOOR = { z0: -30.8, z1: -27.6, h: 3.4 };
 const WROOM = { x0: -23.3, x1: -7.3, z0: -26.6, z1: -45.4, h: 5.2 };
+const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const STEP = 5.4, FIRST = -1;
 const TILT = .38;                                                   // plinths turn toward the approaching visitor
 const heritage = PIECES.filter(p => !p.flagship), flagships = PIECES.filter(p => p.flagship);
@@ -94,8 +98,8 @@ function walkable(x, z) {
   const inHall = x >= WALK.x0 && x <= WALK.x1 && z <= WALK.z0 && z >= WALK.z1;
   const inDoor = x < WALK.x0 + .1 && x > ROOM.x1 - .6 && z < DOOR.z1 - .45 && z > DOOR.z0 + .45;
   const inRoom = x > ROOM.x0 + .6 && x < ROOM.x1 - .4 && z < ROOM.z0 - .6 && z > ROOM.z1 + .6;
-  const inDoor2 = x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
-  const inWyld = x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
+  const inDoor2 = !!WROOMDATA && x < WALK.x0 + .1 && x > WROOM.x1 - .6 && z < WDOOR.z1 - .45 && z > WDOOR.z0 + .45;
+  const inWyld = !!WROOMDATA && x > WROOM.x0 + .7 && x < WROOM.x1 - .4 && z < WROOM.z0 - .6 && z > WROOM.z1 + .6;
   const inBrand = brandRooms.some(r => r.walkable(x, z));
   if (!inHall && !inDoor && !inRoom && !inDoor2 && !inWyld && !inBrand && !(KY && pierWalkable(x, z)) && !hweenWalkable(x, z, WALK) && !sanctuaryWalkable(x, z) && !galleryWalkable(x, z) && !atlas.walkable(x, z)) return false;
   for (const o of obstacles) {
@@ -202,6 +206,8 @@ for (const [a, b] of [[HALL.z0, HDOOR.z1], [HDOOR.z0, DOOR.z1], [DOOR.z0, WDOOR.
   lintel.position.set(HALL.x0 - .15, DOOR.h + (HALL.h - DOOR.h) / 2, (DOOR.z0 + DOOR.z1) / 2); hall.add(lintel);
   const l2 = lintel.clone(); l2.position.z = (WDOOR.z0 + WDOOR.z1) / 2; hall.add(l2);
   const l3 = lintel.clone(); l3.position.z = (HDOOR.z0 + HDOOR.z1) / 2; hall.add(l3); }
+// Held special events leave a continuous hall wall, without a teaser door.
+if(!WROOMDATA){const wall=new THREE.Mesh(new THREE.BoxGeometry(.3,DOOR.h,WDOOR.z1-WDOOR.z0),M.plaster);wall.position.set(HALL.x0-.15,DOOR.h/2,(WDOOR.z0+WDOOR.z1)/2);wall.receiveShadow=wall.castShadow=true;hall.add(wall);}
 // north wall, with the doorway into Sanctuary
 for (const [a, b] of [[HALL.x0, SDOOR.x0], [SDOOR.x1, HALL.x1]]) {
   const seg = new THREE.Mesh(new THREE.BoxGeometry(b - a, HALL.h, .3), M.plaster);
@@ -1031,17 +1037,9 @@ const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 $('nearby')?.addEventListener('click', () => { if (nearbyPiece) { haptic(8); visit(nearbyPiece); } });
 
 // ------------------------------------------------------------------ local-first Museum Passport
-const PASSPORT_KEY = 'speedmax.passport.v1';
-function readPassport() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(PASSPORT_KEY) || 'null');
-    if (raw?.v === 1 && Array.isArray(raw.discoveries)) return raw;
-  } catch (_) { }
-  return { v: 1, discoveries: [], visits: 0, pose: null };
-}
-const passport = readPassport();
+const passport = readPassportState();
 function writePassport() {
-  try { localStorage.setItem(PASSPORT_KEY, JSON.stringify(passport)); } catch (_) { }
+  try { Object.assign(passport, savePassportState(passport)); } catch (_) { toast('Progress could not be saved on this device'); }
 }
 function passportProgress() {
   const total = modelled.length;
@@ -1052,6 +1050,7 @@ function passportProgress() {
 function discover(p) {
   if (!p?.key || !p.glb || passport.discoveries.includes(p.key)) return false;
   passport.discoveries.push(p.key); writePassport();
+  try { applyStoredEvent({ type: 'PRODUCT_VIEWED', subject: p.key, discovery: `bike:${p.key}` }); } catch (_) { }
   const { seen, total } = passportProgress();
   if (started) toast(`Museum Passport · discovered ${p.name} · ${seen}/${total}`);
   return true;
@@ -1071,7 +1070,6 @@ $('passportBtn')?.addEventListener('click', () => {
 });
 passportProgress();
 
-const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const roomOf = (x, z) => {
   const art = window.__museumArt?.regionOf?.(x, z); if (art) return art;
   if (atlas.inside(x, z)) return 'gallery';                         // the data-built wings are part of the upper floor
@@ -1412,6 +1410,7 @@ function enter() {
   const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld', 'pier', 'hween'].includes(passport.pose.region)
     && walkable(passport.pose.x, passport.pose.z);
   passport.visits = (passport.visits || 0) + 1;
+  try { applyStoredEvent({ type: 'FIRST_VISIT', id: 'FIRST_VISIT:museum' }); } catch (_) { }
   if (returning) {
     P.x = passport.pose.x; P.z = passport.pose.z; P.yaw = passport.pose.yaw || 0; P.pitch = passport.pose.pitch ?? -.04;
     path = null;
@@ -1449,7 +1448,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
   const AREA_COLOR = { hall: '#eadfca', sanctuary: '#d7c7e6', hween: '#f0a86c', kona: '#e2b27c', wyld: '#ffc4dd', pier: '#cfe4e2', stair: '#dcd6cb', nave: '#ece6da', ...Object.fromEntries(brandRooms.map(r => [r.desc.id, r.desc.theme?.accent || '#c9a13b'])) };
   const R = (id, name, sub, rect, floor, color, extra = {}) => ({ id, name, sub, x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1, floor, color, ...extra });
   const liveAreas = [
-    ...['hall', 'sanctuary', 'hween', 'kona', 'wyld', ...(pier ? ['pier'] : []), 'stair', 'nave'].map(id => {
+    ...['hall', 'sanctuary', 'hween', 'kona', ...(WROOMDATA?['wyld']:[]), ...(pier ? ['pier'] : []), 'stair', 'nave'].map(id => {
       const w = WORDS[id], rect = { hall: HALL, sanctuary: SROOM, hween: HROOM, kona: ROOM, wyld: WROOM, pier: pier && { x0: PIER.x0, x1: PIER.x1, z0: PIER.z0, z1: PIER.z1 }, stair: { x0: 7.35, x1: 12.3, z0: .75, z1: 6.55 }, nave: { x0: 7.5, x1: 16.5, z0: 5.55, z1: 27.2 } }[id];
       return R(id, w?.short || id, w?.sub || '', rect, w?.floor || 'ground', AREA_COLOR[id], id === 'stair' || id === 'nave' ? { layer: 0 } : {});
     }),
@@ -1893,7 +1892,7 @@ onFontsReady();
 initAppShell();
 // progressive loading: the hall first (loadAll), then each room in the background, with a quiet status chip
 {
-  const steps = [['the WYLD Room', loadWyldBikes], ['Lava Night', loadHweenBike], ['the Sanctuary', loadSanctuaryBikes], ['the Champions room', loadKonaMachines], ['the upper floor', loadThemeBikes], ['the wings', () => atlas.load(loader)], ['the brand rooms', loadBrand]];
+  const steps = [...(WROOMDATA?[['the WYLD Room',loadWyldBikes]]:[]), ['Lava Night', loadHweenBike], ['the Sanctuary', loadSanctuaryBikes], ['the Champions room', loadKonaMachines], ['the upper floor', loadThemeBikes], ['the wings', () => atlas.load(loader)], ['the brand rooms', loadBrand]];
   const chip = $('bgload'), say = t => { if (chip) { chip.hidden = false; chip.querySelector('span').textContent = t; } };
   let chain = loadAll();
   let offline = false;

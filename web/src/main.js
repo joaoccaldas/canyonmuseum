@@ -1,3 +1,4 @@
+import {eventEnabled} from './engine/event-visibility.js';
 import {makeSpecs} from './specs.js';
 import {makeWorkshop} from './workshop.js';
 import {makeZipp} from './wheels.js';
@@ -375,6 +376,7 @@ function buildTunnel() {
 // ------------------------------------------------------------------ configurator
 function applyCfg() {
   const c = S.cfg;
+  if(!eventEnabled('wyld')&&c.wyld){Object.assign(c,PRESETS.aurora,{preset:'aurora',wyld:false});}
   if(PROFILE.unavailableOptions?.includes('rearBottles'))c.rearBottles=false;
   // Wyld procedural dye skin (chained after any artwork projection shader).
   const wp = { darkness: c.wyldDark || 0, sheer: c.wyldSheer || 0, opacity: c.wyldAlpha ?? 1 };

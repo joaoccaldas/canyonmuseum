@@ -1,6 +1,7 @@
 // engine/items.js — collection projections over canonical personal state.
 // No independent persistence. Finds are defined by the generated game registry and
 // collected state comes only from Progression.
+import { contentVisible } from './event-visibility.js';
 import { FIND_REGISTRY } from '../generated/game-config.js';
 
 const clean = value => String(value || '').replace(/^(?:product|bike|part|find|kona|relic):/, '');
@@ -12,7 +13,7 @@ export function findById(id){return FIND_ITEMS.find(x=>x.id===id)||null;}
 
 export function findCollection(snapshot={}){
   const engine=snapshot.progression_engine||{};
-  const found=new Set(Array.isArray(engine.discoveries)?engine.discoveries:[]);
+  const found=new Set([...(Array.isArray(engine.discoveries)?engine.discoveries:[]),...Object.keys(snapshot.progression?.stamps||{})]);
   const acquisitions=Array.isArray(engine.acquisitions)?engine.acquisitions:[];
   const byAcquisition=new Map(acquisitions.map(x=>[x.item_id,x]));
   return FIND_ITEMS.map(item=>Object.freeze({
@@ -40,7 +41,7 @@ export function itemCollection(snapshot = {}) {
   const rows = [];
   const seen = new Set();
   const push = item => {
-    if (!item?.id || seen.has(item.id)) return;
+    if (!item?.id || !contentVisible(item) || seen.has(item.id)) return;
     seen.add(item.id); rows.push(item);
   };
 
@@ -77,9 +78,7 @@ export function itemCollection(snapshot = {}) {
     });
   }
 
-  const discoveries = Array.isArray(snapshot.progression_engine?.discoveries)
-    ? snapshot.progression_engine.discoveries
-    : Object.keys(snapshot.progression?.stamps || {});
+  const discoveries = [...new Set([...(snapshot.progression_engine?.discoveries||[]), ...Object.keys(snapshot.progression?.stamps||{}), ...(snapshot.progression?.discoveries||[]).map(id=>'bike:'+id)])];
   for (const id of discoveries) {
     const raw=String(id);
     if(findById(raw))continue;

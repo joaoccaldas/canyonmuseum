@@ -1,6 +1,7 @@
 // engine/catalog.js — the runtime join of every injected source into one app catalog.
 // landing.template.html injects window.__PRODUCTS (public catalog), __CANDIDATES__ (intake)
 // and __BRANDROOMS__ (room placement). Catalog is the one place the UI asks for products.
+import { contentVisible } from './event-visibility.js';
 import { resolveProduct, listProducts, productsForSlot, collectibles } from './product.js';
 
 function sources() {
@@ -11,7 +12,7 @@ function sources() {
   };
 }
 
-export const getProduct = id => resolveProduct(id, sources());
+export const getProduct = id => {const p=resolveProduct(id,sources());return p&&contentVisible(p)?p:null;};
 
 let publicCatalogPromise = null;
 export function loadPublicCatalog() {
@@ -26,13 +27,13 @@ export async function getPublicProduct(id) {
   const local = getProduct(id);
   if (local) return local;
   const data = await loadPublicCatalog();
-  return (data.products || []).find(p=>p.id===id) || null;
+  return (data.products || []).find(p=>p.id===id&&contentVisible(p)) || null;
 }
 
-export const allProducts = () => listProducts(sources());
+export const allProducts = () => listProducts(sources()).filter(contentVisible);
 export const roomProducts = roomId => allProducts().filter(p => p.room === roomId);
-export const forSlot = slot => productsForSlot(slot, sources());
-export const collection = () => collectibles(sources());
+export const forSlot = slot => productsForSlot(slot, sources()).filter(contentVisible);
+export const collection = () => collectibles(sources()).filter(contentVisible);
 
 // Grouped, human-readable summary for the Explore panel: brands with their live products.
 export function catalogOverview() {

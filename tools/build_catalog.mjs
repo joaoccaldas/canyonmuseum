@@ -7,6 +7,7 @@
 //   assets/kona-years/bikes/*/build-meta.json        the two champions' machines
 //   museum/atlas/bikes.json                          every non-Canyon bike, type study and studio design
 //   museum/skins/museum.json                         archive finishes (Canyon)
+import { contentVisible } from '../web/src/engine/event-visibility.js';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -73,9 +74,9 @@ const edition = (group, id, name, sub, skin, text, where) => products.push({
   facts: [{ cls: 'I', text: `A Speedmax CFR in the ${sub} livery, as shown in ${where}. The frame is the CFR model; only the paint is the edition's.` }],
   skins: [skin], sources: [{ label: 'Livery', file: group === 'film' ? 'museum/themes/films.json' : group === 'wyld' ? 'museum/wyld_room.json' : 'museum/skins/museum.json' }],
 });
-for (const f of J('museum/themes/films.json').films)
+for (const f of J('museum/themes/films.json').films.filter(contentVisible))
   edition('film', f.id, f.name, `${f.film} · ${f.persona}`, { id: `film-${f.id}`, name: f.name, kind: 'dye', dye: { stops: f.stops, angle: f.angle, scale: f.scale, flow: f.flow, darkness: f.darkness || 0 } }, f.tagline, 'the Sanctuary');
-for (const v of J('museum/wyld_room.json').variants)
+for (const v of J('museum/wyld_room.json').variants.filter(v=>contentVisible({edition:'wyld'})))
   edition('wyld', v.id, v.name, v.sub, { id: `wyld-${v.id}`, name: v.name, kind: 'dye', decalDark: v.decal, finish: { roughness: v.wyld?.sheer > .5 ? .18 : .3, metalness: .15, clearcoat: 1 }, dye: v.wyld }, v.text, 'the WYLD Room');
 for (const sk of skins.filter(x => ['galleries', 'lava-night', 'artworld'].includes(x.group)))
   edition(sk.group, sk.id.replace(/^(theme|art)-/, ''), sk.group === 'galleries' ? `${sk.name} room CFR` : sk.name, sk.name, { ...sk, group: undefined }, sk.note || '', sk.group === 'galleries' ? `the ${sk.name} room` : sk.group === 'lava-night' ? 'Lava Night' : 'the Secret Collection');

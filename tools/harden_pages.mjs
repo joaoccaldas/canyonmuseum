@@ -17,7 +17,7 @@ const CSP_BASE = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org",
-  "connect-src 'self' data: blob: https://mtvpnoqwjpoqaiocrklq.supabase.co https://upload.wikimedia.org https://thumb.wikimedia.org",
+  "connect-src 'self' data: blob: https://api.weather.gov https://mtvpnoqwjpoqaiocrklq.supabase.co https://upload.wikimedia.org https://thumb.wikimedia.org",
   "media-src 'self' data: blob:",
   "worker-src 'self' blob:",
   "object-src 'none'", "base-uri 'self'", "form-action 'none'",

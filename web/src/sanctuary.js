@@ -84,7 +84,7 @@ export function buildSanctuary(ctx) {
 
   const sign = lettering(3.4, .85, g => {
     g.fillStyle = '#12181d'; g.font = `700 .14px ${FONT}`; g.letterSpacing = '.06px'; g.fillText('SANCTUARY', 0, .28);
-    g.fillStyle = '#6d6458'; g.font = `italic 400 .26px ${SERIF}`; g.letterSpacing = '0px'; g.fillText('Eight films, one chapel', 0, .68);
+    g.fillStyle = '#6d6458'; g.font = `italic 400 .26px ${SERIF}`; g.letterSpacing = '0px'; g.fillText(`${SPECS.length} films, one chapel`, 0, .68);
   }, 1024);
 
   const creed = lettering(5.2, .7, g => {

@@ -92,14 +92,14 @@ export async function renderProgressSurface(root,{settings,admin=false}={}) {
   if(!user){
     account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note" for="passportEmail">Email for a one-time sign-in link</label><input id="passportEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" class="ui-input passport-email"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
     status.textContent='Play without an account, or sign in only for cross-device backup.';
-    account.querySelector('[data-login]')?.addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('button');btn.disabled=true;try{await sendMagicLink(new FormData(e.currentTarget).get('email'));status.textContent='Check your email and open the sign-in link on this device.';e.currentTarget.hidden=true;}catch(err){status.textContent=err.message||'Could not send sign-in link.';btn.disabled=false;}});
+    account.querySelector('[data-login]')?.addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget;const btn=form.querySelector('button');btn.disabled=true;try{await sendMagicLink(new FormData(form).get('email'));status.textContent='Check your email and open the sign-in link on this device.';form.hidden=true;}catch(err){status.textContent=err.message||'Could not send sign-in link.';btn.disabled=false;}});
     return;
   }
 
   status.textContent='Signed in as '+(user.email||'beta user')+'. Backup and restore are explicit.';
   account.insertAdjacentHTML('beforeend','<div class="kona-list"><article><i>↑</i><div><b>Back up this device</b><span>Save progress, collection, setup and Garage.</span></div><button type="button" data-backup>Back up</button></article><article><i>↓</i><div><b>Restore from cloud</b><span>Replace this device with your latest backup.</span></div><button type="button" data-restore>Restore</button></article><article><i>↪</i><div><b>Sign out</b><span>Local progress stays on this device.</span></div><button type="button" data-signout>Sign out</button></article></div>');
-  account.querySelector('[data-backup]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await backupGameState();status.textContent='Cloud backup saved.';}catch(err){status.textContent=err.message;}finally{e.currentTarget.disabled=false;}});
-  account.querySelector('[data-restore]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await restoreGameState();status.textContent='Cloud state restored. Reloading…';location.reload();}catch(err){status.textContent=err.message;e.currentTarget.disabled=false;}});
+  account.querySelector('[data-backup]')?.addEventListener('click',async e=>{const button=e.currentTarget;button.disabled=true;try{await backupGameState();status.textContent='Cloud backup saved.';}catch(err){status.textContent=err.message;}finally{button.disabled=false;}});
+  account.querySelector('[data-restore]')?.addEventListener('click',async e=>{const button=e.currentTarget;button.disabled=true;try{await restoreGameState();status.textContent='Cloud state restored. Reloading…';location.reload();}catch(err){status.textContent=err.message;button.disabled=false;}});
   account.querySelector('[data-signout]')?.addEventListener('click',async()=>{await signOut();await renderMeSurface(root,{settings});});
 }
 

@@ -50,8 +50,8 @@ body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:
 .avatar-archetype b{font-size:14px}.avatar-archetype span{font-size:12px;line-height:1.4;color:var(--brand-muted)}
 .avatar-slot-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}.avatar-slot-title small{margin:0}.avatar-slot-title span{font:500 12px/1.3 var(--sans);color:var(--brand-muted)}
 .avatar-item-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.avatar-item-tools label,.avatar-item-tools button{min-height:44px;border:1px solid var(--brand-line);border-radius:8px;background:var(--brand-surface);color:var(--brand-ink);padding:7px 9px;font:500 12px/1.3 var(--sans)}
-.avatar-item-tools label{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1}.avatar-item-tools input[type=color]{width:34px;height:30px;padding:0;border:0;background:transparent}
+.avatar-item-tools label,.avatar-item-tools button{min-height:48px;border:1px solid var(--brand-line);border-radius:8px;background:var(--brand-surface);color:var(--brand-ink);padding:7px 9px;font:500 12px/1.3 var(--sans)}
+.avatar-item-tools label{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1}.avatar-item-tools input[type=color]{width:48px;height:48px;padding:0;border:0;background:transparent}
 .avatar-upload{position:relative;overflow:hidden}.avatar-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .avatar-builder-note{margin:0;font:500 12px/1.5 var(--sans);color:var(--brand-muted)}
 .hub-swatches,.avatar-options{display:flex;flex-wrap:wrap;gap:8px}
@@ -61,7 +61,6 @@ body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:
 .avatar-options button.on,.avatar-archetype.on{border-color:var(--brand-ink);box-shadow:inset 0 0 0 1px var(--brand-ink)}
 .avatar-options i{flex:0 0 24px;height:24px;border-radius:4px;background:var(--slot-color)}
 .hub-drawer :focus-visible{outline-color:var(--brand-ink)}
-body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none}
 @media(max-width:599px){.studio-save-state{font-size:0}.studio-save-state::after{content:'● Local save';font-size:11px}.studio-wordmark{gap:10px}.studio-wordmark span{padding-left:10px;font-size:10px}.studio-destinations>button{padding:10px 8px;gap:6px}.studio-destinations i{flex-basis:20px;font-size:18px}.studio-destinations em{display:none}.studio-destinations b{font-size:12px}}
 @media(min-width:900px){
  .race-self-experience{grid-template-columns:clamp(200px,19vw,280px) minmax(0,1fr) clamp(210px,20vw,290px);grid-template-rows:88px minmax(0,1fr);padding-inline:32px;column-gap:24px}
@@ -150,3 +149,6 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
  .studio-stage-caption{padding-bottom:4px}
  .studio-stage-caption small{display:none}
 }
+
+.studio-home{color:var(--stage-ink);min-width:48px;white-space:nowrap}
+@media(max-width:340px){.studio-wordmark span{display:none}.studio-heading{gap:8px}}

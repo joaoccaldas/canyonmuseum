@@ -1,5 +1,6 @@
 // KONA entry. HTML is already on screen. This file does not import Three.js.
 // The museum runtime loads only after the visitor chooses to explore.
+import { mountCountdown } from './ui/countdown.js';
 import { renderEntryProductStage } from './ui/visual-primitives.js';
 import { createProfile, QUALITY, AVATARS } from './engine/profile.js';
 import { initSettings } from './ui/settings.js';
@@ -28,7 +29,7 @@ const settingsUI = initSettings({
   onQuality:id=>window.__konaWorldSettings?.onQuality?.(id) ?? true,
   onSound:on=>window.__konaWorldSettings?.onSound?.(on),
   onMotion:()=>window.__konaWorldSettings?.onMotion?.() ?? true,
-  sync:{available:true,start:async()=>{settingsUI.close();await enterApp('me');document.querySelector('[data-race-self-action=passport]')?.click();}},
+  sync:{available:true,start:async()=>{settingsUI.close();await enterApp('me');document.querySelector('[data-race-self-action=progress]')?.click();}},
 });
 window.__konaSettingsUI = settingsUI;
 
@@ -57,7 +58,7 @@ function loadStyle(href,group='app') {
     link.rel='stylesheet'; link.href=href; link.dataset.styleScope=group;
     if(!managedStyles.has(group))managedStyles.set(group,new Set());
     managedStyles.get(group).add(link);
-    link.onload=()=>{syncManagedStyles();resolve(link);}; link.onerror=()=>reject(new Error(href));
+    link.onload=()=>{syncManagedStyles();resolve(link);}; link.onerror=()=>{loads.delete(key);managedStyles.get(group)?.delete(link);link.remove();reject(new Error(href));};
     document.head.append(link);syncManagedStyles();
   });
   loads.set(key,pending);
@@ -69,7 +70,7 @@ function loadScript(src) {
     const s = document.createElement('script');
     s.src = src;
     s.onload = () => resolve();
-    s.onerror = () => reject(new Error(src));
+    s.onerror = () => { loads.delete(src); s.remove(); reject(new Error(src)); };
     document.body.append(s);
   });
   loads.set(src, pending);
@@ -92,24 +93,14 @@ const ensureWorldShell = () => {
       const t=document.createElement('template'); t.innerHTML=html.trim();
       const anchor=document.getElementById('appSheet');
       document.body.insertBefore(t.content,anchor||document.body.firstChild);
-    });
+    }).catch(error=>{worldShellReady=null;throw error;});
   return worldShellReady;
 };
 let museumDataReady = null;
-const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js'));
+const ensureMuseumData = () => museumDataReady || (museumDataReady = loadScript('app/museum-data.js').catch(error=>{museumDataReady=null;throw error;}));
 
-function daysUntil(iso) {
-  const n = Math.ceil((new Date(iso + 'T12:00:00') - Date.now()) / 86400000);
-  return Number.isFinite(n) ? Math.max(0, n) : null;
-}
-
-function paintCount() {
-  const el = document.getElementById('konaCount');
-  const event = window.__ENTRY_EVENT || {};
-  if (!el || !event.date) return;
-  const days = daysUntil(event.date);
-  el.textContent = days === 0 ? 'Race day in Kona' : days === 1 ? 'Kona in 1 day' : `Kona in ${days} days`;
-}
+let disposeCount=null;
+function paintCount(){disposeCount?.();const host=document.querySelector('.entry-race-clock');if(host)disposeCount=mountCountdown(host,window.__ENTRY_EVENT||{});}
 
 let opening = null;
 function openMuseum(room) {
@@ -256,5 +247,5 @@ const shared=decodeShare(q.get('kona'));
 if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
 else if (authReturned && existingRaceIdentity()) enterApp('home');
-else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=passport]')?.click());
+else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=progress]')?.click());
 else if (returningVisit && ['home','garage','collection','discover','plan','me','feed','travel'].includes(q.get('view'))) enterApp(q.get('view'));

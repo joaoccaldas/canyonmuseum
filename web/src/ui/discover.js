@@ -1,3 +1,4 @@
+import previews from '../../../museum/entry-catalog.json' with {type:'json'};
 import { loadPublicCatalog } from '../engine/catalog.js';
 // ui/discover.js — lightweight editorial discovery. Loads public JSON only on intent.
 // 3D remains an explicit deeper action.
@@ -26,9 +27,9 @@ export async function renderDiscoverSurface(root,{enter}={}){
   const feed=root.querySelector('[data-discover-feed]');
   if(!feed)return;
   const items=[
-    ...products.map(p=>({kicker:p.product_type||'Machine',title:[p.brand,p.label||p.model].filter(Boolean).join(' '),sub:p.year?String(p.year):p.representation||''})),
-    ...places.map(p=>({kicker:'Place',title:p.name,sub:p.region||p.purpose||''}))
+    ...products.map(p=>({kicker:p.product_type||'Machine',title:[p.brand,p.label||p.model].filter(Boolean).join(' '),sub:p.year?String(p.year):p.representation||'',image:previews.bikes.find(x=>x.id===p.id)?.image,href:'Studio.html?p='+encodeURIComponent(p.id),action:'Inspect the machine'})),
+    ...places.map(p=>({kicker:'Place',title:p.label||p.name,sub:p.region||p.purpose||'',image:'assets/kona-years/kailua-bay.jpg',href:(p.source_records||[]).find(x=>/^https:\/\//.test(x)),action:'Read the source'}))
   ];
   feed.innerHTML='<div class="kona-section-head"><h3>Start anywhere</h3><small>'+items.length+' THINGS</small></div>'+
-    '<div class="kona-discover-feed">'+items.map(x=>'<article class="artifact artifact--label"><small>'+esc(x.kicker)+'</small><b>'+esc(x.title)+'</b><span>'+esc(x.sub)+'</span></article>').join('')+'</div>';
+    '<div class="kona-discover-feed">'+items.map(x=>'<article class="artifact artifact--label">'+(x.image?'<img class="discover-thumb" loading="lazy" src="'+esc(x.image)+'" alt="">':'')+'<small>'+esc(x.kicker)+'</small><b>'+esc(x.title)+'</b><span>'+esc(x.sub)+'</span>'+(x.href?'<a class="btn-secondary" href="'+esc(x.href)+'">'+esc(x.action)+' →</a>':'')+'</article>').join('')+'</div>';
 }

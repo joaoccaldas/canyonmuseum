@@ -16,9 +16,12 @@ if (!fs.existsSync(manifestPath)) errors.push('app/app-manifest.json missing fro
 else {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   for (const rel of manifest.core || []) {
-    if (!exists(rel)) { errors.push(`SW core file not staged: ${rel}`); continue; }
+    if (!manifest.files?.[rel]) errors.push(`SW core checksum missing: ${rel}`);
+  }
+  for (const [rel, expected] of Object.entries(manifest.files || {})) {
+    if (!exists(rel)) { errors.push(`SW release file not staged: ${rel}`); continue; }
     const digest=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,rel))).digest('base64');
-    if(digest!==manifest.files?.[rel]) errors.push(`SW core integrity mismatch: ${rel}`);
+    if(digest!==expected) errors.push(`SW release integrity mismatch: ${rel}`);
   }
 }
 

@@ -29,9 +29,12 @@ for(const id of selected){
   await p.evaluateOnNewDocument(theme=>{if(!localStorage.getItem('kona.profile.v1'))localStorage.setItem('kona.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced'}));},theme);
   const prefix=id+'-'+theme;
   const click=async selector=>{
+    if(selector.startsWith('[data-race-self-action='))await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
+    await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     const el=await p.waitForSelector(selector,{visible:true});
     assert.equal(await el.evaluate(e=>!!e.disabled),false,'Disabled action: '+selector);
-    await el.scrollIntoView();
+    await el.evaluate(e=>e.scrollIntoView({block:'center',inline:'center',behavior:'instant'}));
+    await p.waitForFunction(selector=>{const e=document.querySelector(selector),r=e?.getBoundingClientRect();return r&&r.width>0&&r.height>0&&r.right>0&&r.left<innerWidth;},{},selector);
     if(id==='desktop')await el.click();else await el.tap();
   };
   const text=selector=>p.$eval(selector,e=>e.textContent||'');
@@ -52,20 +55,20 @@ for(const id of selected){
       await enter();await inventory('landing');await click('#buildSelf');
       await p.waitForSelector('[data-onboarding-question]');await inventory('onboarding');
       await p.screenshot({path:path.join(out,prefix+'-onboarding.png')});
-      for(const answer of ['dreaming','never','ocean'])await click('[data-onboarding-answer="'+answer+'"]');
+      for(const answer of ['dreaming','never','ocean','seen','review'])await click('[data-onboarding-answer="'+answer+'"]');
       await p.waitForSelector('.registration-avatar');
       const data=await p.evaluate(()=>({answers:JSON.parse(localStorage.getItem('kona.entryIntent.v1')),progress:JSON.parse(localStorage.getItem('kona.progression.v1'))}));
       assert.equal(data.answers.answers['kona-intent'],'dreaming');assert.equal(data.answers.completed,true);
-      assert.equal(data.progress.xp,45);assert.equal(data.progress.level,2);
+      assert.equal(data.progress.xp,75);assert.equal(data.progress.level,2);
       await click('[data-reg-back]');await click('#buildSelf');
       await p.waitForSelector('.registration-avatar');
       assert.equal(await p.$('[data-onboarding-question]'),null,'one-time onboarding cards must not replay');
       assert.equal(await p.evaluate(()=>localStorage.getItem('kona.onboarding.cards.v1')),'seen');
-      assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')).xp),45);
+      assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')).xp),75);
     });
     await step('avatar registration choices persist and first-run tour can finish',async()=>{
       await click('[data-reg-archetype="aero"]');await click('[data-reg-trisuit="aero-panel"]');
-      await click('[data-reg-continue]');await waitHome();
+      await click('[data-reg-continue]');await p.waitForSelector('.onboarding-handoff');await inventory('install-rotate-handoff');await p.screenshot({path:path.join(out,prefix+'-handoff.png')});await click('[data-handoff-continue]');await waitHome();
       await p.waitForSelector('.kona-tour');
       for(let i=0;i<4;i++)await click('[data-tour-next]');
       await p.waitForFunction(()=>!document.querySelector('.kona-tour'));
@@ -82,7 +85,7 @@ for(const id of selected){
     await step('race search and all three relationship buttons save and select visibly',async()=>{
       await click('[data-race-self-action="races"]');await p.waitForSelector('[data-race-results] .race-card');
       await p.type('[data-race-search]','Kona');
-      await p.waitForFunction(()=>document.querySelector('[data-race-results] .race-card h4')?.textContent.toLowerCase().includes('kona'));
+      await p.waitForFunction(()=>document.querySelector('[data-race-results] .race-card')?.dataset.raceId.includes('kona'));
       raceId=await p.$eval('[data-race-results] .race-card',e=>e.dataset.raceId);
       for(const rel of ['interested','registered','completed']){
         await click('[data-race-results] .race-card:first-child [data-race-rel="'+rel+'"]');
@@ -122,7 +125,7 @@ for(const id of selected){
     });
     await step('wardrobe item buttons, image overlay and removal update the avatar',async()=>{
       await click('[data-race-self-action="customize"]');
-      const items=await p.$$eval('[data-avatar-item]',els=>els.map(e=>e.dataset.avatarItem));
+      const items=await p.$$eval('[data-avatar-item]',els=>els.filter(e=>!e.disabled).map(e=>e.dataset.avatarItem));
       for(const value of items){await click('[data-avatar-item="'+value+'"]');assert.equal(await p.$eval('[data-avatar-item="'+value+'"]',e=>e.classList.contains('on')),true);}
       const upload=await p.$('[data-avatar-overlay="trisuit"]');await upload.uploadFile(png);
       await p.waitForSelector('[data-avatar-overlay-remove="trisuit"]');
@@ -131,10 +134,56 @@ for(const id of selected){
     });
     await step('Progress and replay-tour controls have observable outcomes',async()=>{
       await click('[data-race-self-action="progress"]');await p.waitForSelector('[data-hub-drawer]:not([hidden]) #konaAccount');
-      assert.match(await text('[data-hub-body]'),/Level road|LEVEL 2/);await inventory('Progress');
+      assert.match(await text('[data-hub-body]'),/Level road|LEVEL [23]/);await inventory('Progress');
       await click('[data-hub-close]');await click('[data-race-self-action="tour"]');
       await p.waitForSelector('.kona-tour');await click('[data-tour-skip]');await p.waitForFunction(()=>!document.querySelector('.kona-tour'));
       await click('[data-tab="me"]');
+    });
+    await step('first Find earns once, all 100 slots and filters work, and Item Studio loads the actual model',async()=>{
+      await click('[data-studio-home]');await waitHome();
+      await click('[data-first-find]');const earned=await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')));
+      assert.ok(earned.discoveries.includes('find:shore:lava'));await click('[data-home-finds]');
+      await p.waitForSelector('[data-find]');assert.equal((await p.$$('[data-find]')).length,100);
+      for(const filter of ['hidden','trade','event','all']){await click('[data-find-filter="'+filter+'"]');assert.equal(await p.$eval('[data-find-filter="'+filter+'"]',e=>e.getAttribute('aria-pressed')),'true');assert.ok((await p.$$('[data-find]')).length>0);}
+      await inventory('KONA Finds');await p.screenshot({path:path.join(out,prefix+'-finds.png')});
+      await click('[data-find="find:shore:lava"]');assert.match(await text('.find-studio'),/Perfect Volcanic Rock|Its story/);
+      await click('[data-view-find]');await p.waitForFunction(()=>document.querySelector('.find-canvas')?.__collectibleStage,{timeout:60000});
+      await p.screenshot({path:path.join(out,prefix+'-item-3d.png')});const canvas=await p.$('.find-canvas');
+      await click('[data-find-return]');assert.equal(await canvas.evaluate(c=>c.__collectibleStage),false,'return must dispose 3D');
+      const hidden=await p.$eval('[data-find]:not(.is-collected)',e=>e.dataset.find);await click('[data-find="'+hidden+'"]');
+      assert.match(await text('.find-studio'),/A story still waiting/);assert.equal(await p.$('[data-view-find]'),null,'uncollected details must remain hidden');await click('[data-find-return]');
+      await click('[data-finds-back]');await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);await click('[data-studio-home]');await waitHome();
+      assert.equal(await p.$eval('[data-first-find]',e=>e.disabled),true);
+      assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')).xp),earned.xp);
+      await click('[data-tab="me"]');await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
+    });
+    await step('countdown defaults to seconds, normal/timezone persist, and traveller brief has useful sourced links',async()=>{
+      await click('[data-studio-home]');await waitHome();assert.equal(await p.$eval('[data-countdown-value]',e=>e.dataset.countdownMode),'seconds');
+      await click('.home-today .kona-countdown-options summary');await click('.home-today [data-clock-mode="normal"]');
+      await p.select('.home-today [aria-label="Countdown timezone"]','Europe/Stockholm');
+      assert.match(await text('.home-today [data-clock-target]'),/Europe\/Stockholm/);
+      await click('[data-home-plan]');await p.waitForSelector('[data-kona-weather]');
+      assert.match(await text('#konaPanelBody'),/Land at KOA|THE INTERN|Official websites & social/);
+      assert.equal((await p.$$('.kona-brief-thumbnail')).length,2);assert.ok((await p.$$('a[href*="airports.hawaii.gov"]')).length>=3);await inventory('What matters most');
+      await click('[data-tab="home"]');await waitHome();assert.equal(await p.$eval('[data-countdown-value]',e=>e.dataset.countdownMode),'normal');
+      await click('[data-tab="me"]');await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
+    });
+    await step('sharing exports a real PNG, handles cancellation, and preserves private data',async()=>{
+      await click('[data-race-self-action="share"]');await p.waitForSelector('[data-hub-drawer]:not([hidden])');
+      assert.match(await text('[data-hub-body]'),/Share/);const links=await p.$$eval('[data-hub-body] a[href]',els=>els.map(e=>e.href));
+      assert.ok(links.every(url=>!url.includes('access_token')&&!url.includes('@')));
+      await p.evaluate(()=>{
+        window.__sharedCard=null;window.__shareCancelled=false;window.__copiedLink='';
+        Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>true});
+        Object.defineProperty(navigator,'share',{configurable:true,value:async payload=>{if(window.__shareCancelled)throw new DOMException('Cancelled','AbortError');const f=payload.files?.[0];window.__sharedCard={url:payload.url,text:payload.text,name:f?.name,size:f?.size,type:f?.type,signature:f?[...new Uint8Array(await f.arrayBuffer()).slice(0,8)]:[]};}});
+        Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.__copiedLink=text;}}});
+      });
+      await click('[data-share-progress]');await p.waitForFunction(()=>!!window.__sharedCard);
+      const card=await p.evaluate(()=>window.__sharedCard);assert.equal(card.type,'image/png');assert.ok(card.size>1000);assert.deepEqual(card.signature,[137,80,78,71,13,10,26,10]);assert.doesNotMatch(JSON.stringify(card),/access_token|@gmail|refresh_token/);
+      await click('[data-share-copy]');await p.waitForFunction(()=>document.querySelector('[data-share-copy]').textContent==='Copied');
+      assert.equal(await p.evaluate(()=>window.__copiedLink),new URL(base).origin+new URL(base).pathname);
+      await p.evaluate(()=>window.__shareCancelled=true);await click('[data-share-progress]');await p.waitForFunction(()=>document.querySelector('[data-share-status]').textContent.includes('Not shared'));
+      assert.equal(await p.$eval('[data-share-progress]',e=>e.disabled),false);await click('[data-hub-close]');
     });
     await step('Feed shortcut, category buttons, search and RSS affordance work',async()=>{
       await click('[data-race-self-action="feed"]');await p.waitForSelector('.companion-page');

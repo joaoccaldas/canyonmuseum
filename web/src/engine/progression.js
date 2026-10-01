@@ -1,14 +1,16 @@
+import { contentVisible } from './event-visibility.js';
 import { readStorage, writeStorage, storageKey } from './storage.js';
+import { readPassportState } from './passport-state.js';
 import { PROGRESSION_CONFIG, RELIC_REGISTRY, UNLOCK_REGISTRY, FIND_REGISTRY } from '../generated/game-config.js';
 // Progression runtime is generated from museum/game/*.json.
 // JSON registries are the source of truth; UI code never owns reward values.
 
 export const PROGRESSION_KEY = storageKey('progression');
 export const TIERS = Object.freeze(['visitor','passport','athlete']);
-export const LEVELS = Object.freeze((PROGRESSION_CONFIG.levels||[]).map(row=>Object.freeze({...row,unlock:row.summary||''})));
+export const LEVELS = Object.freeze((PROGRESSION_CONFIG.levels||[]).map(row=>{const summary=(row.summary||'').replace(/\s*\+\s*WYLD/g,'');return Object.freeze({...row,summary,unlock:summary,rewards:(row.rewards||[]).filter(contentVisible)});}));
 export const EVENTS = Object.freeze(PROGRESSION_CONFIG.events||{});
 const RARITY = Object.freeze(PROGRESSION_CONFIG.rarity_rewards||{});
-export const COLLECTIBLES = Object.freeze((FIND_REGISTRY.items||[]).map(x=>Object.freeze({...x})));
+export const COLLECTIBLES = Object.freeze([...(FIND_REGISTRY.items||[]),...(RELIC_REGISTRY.relics||[])].map(x=>Object.freeze({...x})));
 export const UNLOCKS = Object.freeze((UNLOCK_REGISTRY.unlocks||[]).map(x=>Object.freeze({...x})));
 export const COLLECTIONS = Object.freeze((PROGRESSION_CONFIG.collections||[]).map(x=>Object.freeze({...x})));
 export const SURPRISE_POLICY = Object.freeze(PROGRESSION_CONFIG.surprise_policy||{});
@@ -31,6 +33,7 @@ export function visibleProgression(state,{admin=false}={}){
   return Object.freeze({level,levels,rewards,admin:!!admin});
 }
 export function rewardUnlocked(state,reward,{admin=false}={}){
+  if(!contentVisible(reward))return false;
   if(admin&&ADMIN_POLICY.bypass_progression_visibility)return true;
   if(!reward)return false;
   const source=LEVELS.find(row=>(row.rewards||[]).some(x=>x.type===reward.type&&x.id===reward.id));
@@ -119,6 +122,7 @@ export function applyEvent(state, event) {
   if (event.type === 'FIND_DISCOVERED' || event.type === 'FIND_ACQUIRED') {
     const item = collectibleById(event.subject);
     if (!item) return { state: base, granted: null, error: 'unknown-collectible' };
+    if (base.discoveries.includes(item.id)) return { state: base, granted: null, duplicate: true };
     const pay = RARITY[item.rarity] || RARITY.common;
     xp = pay.xp;
     credits = pay.credits;
@@ -230,7 +234,7 @@ export function ensureProgression(storage = globalThis.localStorage) {
   if (existing) return existing;
   let passport = null;
   let finds = [];
-  try { passport = JSON.parse(readStorage('passport',storage) || 'null'); } catch (_) {}
+  passport = readPassportState(storage);
   try { finds = JSON.parse(readStorage('finds',storage) || '[]'); } catch (_) {}
   return writeProgression(migratePassport({ passport, finds }), storage);
 }

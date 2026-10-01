@@ -1,6 +1,8 @@
 /* KONA entry — product-first, one hero, no heavy 3D before intent. */
 body.entry-landing .kona-bottom-nav,
-body.entry-quest .kona-bottom-nav{display:none!important}
+body.entry-quest .kona-bottom-nav,
+body.entry-landing .kona-user-menu,
+body.entry-quest .kona-user-menu{display:none!important}
 body.entry-landing #intro,
 body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!important}
 #intro.kona-entry{
@@ -71,7 +73,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry .entry-product-nav span{min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--brand-mist);font:700 10px/1 var(--brand-font-ui,var(--sans));border-right:1px solid rgba(255,255,255,.1)}
 #intro.kona-entry .entry-product-nav span:last-child{border-right:0}
 #intro.kona-entry .entry-product-nav b{color:var(--brand-accent-2,#39c8ef);font-size:8px;letter-spacing:.12em}
-#intro.kona-entry .entry-race-clock{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:10px;padding:0 4px}
+#intro.kona-entry .entry-race-clock{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0 16px;margin-top:10px;padding:0 4px}
 #intro.kona-entry .entry-race-clock small{color:var(--brand-muted);font:750 9px/1.2 var(--brand-font-ui,var(--sans));letter-spacing:.14em}
 #intro.kona-entry .entry-race-clock strong{color:var(--brand-accent,#ff6427);font:800 11px/1.2 var(--brand-font-ui,var(--sans));letter-spacing:.12em;text-transform:uppercase}
 #intro.kona-entry #loadstate:empty{display:none}
@@ -139,7 +141,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.quest-active .kona-intents{display:grid;gap:10px;margin:22px 0 12px}
 #intro.quest-active .quest-choice{width:100%;min-height:58px;text-align:left;padding:0 18px;border-radius:16px;border:1px solid color-mix(in srgb,var(--brand-mist) 14%,transparent);background:color-mix(in srgb,var(--brand-mist) 5.5%,transparent);color:var(--brand-mist);font:650 15px/1.2 var(--brand-font-ui)}
 #intro.quest-active .quest-choice:is(:hover,:focus-visible,.on){border-color:var(--brand-action);background:color-mix(in srgb,var(--brand-action) 13%,transparent)}
-#intro.quest-active .quest-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}#intro.quest-active .quest-nav .btn-text{min-width:var(--brand-touch)}
+#intro.quest-active .quest-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}#intro.quest-active .btn-text{min-width:var(--brand-touch)}
 #intro.quest-active .btn.text{min-height:48px;color:var(--brand-mist);border-color:transparent;background:transparent}
 
 
@@ -212,7 +214,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .lede{font-size:12px;line-height:1.35;max-width:30rem}
   #intro.kona-entry .entry-actions-wrap{grid-area:actions}
   #intro.kona-entry .entry-actions{margin-top:8px;grid-template-columns:minmax(160px,1fr) auto}
-  #intro.kona-entry .entry-actions .btn{min-height:46px}
+  #intro.kona-entry .entry-actions .btn{min-height:48px}
   #intro.kona-entry .entry-trust{margin-top:4px;font-size:8px}
   #intro.kona-entry .entry-signin-note{display:none}
   #intro.kona-entry .entry-product{grid-area:product;margin:0;padding:0;border:0;min-height:0}
@@ -276,3 +278,9 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 .onboarding-handoff>.quest-nav{display:flex;justify-content:flex-end;padding:0}
 @media(max-width:620px){.onboarding-handoff{min-height:auto;padding:18px 0}.onboarding-handoff-grid{grid-template-columns:1fr}.onboarding-tip{min-height:220px}.onboarding-tip h3{font-size:30px}.onboarding-handoff>.quest-nav .btn-primary{width:100%}}
 @media(orientation:landscape) and (max-height:520px){.onboarding-handoff{min-height:auto;gap:10px}.onboarding-handoff-copy h2{font-size:38px}.onboarding-handoff-copy>p:last-child{display:none}.onboarding-handoff-grid{grid-template-columns:1fr 1fr}.onboarding-tip{min-height:190px;padding:14px}.onboarding-tip h3{font-size:26px}.onboarding-tip .btn-primary{left:14px;bottom:14px}.phone-rotate{transform:scale(.8);transform-origin:top right}}
+
+#intro.kona-entry .entry-race-clock .kona-countdown-options{font-size:10px}.entry-race-clock .kona-countdown-options summary{min-height:48px}
+
+#intro.kona-entry .entry-bike-silhouette{width:100%;height:100%;display:grid;place-items:center;color:var(--brand-muted);}
+#intro.kona-entry .entry-bike-silhouette[hidden]{display:none;}
+#intro.kona-entry .entry-bike-silhouette svg{width:85%;height:auto;fill:none;stroke:currentColor;stroke-width:3;}

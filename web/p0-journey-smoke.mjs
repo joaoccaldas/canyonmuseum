@@ -3,7 +3,7 @@ import fs from 'node:fs';import assert from 'node:assert/strict';
 const base=process.argv[2]||'http://127.0.0.1:8744/';
 const exe=process.env.CHROME_PATH||process.env.CHROME||['/opt/pw-browsers/chromium-1194/chrome-linux/chrome','/usr/bin/google-chrome','/usr/bin/chromium'].find(fs.existsSync);
 if(!exe) throw new Error('Chrome/Chromium required');
-const browser=await puppeteer.launch({executablePath:exe,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader']});
+const browser=await puppeteer.launch({executablePath:exe,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{
  const page=await browser.newPage();page.setDefaultTimeout(30000);
  await page.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
@@ -28,6 +28,7 @@ try{
  await page.click('[data-reg-archetype="aero"]');
  await page.click('[data-reg-trisuit="aero-panel"]');
  await page.click('[data-reg-continue]');
+ await page.waitForSelector('.onboarding-handoff');await page.click('[data-handoff-continue]');
  await page.waitForFunction(()=>document.querySelector('.kona-bottom-nav')&&!document.querySelector('#konaPanel').hidden);
  assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i,'first run lands directly on Home');
  assert.equal(museumHeavy().length,0,'Home must not request museum/world assets');

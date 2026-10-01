@@ -12,7 +12,7 @@
     "remote_writes": false
   },
   "counts": {
-    "products": 52,
+    "products": 47,
     "places": 9,
     "events": 1
   },
@@ -986,34 +986,6 @@
     },
     {
       "schema_version": 1,
-      "id": "edition-film-sunny-side",
-      "object_type": "product",
-      "product_type": "bike",
-      "brand": "Canyon",
-      "label": "WYLD Dye",
-      "family": "Speedmax",
-      "year": 2027,
-      "public": true,
-      "representation": "provisional",
-      "capabilities": [
-        "inspect",
-        "collect",
-        "share",
-        "customize",
-        "equip",
-        "visit"
-      ],
-      "asset": "assets/museum/speedmax_web.glb",
-      "canonical_url": null,
-      "source_records": [
-        "museum/themes/films.json"
-      ],
-      "locations": [
-        "sanctuary"
-      ]
-    },
-    {
-      "schema_version": 1,
       "id": "edition-film-sanctuary",
       "object_type": "product",
       "product_type": "bike",
@@ -1038,118 +1010,6 @@
       ],
       "locations": [
         "sanctuary"
-      ]
-    },
-    {
-      "schema_version": 1,
-      "id": "edition-wyld-dye",
-      "object_type": "product",
-      "product_type": "bike",
-      "brand": "Canyon",
-      "label": "WYLD Dye",
-      "family": "Speedmax",
-      "year": 2027,
-      "public": true,
-      "representation": "provisional",
-      "capabilities": [
-        "inspect",
-        "collect",
-        "share",
-        "customize",
-        "equip",
-        "visit"
-      ],
-      "asset": "assets/museum/speedmax_web.glb",
-      "canonical_url": null,
-      "source_records": [
-        "museum/wyld_room.json"
-      ],
-      "locations": [
-        "wyld"
-      ]
-    },
-    {
-      "schema_version": 1,
-      "id": "edition-wyld-tide",
-      "object_type": "product",
-      "product_type": "bike",
-      "brand": "Canyon",
-      "label": "WYLD Tide",
-      "family": "Speedmax",
-      "year": 2027,
-      "public": true,
-      "representation": "provisional",
-      "capabilities": [
-        "inspect",
-        "collect",
-        "share",
-        "customize",
-        "equip",
-        "visit"
-      ],
-      "asset": "assets/museum/speedmax_web.glb",
-      "canonical_url": null,
-      "source_records": [
-        "museum/wyld_room.json"
-      ],
-      "locations": [
-        "wyld"
-      ]
-    },
-    {
-      "schema_version": 1,
-      "id": "edition-wyld-sheer",
-      "object_type": "product",
-      "product_type": "bike",
-      "brand": "Canyon",
-      "label": "WYLD Sheer",
-      "family": "Speedmax",
-      "year": 2027,
-      "public": true,
-      "representation": "provisional",
-      "capabilities": [
-        "inspect",
-        "collect",
-        "share",
-        "customize",
-        "equip",
-        "visit"
-      ],
-      "asset": "assets/museum/speedmax_web.glb",
-      "canonical_url": null,
-      "source_records": [
-        "museum/wyld_room.json"
-      ],
-      "locations": [
-        "wyld"
-      ]
-    },
-    {
-      "schema_version": 1,
-      "id": "edition-wyld-night",
-      "object_type": "product",
-      "product_type": "bike",
-      "brand": "Canyon",
-      "label": "WYLD Night",
-      "family": "Speedmax",
-      "year": 2027,
-      "public": true,
-      "representation": "provisional",
-      "capabilities": [
-        "inspect",
-        "collect",
-        "share",
-        "customize",
-        "equip",
-        "visit"
-      ],
-      "asset": "assets/museum/speedmax_web.glb",
-      "canonical_url": null,
-      "source_records": [
-        "museum/wyld_room.json"
-      ],
-      "locations": [
-        "wyld"
       ]
     },
     {

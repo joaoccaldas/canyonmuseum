@@ -20,11 +20,14 @@ import { captureView, shareImage } from '../engine/share.js';
 import { initSettings } from '../ui/settings.js';
 import { SCENES, encodeLook, decodeLook, productsFor } from './model.js';
 import { createRaceSetupStore, encodeRaceSetup, decodeRaceSetup, completedSlots, setSetupSlot, RACE_SETUP_EVENT } from './race-setup.js';
+import { readStorage, writeStorage } from '../engine/storage.js';
 import { syncIdentityFromSetup } from '../engine/identity.js';
 import { renderRaceBadges } from '../ui/race-cards.js';
 
+import { eventEnabled, contentVisible } from '../engine/event-visibility.js';
+
 const $ = id => document.getElementById(id);
-const CAT = window.__PRODUCTS, FILMS = window.__FILMS?.films || [], MSKINS = window.__SKINS?.skins || [], WYLD = window.__WYLDROOM?.variants || [], EVENTS = window.__EVENTS || [];
+const CAT = {...window.__PRODUCTS,products:(window.__PRODUCTS?.products||[]).filter(contentVisible)}, FILMS = window.__FILMS?.films || [], MSKINS = window.__SKINS?.skins || [], WYLD = eventEnabled('wyld') ? window.__WYLDROOM?.variants || [] : [], EVENTS = window.__EVENTS || [];
 const profile = createProfile();
 let adminAccess=false,pendingLockedProduct=null;
 const accessForProduct=product=>productAccess(product,{state:ensureProgression(),admin:adminAccess});
@@ -37,7 +40,6 @@ const sharedSetup = decodeRaceSetup(q.get('setup'), CAT.products);
 const raceSetupStore = createRaceSetupStore();
 const event = EVENTS.find(e => e.id === (q.get('event') || sharedSetup?.event_id)) || null;
 let raceSetup = sharedSetup || raceSetupStore.load(CAT.products);
-syncIdentityFromSetup(raceSetup, CAT.products);
 
 // ---------------------------------------------------------------- renderer, camera, stage
 const canvas = $('stage');
@@ -85,7 +87,7 @@ function setScene(id, film) {
 
 // ---------------------------------------------------------------- products, looks, loading
 const cache = new Map();
-let current = null, look = null, loadToken = 0;
+let current = null, look = null, loadToken = 0, loadingProduct = false, loadedSelection = null;
 const loadModel = url => {
   if (!cache.has(url)) cache.set(url, loader.loadAsync(url).then(g => g.scene).catch(error=>{cache.delete(url);throw error;}));
   const pending=cache.get(url);cache.delete(url);cache.set(url,pending);return pending;
@@ -99,23 +101,23 @@ function trimModelCache(){
   }
 }
 async function show(product, lookIn) {
+  const token = ++loadToken; loadingProduct = true; loadedSelection = null;
   const gate=accessForProduct(product);
   if(!gate.unlocked){
     pendingLockedProduct=product;
     current?.root?.traverse(o=>{for(const m of (Array.isArray(o.material)?o.material:[o.material]))m?.dispose?.();});
-    holder.clear();current=null;$('loading').hidden=true;
+    holder.clear();current=null;loadingProduct=false;$('loading').hidden=true;
     $('heroEyebrow').textContent='LOCKED · LEVEL '+gate.requiredLevel;
     $('heroTitle').textContent=product.name;
     $('heroSub').textContent='You can inspect the facts now. The 3D bike unlocks as you explore KONA.';
     drawPanel();
-    return;
+    return false;
   }
-  pendingLockedProduct=null;
-  const token = ++loadToken; $('loading').hidden = false;
+  pendingLockedProduct=null; $('loading').hidden = false;
   $('heroEyebrow').textContent = [product.year || product.years || product.era, product.brand].filter(Boolean).join(' · ');
   $('heroTitle').textContent = product.name; $('heroSub').textContent = product.origin === 'studio-design' ? 'Studio design · only in the studio' : product.museum ? 'Also in the museum' : '';
   try {
-    const proto = await loadModel(product.glb); if (token !== loadToken) return;
+    const proto = await loadModel(product.glb); if (token !== loadToken) return false;
     const bike = proto.clone(true);
     bike.traverse(o => { if (o.isMesh) { o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); o.castShadow = true; o.receiveShadow = true; if (o.userData?.optional_accessory) o.visible = false; } });
     const b = new THREE.Box3().setFromObject(bike), c = b.getCenter(new THREE.Vector3()), size = b.getSize(new THREE.Vector3());
@@ -128,10 +130,14 @@ async function show(product, lookIn) {
     applyLook(lookIn || defaultLook(product));
     $('favBtn').setAttribute('aria-pressed', profile.get().favourites.includes(product.id)); $('favBtn').textContent = profile.get().favourites.includes(product.id) ? '♥' : '♡';
     drawPanel();resize();trimModelCache();
+    loadedSelection = product.id;
+    return true;
   } catch (e) {
+    if (token !== loadToken) return false;
     console.warn('studio load', product.id, e);
     toast(navigator.onLine === false ? 'You are offline: this bike has not been cached yet' : 'Could not load this bike · check your connection');
-  } finally { if (token === loadToken) $('loading').hidden = true; }
+    return false;
+  } finally { if (token === loadToken) { loadingProduct = false; $('loading').hidden = true; } }
 }
 const defaultLook = p => ({ skin: p.skins?.[0] || null, finish: 'gloss', custom: null });
 function skinFor(l) {
@@ -140,11 +146,12 @@ function skinFor(l) {
   return { ...base, finish: { ...fin, ...(base.finish && l.finish === 'gloss' ? base.finish : {}) } };
 }
 function applyLook(l) {
+  if(current&&!contentVisible(l?.skin))l=defaultLook(current.product);
   look = l; if (!current) return;
   const sk = skinFor(l);
   if (sk.frame || sk.dye) applySkin(current.paint, sk);
   const film = l.theme ? FILMS.find(f => f.id === l.theme) : null;
-  setScene(film ? 'film' : (q.get('scene') || sceneId), film);
+  setScene(film ? 'film' : sceneId, film);
   writeUrl();
 }
 function writeUrl() {
@@ -174,7 +181,7 @@ function drawPanel() {
     P.append(h('p', { class: 'count' }, `${list.length} of ${CAT.products.length} · ${CAT.studio_only} only in the studio`));
     P.append(h('div', { class: 'grid' }, list.map(p => {
       const sw = p.skins?.[0]?.frame || '#8e979d',gate=accessForProduct(p);
-      return h('button', { type: 'button', class: 'prod'+(gate.unlocked?'':' locked'), 'aria-current': String(current?.product === p), disabled:!gate.unlocked, 'aria-label':gate.unlocked?p.name:p.name+' · unlocks at Level '+gate.requiredLevel, onclick: gate.unlocked ? async () => { await show(p); saveCurrentToSetup({stay:true,announce:true}); if (innerWidth < 900) dock(true); } : null },
+      return h('button', { type: 'button', class: 'prod'+(gate.unlocked?'':' locked'), 'aria-current': String(current?.product === p), disabled:!gate.unlocked, 'aria-label':gate.unlocked?p.name:p.name+' · unlocks at Level '+gate.requiredLevel, onclick: gate.unlocked ? async () => { if (await show(p)) saveCurrentToSetup({stay:true,announce:true}); if (innerWidth < 900) dock(true); } : null },
         h('i', { class: 'sw', style: `background:${sw}` }), h('small', {}, [p.year || p.years || p.era, p.brand].filter(Boolean).join(' · ')), h('b', {}, p.name),
         !gate.unlocked ? h('span',{class:'tag'},'LEVEL '+gate.requiredLevel) : p.origin === 'studio-design' ? h('span', { class: 'tag' }, 'Studio only') : event?.featured?.includes(p.id) ? h('span', { class: 'tag' }, event.name) : null);
     })));
@@ -183,7 +190,7 @@ function drawPanel() {
     const dot = s => h('i', { style: `background:linear-gradient(135deg,${s.frame || '#888'} 58%,${s.accent || s.frame || '#888'} 58%)` });
     if (skins.length) P.append(h('div', { class: 'sec' }, h('h4', {}, 'Liveries for this bike'), h('div', { class: 'chips' }, skins.map(s =>
       h('button', { type: 'button', 'aria-pressed': String(look?.skin === s && !look?.custom && !look?.theme), onclick: () => { applyLook({ skin: s, finish: look.finish }); drawPanel(); } }, dot(s), s.name, h('small', {}, s.kind))))));
-    const mine = (profile.get().liveries || []);
+    const mine = (profile.get().liveries || []).filter(contentVisible);
     if (mine.length) P.append(h('div', { class: 'sec' }, h('h4', {}, 'My liveries'), h('div', { class: 'chips' }, mine.map(s =>
       h('button', { type: 'button', onclick: () => { applyLook({ skin: s, finish: look.finish }); drawPanel(); } }, dot(s), s.name)))));
     const base = skinFor(look);
@@ -231,10 +238,14 @@ function setupShareUrl() {
   return u.href;
 }
 function saveCurrentToSetup({stay=false,announce=false}={}) {
-  if (!current) return;
+  if (!current || loadingProduct) { toast('Wait for your bike to finish loading'); return; }
+  if (loadedSelection !== current.product.id) { toast('Choose a bike that loaded successfully before saving'); return; }
+  const previousSetup = readStorage('raceSetup');
   raceSetup = setSetupSlot(raceSetup, 'bike', current.product, { look:encodeLook(look), scene:sceneId }, CAT.products);
-  raceSetup = raceSetupStore.save(raceSetup, CAT.products);
-  syncIdentityFromSetup(raceSetup, CAT.products);
+  try { raceSetup = raceSetupStore.save(raceSetup, CAT.products); }
+  catch (error) { toast(error.message); return; }
+  const saved = syncIdentityFromSetup(raceSetup, CAT.products);
+  if(saved.persisted === false){writeStorage('raceSetup',previousSetup);toast('Your setup could not be saved. Previous progress was kept.');return;}
   toast(announce ? 'Bike selected for your Race Self' : 'Saved to My Kona Setup');
   if (!stay) { tab = 'setup'; dock(false); drawPanel(); }
 }
@@ -350,6 +361,9 @@ setScene(requestedScene && SCENES[requestedScene] ? requestedScene : (event ? 'k
 const start = CAT.products.find(p => p.id === (sharedSetup?.slots?.bike?.product_id || q.get('p'))) || (event && CAT.products.find(p => p.id === event.featured?.[0])) || CAT.products[0];
 const fromLink = decodeLook(sharedSetup?.slots?.bike?.configuration?.look || q.get('s'), start, FILMS);
 if (sharedSetup?.slots?.bike) tab = 'setup';
-studioAccessReady.then(()=>show(start, fromLink));
+studioAccessReady.then(()=>{
+  const initial=q.has('p')||sharedSetup?.slots?.bike ? start : CAT.products.find(p=>accessForProduct(p).unlocked)||start;
+  return show(initial, initial===start?fromLink:null);
+});
 dock(false);
 window.__studio = { CAT, show, applyLook, setDream, get current() { return current; }, get look() { return look; }, get raceSetup() { return raceSetup; }, saveCurrentToSetup, renderer, scene, camera };
