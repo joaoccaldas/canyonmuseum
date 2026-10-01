@@ -25,8 +25,8 @@
   --brand-discovery:var(--brand-ocean);
   --brand-personality:var(--brand-hibiscus);
   --brand-progress:var(--brand-lime);
-  --brand-on-accent:#fff;
-  --brand-on-action:#fff;
+  --brand-on-accent:var(--brand-lava);
+  --brand-on-action:var(--brand-lava);
   --brand-success:#2bbf88;
 
   /* one typography authority */
