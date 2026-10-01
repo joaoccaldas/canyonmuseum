@@ -23,6 +23,7 @@ export const LEVELS = [
 export const EVENTS = {
   FIRST_VISIT: { xp: 25, credits: 0 },
   ONBOARDING_ANSWER: { xp: 15, credits: 0 },
+  NUDGE_OPENED: { xp: 5, credits: 0 },
   PRODUCT_VIEWED: { xp: 5, credits: 0 },
   PRODUCT_EXPLODED: { xp: 10, credits: 0 },
   ROOM_ENTERED: { xp: 0, credits: 0 },
