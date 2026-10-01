@@ -1,5 +1,5 @@
 {
- "version": "4a5b62075f40",
+ "version": "54031ab72eb1",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -9,6 +9,7 @@
   "web/styles/entry-visual-v2.css",
   "web/styles/system.css",
   "web/styles/shell-mobile.css",
+  "web/styles/race-self.css",
   "brand/tokens.css",
   "brand/themes.css",
   "brand/artifacts.css",
@@ -19,14 +20,14 @@
   "assets/pwa/apple-touch-icon-v3.png"
  ],
  "files": {
-  "index.html": "PVP845v4Qqq5D4HUOHW2BOHGp0NkARsrC+Eid9mcOhg=",
-  "app/kona-core.js": "5LOlfw5wrx6crF8aWqp0bqjsHoWy0b/lcHZsNr3xjlw=",
+  "index.html": "0lE39iYgEW8UNg/oq9YQIgln38XQVtnxQWZlhx1F8uo=",
+  "app/kona-core.js": "J9jdc5Bo4BYsamPY/O8GnvoSWOmwCBLsCL0jubI34cU=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
   "web/styles/entry-visual-v2.css": "psli1G5AtVc+VVkop+LkjFnLmIeEsm551aEE62VdK5g=",
   "web/styles/system.css": "SVSOVdZiaTAXK9YVcme3Vd9R+Rv4J4AB3Bib1hz5oZM=",
-  "web/styles/shell-mobile.css": "1uS9oQVvKzAEylCw76SQ2aNKWdpU+an8J11291umoHA=",
+  "web/styles/shell-mobile.css": "oMD4/yeW3cz2JkaZZrz2LEMZm1YmvJX//sB+6RDJwHc=",
   "brand/tokens.css": "QQHxGEUGC6R3vIPGGE9Gpyl/Z/2oHMxf84vOVhrk+e0=",
   "brand/themes.css": "Hhov5kE9vhLxeEzXh8a0Ybe0bdQ3LPnC1sxOpOZvrHo=",
   "brand/artifacts.css": "eFVVXE91n+Pf8sBFwoFhdF13k9k1Adq8NN/gdKfWyUg=",
@@ -41,21 +42,21 @@
   "web/styles/studio.css": "G4b+ixXDwq1YvKkUIZowbs2ArwZ7162BtxLw3NLBpdM=",
   "web/styles/experience.css": "xcoJhmxjsrIWNdZ8K4s554krhpx6kYAdDM05keSA1XE=",
   "web/styles/collection.css": "4jnOPH+13luqgNSkSJtjJhl6YVpAVxq5NNT+gzGjMLU=",
-  "app/race-self-stage.js": "j5qWdvY6rnZ8KbYRa40MrnetXQxKpWZobPZafGAlXz4=",
+  "app/race-self-stage.js": "oTpd+ZXvoSkhejDHjaJWxfbqc2n3OH+0WtBIzUlovw8=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "XBUsB/tknrYRsaNlPH7ba3JomZlUtGwKtneaEuRTQOE=",
   "app/hall.js": "bl8KttG0wVvBjQgjEPgQDoymwEh4nCwITmRqILkIUMU=",
-  "app/studio.js": "Bc/ihaIeML+jku/XkKyvBdM0KLiR25tubuMpKO0/AAQ=",
+  "app/studio.js": "igGgNrqUs2eqB7KmkyJWfzRKYLdNYtdZwOcVp6HQVQo=",
   "app/studio-catalog.js": "Qj8rIu7C13w5fDmtGeLtuZmcl2S6tEN+XVDRHPYEZZ8=",
-  "Canyon_Collection.html": "ICV4QtIP3LV1tnIEQvwKVfOVP27FUuzHnClgm6vHn3M=",
-  "Experiences.html": "lZ5s5vERH4w1MuqSq8/qPKJkXZTMbKmvS5ULkML/X0o=",
+  "Canyon_Collection.html": "a948TN1275sV/doMKNdnEr2dyIVEPt9VHVfu2wsoXI8=",
+  "Experiences.html": "PJAXxPiATn5RUjZ0QgB8ZVYW+6DcAIa4jCMWabVlScM=",
   "Speedmax_2007_Museum.html": "rI96zd9MVQls7PpYZo1GjyNVgxQNTkegdslkn7NRPss=",
   "Speedmax_AL_2011_Museum.html": "eZnUgbPbTFtwQpD7Oko4gMW/TIQ9fXpmmqMg9ZWUzng=",
   "Speedmax_CF_2011_Museum.html": "WkwjWb31H/B9ZqBQPprfPiV+KT2Qgdrl3YPtMcW1aTY=",
   "Speedmax_Museum.html": "NhnMcDn5aft/UWa5la/XXFEFqvPG4JiBrhzHZkskS+0=",
   "Speedmax_SLX_Museum.html": "9dpZCyDe5ZLtINBI0OWwTiIjwT7KEyRv0RDBDyOkzWA=",
   "Speedmax_Three_2005_Museum.html": "mwtRJtTFB+6AAAFnyz8gm8S0mr02xSF0dd5TlTkIJaA=",
-  "Studio.html": "oRlIFKVYXqqotu3ZqDQYJ3wQtzxwcLFZgwaHGnSkWAM=",
+  "Studio.html": "vKYaJBaWoI6Hj65nrfxTO9x7ichIUbA8wy0QyW60JKg=",
   "assets/art/paintings/builders-bench.jpg": "AYYSF1BMlgQJodQ0jhQyrPoDM/VWMje/TnPEjvBVAoA=",
   "assets/art/paintings/crosswind.jpg": "6to32GpQsK0TRot+06sdVSc6asouaIiOKRxxCxZ1dXg=",
   "assets/art/paintings/kohala-turn.jpg": "EG0TNXObOZ/Ur52EvO5RADs+fP2tp486ACrkGCx+ArM=",
@@ -170,6 +171,7 @@
   "assets/reference/paintings/speedmax-three-2005.jpg": "7aHIi/BnX+O+QmSh1Bi8mgKnIBhMB1WE4N0sjLq1/aM=",
   "assets/reference/zipp-super9-b1.png": "u/4HdUUzE+jWzYsEqshqCwIO96h+M7WWhcWMQA/HuRs=",
   "assets/share/collection.jpg": "W6lRq4vdhYr3rNejeGLQnYbIlPXgnmvRBkAD6wN8+vo=",
-  "assets/share/museum.jpg": "MR9MD9E1O+efqEOc6xucgpUDOD9++PbpLjoyrd0S2PU="
+  "assets/share/museum.jpg": "MR9MD9E1O+efqEOc6xucgpUDOD9++PbpLjoyrd0S2PU=",
+  "web/styles/race-self.css": "f3gja0zKq9R7O1KbHfaNnR8jilC0vZvNVPM9pl4jzT0="
  }
 }
