@@ -18,7 +18,10 @@ const www = join(here, '..', 'www');
 rmSync(www, { recursive: true, force: true });
 mkdirSync(www, { recursive: true });
 for (const f of readdirSync(root)) if (f.endsWith('.html') || f === 'manifest.webmanifest') cpSync(join(root, f), join(www, f));
-cpSync(join(root, 'app', 'icons'), join(www, 'app', 'icons'), { recursive: true });
+cpSync(join(root, 'app'), join(www, 'app'), { recursive: true, filter: src => !/[\\/]native([\\/]|$)/.test(src.slice(join(root, 'app').length)) });
+cpSync(join(root, 'web', 'styles'), join(www, 'web', 'styles'), { recursive: true });
+cpSync(join(root, 'brand'), join(www, 'brand'), { recursive: true });
+cpSync(join(root, 'integrations'), join(www, 'integrations'), { recursive: true });
 cpSync(join(root, 'assets'), join(www, 'assets'), { recursive: true, filter: src => !/[\\/]src([\\/]|$)/.test(src.slice(join(root, 'assets').length)) && !src.endsWith('.html') });
 
 const versionCode = Number.parseInt(process.env.SPEEDMAX_VERSION_CODE || '0', 10) || 0;
