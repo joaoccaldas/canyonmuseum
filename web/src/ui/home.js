@@ -53,7 +53,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
         '<p>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</p>'+
-        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open User Studio <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Open Garage</button></div>'+
+        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open your athlete <span>→</span></button></div>'+
       '</div>'+
     '</section>'+
     '<section class="kona-section artifact artifact--label home-first-find"><small>YOUR FIRST DETOUR</small><h3>Something small is hiding here.</h3><p>Spot the volcanic rock. Tap it. KONA Finds will keep the story.</p><div class="ui-cluster"><span class="t-hand" aria-hidden="true">That suspicious little rock →</span><button type="button" class="btn-icon" data-first-find aria-label="Collect Perfect Volcanic Rock"'+(firstFound?' disabled':'')+'><svg viewBox="0 0 100 70" aria-hidden="true"><path d="M12 52 24 25 47 12 72 18 89 45 70 60 36 64Z" fill="currentColor"/></svg></button></div><p class="kona-source-note" role="status" data-first-find-status>'+(firstFound?'Perfect Volcanic Rock is saved in KONA Finds.':'Your first Find is waiting.')+'</p><button type="button" class="btn-text" data-home-finds>Open KONA Finds →</button></section>'+
