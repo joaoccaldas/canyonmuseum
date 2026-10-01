@@ -1,0 +1,5 @@
+/* MUSEUM-LEGACY desktop/fine-pointer layout only. */
+
+@media(min-width:1000px){.hr{padding:5px;background:#111820a8;border:1px solid #c8e9ed18;border-radius:16px;backdrop-filter:blur(20px)}body[data-ui=light] .hr{background:#eef0f3aa}.hr .pill{border-color:transparent;box-shadow:none;background:transparent}.hr .pill:hover{background:#899ca522}}
+
+@media (min-width:761px){.hr .pill.active{background:#e8f4f2;color:#0b1016}.hr .pill.active svg{color:#0f8c78}}
