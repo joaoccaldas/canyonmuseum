@@ -1,74 +1,32 @@
-# Product
+# KONA product contract
 
-## Positioning
+KONA combines an athlete identity, equipment, race-week context, immersive discovery and personal progress. Value precedes registration.
 
-KONA is the race-week, gear, identity, story and challenge companion for triathlon.
+## Day-one flow
 
-It should not attempt to replace:
-- Strava's activity/social graph
-- TrainingPeaks' training-analysis/planning depth
-- IRONMAN's authoritative timing/event infrastructure
-- Zwift's indoor training platform
+1. Landing offers Enter, Sign in and Install.
+2. New visitors customize an avatar and continue to Home; questions are not a required gate.
+3. A short tour can be skipped and replayed.
+4. Returning visitors continue to Home with saved state.
+5. User Studio exposes customization, races, collection, progress, settings and Bike Studio.
+6. Discover offers optional entry into the museum. First paint and Home need no museum assets.
+7. Plan shows loaded race-week data or an honest unavailable state.
+8. Feed and Travel use existing source-backed providers and external handoffs.
 
-Its differentiating layer is:
+## Progress, collection and sharing
 
-> **race identity + real/dream equipment + confirmed race history + race-week context + immersive 3D + collections + progression + shareable personal story**
+Discoveries, fixed collectible rewards and meaningful first actions drive progression. Repeated finds must not pay again. Collection distinguishes owned equipment, dream setups, items saved to try and discoveries. Level progress describes earned XP; credits are virtual and have no cash value. Level labels are not proof that advertised cosmetics or rooms exist.
 
-## Consumer object
+Bike/setup sharing contains allowlisted configuration, excluding credentials and private account data. Cancelled sharing remains cancelled. Missing comparison facts remain missing rather than becoming zero prices or fabricated geometry.
 
-The primary consumer object is `RaceIdentity`.
+## External boundaries
 
-A RaceIdentity combines:
-- event
-- real/dream/surprise mode
-- equipment references
-- goal
-- avatar
-- share state
+Live email/callback, cloud restore and physical installation need separate evidence. Mock success is not delivered mail. Race labels are personal intentions, not registrations. Travel links are not in-app live flight/traffic boards. Native publication remains disabled until packaging, signing and hardware checks pass.
 
-## Core loop
+See [later PRs](launch/LATER_PRS.md) for expansion.
 
-`FAST ENTRY → IDENTITY → REWARD → STORY → EXPLORE → CHALLENGE → SHARE → RETURN`
+## Landing discovery
 
-## First-session rule
+The hero rotates through the eligible bike catalog on each visit, avoiding the previous choice when another is available. Another bike changes the preview without entering 3D. Secret Collection entries use anonymous silhouettes without names or asset URLs. Public previews are built from canonical models and paint; only the selected image loads. Broken or uncached images show a clear fallback.
 
-Value precedes registration.
-
-1. Why are you here?
-2. Real / Dream / Surprise
-3. Choose equipment
-4. Choose goal
-5. Reveal RaceIdentity
-6. Reward
-7. Optional save/sign-in
-8. Optional Identity Assist
-9. Confirm race history
-10. Passport reveal
-11. Share
-
-## Second-session rule
-
-Returning users should see a personalized command surface, not onboarding again.
-
-Prioritize:
-- next useful action
-- RaceIdentity completion
-- race-week context
-- progression
-- new relevant content
-- challenge progress
-- saved equipment/collections
-
-## Monetization
-
-Near term:
-- affiliate commerce
-- immersive brand prototypes
-- athlete/event activations
-- sponsor rooms
-- content/hosting retainers
-
-Later:
-- white-label platform
-- premium consumer features after retention is proven
-- opt-in aggregate demand insight after scale and privacy thresholds are satisfied
+Entry copy: “Wondering what this is all for? Join the club. We take curiosity seriously.”

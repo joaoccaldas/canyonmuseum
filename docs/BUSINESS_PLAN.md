@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # KONA Business & Product Plan V9
 
 Public-safe canonical strategy. No private CRM, contact, health, correspondence or user-level data belongs here.
@@ -6,7 +8,7 @@ Public-safe canonical strategy. No private CRM, contact, health, correspondence 
 
 **KONA — Race the version of yourself.**
 
-A mobile-first triathlon race-week, identity, gear, story, discovery and challenge platform. The Canyon Museum is a flagship collection inside the platform, not the parent brand.
+A mobile-first triathlon race-week, identity, gear, story, discovery and challenge platform. The KONA Museum is a flagship collection inside the platform, not the parent brand.
 
 ## Problem
 
@@ -139,7 +141,7 @@ Requirements:
 - sitemap
 - concise llms.txt
 - detailed llms-full.txt
-- pt-BR LLM guide
+- pt-BR machine-readable guide
 - no keyword stuffing or invented claims
 
 ## Privacy

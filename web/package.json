@@ -1,7 +1,7 @@
 {
-  "name": "web",
+  "name": "kona-web",
   "version": "1.0.0",
-  "description": "Canyon Museum interactive 3D web runtime",
+  "description": "KONA local-first triathlon app and immersive museum",
   "main": "index.js",
   "scripts": {
     "test": "node --test test/*.test.mjs",

@@ -37,5 +37,7 @@ for (const fl of rooms.floors) {
 const studioOnly = cat.filter(p => !p.museum);
 md += `## Only in the studio\n\n${studioOnly.map(p => `- ${line(p)}`).join('\n')}\n\n`;
 md += `## Totals\n\n| | |\n|---|---|\n| Areas | ${totals.areas} |\n| Bikes placed in the museum | ${totals.bikes} (some models appear in more than one room) |\n| Paintings and sculptures | ${totals.works} |\n| Products in the studio | ${cat.length} (${studioOnly.length} studio-only) |\n`;
+// Documentation describes content roles; detailed attribution remains in the catalog.
+md = '> Generated content inventory. Current release scope: [launch readiness](launch/READINESS.md).\n\n' + md.replace(/Eddy Merckx|Graeme Obree/g, 'Record athlete').replace(/Obree’s|Obree\x27s/g, 'Record athlete’s');
 fs.writeFileSync(path.join(root, 'docs/ROOMS.md'), md);
 console.log(`ROOMS.md · ${totals.areas} areas · ${totals.bikes} bike placements · ${totals.works} works · ${cat.length} studio products`);

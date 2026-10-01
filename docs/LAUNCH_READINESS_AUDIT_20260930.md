@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Launch Readiness Audit — 2026-09-30
 
 ## Scope
@@ -15,13 +17,13 @@ Asset lane:
 - `assets/kona-environment-pack-20260930` — currently diverged and not merge-ready as a whole
 
 Secondary repo:
-- `joaoccaldas/ai` contains WYLD/Bike Porn and other studio projects; Bike Porn ceremony/model-viewer cleanup merged as PR #84.
+- `<reference project>` contains WYLD/Bike Porn and other studio projects; Bike Porn ceremony/model-viewer cleanup merged as PR #84.
 
 ---
 
 # Executive verdict
 
-## Existing Canyon Museum on main
+## Existing KONA Museum on main
 
 **Launchable today as an experimental public web/PWA museum.**
 
@@ -397,7 +399,7 @@ The Museum should be a major Explore destination, not the entire navigation mode
 
 ## Not production-ready
 
-- no affiliate program should be treated as active until Caldas Studio is accepted;
+- no affiliate program should be treated as active until KONA is accepted;
 - no real tracking IDs should live in the public repo;
 - pricing/availability require freshness metadata;
 - no checkout;
@@ -457,7 +459,7 @@ using the same primitives.
 
 # Launch matrix
 
-## READY NOW — existing Canyon Museum public release
+## READY NOW — existing KONA Museum public release
 
 - [x] public Pages deployment
 - [x] deterministic build
@@ -478,7 +480,7 @@ using the same primitives.
 
 ## READY FOR CONTROLLED INTERNAL / FRIEND BETA
 
-- [x] current Canyon Museum main
+- [x] current KONA Museum main
 - [x] My Kona Setup V0
 - [x] product-intake proof for Cervélo + Alphafly
 - [x] integration platform as isolated test branch
@@ -567,7 +569,7 @@ Only after:
 
 # Final launch classification
 
-**Canyon Museum V0:** GO.
+**KONA Museum V0:** GO.
 
 **Controlled KONA alpha / friends-and-family beta:** GO, with explicit beta labeling.
 

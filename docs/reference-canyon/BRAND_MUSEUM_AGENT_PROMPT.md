@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Prompt: build a reference-backed 3D museum for one bicycle brand
 
 Copy everything below the line into a new agent session. Replace the three

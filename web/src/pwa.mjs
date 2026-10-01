@@ -21,7 +21,7 @@ export function initInstallExperience({ button, toast }) {
   addEventListener('appinstalled', () => {
     installPrompt = null;
     button.hidden = true;
-    toast?.('Canyon Museum installed');
+    toast?.('KONA Museum installed');
   });
 
   button.addEventListener('click', async () => {

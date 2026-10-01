@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # KONA Brand & Responsive UI Authority
 
 The approved KONA brand boards are the visual authority for every consumer-facing surface.

@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Event OS Strategy
 
 Goal: make the Kona product more useful before, during and after race week than a conventional tracker/site, while remaining able to ingest official live timing later.

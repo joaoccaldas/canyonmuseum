@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # RaceSetup Contract V1
 
 Status: Setup Slot Compatibility V0  

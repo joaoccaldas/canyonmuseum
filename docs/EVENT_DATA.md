@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Official Event Data Policy
 
 Official race-organizer sources are valuable, but they contain a mix of durable facts and rapidly expiring operational details.

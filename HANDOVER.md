@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](docs/launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Canyon 3D Museum: Operations & Handover Guide
 
 This document provides developer handover notes, operational instructions, and procedures for maintaining and extending the Canyon 3D Museum.

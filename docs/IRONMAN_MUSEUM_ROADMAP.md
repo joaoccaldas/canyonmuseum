@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # IRONMAN Museum Concept Roadmap
 
 Status: concept / partner-demo track
@@ -7,7 +9,7 @@ Target: ready-to-deploy proof of concept for event organizers, starting with Kon
 
 ## Why
 
-The existing Canyon Museum proves product/brand storytelling. An IRONMAN Museum proves the same engine can represent an entire event ecosystem:
+The existing KONA Museum proves product/brand storytelling. An IRONMAN Museum proves the same engine can represent an entire event ecosystem:
 
 - race history;
 - iconic courses and locations;

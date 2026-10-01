@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Batch 7 Race Self polish — 2026-09-30
 
 Synchronized generated-output head before this verification trigger:

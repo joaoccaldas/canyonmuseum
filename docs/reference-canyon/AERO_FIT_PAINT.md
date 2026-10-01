@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Aero lab, rider fit and image painting
 
 The offline museum viewer includes **Aero lab**, **Rider fit**, and **Configure → Upload artwork**. All calculations and file processing happen locally. No uploads, services, accounts or credentials are required.

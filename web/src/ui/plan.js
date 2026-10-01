@@ -25,11 +25,11 @@ export function renderPlanSurface(root,{data={}}={}) {
   const eventLine = [event.date ? fmtDate(event.date) : '', event.venue || event.location || ''].filter(Boolean).join(' · ');
 
   root.innerHTML =
-    '<section class="kona-section first artifact artifact--label"><div class="kona-section-head"><h3>Race week</h3><small>2026 verified</small></div>'+
+    '<section class="kona-section first artifact artifact--label"><div class="kona-section-head"><h3>Race week</h3><small>'+(week.length?'2026 schedule':'Schedule unavailable')+'</small></div>'+
       (eventLine?'<p class="kona-source-note">'+esc(eventLine)+'</p>':'')+
-      '<div class="kona-timeline">'+(days || '<article><div><b>Race-week details are being verified.</b><span>No museum load required.</span></div></article>')+'</div></section>'+
+      '<div class="kona-timeline">'+(days || '<article><div><b>Race-week details are unavailable right now.</b><span>Please try again when your connection returns.</span></div></article>')+'</div></section>'+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Places worth your time</h3><small>Local-first planning</small></div><div class="kona-place-grid">'+
-      (cards || '<article><b>Place notes are being prepared.</b><span>Only lightweight verified data appears here.</span></article>')+
+      (cards || '<article><b>Place notes are being prepared.</b><span>Check back for race-week recommendations.</span></article>')+
     '</div></section>'+
     '<p class="kona-source-note">Operational race information is shown only from current 2026 official sources. Older athlete guides and course maps remain reference-only.</p>';
 }

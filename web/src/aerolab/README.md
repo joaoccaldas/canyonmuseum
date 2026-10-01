@@ -1,6 +1,8 @@
+> Supporting contract. Current release scope and verification: the repository launch readiness document. Earlier completion claims require current runtime evidence.
+
 # Aero lab + rider fit (standalone)
 
-Extracted from the Speedmax museum (`speedmax-cfr-3d`) into self-contained modules.
+Extracted from the KONA museum (`speedmax-cfr-3d`) into self-contained modules.
 **Not wired into the Kona world**: `web/src/main.js` does not import anything from here.
 
 | Module | What it does |

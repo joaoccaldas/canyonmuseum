@@ -66,7 +66,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 }
 .kona-bottom-nav button,.kona-bottom-nav a{
   min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  position:relative;color:var(--kona-muted);border-radius:0;background:transparent;font:650 10px/1 var(--sans);letter-spacing:.01em;text-decoration:none;touch-action:manipulation
+  position:relative;color:var(--kona-muted);border:0;border-radius:0;appearance:none;background:transparent;font:650 10px/1 var(--sans);letter-spacing:.01em;text-decoration:none;touch-action:manipulation
 }
 .kona-bottom-nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .kona-bottom-nav .on{color:var(--kona-accent);background:transparent}
@@ -250,7 +250,6 @@ body.install-open{overflow:hidden}
 .kona-user-menu{position:fixed;z-index:42;top:max(14px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px;min-height:var(--brand-touch);padding:8px 16px;border:1px solid var(--brand-line);border-radius:12px;background:var(--brand-surface);color:var(--brand-ink);font:700 13px/1 var(--brand-font-ui);cursor:pointer}
 .kona-user-menu i{width:22px;height:26px;background:var(--user-accent);clip-path:polygon(25% 0,75% 0,75% 35%,100% 35%,100% 80%,75% 80%,75% 100%,25% 100%,25% 80%,0 80%,0 35%,25% 35%)}
 /* Global escape invariant: User Studio remains reachable from landing, onboarding, app panels and the loaded world. */
-body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:flex}
 
 /* Standalone published pages share the same escape back into the canonical personal surface. */
 .global-user-studio{
@@ -262,3 +261,13 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:flex
   font:800 11px/1 var(--brand-font-ui);letter-spacing:.08em;text-decoration:none;
 }
 .global-user-studio:is(:hover,:focus-visible){border-color:var(--brand-action);outline:none}
+
+/* Shared progress and collection primitives. */
+.kona-level-progress{display:grid;gap:10px;margin:16px 0;color:var(--brand-ink)}
+.kona-level-progress progress{width:100%;height:12px;accent-color:var(--brand-accent);border:0;border-radius:4px;overflow:hidden}
+.kona-level-progress span{font-size:13px;color:var(--brand-muted)}
+.kona-item-mark{display:grid;place-items:center;min-height:76px;font:400 40px/1 var(--brand-font-editorial);background:var(--brand-surface-2,var(--brand-surface));color:var(--brand-accent);font-style:normal;margin-bottom:12px}
+
+.kona-level-progress progress::-webkit-progress-bar{background:var(--brand-line)}
+.kona-level-progress progress::-webkit-progress-value{background:var(--brand-progress)}
+.kona-level-progress progress::-moz-progress-bar{background:var(--brand-progress)}

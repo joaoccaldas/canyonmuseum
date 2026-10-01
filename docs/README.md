@@ -1,22 +1,13 @@
-# Documentation authority
+# Documentation index
 
-## Canonical current
-- ../README.md
-- ../STATUS.md
-- BUSINESS_PLAN.md
-- PRODUCT.md
-- ROADMAP.md
-- ARCHITECTURE.md
-- DATA_MODEL.md
-- DESIGN_SYSTEM.md
-- SECURITY_PRIVACY.md
-- OPERATIONS.md
-- DECISIONS.md
+Current release and product scope:
 
-## Feature contracts
-Feature-specific V1/V2 documents are implementation contracts and must not override canonical current docs.
+- [Launch readiness](launch/READINESS.md)
+- [Product](PRODUCT.md), [architecture](ARCHITECTURE.md), [data model](DATA_MODEL.md)
+- [Brand](BRAND_SYSTEM.md), [security](SECURITY_PRIVACY.md), [operations](OPERATIONS.md)
+- [Repository review](launch/REPOSITORY_REVIEW.md)
+- [Later PR roadmap](launch/LATER_PRS.md)
 
-## Historical evidence
-Dated audits, handovers and museum-era roadmaps are historical evidence. They are not current production truth.
+Feature contracts describe implementation intent. Dated audits and handovers describe historical observations. Neither overrides current source, reproducible runtime evidence or the deployed receipt. A document, filename or level label does not prove a feature works.
 
-Rule: if a dated audit conflicts with STATUS.md or the canonical documents above, the canonical current document wins.
+Use role-based descriptions without personal names, private data, test recipients or implementation-provider identities. Licensing attribution remains in canonical source records.

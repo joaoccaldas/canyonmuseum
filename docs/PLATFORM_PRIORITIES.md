@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Platform Priorities — 2026-09-30
 
 This roadmap defines execution order across the parallel lanes. It deliberately prioritizes reusable platform capability before room-specific polish.

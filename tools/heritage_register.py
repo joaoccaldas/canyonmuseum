@@ -130,7 +130,7 @@ def main():
         (ROOT / f"museum/bikes/{b['id']}.json").write_text(json.dumps(man, indent=2))
         vp = {'schema_version': 1, 'bike': {
             'key': b['key'], 'exhibit': b['exhibit'], 'era': b['era'], 'family': b['family'], 'name': b['name'], 'years': f"MY{b['my']}",
-            'size': b['size'].split(' ')[0], 'finishName': b['finish'], 'pageTitle': f"Canyon Museum — {b['model']} ({b['my']})",
+            'size': b['size'].split(' ')[0], 'finishName': b['finish'], 'pageTitle': f"KONA Museum — {b['model']} ({b['my']})",
             'lede': b['lede'], 'story': b['story'], 'stats': [{'value': v, 'label': l} for v, l in b['stats']],
             'spec': [list(r) for r in b['spec']], 'geometry': [list(r) for r in b['geometry']],
             'method': "Scale comes from circle fits to both tyres in Canyon's archived side photo. Every tube is a traced centreline with its side-view depth measured from the photo; widths across the bike are inferred. Parts are rebuilt from the archived specification.",

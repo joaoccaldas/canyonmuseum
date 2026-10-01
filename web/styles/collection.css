@@ -89,3 +89,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{o
 
 /* shared KONA interaction contract */
 button,a,[role="button"]{min-height:var(--brand-touch,48px)}
+.arrows button{min-width:var(--brand-touch,48px)}
+@media(max-width:760px){
+ header{display:grid;gap:12px;align-items:start}
+ header .logo{max-width:calc(100% - 132px)}
+ header .logo span{font-size:10px;letter-spacing:.04em;line-height:1.4}
+ header nav{flex-wrap:wrap;gap:12px}
+ header nav a{min-width:48px}
+ .collection-bar{flex-wrap:wrap;gap:12px}
+ .hint-pill{max-width:100%;white-space:normal;overflow-wrap:break-word}
+}

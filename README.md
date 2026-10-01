@@ -1,97 +1,50 @@
-# KONA · Caldas Studio
+# KONA
 
-> **Race the version of yourself.**  
-> KONA is a mobile-first triathlon race-week, identity, gear, story and challenge platform built on the Canyon Museum 3D production factory.
+Race the version of yourself.
 
-## What this repository contains
-
-- KONA app shell: Now · Explore · Setup · Plan · Me
-- local-first RaceIdentity and progression
-- optional Supabase magic-link backup
-- 3D museum / product inspection / Studio
-- product, athlete, event, challenge and commerce architecture
-- Android/PWA build paths
-- Blender and procedural asset tooling
-- deterministic release/security checks
-
-The historical Canyon Museum remains the strongest reference implementation and 3D factory, but the consumer product is now KONA.
+A local-first triathlon app for athlete identity, equipment, race-week context, immersive discovery and personal progress. An account is optional; browser installation is the day-one app route.
 
 ## Start here
 
-Canonical current documentation:
+- [Launch readiness](docs/launch/READINESS.md)
+- [Product](docs/PRODUCT.md), [architecture](docs/ARCHITECTURE.md), [data model](docs/DATA_MODEL.md)
+- [Brand system](docs/BRAND_SYSTEM.md), [security and privacy](docs/SECURITY_PRIVACY.md)
+- [Repository cleanup review](docs/launch/REPOSITORY_REVIEW.md)
+- [Later PR roadmap](docs/launch/LATER_PRS.md)
 
-1. [STATUS.md](STATUS.md)
-2. [Product](docs/PRODUCT.md)
-3. [Architecture](docs/ARCHITECTURE.md)
-4. [Data model](docs/DATA_MODEL.md)
-5. [Design system](docs/DESIGN_SYSTEM.md)
-6. [Security & privacy](docs/SECURITY_PRIVACY.md)
-7. [Operations](docs/OPERATIONS.md)
-8. [Roadmap](docs/ROADMAP.md)
-9. [Decisions](docs/DECISIONS.md)
-10. [Repository hygiene](docs/REPOSITORY_HYGIENE.md)
+## Local development
 
-Historical audits and handovers are evidence, not current product truth.
+Run from a repository checkout:
 
-## Local run
-
-```bash
-git clone https://github.com/joaoccaldas/canyonmuseum.git
-cd canyonmuseum
+```sh
 npm ci --ignore-scripts --prefix web
-python3 -m http.server 8744
+node tools/build_pages.mjs
+node tools/build_app.mjs
+bash tools/stage_site.sh
+python3 -m http.server 8744 --directory _site
 ```
 
-Open:
+Open `http://127.0.0.1:8744/`.
 
-```
-http://127.0.0.1:8744/
-```
+## Verification
 
-## Validation
-
-```bash
+```sh
 npm test --prefix web
 node tools/validate-bikes.mjs
+node tools/validate_integration_contract.mjs
 node tools/repo-hygiene.mjs
-node tools/build_pages.mjs
+node tools/brand-hygiene.mjs
+node tools/scan_private_data.mjs
 ```
 
-The committed deterministic pages must match a rebuild.
+Existing browser audits use `CHROME_PATH` pointing to a local Chromium browser. Generated pages, bundles and worker hashes must match the source build. Test the staged artifact, then compare the deployed receipt to the approved commit.
 
-## Release model
+## Naming and compatibility
 
-A release is not ready because code exists.
+KONA owns display branding, page metadata, share captions, packages and native application identity. Existing hosting paths, published exhibit URLs, source identifiers and legacy storage aliases remain compatibility contracts. Blind renaming would break inbound links or strand saved progress. New storage uses `kona.*` through the adapter.
 
-Required evidence:
-- unit/contract checks
-- bike/product asset validation
-- deterministic build
-- release security gate
-- app release seal
-- real-browser/mobile evidence where applicable
-- post-deploy smoke at the exact merged SHA
+## Privacy and rights
 
-Android binaries are distributed through GitHub Actions/Release artifacts rather than committed into source control.
+Never commit credentials, personal profiles, correspondence, test recipients or local-machine paths. Documentation uses roles without personal attribution or implementation-provider disclosure. Preserve required source and licensing attribution in canonical content records. Native binaries and browser captures belong in release/CI artifacts.
 
-## Architecture principle
-
-```
-Canonical entity
-   ↓
-Reusable experience
-   ↓
-Museum / Studio / RaceIdentity / Challenge / Story / Share / Commerce
-```
-
-Do not create brand-specific, athlete-specific or event-specific production forks when data/configuration can express the variation.
-
-## Privacy
-
-KONA is local-first and useful without an account.
-
-Do not commit private user data, personal correspondence, private CRM/contact data, health data, credentials, secret API keys or private race-history matches to this public repository.
-
-## License / rights
-
-Third-party brands, trademarks, public-source media and reference material retain their respective ownership and license requirements. See provenance/source records before commercial reuse.
+Landing previews come from the full eligible bike catalog. Secret entries have anonymous silhouettes. When adding a public bike, run `node tools/render_entry_art.mjs --catalog`, then the normal page/seal builds; the build rejects a missing preview.

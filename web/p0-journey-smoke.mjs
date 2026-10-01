@@ -58,9 +58,9 @@ try{
  assert.equal(await page.$('.kona-tour'),null,'tour must not repeat automatically');
 
  // Museum round trip: lazy hall CSS must turn off again before Feed/Home renders.
- await page.click('[data-tab="me"]');
- await page.waitForSelector('[data-race-self-action="museum"]');
- await page.click('[data-race-self-action="museum"]');
+ await page.click('[data-tab="discover"]');
+ await page.waitForSelector('[data-enter-world]');
+ await page.click('[data-enter-world]');
  await page.waitForFunction(()=>document.body.classList.contains('museum-open'));
  await page.waitForFunction(()=>[...document.querySelectorAll('link[data-style-scope="museum"]')].length===2);
  await page.evaluate(()=>window.__konaShell.feed());

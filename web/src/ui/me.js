@@ -1,7 +1,7 @@
 // ui/me.js — RaceIdentity + Progress projection.
 // Personal truth comes from canonical game state; this surface owns no persistence.
 import { readGameState, gameProgress } from '../engine/game-state.js';
-import { ensureProgression } from '../engine/progression.js';
+import { ensureProgression, LEVELS } from '../engine/progression.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 import { renderRaceBadges } from './race-cards.js';
@@ -40,11 +40,15 @@ export async function renderProgressSurface(root,{settings}={}) {
   try { ensureProgression(); } catch (_) { /* Progress remains readable without repair */ }
   const snapshot = readGameState();
   const p = gameProgress(snapshot);
+  const level=LEVELS.find(row=>row.level===p.level)||LEVELS[0];
+  const next=LEVELS.find(row=>row.level===level.level+1);
+  const levelProgress=next?Math.min(100,Math.max(0,(p.xp-level.xp)/(next.xp-level.xp)*100)):100;
   root.innerHTML = await raceIdentityMarkup(snapshot)+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Progress</h3><small>'+esc(p.levelName||'Visitor')+'</small></div>'+
+      '<div class="kona-level-progress"><strong>Level '+level.level+' · '+esc(level.name)+'</strong><progress aria-label="Progress to next level" value="'+levelProgress+'" max="100"></progress><span>'+(next?(next.xp-p.xp)+' XP to '+esc(next.name):'Top level reached')+'</span></div>'+
       '<div class="kona-list"><article><i>XP</i><div><b>'+p.xp+' XP</b><span>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds</span></div></article>'+
       '<article><i>↗</i><div><b>'+p.streak+' day streak</b><span>Progress follows what you actually explore.</span></div></article>'+
-      (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Earned as you explore KONA.</span></div></article>':'')+
+      (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Earned as you explore. Virtual credits have no cash value.</span></div></article>':'')+
       '</div></section>'+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Your collection</h3><small>Every discovery counts</small></div><div class="kona-place-grid">'+
       '<article><small>Bikes</small><b>'+p.bikes+'</b><span>visited</span></article>'+
@@ -65,14 +69,14 @@ export async function renderProgressSurface(root,{settings}={}) {
   if(!user){
     account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note" for="passportEmail">Email for a one-time sign-in link</label><input id="passportEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" class="ui-input passport-email"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
     status.textContent='Play without an account, or sign in only for cross-device backup.';
-    account.querySelector('[data-login]')?.addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('button');btn.disabled=true;try{await sendMagicLink(new FormData(e.currentTarget).get('email'));status.textContent='Check your email and open the sign-in link on this device.';e.currentTarget.hidden=true;}catch(err){status.textContent=err.message||'Could not send sign-in link.';btn.disabled=false;}});
+    account.querySelector('[data-login]')?.addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget;const btn=form.querySelector('button');btn.disabled=true;try{await sendMagicLink(new FormData(form).get('email'));status.textContent='Check your email and open the sign-in link on this device.';form.hidden=true;}catch(err){status.textContent=err.message||'Could not send sign-in link.';btn.disabled=false;}});
     return;
   }
 
   status.textContent='Signed in as '+(user.email||'beta user')+'. Backup and restore are explicit.';
   account.insertAdjacentHTML('beforeend','<div class="kona-list"><article><i>↑</i><div><b>Back up this device</b><span>Save progress, collection, setup and Garage.</span></div><button type="button" data-backup>Back up</button></article><article><i>↓</i><div><b>Restore from cloud</b><span>Replace this device with your latest backup.</span></div><button type="button" data-restore>Restore</button></article><article><i>↪</i><div><b>Sign out</b><span>Local progress stays on this device.</span></div><button type="button" data-signout>Sign out</button></article></div>');
-  account.querySelector('[data-backup]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await backupGameState();status.textContent='Cloud backup saved.';}catch(err){status.textContent=err.message;}finally{e.currentTarget.disabled=false;}});
-  account.querySelector('[data-restore]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await restoreGameState();status.textContent='Cloud state restored. Reloading…';location.reload();}catch(err){status.textContent=err.message;e.currentTarget.disabled=false;}});
+  account.querySelector('[data-backup]')?.addEventListener('click',async e=>{const button=e.currentTarget;button.disabled=true;try{await backupGameState();status.textContent='Cloud backup saved.';}catch(err){status.textContent=err.message;}finally{button.disabled=false;}});
+  account.querySelector('[data-restore]')?.addEventListener('click',async e=>{const button=e.currentTarget;button.disabled=true;try{await restoreGameState();status.textContent='Cloud state restored. Reloading…';location.reload();}catch(err){status.textContent=err.message;button.disabled=false;}});
   account.querySelector('[data-signout]')?.addEventListener('click',async()=>{await signOut();await renderMeSurface(root,{settings});});
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "speedmax-museum-native",
+  "name": "kona-native",
   "private": true,
   "version": "1.0.0",
   "description": "Android shell for KONA (Capacitor). Bundles the app and optional museum experience for offline, full-frame-rate use.",

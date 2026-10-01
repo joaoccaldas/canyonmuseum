@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: the repository launch readiness document. Earlier completion claims require current runtime evidence.
+
 # Supabase migrations
 
 This directory is the reproducible database-change record.

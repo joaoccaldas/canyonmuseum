@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Visual Evidence Standard V1
 
 Every material UI PR produces runtime screenshots and a scorecard.

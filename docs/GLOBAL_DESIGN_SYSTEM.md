@@ -1,6 +1,8 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Global Experience Design System
 
-Canyon Museum is the reference implementation for every Kona-universe app.
+KONA Museum is the reference implementation for every Kona-universe app.
 
 ## Typography
 - UI/body: Manrope 300-700.

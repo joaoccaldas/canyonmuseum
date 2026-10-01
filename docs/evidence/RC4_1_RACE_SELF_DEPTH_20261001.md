@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # RC4.1 Race Self depth verification — 2026-10-01
 
 Synchronized generated head before this verification trigger:

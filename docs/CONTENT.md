@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Content — how to add wings, rooms, bikes, liveries, paintings and sculptures
 
 Everything a visitor sees in the data-built wings is **data**. Code builds it; nothing about a
@@ -83,10 +85,10 @@ AI-generated works are labelled as such on the wall and on the card (evidence cl
 
 | Folder | What | Kept as |
 |---|---|---|
-| `museum/sources/higgsfield/paintings-20260929.json` | 12 painting generations (Higgsfield `gpt_image_2_5`) | provider response: job id, prompt, size, URL, time |
-| `museum/sources/higgsfield/sculptures-20260929.json` | 3 sculpture generations (Higgsfield `meshy_v6_text_to_3d`) | provider response + optimisation command |
+| `museum/sources/higgsfield/paintings-20260929.json` | 12 painting generations (media pipeline `image generation`) | provider response: job id, prompt, size, URL, time |
+| `museum/sources/higgsfield/sculptures-20260929.json` | 3 sculpture generations (media pipeline `meshy_v6_text_to_3d`) | provider response + optimisation command |
 | `museum/atlas/bikes.json` → `ref` | Wikimedia Commons photographs | title, page, author, licence (see `docs/ATLAS.md`) |
 | `museum/wyld_room.json`, `museum/kona_*.json`, `museum/heritage/*` | earlier sources | unchanged |
 
-Higgsfield project: *Canyon Museum — Kona Light wing* (`3cdaf07a-599a-4edc-9774-a736ee33bef8`).
+media pipeline project: *KONA Museum — Kona Light wing* (`3cdaf07a-599a-4edc-9774-a736ee33bef8`).
 Cost of this round: 12 × 0.25 + 3 × 25 = 78 credits.

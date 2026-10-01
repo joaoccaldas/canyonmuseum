@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Against the Clock — the time-trial wing
 
 An upper-floor wing north of the galleries nave (through the doorway in the nave's north wall).
@@ -10,7 +12,7 @@ liveries you can switch live.
 | Room | Side | Holds |
 |---|---|---|
 | The corridor | — | Velodrome boards (measurement line, sprinters' line, blue band), skylights, a working clock on the end wall |
-| The Hour | east | Eddy Merckx Hour bike (1972), Graeme Obree's bikes (1993); the two distances on the wall |
+| The Hour | east | the record athlete Hour bike (1972), the record athlete's bikes (1993); the two distances on the wall |
 | Monocoque | east | Lotus Type 108 (1992), Zipp 2001 (1990s) |
 | Long course | east | Stevens triathlon bike, aluminium triathlon bike (2005) |
 | Types | west | Funny bike (1980s), track pursuit bike, disc-brake triathlon superbike |
@@ -48,16 +50,7 @@ studies name no maker; no logos are reproduced.
 
 ## Photographs (Wikimedia Commons)
 
-| File | Author | Licence | Used for |
-|---|---|---|---|
-| [EddyMerckxHourRecordBike.jpg](https://commons.wikimedia.org/wiki/File:EddyMerckxHourRecordBike.jpg) | David Edgar | CC BY-SA 3.0 | Merckx Hour bike |
-| [Eddy Merckx bike - Mexico City 1972.JPG](https://commons.wikimedia.org/wiki/File:Eddy_Merckx_bike_-_Mexico_City_1972.JPG) | eugenio.baccarini | CC BY-SA 4.0 | References room; 49.431 km read from the display board |
-| [Graeme Obree display at the Riverside Museum.jpg](https://commons.wikimedia.org/wiki/File:Graeme_Obree_display_at_the_Riverside_Museum.jpg) | Ed Webster | CC BY 2.0 | Obree's bikes |
-| [Lotus 108 (24281585325).jpg](https://commons.wikimedia.org/wiki/File:Lotus_108_(24281585325).jpg) | Paul Hudson | CC BY 2.0 | Lotus Type 108 |
-| [Lotus sport bike Glasgow Transport Museum.jpg](https://commons.wikimedia.org/wiki/File:Lotus_sport_bike_Glasgow_Transport_Museum.jpg) | Jordanhill School D&T Dept | CC BY 2.0 | References room |
-| [Zipp frames.jpg](https://commons.wikimedia.org/wiki/File:Zipp_frames.jpg) | Nfreeman2 | Public domain | Zipp 2001 (both photo liveries) |
-| [Stevens triathlon bicycle.JPG](https://commons.wikimedia.org/wiki/File:Stevens_triathlon_bicycle.JPG) | Ximeg | CC BY-SA 3.0 | Stevens triathlon bike |
-| [Triathlonrad.jpg](https://commons.wikimedia.org/wiki/File:Triathlonrad.jpg) | GS (de.wikipedia) | CC BY-SA 3.0 | Aluminium triathlon bike |
+Detailed file, author and license records remain in `museum/atlas/bikes.json` and the exhibit source metadata. Review those records before reuse.
 
 Copies (≤ 1024 px) live in `assets/atlas/ref/` and are credited on the wall and on each card.
 The 3D models are original work derived from measurements, not from the photographs' pixels.

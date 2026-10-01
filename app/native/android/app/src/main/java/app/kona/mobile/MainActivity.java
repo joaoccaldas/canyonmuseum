@@ -1,4 +1,4 @@
-package com.caldasstudio.speedmaxmuseum;
+package app.kona.mobile;
 
 import com.getcapacitor.BridgeActivity;
 

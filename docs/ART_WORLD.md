@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Immersive Art World
 
 The museum can now carry a second layer of 3D storytelling without replacing the bike-first exhibition.

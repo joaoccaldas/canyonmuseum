@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Proven Complete Journeys
 
 This is the product maturity dashboard. Contracts, schemas and commits do not count as complete journeys.

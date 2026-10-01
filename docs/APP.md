@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # The app layer — profile, quality, sharing, loading, accounts
 
 The museum runs as a website and as an installed app (PWA; Android build in `app/native`). This file
@@ -29,7 +31,7 @@ Pixel ratio and shadows change immediately; geometry detail applies after a relo
 ## Sharing — `web/src/engine/share.js`
 
 The **Share** button (header) and **↗** on every card capture the current view straight after a render,
-add a caption strip (exhibit · room · Speedmax Museum), and hand the JPEG to the system share sheet
+add a caption strip (exhibit · room · KONA), and hand the JPEG to the system share sheet
 (Web Share Level 2 → Messages, WhatsApp, Mail, Instagram…). If the device cannot share files it
 shares the link; otherwise it saves the image. Links carry `?room=<area>`, which walks the recipient
 to the same room.

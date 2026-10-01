@@ -1,4 +1,4 @@
-"""Build the Canyon Museum immersive-art asset pack with Blender's bpy API.
+"""Build the KONA Museum immersive-art asset pack with Blender's bpy API.
 
 Run:
   python3 -m pip install bpy
@@ -176,7 +176,7 @@ for i in range(10):
     x, y = .38*math.cos(a), 1.0+.38*math.sin(a)
     cube(f'CARNIVAL_SPOKE_{i:02d}', (.03,.38,.03), (x,y,0), BONE, g, .008, (0,0,-a))
 
-scene['asset_pack'] = 'Canyon Museum immersive art world'
+scene['asset_pack'] = 'KONA Museum immersive art world'
 scene['provenance'] = 'Original procedural Blender geometry. Public-safe; no personal data.'
 
 blend = os.path.join(OUT, 'artworld_assets.blend')

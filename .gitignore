@@ -11,3 +11,5 @@ output/
 artifacts/artworld-visual/
 
 _site/
+
+app/native/www/

@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # The studio — `Studio.html`
 
 One page for every product. Models are fetched when chosen (never inlined), so the page is ~770 kB

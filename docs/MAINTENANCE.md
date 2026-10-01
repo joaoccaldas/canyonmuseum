@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Bike and Equipment Maintenance Roadmap
 
 Maintenance should be a first-class reusable knowledge layer attached to canonical bikes/components.
