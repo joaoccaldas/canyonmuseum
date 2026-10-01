@@ -14,10 +14,10 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry::after{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,rgba(7,17,22,.06),rgba(7,17,22,.14) 44%,rgba(7,17,22,.88))}
 #intro.kona-entry .intro-inner{
   width:min(100%,1320px);min-height:calc(100dvh - 44px);margin:auto;
-  display:grid;grid-template-columns:minmax(0,.92fr) minmax(420px,1.08fr);
-  gap:clamp(30px,5vw,76px);align-items:center
+  display:grid;grid-template-columns:minmax(0,.92fr) minmax(420px,1.08fr);grid-template-areas:"copy product" "actions product";
+  gap:0 clamp(30px,5vw,76px);align-items:center
 }
-#intro.kona-entry .entry-copy{max-width:590px;align-self:center}
+#intro.kona-entry .entry-copy{grid-area:copy;max-width:590px;align-self:end}
 #intro.kona-entry .entry-mast{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 #intro.kona-entry .eyebrow{color:var(--brand-accent-2,#72d3d6);font:800 11px/1 var(--brand-font-ui,var(--sans));letter-spacing:.22em}
 #intro.kona-entry .entry-event{padding-left:16px;border-left:1px solid rgba(255,255,255,.26);color:#d0d9dc;font:700 9px/1.2 var(--brand-font-ui,var(--sans));letter-spacing:.14em}
@@ -28,6 +28,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 }
 #intro.kona-entry h1 em{display:inline;font-style:italic;color:var(--brand-accent,#ff6427);-webkit-text-fill-color:var(--brand-accent,#ff6427)}
 #intro.kona-entry .lede{max-width:31rem;margin:0;color:#eef2f2;font:550 clamp(15px,1.2vw,18px)/1.5 var(--brand-font-ui,var(--sans));text-wrap:pretty}
+#intro.kona-entry .entry-actions-wrap{grid-area:actions;max-width:590px;align-self:start}
 #intro.kona-entry .entry-actions{display:flex;align-items:center;gap:10px;margin-top:26px;flex-wrap:wrap}
 #intro.kona-entry .entry-actions .btn{min-height:54px;border-radius:999px;padding-inline:20px}
 #intro.kona-entry .entry-actions .btn.primary{background:var(--brand-accent,#e85a22);color:var(--brand-on-accent,#fff);border-color:var(--brand-accent,#e85a22);box-shadow:0 18px 48px rgba(0,0,0,.24)}
@@ -38,7 +39,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry .entry-trust>span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand-accent-2,#39c8ef)}
 #intro.kona-entry .entry-trust #entryInstall{width:auto;min-height:36px;padding:0;border:0;border-bottom:1px solid rgba(255,255,255,.45);border-radius:0;background:transparent;color:#e5ecee}
 #intro.kona-entry .entry-signin-note{margin:7px 0 0;color:#8fa1a8;font:500 10px/1.4 var(--brand-font-ui,var(--sans))}
-#intro.kona-entry .entry-product{position:relative;align-self:stretch;min-height:590px;display:flex;flex-direction:column;justify-content:center}
+#intro.kona-entry .entry-product{grid-area:product;position:relative;align-self:stretch;min-height:590px;display:flex;flex-direction:column;justify-content:center}
 #intro.kona-entry .entry-product-stage{
   --stage-rx:0deg;--stage-ry:0deg;
   position:relative;min-height:430px;border:1px solid rgba(255,255,255,.15);
@@ -97,11 +98,12 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .entry-race-clock{margin-top:7px}
   #intro.kona-entry .entry-race-clock small{font-size:8px}
   #intro.kona-entry .entry-race-clock strong{font-size:9px}
-  #intro.kona-entry .entry-actions{order:3;width:100%;display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
+  #intro.kona-entry .entry-actions-wrap{order:3;width:100%;max-width:none}
+  #intro.kona-entry .entry-actions{width:100%;display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
   #intro.kona-entry .entry-actions .btn{min-height:52px}
-  #intro.kona-entry .entry-trust{order:4;margin-top:10px;font-size:9px}
+  #intro.kona-entry .entry-trust{margin-top:10px;font-size:9px}
   #intro.kona-entry .entry-trust #entryInstall{display:none}
-  #intro.kona-entry .entry-signin-note{order:5;margin-top:5px;font-size:9px}
+  #intro.kona-entry .entry-signin-note{margin-top:5px;font-size:9px}
 }
 @media(max-width:360px){
   #intro.kona-entry{padding-inline:14px}
