@@ -47,7 +47,6 @@ export function initSettings({ profile, QUALITY, AVATARS, activeQuality, onQuali
         reloadNeeded ? el('div', { class: 'set-reload' }, el('span', {}, 'Some changes apply after a reload.'), el('button', { type: 'button', class: 'btn primary', onclick: () => location.reload() }, 'Reload now')) : null,
         el('p', { class: 'set-note' }, `Now rendering: ${QUALITY[activeQuality()]?.label || 'Auto'}. Low keeps phones cool and saves data.`)),
       el('section', {}, el('h4', {}, 'Experience'),
-      el('section', {}, el('h4', {}, 'Experience'),
         el('div', { class: 'set-row' }, el('span', {}, 'Ambient sound'), seg('Sound', p.sound ? 'on' : 'off', [['off', 'Off'], ['on', 'On']], v => { profile.set({ sound: v === 'on' }); onSound(v === 'on'); })),
         el('div', { class: 'set-row' }, el('span', {}, '3D movement'), seg('Travel', p.travel, [['teleport', 'Teleport'], ['walk', 'Walk']], v => profile.set({ travel: v }))),
         el('div', { class: 'set-row' }, el('span', {}, 'Motion'), seg('Motion', p.motion, [['auto', 'Auto'], ['full', 'Full'], ['reduced', 'Reduced']], v => { profile.set({ motion: v }); reloadNeeded = onMotion(v) || reloadNeeded; }))),
