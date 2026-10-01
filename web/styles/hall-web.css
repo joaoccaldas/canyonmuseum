@@ -338,6 +338,7 @@ body.map-open #joy{opacity:0;pointer-events:none}
 .map-plan::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 0 45%,rgba(255,255,255,.22) 50%,transparent 55%)}
 .map-area.live rect{filter:saturate(.9)}
 .map-area.future rect{fill:#59656c!important;stroke:#2f3a40!important;filter:none}
+.map-area.locked rect{filter:saturate(.25);opacity:.55;stroke:rgba(18,24,29,.28);stroke-dasharray:1.2 1}.map-area.locked text{fill:#5f6a72!important;font-weight:750;letter-spacing:.04em}
 .map-area.future text{fill:#eef3f4!important;font-weight:800;letter-spacing:.08em}
 .map-area.here rect{stroke:#0d7f84;stroke-width:.7;filter:drop-shadow(0 0 .4px rgba(19,138,143,.8))}
 .map-list li.future>div,.map-list button{min-height:52px}
