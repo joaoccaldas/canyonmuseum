@@ -55,6 +55,20 @@ try{
   report.push({width,height,status:'PASS',stage:layout.stage});
  }
  await page.setViewport({width:390,height:844,deviceScaleFactor:1});
+ // Browser-level text enlargement proxy: verify consumer shell remains usable when text is scaled 125%.
+ await page.goto(base,{waitUntil:'networkidle0'});
+ await page.evaluate(()=>document.documentElement.style.fontSize='125%');
+ await page.click('#buildSelf');await page.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden);
+ const enlarged=await page.evaluate(()=>({
+   overflow:document.documentElement.scrollWidth>innerWidth,
+   cta:[...document.querySelectorAll('.kona-primary,.btn-primary')].filter(e=>e.getClientRects().length).every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.right<=innerWidth+1;})
+ }));
+ assert.equal(enlarged.overflow,false,'125% text scale must not create horizontal overflow');
+ assert.equal(enlarged.cta,true,'125% text scale must keep primary actions usable');
+ await page.evaluate(()=>document.documentElement.style.fontSize='');
+
+ await page.setViewport({width:390,height:844,deviceScaleFactor:1});
+ await page.click('[data-tab="me"]');await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
  await page.click('[data-race-self-action="customize"]');
  await page.click('[data-avatar-archetype="aero"]');
  await page.click('[data-avatar-item="top:lava"]');
