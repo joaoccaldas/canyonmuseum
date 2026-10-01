@@ -99,7 +99,10 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
 .studio-install{margin-left:auto;min-height:48px;padding:0 12px;border:1px solid #ffffff26;border-radius:99px;background:transparent;color:#dce8e9;font:600 11px var(--brand-font-ui);cursor:pointer}
 @media(max-width:599px){.studio-heading .studio-save-state{display:none}}
 
-@media(max-width:379px){.studio-wordmark span{display:none}}
+@media(max-width:379px){
+ .studio-install{font-size:0;padding-inline:10px}.studio-install::after{content:'Install';font-size:11px}
+ .studio-wordmark{gap:8px}.studio-wordmark span{display:block;padding-left:8px;font-size:8px;letter-spacing:.11em}
+}
 
 /* RC8 customization containment */
 .hub-drawer,.hub-drawer [data-hub-body],.avatar-builder,.avatar-slot,.avatar-archetypes,.avatar-item-tools,.avatar-options{min-width:0;max-width:100%}
@@ -140,4 +143,12 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
 }
 @media(max-width:380px){
   .studio-destinations>button{flex-basis:146px;min-width:146px}
+}
+
+@media(max-width:340px){
+ .race-self-identity{padding-top:8px}
+ .race-self-identity small,.race-self-identity p{display:none}
+ .race-self-identity h1{font-size:34px;line-height:.94;margin:2px 0 6px}
+ .studio-stage-caption{padding-bottom:4px}
+ .studio-stage-caption small{display:none}
 }
