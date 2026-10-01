@@ -1,5 +1,5 @@
 {
- "version": "2fbbf9a11706",
+ "version": "e6fd7628bfbd",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -38,7 +38,7 @@
   "web/styles/shell-mobile.css": "2PCyyG0IIOPEKgVLsUd2CRxFlxpu/RDEscF8NpKNV/I=",
   "web/styles/home.css": "M2QUd913oyU1YuRybHiuaPh6VSJUEJninKnS85efSig=",
   "web/styles/garage.css": "Th60m+xGDebkvG90CnGmrUAU3xrRanrmg+N3x7jVhxE=",
-  "web/styles/race-self.css": "AEa4mFxnYB5JEZmsmju6rYryhHf1WFHNk7e0K+4Ihqk=",
+  "web/styles/race-self.css": "EVn+rKXfs668Rt72cv/y1yMzSq/HecXASfGFfzrDVOY=",
   "web/styles/companion.css": "1mzyalJ5H0pL3nW0iCBa/O8bGHKdFmkCzRQQN3X64U0=",
   "web/styles/admin-assets.css": "KCxmjAcirt1XJ2p1Kg+kum1fL3HzPkc8jbjRwF/0qWM=",
   "brand/tokens.css": "U81fLd9WTzpQwX2KkXlp7QzZ3FrzKiU5PA4A3/Dx4y8=",
