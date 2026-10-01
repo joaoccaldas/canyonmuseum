@@ -19,7 +19,7 @@ async function equipmentProduct(snapshot, equipmentId) {
 async function raceIdentityMarkup(snapshot) {
   const identity = snapshot?.race_identity;
   if (!identity?.event_id) {
-    return '<section class="kona-hero-card artifact artifact--hero"><small>YOUR KONA</small><h3>Start with a RaceIdentity.</h3><p>Your intent, goal and equipment become the anchor for Garage, Plan and Passport.</p></section>';
+    return '<section class="kona-hero-card artifact artifact--hero"><small>YOUR KONA</small><h3>Start with your Race Self.</h3><p>Your goal, races and equipment come together here and stay connected across KONA.</p></section>';
   }
   const [bike, shoe] = await Promise.all([equipmentProduct(snapshot, identity.setup?.bike), equipmentProduct(snapshot, identity.setup?.shoe)]);
   const gear = [
@@ -32,7 +32,7 @@ async function raceIdentityMarkup(snapshot) {
     '<small>YOUR KONA · 2026</small>'+
     '<h3>'+esc(goal)+'</h3>'+
     '<p>'+esc(intent)+(gear?' · '+esc(gear):'')+'</p>'+
-    '<span class="kona-source-note">RaceIdentity is private on this device unless you choose to save or share it.</span>'+
+    '<span class="kona-source-note">Your Race Self is private on this device unless you choose to save or share it.</span>'+
   '</section>';
 }
 
@@ -44,16 +44,16 @@ export async function renderMeSurface(root,{settings}={}) {
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Passport</h3><small>'+esc(p.levelName||'Visitor')+'</small></div>'+
       '<div class="kona-list"><article><i>XP</i><div><b>'+p.xp+' XP</b><span>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds</span></div></article>'+
       '<article><i>↗</i><div><b>'+p.streak+' day streak</b><span>Progress follows what you actually explore.</span></div></article>'+
-      (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Secondary to your identity and Passport.</span></div></article>':'')+
+      (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Earned as you explore KONA.</span></div></article>':'')+
       '</div></section>'+
-    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Your collection</h3><small>Derived from your graph</small></div><div class="kona-place-grid">'+
+    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Your collection</h3><small>From your activity</small></div><div class="kona-place-grid">'+
       '<article><small>Bikes</small><b>'+p.bikes+'</b><span>visited</span></article>'+
       '<article><small>Kona years</small><b>'+p.konaYears+'</b><span>discovered</span></article>'+
       '<article><small>Parts</small><b>'+p.parts+'</b><span>inspected</span></article>'+
       '<article><small>Garage</small><b>'+p.garage+'</b><span>equipment links</span></article>'+
     '</div></section>'+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Race badges</h3><small>Past & future</small></div><div data-profile-races></div></section>'+
-    '<section class="kona-section artifact artifact--label" id="konaAccount"><div class="kona-section-head"><h3>Sync across devices</h3><small>Optional · beta</small></div><p class="kona-source-note" data-status>Checking account…</p></section>'+
+    '<section class="kona-section artifact artifact--label" id="konaAccount"><div class="kona-section-head"><h3>Sync across devices</h3><small>Optional backup</small></div><p class="kona-source-note" data-status>Checking account…</p></section>'+
     '<section class="kona-section artifact artifact--label"><button class="kona-primary" type="button" data-settings>Profile, privacy & settings <span>→</span></button></section>';
 
   await renderRaceBadges(root.querySelector('[data-profile-races]'),{limit:20,empty:true});
