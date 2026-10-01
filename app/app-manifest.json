@@ -1,5 +1,5 @@
 {
- "version": "7f9ce7485f70",
+ "version": "01ca3a9aaa15",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -33,9 +33,9 @@
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
-  "web/styles/entry.css": "WkdlFotOmmZv+KgUP84SnZLJdYeOGoV6Qv9Ez01VOl8=",
-  "web/styles/system.css": "GAe9XQk5q8gX8A07QcvClS4EdKSRbPdvQ7/iUO8/dM0=",
-  "web/styles/shell-mobile.css": "2PCyyG0IIOPEKgVLsUd2CRxFlxpu/RDEscF8NpKNV/I=",
+  "web/styles/entry.css": "5u4amw9tDcLiDk4MefQRraRIWYnFY8sa867vjnyNhZA=",
+  "web/styles/system.css": "5ppBgven+mzUxSK3wdTip5PjfYWXtNHU8UtHEBflKgo=",
+  "web/styles/shell-mobile.css": "uiSmh71U2wvcacfMCAP77k9Dedf78/4C32Vi0dUg5Ks=",
   "web/styles/home.css": "M2QUd913oyU1YuRybHiuaPh6VSJUEJninKnS85efSig=",
   "web/styles/garage.css": "Th60m+xGDebkvG90CnGmrUAU3xrRanrmg+N3x7jVhxE=",
   "web/styles/race-self.css": "EVn+rKXfs668Rt72cv/y1yMzSq/HecXASfGFfzrDVOY=",
