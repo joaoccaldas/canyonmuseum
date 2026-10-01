@@ -114,6 +114,9 @@
 .why-story-nav .why-next{justify-self:end;padding:0 18px;border:1px solid var(--brand-action);border-radius:var(--brand-pill-radius);color:var(--brand-action)}
 .why-progress{height:2px;width:130px;background:var(--brand-line);position:relative}
 .why-progress span{display:block;height:100%;background:var(--brand-action)}
+.why-progress--33 span{width:33%}
+.why-progress--66 span{width:66%}
+.why-progress--100 span{width:100%}
 
 .why-final{min-height:calc(100vh - 76px);display:grid;place-items:center;text-align:center;padding:64px 20px;background:linear-gradient(0deg,rgba(8,11,14,.58),rgba(8,11,14,.12)),url('../../assets/kona-years/kailua-bay.jpg') center/cover no-repeat;color:white}
 .why-final-inner{max-width:720px}
