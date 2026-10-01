@@ -43,14 +43,21 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<h3 data-countdown-value>'+esc(headline)+'</h3><p>'+esc(note)+'</p>'+
       '<button class="kona-primary" type="button" data-home-plan>What matters next <span>→</span></button>'+
     '</section>'+
+    '<section class="home-flow" aria-label="KONA journey">'+
+      '<button type="button" data-home-discover><small>01</small><span><b>Explore</b><em>Places, stories, world</em></span><i>→</i></button>'+
+      '<button type="button" data-home-garage><small>02</small><span><b>Gear</b><em>Bike, kit, setup</em></span><i>→</i></button>'+
+      '<button type="button" data-home-plan><small>03</small><span><b>Race</b><em>Plan, weather, logistics</em></span><i>→</i></button>'+
+      '<button type="button" data-home-self><small>04</small><span><b>You</b><em>Avatar, progress, collection</em></span><i>→</i></button>'+
+    '</section>'+
     '<section class="home-race-self artifact artifact--label">'+
       '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
         '<p>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</p>'+
-        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open User Studio <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Open Garage</button></div>'+
+        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open your athlete <span>→</span></button></div>'+
       '</div>'+
     '</section>'+
     '<section class="kona-section artifact artifact--label home-first-find"><small>YOUR FIRST DETOUR</small><h3>Something small is hiding here.</h3><p>Spot the volcanic rock. Tap it. KONA Finds will keep the story.</p><div class="ui-cluster"><span class="t-hand" aria-hidden="true">That suspicious little rock →</span><button type="button" class="btn-icon" data-first-find aria-label="Collect Perfect Volcanic Rock"'+(firstFound?' disabled':'')+'><svg viewBox="0 0 100 70" aria-hidden="true"><path d="M12 52 24 25 47 12 72 18 89 45 70 60 36 64Z" fill="currentColor"/></svg></button></div><p class="kona-source-note" role="status" data-first-find-status>'+(firstFound?'Perfect Volcanic Rock is saved in KONA Finds.':'Your first Find is waiting.')+'</p><button type="button" class="btn-text" data-home-finds>Open KONA Finds →</button></section>'+
+    '<section class="home-kona-now-shell" data-home-kona-now aria-label="What’s going on in Kona"><div class="home-kona-now-loading"><small>KONA NOW · PEOPLE / PLACES / PROGRESS</small><h3>What\'s going on in Kona?</h3><p>Checking athlete cameras and the island pulse…</p></div></section>'+
     '<section class="home-postcard artifact artifact--photo">'+
       '<div class="home-postcard-photo" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" loading="lazy" decoding="async"></div>'+
       '<div class="home-postcard-copy"><small>KAILUA-KONA · HAWAIʻI</small><h3>Not just a race.</h3><p>Roads, lava, people, machines and strange little details worth finding.</p><button type="button" class="kona-link-btn" data-home-discover>Discover something →</button></div>'+
@@ -69,10 +76,10 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       button.disabled=true;status.textContent='Perfect Volcanic Rock saved in KONA Finds. +'+(after.xp-before.xp)+' XP · +'+(after.credits-before.credits)+' KC';
     }catch{status.textContent='Could not save your Find. Tap the rock to try again.';}
   });
-  root.querySelector('[data-home-self]')?.addEventListener('click',()=>openRaceSelf?.());
-  root.querySelector('[data-home-garage]')?.addEventListener('click',()=>openGarage?.());
-  root.querySelector('[data-home-discover]')?.addEventListener('click',()=>openDiscover?.());
-  root.querySelector('[data-home-plan]')?.addEventListener('click',()=>openPlan?.());
+  root.querySelectorAll('[data-home-self]').forEach(x=>x.addEventListener('click',()=>openRaceSelf?.()));
+  root.querySelectorAll('[data-home-garage]').forEach(x=>x.addEventListener('click',()=>openGarage?.()));
+  root.querySelectorAll('[data-home-discover]').forEach(x=>x.addEventListener('click',()=>openDiscover?.()));
+  root.querySelectorAll('[data-home-plan]').forEach(x=>x.addEventListener('click',()=>openPlan?.()));
   root.querySelector('[data-home-nudge]')?.addEventListener('click',e=>{
     const button=e.currentTarget,id='nudge:'+dayKey;
     try {

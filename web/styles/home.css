@@ -1,5 +1,12 @@
 /* RC4 Home continuity: calm shell, Race Self as explicit depth. */
 .home-today{min-height:220px}
+.home-flow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.home-flow button{display:grid;grid-template-columns:28px minmax(0,1fr) 18px;align-items:center;gap:8px;min-height:68px;padding:10px 11px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius);background:var(--brand-surface);color:var(--brand-ink);text-align:left;cursor:pointer}
+.home-flow button small{font:800 9px/1 var(--brand-font-data);color:var(--brand-action)}
+.home-flow button span{display:grid;gap:3px;min-width:0}.home-flow button b{font:750 13px/1.2 var(--brand-font-ui)}.home-flow button em{font:500 9.5px/1.25 var(--brand-font-ui);font-style:normal;color:var(--brand-muted)}
+.home-flow button i{font:700 16px/1 var(--brand-font-ui);font-style:normal;color:var(--brand-action)}
+.home-flow button:is(:hover,:focus-visible){border-color:color-mix(in srgb,var(--brand-action) 45%,var(--brand-line));background:color-mix(in srgb,var(--brand-action) 5%,var(--brand-surface))}
+@media(max-width:340px){.home-flow{grid-template-columns:1fr}.home-flow button{min-height:58px}}
 .home-race-self{display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;padding:18px;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius);background:
   radial-gradient(circle at 12% 18%,color-mix(in srgb,var(--brand-action) 18%,transparent),transparent 32%),
   color-mix(in srgb,var(--brand-surface) 96%,transparent);box-shadow:var(--artifact-shadow)}
@@ -18,6 +25,28 @@
 @media(max-width:430px){
   .home-race-self{grid-template-columns:92px minmax(0,1fr);padding:14px;gap:12px}.home-race-self-visual{min-height:132px}.home-avatar{transform:scale(.9)}
   .home-postcard{grid-template-columns:1fr;min-height:0}.home-postcard-photo{height:155px;min-height:155px}.home-postcard-copy{padding:16px}
+}
+
+.home-kona-now-shell{display:grid;gap:14px;padding:18px 0 22px;border-block:1px solid var(--brand-line)}
+.home-kona-now-head{display:flex;align-items:end;justify-content:space-between;gap:18px}
+.home-kona-now-head>div{min-width:0}.home-kona-now-head small{display:block;font:800 9px/1.2 var(--brand-font-ui);letter-spacing:.16em;color:var(--brand-discovery)}
+.home-kona-now-head h3{margin:6px 0 5px;font:400 clamp(31px,7vw,48px)/.94 var(--brand-font-editorial);letter-spacing:-.025em}
+.home-kona-now-head p{margin:0;max-width:44rem;color:var(--brand-muted);font:500 12px/1.5 var(--brand-font-ui)}
+.home-kona-now-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.home-kona-now-card{min-width:0;overflow:hidden;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius);background:var(--brand-surface)}
+.home-kona-now-visual{display:block;position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--brand-ink);color:inherit;text-decoration:none}
+.home-kona-now-visual img{display:block;width:100%;height:100%;object-fit:cover}
+.home-kona-now-visual .companion-thumb-fallback{display:grid;align-content:end;gap:3px;width:100%;height:100%;padding:12px;background:linear-gradient(145deg,color-mix(in srgb,var(--brand-discovery) 16%,var(--brand-surface)),var(--brand-surface))}
+.home-kona-now-visual .companion-thumb-fallback b{font:400 24px/.95 var(--brand-font-editorial)}
+.home-kona-now-visual .companion-thumb-fallback em{font:650 9px/1.3 var(--brand-font-ui);font-style:normal;color:var(--brand-muted)}
+.home-kona-now-card>div{padding:12px}.home-kona-now-card small{display:block;color:var(--brand-discovery);font:750 8px/1.35 var(--brand-font-ui);letter-spacing:.08em;text-transform:uppercase}
+.home-kona-now-card h4{margin:6px 0;font:400 22px/1 var(--brand-font-editorial);letter-spacing:-.015em}.home-kona-now-card h4 a{color:inherit;text-decoration:none}.home-kona-now-card h4 a:hover{text-decoration:underline;text-decoration-color:var(--brand-action);text-underline-offset:4px}
+.home-kona-now-card p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:var(--brand-muted);font:500 10.5px/1.5 var(--brand-font-ui)}
+.home-kona-now-loading{margin:0;color:var(--brand-muted);font:550 12px/1.5 var(--brand-font-ui)}
+@media(max-width:700px){
+ .home-kona-now-head{align-items:start}.home-kona-now-head .kona-link-btn{flex:0 0 auto}
+ .home-kona-now-preview{display:flex;overflow-x:auto;gap:10px;padding-bottom:4px;scroll-snap-type:x mandatory;overscroll-behavior-inline:contain}
+ .home-kona-now-card{flex:0 0 min(78vw,290px);scroll-snap-align:start}
 }
 
 .home-horizon{display:grid;gap:18px;padding:8px 0 22px;border-top:1px solid var(--brand-line)}

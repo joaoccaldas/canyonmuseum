@@ -63,7 +63,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('progress','☆','Progress','Badges, milestones & history')+
         menuItem('share','↗','Share KONA','Progress card, WhatsApp & more')+
         menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
-        menuItem('feed','≋','The Feed','News, YouTube & your RSS sources')+
+        menuItem('feed','≋',"What's going on in Kona",'Athletes, island signals & your sources')+
         menuItem('travel','⌁','Travel to Kona','Island guide, arrivals & local stops')+
         (isAdmin?menuItem('assets','▦','Asset Library','Bikes, gear, rooms, art & world assets'):'')+
         '<p class="studio-menu-note">Your history lives here.<br>The world stays out there.</p>'+

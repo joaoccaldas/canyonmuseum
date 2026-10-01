@@ -100,6 +100,28 @@
       "status": "ok",
       "checked_at": "2026-10-01T08:21:05.935Z",
       "last_success_at": "2026-10-01T08:21:05.935Z"
+    },
+    {
+      "id": "https://www.youtube.com/feeds/videos.xml?channel_id=UC3FUifepO8vXHtool8S1Z1g",
+      "name": "Kristian Blummenfelt",
+      "kind": "video",
+      "website": "https://www.youtube.com/@kristian.blummenfelt",
+      "feed_url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC3FUifepO8vXHtool8S1Z1g",
+      "note": "Official athlete channel",
+      "status": "unavailable",
+      "checked_at": "2026-10-01T08:21:05.948Z",
+      "last_success_at": null
+    },
+    {
+      "id": "https://www.youtube.com/feeds/videos.xml?channel_id=UCkJ1Sgtqj909kXj_kApY3rA",
+      "name": "Laura Philipp",
+      "kind": "video",
+      "website": "https://www.youtube.com/channel/UCkJ1Sgtqj909kXj_kApY3rA",
+      "feed_url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCkJ1Sgtqj909kXj_kApY3rA",
+      "note": "Official athlete channel",
+      "status": "unavailable",
+      "checked_at": "2026-10-01T08:21:05.948Z",
+      "last_success_at": null
     }
   ],
   "items": [
