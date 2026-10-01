@@ -113,7 +113,6 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       openTour:replayTour,
       isCurrent:()=>request===studioRequest,
       openMuseum:()=>{ close(); enter?.(); },
-      openCollection:collection,
       isAdmin:admin,
       openAssets:adminAssets,
       openFeed:feed,
