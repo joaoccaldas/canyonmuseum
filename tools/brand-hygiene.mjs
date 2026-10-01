@@ -42,3 +42,5 @@ if(!/family=Caveat:wght@500;600&family=Instrument\+Serif:ital@0;1&family=Manrope
 if((landing.match(/fonts\.googleapis\.com\/css2\?/g)||[]).length!==1)errors.push('landing must have exactly one Google Fonts stylesheet');
 if(errors.length){console.error('brand authority gate failed');for(const e of errors)console.error(' - '+e);process.exit(1);}
 console.log('brand authority gate: PASS ('+active.length+' active styles checked)');
+
+// final frozen-candidate validation trigger
