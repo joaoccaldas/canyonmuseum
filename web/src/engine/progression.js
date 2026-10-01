@@ -8,20 +8,21 @@ export const PROGRESSION_KEY = storageKey('progression');
 export const TIERS = ['visitor', 'passport', 'athlete'];
 
 export const LEVELS = [
-  { level: 1, name: 'Visitor', xp: 0 },
-  { level: 2, name: 'Explorer', xp: 40 },
-  { level: 3, name: 'Collector', xp: 100 },
-  { level: 4, name: 'Racer', xp: 200 },
-  { level: 5, name: 'Kona Rookie', xp: 350 },
-  { level: 6, name: 'Lava Runner', xp: 550 },
-  { level: 7, name: 'Queen K Veteran', xp: 800 },
-  { level: 8, name: 'Archivist', xp: 1100 },
-  { level: 9, name: 'Legend', xp: 1500 },
-  { level: 10, name: 'Kahuna', xp: 2000 },
+  { level:1, name:'Visitor', xp:0, unlock:'Race Self + the world preview', status:'live' },
+  { level:2, name:'Explorer', xp:40, unlock:'Keep your first bike + first Garage bay', status:'live' },
+  { level:3, name:'Collector', xp:100, unlock:'Two more bike reveals + Kona wall theme', status:'live' },
+  { level:4, name:'Racer', xp:200, unlock:'Advanced trisuit tools + Garage wall slot', status:'live' },
+  { level:5, name:'Kona Rookie', xp:350, unlock:'Kona Credits shop', status:'teased' },
+  { level:6, name:'Lava Runner', xp:550, unlock:'Lava Night + decoration slot', status:'teased' },
+  { level:7, name:'Queen K Veteran', xp:800, unlock:'Gear rack + helmet and shoe displays', status:'teased' },
+  { level:8, name:'Archivist', xp:1100, unlock:'History vault + rare artifact shelf', status:'teased' },
+  { level:9, name:'Legend', xp:1500, unlock:'Larger Garage + legendary bike slots', status:'teased' },
+  { level:10, name:'Kahuna', xp:2000, unlock:'Full Kona Garage theme + Secret Collection key', status:'teased' },
 ];
 
 export const EVENTS = {
   FIRST_VISIT: { xp: 25, credits: 0 },
+  ONBOARDING_ANSWER: { xp: 15, credits: 0 },
   PRODUCT_VIEWED: { xp: 5, credits: 0 },
   PRODUCT_EXPLODED: { xp: 10, credits: 0 },
   ROOM_ENTERED: { xp: 0, credits: 0 },
@@ -67,6 +68,9 @@ export const COLLECTIBLES = [
 ];
 
 export const UNLOCKS = [
+  { id:'unlock:first-bike', requirements:[{type:'level',min:2}], reward:{type:'feature',id:'garage:first-bike'} },
+  { id:'unlock:kona-wall', requirements:[{type:'level',min:3}], reward:{type:'cosmetic',id:'wall:kona'} },
+  { id:'unlock:advanced-trisuit', requirements:[{type:'level',min:4}], reward:{type:'feature',id:'trisuit:advanced'} },
   {
     id: 'unlock:arrival-badge',
     requirements: [{ type: 'tier', min: 'passport' }],
