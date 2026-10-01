@@ -50,7 +50,7 @@ for (const rel of PAGE_FILES) {
 const shellCss=fs.readFileSync(path.join(ROOT,'web/styles/shell-mobile.css'),'utf8');
 if(/\.race-self-|\.hub-drawer|\.avatar-options/.test(shellCss))
   errors.push('web/styles/shell-mobile.css: Race Self styles must live only in web/styles/race-self.css');
-\nfor(const banned of ['downloads/SpeedmaxMuseum.apk']) if(fs.existsSync(path.join(ROOT,banned))) errors.push(`${banned}: release binary belongs in Actions/Releases`);
+for(const banned of ['downloads/SpeedmaxMuseum.apk']) if(fs.existsSync(path.join(ROOT,banned))) errors.push(`${banned}: release binary belongs in Actions/Releases`);
 
 if(errors.length){console.error('repository hygiene guard failed');for(const e of errors)console.error(' - '+e);process.exit(1);}
 console.log(`repository hygiene guard: PASS (${textFiles.length} source files checked; ${LEGACY_SPEEDMAX_ALLOWLIST.size} legacy-key files grandfathered for migration)`);
