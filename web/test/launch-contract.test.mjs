@@ -17,8 +17,8 @@ test('portrait framing increases distance and reserves room around the object',(
   assert.ok(Math.asin(1/distance)<limiting,'entire sphere must fit');
  }
 });
-test('entry, home and garage composition have a single stylesheet owner',()=>{
- const system=read('web/styles/system.css'),shell=read('web/styles/shell-mobile.css');
+test('entry and routes have one stylesheet owner and feature CSS is not preloaded',()=>{
+ const system=read('web/styles/system.css'),shell=read('web/styles/shell-mobile.css'),tpl=read('web/landing.template.html'),entrySrc=read('web/src/entry.js'),konaShell=read('web/src/ui/kona-shell.js');
  assert.doesNotMatch(system,/#intro\.kona-entry|--kona-bg\s*:/);
  assert.doesNotMatch(shell,/\.home-|\.garage-/);
  assert.match(read('web/styles/home.css'),/\.home-race-self/);
@@ -30,7 +30,7 @@ test('staged deploy rejects missing or corrupt service-worker core CSS',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'kona-stage-test-'));
  try{
   fs.mkdirSync(path.join(dir,'app'));fs.mkdirSync(path.join(dir,'web/styles'),{recursive:true});
-  const css='body{color:red}',rel='web/styles/race-self.css';
+  const css='body{color:red}',rel='web/styles/system.css';
   fs.writeFileSync(path.join(dir,'app/app-manifest.json'),JSON.stringify({core:[rel],files:{[rel]:crypto.createHash('sha256').update(css).digest('base64')}}));
   fs.writeFileSync(path.join(dir,'index.html'),'<link rel="stylesheet" href="'+rel+'">');
   const run=()=>spawnSync(process.execPath,[new URL('tools/validate-staged-site.mjs',root).pathname,dir],{encoding:'utf8'});
