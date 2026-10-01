@@ -262,3 +262,13 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:flex
   font:800 11px/1 var(--brand-font-ui);letter-spacing:.08em;text-decoration:none;
 }
 .global-user-studio:is(:hover,:focus-visible){border-color:var(--brand-action);outline:none}
+
+
+/* Progress road */
+.progress-next{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-top:18px;padding-top:16px;border-top:1px solid var(--brand-line)}
+.progress-next div{display:grid;gap:4px}.progress-next small{font:700 9px/1.2 var(--brand-font-ui);letter-spacing:.14em;color:var(--brand-muted)}.progress-next b{font:650 13px/1.4 var(--brand-font-ui)}.progress-next>span{font:800 13px/1 var(--brand-font-data);color:var(--brand-accent)}
+.progress-next-bar{height:6px;margin-top:10px;overflow:hidden;border-radius:999px;background:color-mix(in srgb,var(--brand-ink) 9%,transparent)}.progress-next-bar i{display:block;height:100%;border-radius:inherit;background:var(--brand-accent)}
+.progress-levels{display:grid;gap:0;border-top:1px solid var(--brand-line)}
+.progress-level{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--brand-line)}
+.progress-level>div{display:grid;gap:3px;min-width:0}.progress-level small{font:750 9px/1.2 var(--brand-font-data);letter-spacing:.12em;color:var(--brand-muted)}.progress-level b{font:650 14px/1.3 var(--brand-font-ui)}.progress-level span{font:500 12px/1.45 var(--brand-font-ui);color:var(--brand-muted)}.progress-level em{flex:0 0 auto;font:750 9px/1 var(--brand-font-data);font-style:normal;letter-spacing:.1em;color:var(--brand-muted)}
+.progress-level.is-open em{color:var(--brand-success)}.progress-level.is-locked{opacity:.72}
