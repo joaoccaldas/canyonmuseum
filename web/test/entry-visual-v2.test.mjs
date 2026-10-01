@@ -10,3 +10,10 @@ test('entry mode is explicit on body for visual/runtime evidence',()=>assert.mat
 
 test('landing explains the three core product promises before entry',()=>{assert.match(html,/Race Self/);assert.match(html,/Bike Studio/);assert.match(html,/Explore Kona/);});
 test('landing includes a lightweight product-proof stage',()=>{assert.match(html,/id="entryProductStage"/);assert.match(js,/renderEntryProductStage/);});
+
+test('mobile landing has one CSS authority and no obsolete entry selectors',()=>{
+  assert.doesNotMatch(css,/\.entry-preview|\.entry-utilities|#intro\.kona-entry \.cta\b/);
+  assert.match(css,/font-size:clamp\(40px,11\.4vw,52px\)/);
+  assert.match(css,/\.entry-actions-wrap\{order:2/);
+  assert.match(css,/\.entry-product\{order:3/);
+});
