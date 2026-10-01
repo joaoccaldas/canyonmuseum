@@ -30,3 +30,5 @@ Do not declare production ready unless unit/asset/brand/P0, security, integratio
 ## Post-sync verification trigger
 
 Deterministic outputs were synchronized at `16646d22e56f75c8e22ce03f2eeb078b1c2c180f`. This documentation-only commit intentionally triggers the final release matrix on the sealed output tree without changing runtime source or generated assets.
+
+Mobile User Studio strip and standalone-page escape routes were sealed into deterministic outputs at `472fad7ffa7fe16e7e4ebb85426647a7c1264b26`. The following docs-only commit is the final same-tree release verification trigger.
