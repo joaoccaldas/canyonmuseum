@@ -130,9 +130,10 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 /* Onboarding is a full state, not content appended beneath the hero. */
 #intro.quest-active .entry-media{filter:saturate(.75) brightness(.42)}
 #intro.quest-active::before{background:linear-gradient(180deg,rgba(7,17,22,.72),rgba(7,17,22,.96))}
-#intro.quest-active .intro-inner{width:min(100%,600px)}
+#intro.quest-active .intro-inner{width:min(100%,1100px)}
 #intro.quest-active .intro-inner> :not(#konaQuest){display:none!important}
-#intro.quest-active #konaQuest{display:block}
+#intro.quest-active #konaQuest{display:block;width:min(100%,600px);margin-inline:auto}
+#intro.quest-active #konaQuest:has(.registration-avatar){width:100%;max-width:none}
 #intro.quest-active .eyebrow{font:400 clamp(38px,7vw,58px)/.98 var(--serif,Georgia,serif);letter-spacing:-.02em;text-transform:none;color:#f8f5ef}
 #intro.quest-active .quest-progress{color:#aebbc1}
 #intro.quest-active .kona-intents{display:grid;gap:10px;margin:22px 0 12px}
