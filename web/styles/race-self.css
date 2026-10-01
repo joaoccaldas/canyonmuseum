@@ -30,9 +30,19 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
 .hub-drawer-head small{font:800 9px/1 var(--sans);letter-spacing:.16em;color:var(--brand-accent-2)}
 .hub-drawer-head h3{margin-top:3px;font:400 28px/1 var(--serif)}
 .hub-drawer-head button{width:var(--brand-touch,48px);height:var(--brand-touch,48px);border-radius:50%;border:1px solid var(--brand-line);background:var(--brand-surface);color:var(--brand-ink);font-size:22px}
-.hub-self-grid{display:grid;grid-template-columns:1fr;gap:10px}.hub-self-grid section{padding:12px;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius,20px)}
-.hub-self-grid small{display:block;margin-bottom:7px;font:800 9px/1 var(--sans);letter-spacing:.14em;color:var(--brand-muted)}
+.hub-self-grid,.avatar-builder{display:grid;grid-template-columns:1fr;gap:10px}.hub-self-grid section,.avatar-builder>section{padding:12px;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius,20px)}
+.hub-self-grid small,.avatar-builder small{display:block;margin-bottom:7px;font:800 9px/1 var(--sans);letter-spacing:.14em;color:var(--brand-muted)}
 .hub-swatches,.avatar-options{display:flex;flex-wrap:wrap;gap:8px}
+.avatar-archetype-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.avatar-archetype{min-height:86px;padding:12px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius,12px);background:var(--brand-surface);color:var(--brand-ink);text-align:left;display:grid;align-content:start;gap:5px}
+.avatar-archetype.on{border-color:var(--brand-ink);box-shadow:inset 0 0 0 1px var(--brand-ink)}
+.avatar-archetype b{font:700 13px/1.1 var(--sans)}.avatar-archetype span{font:500 10px/1.35 var(--sans);color:var(--brand-muted)}
+.avatar-slot-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}.avatar-slot-title small{margin:0}.avatar-slot-title span{font:600 10px/1 var(--sans);color:var(--brand-muted)}
+.avatar-item-tools{display:grid;grid-template-columns:minmax(120px,1fr) minmax(120px,1fr) auto;gap:8px;margin-top:10px}
+.avatar-item-tools label,.avatar-item-tools button{min-height:44px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius,12px);background:var(--brand-surface);color:var(--brand-ink);padding:7px 9px;font:600 10px/1.15 var(--sans)}
+.avatar-item-tools label{display:flex;align-items:center;justify-content:space-between;gap:8px}.avatar-item-tools input[type=color]{width:34px;height:30px;padding:0;border:0;background:transparent}
+.avatar-upload{position:relative;overflow:hidden}.avatar-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.avatar-builder-note{margin:0;padding:0 4px 4px;font:500 10px/1.4 var(--sans);color:var(--brand-muted)}
 .hub-swatches button{width:48px;height:48px;border-radius:10px;border:3px solid transparent;background:var(--swatch)}
 .hub-swatches button.on{box-shadow:0 0 0 3px var(--brand-ink)}
 .avatar-options button{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:8px;min-width:110px;min-height:var(--brand-touch,48px);padding:7px 10px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius,12px);background:var(--brand-surface);color:var(--brand-ink);text-align:left}
@@ -47,3 +57,6 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
   .race-self-controls>a,.race-self-controls>button{flex-direction:row;justify-content:flex-start;text-align:left;padding:14px;border-bottom:1px solid var(--brand-line)}
   .race-self-controls b{font-size:14px}.race-self-controls small{font-size:10px;max-width:220px}
 }
+
+@media(max-width:560px){.avatar-archetype-grid{grid-template-columns:1fr 1fr}.avatar-item-tools{grid-template-columns:1fr 1fr}.avatar-item-tools button{grid-column:1/-1}.avatar-options button{min-width:calc(50% - 4px);flex:1 1 calc(50% - 4px)}}
+@media(min-width:760px){.avatar-builder{grid-template-columns:1fr 1fr}.avatar-builder>.avatar-archetypes,.avatar-builder>.avatar-accent,.avatar-builder>.avatar-builder-note{grid-column:1/-1}}
