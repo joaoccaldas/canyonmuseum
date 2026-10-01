@@ -135,7 +135,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.quest-active .quest-choice{width:100%;min-height:58px;text-align:left;padding:0 18px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.055);color:#f8f5ef;font:650 15px/1.2 var(--sans,system-ui)}
 #intro.quest-active .quest-choice:is(:hover,:focus-visible,.on){border-color:#ff6427;background:rgba(255,100,39,.13)}
 #intro.quest-active .quest-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
-#intro.quest-active .btn.text{color:#dbe2e5;border-color:transparent;background:transparent}
+#intro.quest-active .btn.text{min-height:48px;color:#dbe2e5;border-color:transparent;background:transparent}
 #intro.quest-active #konaQuest .reveal-hero{aspect-ratio:16/9;border-radius:22px;margin:18px 0;background:linear-gradient(180deg,transparent,rgba(7,17,22,.55)),url('assets/share/collection.jpg') center/cover no-repeat;box-shadow:0 24px 70px rgba(0,0,0,.28)}
 #intro.quest-active #konaQuest .reveal-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin:16px 0 22px}
 #intro.quest-active #konaQuest .reveal-meta span{color:#aebbc1;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
