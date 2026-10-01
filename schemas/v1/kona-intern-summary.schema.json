@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/kona-intern-summary-v1.json",
+  "title": "KONA Intern Summary V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "source_id",
+    "source_title",
+    "source_url",
+    "published_at",
+    "intern_summary",
+    "intern_mode",
+    "summary_generated_at",
+    "serious_mode",
+    "sponsored"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_title": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "intern_summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "intern_mode": {
+      "enum": [
+        "tiny",
+        "normal",
+        "too-important",
+        "overexplained",
+        "cosmic",
+        "spreadsheet",
+        "field-note",
+        "straight"
+      ]
+    },
+    "summary_generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12
+    },
+    "serious_mode": {
+      "type": "boolean"
+    },
+    "sponsored": {
+      "type": "boolean"
+    },
+    "sponsor_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "editorial_version": {
+      "type": "string"
+    },
+    "stable_seed": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
