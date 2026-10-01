@@ -3,22 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script>
-(function(){
-  function fit(){
-    var html=document.documentElement;
-    var short=Math.min(screen.width||1e5,screen.height||1e5);
-    var landscape=innerWidth>innerHeight;
-    var physical=landscape?Math.max(screen.width||innerWidth,screen.height||innerHeight):short;
-    var ratio=innerWidth/Math.max(1,physical);
-    var on=short<=500&&ratio>1.3;
-    html.classList.toggle('phone-fit',on);
-    html.classList.toggle('physical-phone',short<=600);
-    html.style.setProperty('--fit',on?ratio.toFixed(3):'1');
-  }
-  fit(); addEventListener('resize',fit); addEventListener('orientationchange',function(){setTimeout(fit,200)});
-})();
-</script>
+<script src="app/viewport.js"></script>
 <title>KONA · Race the version of yourself</title>
 <meta name="description" content="Build your Race Self, choose your machine in 3D, prepare for race week, and explore Kona through a personal guide and living museum.">
 <meta name="theme-color" content="#f4efe7">
@@ -31,7 +16,7 @@
 <meta name="apple-mobile-web-app-title" content="KONA">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300..800&display=swap" rel="stylesheet">
-<!-- Source styles stay external: index.html is a thin shell. Order is tokens → shared shell → personal surfaces → entry authority. -->
+<!-- Thin entry shell: tokens → shared shell → entry. Feature CSS loads with its feature. -->
 <!--design-system:start-->
 <link rel="stylesheet" href="brand/tokens.css">
 <link rel="stylesheet" href="brand/themes.css">
@@ -39,9 +24,6 @@
 <link rel="stylesheet" href="web/styles/components.css">
 <link rel="stylesheet" href="web/styles/system.css">
 <link rel="stylesheet" href="web/styles/shell-mobile.css">
-<link rel="stylesheet" href="web/styles/home.css">
-<link rel="stylesheet" href="web/styles/garage.css">
-<link rel="stylesheet" href="web/styles/race-self.css">
 <link rel="stylesheet" href="web/styles/entry.css">
 <!--design-system:end-->
 </head>
