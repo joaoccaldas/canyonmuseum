@@ -143,6 +143,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         '<div class="avatar-options">'+options+'</div>'+
         '<div class="avatar-item-tools">'+
           '<label><span>Custom color</span><input type="color" data-avatar-color="'+slot+'" value="'+esc(/^#[0-9a-f]{6}$/i.test(selected.color)?selected.color:'#777777')+'"></label>'+
+          (slot==='trisuit'?'<label><span>Accent color</span><input type="color" data-avatar-accent-color="'+slot+'" value="'+esc(/^#[0-9a-f]{6}$/i.test(selected.accentColor)?selected.accentColor:'#ff6a00')+'"></label>':'')+
           '<label class="avatar-upload"><span>'+(overlay?'Replace image':'Add image')+'</span><input type="file" accept="image/png,image/jpeg,image/webp" data-avatar-overlay="'+slot+'"></label>'+
           (overlay?'<button type="button" data-avatar-overlay-remove="'+slot+'">Remove image</button>':'')+
         '</div>'+
@@ -175,6 +176,9 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     }));
     drawerBody.querySelectorAll('[data-avatar-color]').forEach(input=>input.addEventListener('input',()=>{
       commitStyle(patchAvatarItem(avatarStyle,input.dataset.avatarColor,{color:input.value}));
+    }));
+    drawerBody.querySelectorAll('[data-avatar-accent-color]').forEach(input=>input.addEventListener('input',()=>{
+      commitStyle(patchAvatarItem(avatarStyle,input.dataset.avatarAccentColor,{accentColor:input.value}));
     }));
     drawerBody.querySelectorAll('[data-avatar-overlay]').forEach(input=>input.addEventListener('change',async()=>{
       const overlay=await readImage(input.files?.[0]);
