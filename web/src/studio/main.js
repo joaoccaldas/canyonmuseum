@@ -28,10 +28,7 @@ const CAT = window.__PRODUCTS, FILMS = window.__FILMS?.films || [], MSKINS = win
 const profile = createProfile();
 let adminAccess=false,pendingLockedProduct=null;
 const accessForProduct=product=>productAccess(product,{state:ensureProgression(),admin:adminAccess});
-currentUser().then(user=>{
-  const next=isAdminUser(user);
-  if(next&&!adminAccess){adminAccess=true;drawPanel();if(pendingLockedProduct){const p=pendingLockedProduct;pendingLockedProduct=null;show(p);}}
-}).catch(()=>{});
+const studioAccessReady=currentUser().then(user=>{adminAccess=isAdminUser(user);return adminAccess;}).catch(()=>false);
 const touch = matchMedia('(pointer: coarse)').matches || innerWidth < 760;
 const RS = renderSettings(profile.get().quality, { lite: touch, dpr: devicePixelRatio });
 const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -353,6 +350,6 @@ setScene(requestedScene && SCENES[requestedScene] ? requestedScene : (event ? 'k
 const start = CAT.products.find(p => p.id === (sharedSetup?.slots?.bike?.product_id || q.get('p'))) || (event && CAT.products.find(p => p.id === event.featured?.[0])) || CAT.products[0];
 const fromLink = decodeLook(sharedSetup?.slots?.bike?.configuration?.look || q.get('s'), start, FILMS);
 if (sharedSetup?.slots?.bike) tab = 'setup';
-show(start, fromLink);
+studioAccessReady.then(()=>show(start, fromLink));
 dock(false);
 window.__studio = { CAT, show, applyLook, setDream, get current() { return current; }, get look() { return look; }, get raceSetup() { return raceSetup; }, saveCurrentToSetup, renderer, scene, camera };
