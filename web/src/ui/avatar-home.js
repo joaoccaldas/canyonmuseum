@@ -10,7 +10,7 @@ import {
   avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype, setAvatarPresentation,
 } from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
-import { renderPassportSurface } from './me.js';
+import { renderProgressSurface } from './me.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -30,7 +30,7 @@ function readImage(file){
   });
 }
 
-export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openMuseum,openDiscover,openPlan,openFeed,openTravel,openTour,openAssets,isAdmin=false,isCurrent=()=>true}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,openCollection,openTour,openAssets,isAdmin=false,isCurrent=()=>true}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -55,24 +55,20 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         '<div class="studio-canvas-frame"><canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D User Studio"></canvas><p class="studio-stage-status" role="status">Preparing your athlete…</p></div>'+
         '<div class="studio-stage-caption"><span>'+esc(p.name||'Your athlete')+'</span><button type="button" data-stage-reset aria-label="Reset athlete view">↺ Reset view</button><small>Drag to rotate · Scroll or pinch to zoom</small></div>'+
       '</div>'+
-      '<nav class="studio-destinations" aria-label="Explore KONA"><small class="studio-menu-label">STEP INTO THE WORLD</small>'+
-        menuItem('museum','↗','Canyon Museum','Walk through cycling history')+
-        menuItem('discover','◎','Discover Kona','Places, stories & things hiding nearby')+
-        menuItem('feed','≋','The Feed','Athletes, triathlon & island rabbit holes')+
-        menuItem('travel','✦','Travel to Kona','Flights, local stops & getting around')+
-        menuItem('plan','▤','Race week','What matters next, minus the spreadsheet energy')+
+      '<nav class="studio-destinations" aria-label="Your journey"><small class="studio-menu-label">YOUR JOURNEY</small>'+
+        menuItem('races','◉','Races',raceCount+' race badges')+
+        menuItem('collection','◇','Collection',summary.total+' things found')+
+        menuItem('progress','☆','Progress','Badges, milestones & history')+
         menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
-        menuItem('passport','☆','Passport','Your progress & collection')+
         (isAdmin?menuItem('assets','▦','Asset Portfolio','All bikes, gear & room assets'):'')+
-        '<p class="studio-menu-note">No prescribed route.<br>Curiosity usually works.</p>'+
+        '<p class="studio-menu-note">Your history lives here.<br>The world stays out there.</p>'+
       '</nav>'+
-      '<nav class="race-self-controls" aria-label="User Studio menu"><small class="studio-menu-label">MAKE IT YOURS</small>'+
+      '<nav class="race-self-controls" aria-label="Your athlete"><small class="studio-menu-label">YOUR ATHLETE</small>'+
         menuItem('customize','●','Avatar','Build your character')+
         '<a href="'+studioHref+'"><i aria-hidden="true">△</i><span><b>Bike Studio</b><small>Choose & customize in 3D</small></span><em aria-hidden="true">↗</em></a>'+
-        '<button type="button" disabled aria-label="Gear customization, coming soon"><i aria-hidden="true">◇</i><span><b>Gear <mark>Soon</mark></b><small>Your next layer of expression</small></span></button>'+
-        menuItem('races','◉','Races',raceCount+' race badges')+
-        menuItem('settings','⚙','Settings','Appearance & preferences')+
-        '<p class="studio-menu-note">Change your mind later.<br>That is part of the sport.</p>'+
+        '<button type="button" disabled aria-label="Gear customization, coming soon"><i aria-hidden="true">◇</i><span><b>Gear <mark>Soon</mark></b><small>Shoes, helmet & race kit</small></span></button>'+
+        menuItem('settings','⚙','Settings','Profile, appearance & privacy')+
+        '<p class="studio-menu-note">Build your Race Self here.<br>Explore from the main navigation.</p>'+
       '</nav>'+
       '<section class="hub-drawer" data-hub-drawer hidden role="dialog" aria-modal="true" aria-labelledby="studioDrawerTitle"><div class="hub-drawer-head"><div><small data-hub-kicker>USER STUDIO</small><h2 id="studioDrawerTitle" data-hub-title>Your athlete</h2></div><button type="button" data-hub-close aria-label="Close customization">×</button></div><div data-hub-body></div></section>'+
     '</section>';
@@ -220,22 +216,18 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     if(drawer.hidden)openDrawer();
   };
 
-  const showPassport=async()=>{
+  const showProgress=async()=>{
     drawerKicker.textContent='USER STUDIO · PASSPORT';drawerTitle.textContent='Your progress';
     drawerBody.replaceChildren();
-    await renderPassportSurface(drawerBody,{settings});
+    await renderProgressSurface(drawerBody,{settings});
     if(drawer.hidden)openDrawer();
   };
 
   root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
-  root.querySelector('[data-race-self-action="museum"]')?.addEventListener('click',()=>openMuseum?.());
-  root.querySelector('[data-race-self-action="discover"]')?.addEventListener('click',()=>openDiscover?.());
-  root.querySelector('[data-race-self-action="feed"]')?.addEventListener('click',()=>openFeed?.());
-  root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
-  root.querySelector('[data-race-self-action="plan"]')?.addEventListener('click',()=>openPlan?.());
   root.querySelector('[data-race-self-action="tour"]')?.addEventListener('click',()=>openTour?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
-  root.querySelector('[data-race-self-action="passport"]')?.addEventListener('click',showPassport);
+  root.querySelector('[data-race-self-action="collection"]')?.addEventListener('click',()=>openCollection?.());
+  root.querySelector('[data-race-self-action="progress"]')?.addEventListener('click',showProgress);
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
   return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();root.removeEventListener('keydown',handleKey);};
