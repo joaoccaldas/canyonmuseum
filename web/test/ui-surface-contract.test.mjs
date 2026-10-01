@@ -83,5 +83,5 @@ test('Home button means Home and admin assets stay a Me-only capability',()=>{
 
 test('visual evidence captures first pages across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','sign-in','user-studio','avatar-editor','discover','garage','plan','passport','bike-studio']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','sign-in','avatar-registration','home','user-studio','avatar-editor','discover','garage','plan','passport','bike-studio']) assert.match(visual,new RegExp(view));
 });
