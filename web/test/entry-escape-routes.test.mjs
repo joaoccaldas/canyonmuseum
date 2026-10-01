@@ -25,7 +25,8 @@ test('returning Continue uses canonical Home entry whether RaceIdentity exists o
 test('avatar setup can be escaped and does not trap the visitor',()=>{
   assert.match(registration,/data-reg-back/);
   assert.match(entry,/onBack:.*entry-landing|setEntryMode\('landing'\)/s);
-  assert.match(entry,/onContinue:\(\)=>paintQuest\('install'\)/);\n  assert.match(entry,/data-handoff-continue[\s\S]*enterApp\('home'\)/);
+  assert.match(entry,/onContinue:\(\)=>paintQuest\('install'\)/);
+  assert.match(entry,/data-handoff-continue[\s\S]*enterApp\('home'\)/);
 });
 test('sign in is optional and exposes Continue without account',()=>{
   assert.match(entry,/Continue without account/);assert.match(entry,/continueLocal/);assert.match(entry,/enterApp\('home'\)/);
