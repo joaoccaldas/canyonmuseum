@@ -8,6 +8,8 @@ const registry=JSON.parse(fs.readFileSync(new URL('../../integrations/companion/
 
 test('Kona Now is the existing companion route, not a duplicate feed implementation',()=>{
   assert.match(companion,/What's going on in Kona\?/);
+  assert.match(companion,/renderKonaNowPreview/);
+  assert.match(companion,/balancedPreview/);
   assert.match(companion,/sourceManager/);
   assert.match(companion,/liveSubscriptions/);
   assert.match(companion,/data-personal-rss/);
