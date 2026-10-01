@@ -31,6 +31,18 @@ export async function fetchPublic(value:string,redirects=0):Promise<string>{
 const arr=(value:any)=>value==null?[]:Array.isArray(value)?value:[value];
 const text=(value:any)=>String(value?.['#text']??value??'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#(?:39|x27);/gi,"'").replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim().slice(0,240);
 const secureLink=(value:any)=>{try{return publicURL(String(value)).href;}catch{return '';}};
+const mediaURL=(item:any)=>{
+ const group=item?.['media:group']||{};
+ const thumbnail=arr(item?.['media:thumbnail']||group['media:thumbnail'])[0];
+ const content=arr(item?.['media:content']||group['media:content'])[0];
+ const enclosure=arr(item?.enclosure)[0];
+ const candidates=[
+  thumbnail?.['@url'],
+  content?.['@url'],
+  /^image\//i.test(String(enclosure?.['@type']||''))?enclosure?.['@url']:'',
+ ];
+ return candidates.map(secureLink).find(Boolean)||'';
+};
 export function parseFeed(xml:string,url:string,kind:string,now=Date.now()){
  if(/<!\s*(DOCTYPE|ENTITY)/i.test(xml)||xml.length>2_000_000)throw new Error('Unsupported feed XML.');
  const parsed=new XMLParser({ignoreAttributes:false,attributeNamePrefix:'@',processEntities:true,parseTagValue:false,trimValues:true}).parse(xml);
@@ -42,9 +54,11 @@ export function parseFeed(xml:string,url:string,kind:string,now=Date.now()){
  const items=arr(isAtom?feed.entry:feed.item).slice(0,25).map((item:any)=>{
   const link=secureLink(isAtom?arr(item.link).find((x:any)=>!x['@rel']||x['@rel']==='alternate')?.['@href']:item.link);
   const published=Date.parse(text(item.published||item.pubDate||item.updated));
-  const title=text(item.title),video=text(item['yt:videoId']);
+  const title=text(item.title),video=text(item['yt:videoId']),group=item?.['media:group']||{};
+  const summary=text(isAtom?(item.summary||item.content||group['media:description']):(item.description||item['content:encoded']||item['media:description']||group['media:description']));
+  const thumbnail=videoChannel&&/^[\w-]{11}$/.test(video)?'https://i.ytimg.com/vi/'+video+'/hqdefault.jpg':mediaURL(item);
   if(!link||!title||!Number.isFinite(published)||published>now+3600000)return null;
-  return {id:link,source_id:sourceId,title,url:link,published_at:new Date(published).toISOString(),kind:source.kind,...(videoChannel&&/^[\w-]{11}$/.test(video)?{thumbnail:'https://i.ytimg.com/vi/'+video+'/hqdefault.jpg'}:{})};
+  return {id:link,source_id:sourceId,title,url:link,published_at:new Date(published).toISOString(),kind:source.kind,...(summary?{summary}:{}),...(thumbnail?{thumbnail}:{})};
  }).filter(Boolean);
  if(!items.length)throw new Error('No dated stories found in this feed.');
  return {source,items};
@@ -64,5 +78,5 @@ export async function resolveFeed(value:string){
 }
 export function toRSS(data:any){
  const x=(v:any)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]!));
- return '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>KONA · Your Feed</title><link>https://joaoccaldas.github.io/canyonmuseum/?view=feed</link><description>Your selected triathlon and island sources. Read and watch at the original publisher.</description>'+data.items.slice(0,100).map((i:any)=>'<item><title>'+x(i.title)+'</title><link>'+x(i.url)+'</link><guid>'+x(i.url)+'</guid><pubDate>'+new Date(i.published_at).toUTCString()+'</pubDate></item>').join('')+'</channel></rss>';
+ return '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>KONA · What&apos;s going on in Kona?</title><link>https://joaoccaldas.github.io/canyonmuseum/?view=feed</link><description>Athlete cameras, island signals and triathlon stories from your selected sources. Originals stay one tap away.</description>'+data.items.slice(0,100).map((i:any)=>'<item><title>'+x(i.title)+'</title><link>'+x(i.url)+'</link><guid>'+x(i.url)+'</guid><pubDate>'+new Date(i.published_at).toUTCString()+'</pubDate>'+(i.summary?'<description>'+x(i.summary)+'</description>':'')+'</item>').join('')+'</channel></rss>';
 }
