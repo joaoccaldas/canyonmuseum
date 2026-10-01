@@ -13,6 +13,8 @@ const plan=fs.readFileSync(new URL('../src/ui/plan.js',import.meta.url),'utf8');
 const me=fs.readFileSync(new URL('../src/ui/me.js',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url),'utf8');
+const registration=fs.readFileSync(new URL('../src/ui/avatar-registration.js',import.meta.url),'utf8');
+const admin=fs.readFileSync(new URL('../src/ui/admin-assets.js',import.meta.url),'utf8');
 
 test('shell orchestrates calm Home, deep Race Self, Discover, Plan and Me surfaces',()=>{
   assert.match(shell,/renderHomeSurface/);
@@ -37,7 +39,7 @@ test('Garage and Me resolve Product presentation from the shared public projecti
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Home is lightweight and User Studio provides the main navigation',()=>{
+test('Home is lightweight while User Studio remains personal depth',()=>{
   assert.match(home,/data-home-self/);
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
@@ -64,9 +66,19 @@ test('Me is RaceIdentity-first and owns no independent persistence',()=>{
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('entry opens canonical User Studio',()=>{
-  assert.match(entry,/function enterApp\(first = 'me'\)/);
+test('entry has explicit first-run avatar setup and returning Home',()=>{
+  assert.match(entry,/function enterApp\(first = 'home'\)/);
+  assert.match(entry,/paintQuest\('avatar'\)/);
+  assert.match(entry,/renderAvatarRegistration/);
+  assert.match(registration,/TRISUIT LAYOUT/);
+  assert.match(registration,/data-reg-overlay/);
   assert.match(entry,/Enter KONA/);
+});
+test('Home button means Home and admin assets stay a Me-only capability',()=>{
+  assert.match(shell,/\[data-tab=home\]'\)\.onclick=now/);
+  assert.match(shell,/renderAdminAssets/);
+  assert.match(admin,/museum\/catalog\/products\.json/);
+  assert.match(admin,/museum\/world\/decorations\.json/);
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
