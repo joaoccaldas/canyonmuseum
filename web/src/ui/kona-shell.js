@@ -49,7 +49,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
   const accessContext={admin:false};
   globalThis.__konaAccess=accessContext;
-  currentUser().then(user=>{accessContext.admin=isAdminUser(user);}).catch(()=>{});
+  const accessReady=currentUser().then(user=>{accessContext.admin=isAdminUser(user);return accessContext;}).catch(()=>accessContext);
   let routeToken=0;
   const returnJourney=initReturnJourney({openProgress:async()=>{
     await raceSelf();
@@ -99,6 +99,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
 
   async function now(){
+    await accessReady;
     dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('home','web/styles/home.css');
     title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
@@ -110,7 +111,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       openGarage:garage,
       openDiscover:explore,
       openPlan:plan,
-
+      admin:accessContext.admin,
     });
     requestAnimationFrame(()=>requestAnimationFrame(()=>startTour()));
     scheduleSurprise('home');
@@ -163,6 +164,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   }
 
   async function garage(){
+    await accessReady;
     dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('garage','web/styles/garage.css');
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
@@ -226,5 +228,5 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     }
   };
   syncUserMenu(profile?.get?.()); profile?.subscribe?.(syncUserMenu);
-  return { now, raceSelf, garage, plan, me, explore, collection, feed, travel, adminAssets, tour:replayTour, close };
+  return { now, raceSelf, garage, plan, me, explore, collection, feed, travel, adminAssets, tour:replayTour, close, accessReady };
 }
