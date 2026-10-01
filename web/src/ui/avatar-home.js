@@ -1,10 +1,14 @@
 // ui/avatar-home.js — immersive Race Self surface.
 // Race Self is personal depth inside the app, never a second navigation authority.
+// Avatar building is a projection over engine/avatar.js; mobile and desktop share this exact UI.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
-import { AVATAR_OPTIONS, AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
+import {
+  AVATAR_ARCHETYPES, AVATAR_ITEMS, AVATAR_SLOTS,
+  avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype,
+} from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -14,6 +18,15 @@ async function equipped(snapshot,equipmentId){
   const row=(snapshot.user_equipment||[]).find(x=>x.id===equipmentId);
   if(!row?.product_id)return null;
   return getPublicProduct(productId(row.product_id));
+}
+function readImage(file){
+  if(!file||!/^image\/(png|jpeg|webp)$/i.test(file.type)||file.size>500000)return Promise.resolve(null);
+  return new Promise(resolve=>{
+    const r=new FileReader();
+    r.onload=()=>resolve({src:String(r.result||''),name:file.name,opacity:1,updatedAt:new Date().toISOString()});
+    r.onerror=()=>resolve(null);
+    r.readAsDataURL(file);
+  });
 }
 
 export async function renderAvatarHome(root,{profile,settings,onBack}={}){
@@ -39,7 +52,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
         '<div class="race-self-identity"><small>YOUR RACE SELF</small><h2>'+esc(goal)+'</h2><p>'+esc(intent)+' · '+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
       '</div>'+
       '<nav class="race-self-controls" aria-label="Race Self controls">'+
-        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Avatar</b><small>Voxel figure</small></span></button>'+
+        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Avatar</b><small>Build your character</small></span></button>'+
         '<a href="'+studioHref+'"><i>△</i><span><b>Bike</b><small>Choose in 3D</small></span></a>'+
         '<button type="button" data-race-self-action="races"><i>◉</i><span><b>Races</b><small>'+raceCount+' badges</small></span></button>'+
         '<button type="button" data-race-self-action="settings"><i>⚙</i><span><b>Settings</b><small>'+(summary.total||0)+' collected</small></span></button>'+
@@ -62,7 +75,6 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   }
 
   root.querySelector('[data-race-self-back]')?.addEventListener('click',()=>onBack?.());
-
   const drawer=root.querySelector('[data-hub-drawer]');
   const drawerBody=root.querySelector('[data-hub-body]');
   const drawerTitle=root.querySelector('[data-hub-title]');
@@ -70,33 +82,71 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   const closeDrawer=()=>{drawer.hidden=true;drawerBody.replaceChildren();};
   root.querySelector('[data-hub-close]')?.addEventListener('click',closeDrawer);
 
+  const commitStyle=next=>{
+    avatarStyle=normaliseAvatarStyle(next);
+    profile?.set?.({avatarStyle});
+    stageApi?.setAvatarStyle?.(avatarStyle);
+  };
+
   const showSelf=()=>{
-    const style=normaliseAvatarStyle(profile?.get?.().avatarStyle);
-    const optionRow=(slot,values)=>'<section class="avatar-slot"><small>'+slot.toUpperCase()+'</small><div class="avatar-options">'+values.map(v=>{
-      const color=AVATAR_COLORS[slot]?.[v]||'#777';
-      return '<button type="button" data-avatar-slot="'+slot+'" data-avatar-value="'+v+'" class="'+(style[slot]===v?'on':'')+'" style="--slot-color:'+color+'"><i></i><span>'+v.replace(/-/g,' ')+'</span></button>';
-    }).join('')+'</div></section>';
-    drawerKicker.textContent='VOXEL SELF';drawerTitle.textContent='Build your figure';
-    drawerBody.innerHTML='<div class="hub-self-grid avatar-builder">'+
-      optionRow('skin',AVATAR_OPTIONS.skin)+
-      optionRow('hair',AVATAR_OPTIONS.hair)+
-      optionRow('top',AVATAR_OPTIONS.top)+
-      optionRow('bottoms',AVATAR_OPTIONS.bottoms)+
-      optionRow('shoes',AVATAR_OPTIONS.shoes)+
-      optionRow('accessory',AVATAR_OPTIONS.accessory)+
-      '<section><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
+    avatarStyle=normaliseAvatarStyle(profile?.get?.().avatarStyle);
+    const archetypes=AVATAR_ARCHETYPES.map(a=>
+      '<button type="button" class="avatar-archetype '+(avatarStyle.archetype===a.id?'on':'')+'" data-avatar-archetype="'+a.id+'">'+
+      '<b>'+esc(a.label)+'</b><span>'+esc(a.note)+'</span></button>'
+    ).join('');
+    const rows=AVATAR_SLOTS.map(slot=>{
+      const selected=avatarItem(avatarStyle,slot);
+      const options=(AVATAR_ITEMS[slot]||[]).map(item=>
+        '<button type="button" data-avatar-item="'+slot+':'+item.id+'" class="'+(selected.id===item.id?'on':'')+'" style="--slot-color:'+(item.color||'#777')+'"><i></i><span>'+esc(item.label)+'</span></button>'
+      ).join('');
+      const overlay=avatarStyle.items[slot]?.overlay;
+      return '<section class="avatar-slot" data-avatar-slot-card="'+slot+'">'+
+        '<div class="avatar-slot-title"><small>'+slot.toUpperCase()+'</small><span>'+esc(selected.label||selected.id)+'</span></div>'+
+        '<div class="avatar-options">'+options+'</div>'+
+        '<div class="avatar-item-tools">'+
+          '<label><span>Custom color</span><input type="color" data-avatar-color="'+slot+'" value="'+esc(selected.color||'#777777')+'"></label>'+
+          '<label class="avatar-upload"><span>'+(overlay?'Replace image':'Add image')+'</span><input type="file" accept="image/png,image/jpeg,image/webp" data-avatar-overlay="'+slot+'"></label>'+
+          (overlay?'<button type="button" data-avatar-overlay-remove="'+slot+'">Remove image</button>':'')+
+        '</div>'+
+      '</section>';
+    }).join('');
+
+    drawerKicker.textContent='AVATAR STUDIO';drawerTitle.textContent='Build your character';
+    drawerBody.innerHTML=
+      '<div class="avatar-builder">'+
+        '<section class="avatar-archetypes"><small>CHARACTER</small><div class="avatar-archetype-grid">'+archetypes+'</div></section>'+
+        rows+
+        '<section class="avatar-accent"><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
+        '<p class="avatar-builder-note">PNG, JPEG or WebP overlays are stored with your local avatar profile. Maximum 500 KB per image.</p>'+
       '</div>';
     drawer.hidden=false;
-    drawerBody.querySelectorAll('[data-avatar-slot]').forEach(btn=>btn.addEventListener('click',()=>{
-      avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,[btn.dataset.avatarSlot]:btn.dataset.avatarValue,accent:profile.get().avatar});
-      profile.set({avatarStyle});
-      drawerBody.querySelectorAll('[data-avatar-slot="'+btn.dataset.avatarSlot+'"]').forEach(x=>x.classList.toggle('on',x===btn));
-      stageApi?.setAvatarStyle?.(avatarStyle);
+
+    drawerBody.querySelectorAll('[data-avatar-archetype]').forEach(btn=>btn.addEventListener('click',()=>{
+      commitStyle(setAvatarArchetype(avatarStyle,btn.dataset.avatarArchetype));
+      showSelf();
+    }));
+    drawerBody.querySelectorAll('[data-avatar-item]').forEach(btn=>btn.addEventListener('click',()=>{
+      const [slot,id]=btn.dataset.avatarItem.split(':');
+      commitStyle(patchAvatarItem(avatarStyle,slot,{id}));
+      showSelf();
+    }));
+    drawerBody.querySelectorAll('[data-avatar-color]').forEach(input=>input.addEventListener('input',()=>{
+      commitStyle(patchAvatarItem(avatarStyle,input.dataset.avatarColor,{color:input.value}));
+    }));
+    drawerBody.querySelectorAll('[data-avatar-overlay]').forEach(input=>input.addEventListener('change',async()=>{
+      const overlay=await readImage(input.files?.[0]);
+      if(!overlay)return;
+      commitStyle(patchAvatarItem(avatarStyle,input.dataset.avatarOverlay,{overlay}));
+      showSelf();
+    }));
+    drawerBody.querySelectorAll('[data-avatar-overlay-remove]').forEach(btn=>btn.addEventListener('click',()=>{
+      commitStyle(patchAvatarItem(avatarStyle,btn.dataset.avatarOverlayRemove,{overlay:null}));
+      showSelf();
     }));
     drawerBody.querySelectorAll('[data-avatar]').forEach(btn=>btn.addEventListener('click',()=>{
       const nextAccent=btn.dataset.avatar;
-      avatarStyle=normaliseAvatarStyle({...profile.get().avatarStyle,accent:nextAccent});
-      profile.set({avatar:nextAccent,avatarStyle});
+      avatarStyle=normaliseAvatarStyle({...avatarStyle,accent:nextAccent});
+      profile?.set?.({avatar:nextAccent,avatarStyle});
       stageApi?.setAvatarStyle?.(avatarStyle);
       drawerBody.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('on',x===btn));
     }));
