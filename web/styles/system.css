@@ -136,7 +136,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 #appSheet img{width:64px;height:64px;border-radius:16px;display:block;margin-bottom:12px}
 #appSheet h3{font-family:var(--brand-font-editorial);font-weight:400;font-size:30px;line-height:1.05}
 #appSheet p{font-size:13.5px;line-height:1.6;color:var(--brand-muted);margin:8px 0 14px}
-#appSheet .opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--brand-line);margin-top:8px;font-weight:700;font-size:14px}
+#appSheet .opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--brand-line);margin-top:8px;background:var(--brand-surface);color:var(--brand-ink);font-weight:700;font-size:14px;appearance:none}
 #appSheet .opt:hover{border-color:var(--brand-ink)}
 #appSheet .opt small{font-weight:500;font-size:11.5px;color:var(--brand-faint)}
 #appSheet .close{position:absolute;top:14px;right:14px;width:48px;height:48px;border-radius:50%;border:1px solid var(--brand-line);background:var(--brand-surface);color:var(--brand-ink);font-size:18px}
@@ -157,7 +157,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 .kona-section{border-radius:var(--brand-card-radius);}
 .kona-primary,.btn,.quest-choice,.kona-list button,.kona-list a{min-height:var(--brand-touch)}
 .kona-list article,.kona-timeline article{gap:var(--brand-space-2)}
-@media(max-width:760px),(pointer:coarse){
+@media(max-width:899px),(pointer:coarse){
   .kona-panel{padding-inline:var(--brand-mobile-gutter);padding-top:max(12px,env(safe-area-inset-top));}
   .kona-panel-head{margin-bottom:12px}
   .kona-panel-head h2{font-size:clamp(34px,10vw,48px)}
@@ -199,7 +199,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 .kona-discover-categories article,.kona-discover-feed article{border-color:var(--brand-line)}
 .kona-timeline time,.kona-list a,.kona-editorial-link b{color:var(--brand-accent-2)}
 .kona-source-note{color:var(--brand-faint)}
-@media(max-width:760px),(pointer:coarse){
+@media(max-width:899px),(pointer:coarse){
   .race-card{min-height:112px;padding:12px}
   .race-card h4{font-size:22px}
   .race-card-actions{display:grid;grid-template-columns:1fr;gap:6px}
