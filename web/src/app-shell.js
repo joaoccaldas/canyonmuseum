@@ -8,9 +8,15 @@ import { initInstall } from './ui/install.js';
 //    Android only installs it over this one if it carries the same signing key.
 const SITE = 'https://joaoccaldas.github.io/canyonmuseum/';
 const $ = id => document.getElementById(id);
+function ensureUpdateBar(){
+ let el=$('updateBar');if(el)return el;
+ const root=$('appOverlayRoot')||document.body;
+ root.insertAdjacentHTML('beforeend','<div id="updateBar" hidden role="status" aria-live="polite"><span></span><button type="button"></button><button type="button" class="later" aria-label="Later">×</button></div>');
+ return $('updateBar');
+}
 
 function pill(text, action, onAction) {
-  const el = $('updateBar'); if (!el) return;
+  const el = ensureUpdateBar();
   el.querySelector('span').textContent = text;
   const b = el.querySelector('button, a.go'); b.textContent = action;
   if (typeof onAction === 'string') { b.outerHTML = `<a class="go" href="${onAction}" rel="noopener">${action}</a>`; }
@@ -33,6 +39,7 @@ async function nativeUpdateCheck() {
 export function initAppShell() {
   if (window.__appShell) return;
   window.__appShell = true;
+  ensureUpdateBar();
   if (window.Capacitor?.isNativePlatform?.()) { document.body.classList.add('native'); nativeUpdateCheck(); return; }
   initInstall();
 
