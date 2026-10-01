@@ -51,7 +51,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     '<section class="race-self-experience" aria-label="User Studio">'+
       '<header class="studio-heading"><a href="index.html" class="studio-wordmark" aria-label="KONA title screen">KONA<span>USER STUDIO</span></a><button class="studio-install" data-install-app type="button">Install app</button><span class="studio-save-state" role="status">● Saved on this device</span></header>'+
       '<div class="race-self-stage-wrap">'+
-        '<div class="race-self-identity"><small>YOUR ATHLETE. YOUR NEXT CHAPTER.</small><h1>Your race starts here.</h1><p>Make it yours. Then step into the museum.</p></div>'+
+        '<div class="race-self-identity"><small>YOUR ATHLETE. YOUR STRANGE LITTLE UNIVERSE.</small><h1>Build the version of you that hasn’t raced yet.</h1><p>Make it yours. Then go find something you weren’t looking for.</p></div>'+
         '<div class="studio-canvas-frame"><canvas class="race-self-stage" data-race-self-stage aria-label="Interactive 3D User Studio"></canvas><p class="studio-stage-status" role="status">Preparing your athlete…</p></div>'+
         '<div class="studio-stage-caption"><span>'+esc(p.name||'Your athlete')+'</span><button type="button" data-stage-reset aria-label="Reset athlete view">↺ Reset view</button><small>Drag to rotate · Scroll or pinch to zoom</small></div>'+
       '</div>'+
@@ -63,7 +63,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('plan','▤','Race week','What matters next, minus the spreadsheet energy')+
         menuItem('passport','☆','Passport','Your progress & collection')+
         (isAdmin?menuItem('assets','▦','Asset Portfolio','All bikes, gear & room assets'):'')+
-        '<p class="studio-menu-note">Start anywhere.<br>Your studio is always here.</p>'+
+        '<p class="studio-menu-note">No prescribed route.<br>Curiosity usually works.</p>'+
       '</nav>'+
       '<nav class="race-self-controls" aria-label="User Studio menu"><small class="studio-menu-label">MAKE IT YOURS</small>'+
         menuItem('customize','●','Avatar','Build your character')+
@@ -71,7 +71,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         '<button type="button" disabled aria-label="Gear customization, coming soon"><i aria-hidden="true">◇</i><span><b>Gear <mark>Soon</mark></b><small>Your next layer of expression</small></span></button>'+
         menuItem('races','◉','Races',raceCount+' race badges')+
         menuItem('settings','⚙','Settings','Appearance & preferences')+
-        '<p class="studio-menu-note">No account needed.<br>Your choices save automatically.</p>'+
+        '<p class="studio-menu-note">Change your mind later.<br>That is part of the sport.</p>'+
       '</nav>'+
       '<section class="hub-drawer" data-hub-drawer hidden role="dialog" aria-modal="true" aria-labelledby="studioDrawerTitle"><div class="hub-drawer-head"><div><small data-hub-kicker>USER STUDIO</small><h2 id="studioDrawerTitle" data-hub-title>Your athlete</h2></div><button type="button" data-hub-close aria-label="Close customization">×</button></div><div data-hub-body></div></section>'+
     '</section>';
