@@ -19,3 +19,8 @@
 .credit{position:fixed;left:28px;bottom:14px;z-index:9;max-width:430px}
 #settings{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:18px}.set-card{width:min(560px,100%);max-height:100%;overflow:auto;padding:26px}.set-head h3{font-size:34px}.set-card section{padding:16px 0}.set-opts{grid-template-columns:repeat(2,1fr)}
 #map{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:18px}.map-card{width:min(1100px,100%);max-height:100%;overflow:auto;border-radius:22px;padding:20px 22px 16px}.map-head{display:grid;grid-template-columns:minmax(0,1fr) auto 48px;align-items:center;gap:18px}.map-head h3{font-size:46px}.map-tabs{justify-self:center}.map-tabs button{min-height:44px;padding:0 16px}.map-close{width:48px;height:48px}.map-plan{margin:12px 0 6px;border-radius:16px}.map-plan svg{height:min(52vh,520px)}.map-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin-top:10px}.map-list button,.map-list li.future>div{min-height:52px;padding:8px 10px}
+
+
+body.flowing:not(.card-open) #konaWorld>header{opacity:.22;transform:translateY(-8px);transition:opacity .3s,transform .3s}
+body.flowing:not(.card-open) #rail{transform:translateY(calc(100% - 18px));opacity:.72}
+body.flowing #konaWorld>header:hover,body.flowing #konaWorld>header:focus-within{opacity:1;transform:none}
