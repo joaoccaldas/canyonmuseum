@@ -34,6 +34,16 @@ Every day ends with one observed acceptance result. A daily release is optional:
 | Oct 10 | Race-day editorial/support | Official tracking handoff; no invented results, automatic imports or late noncritical code. |
 | Oct 11–14 | Reflection and retention | Separate observed usage/revenue from estimates; retire race banners; use learning to choose the next release. |
 
+## Vision-to-release truth boundary
+
+The visual storytelling catalogue is a product/brand north star, not release evidence. Preserve its core machine + athlete concept, but classify capabilities by observed implementation before publishing them as current.
+
+**Launch/current only when proved on #135:** local-first Race Self, Garage and race setup, the eligible bike catalogue, KONA Finds, sourced Feed/Travel surfaces, countdown, private sharing, responsive navigation, and the currently certified museum/runtime surfaces.
+
+**Future or separately authorised until proved:** WYLD event/room exposure, Totem/door entitlements, seasonal/global rankings, NFC passports or physical member keys, verified athlete tiers, Strava-driven access, live wind telemetry, automated Intern operations, trading, affiliate/buy flows, and partner-specific commercial experiences.
+
+Do not use a vision document, mockup, schema, generated image, or product narrative as proof that a runtime capability exists. The authoritative chain is source → deterministic build → tests/evidence → exact-SHA deployment receipt.
+
 ## Later: PR #139 — product/spec/contracts
 
 Totems as real themed keys, visible/hinted/secret doors, three-day guessing challenges, bounded early access, 100-Find seasons, Global Firsts, anti-farming, commercial ranking exclusions, brand/athlete propositions and automated Intern contracts remain architecture. Validate schemas/examples and reject unsafe payloads; do not ship runtime implementations in this PR.
