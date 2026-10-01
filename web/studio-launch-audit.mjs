@@ -21,7 +21,14 @@ try{
   if(width===390||width===1440)await page.screenshot({path:new URL(`landing-${width}.png`,out).pathname});
   await page.click('#buildSelf');
   await page.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden);
-  await page.click('[data-tab="me"]');
+  await page.evaluate(()=>{
+   const mobile=document.querySelector('[data-tab="me"]');
+   const global=document.querySelector('[data-user-studio]');
+   const visible=el=>el&&getComputedStyle(el).display!=='none'&&el.getClientRects().length>0;
+   const target=visible(mobile)?mobile:visible(global)?global:null;
+   if(!target)throw new Error('No visible User Studio route');
+   target.click();
+  });
   await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
   const layout=await page.evaluate(()=>{
    const canvas=document.querySelector('[data-race-self-stage]'),frame=canvas.__studioFrame;
