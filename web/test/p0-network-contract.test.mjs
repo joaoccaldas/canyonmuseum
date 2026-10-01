@@ -22,9 +22,8 @@ test('first entry starts lightweight avatar registration before the app',()=>{
  assert.match(entry,/setEntryMode\('quest'\)/);
 });
 
-test('reveal enters Home without loading hall runtime',()=>{
- const reveal=entry.slice(entry.indexOf("if (step === 'reveal'"),entry.indexOf("if (step === 'save'"));
- assert.match(reveal,/enterKona/);
- assert.match(reveal,/enterApp/);
- assert.equal(reveal.includes("openMuseum("),false);
+test('avatar completion enters Home without loading hall runtime',()=>{
+ const avatar=entry.slice(entry.indexOf("if(step==='avatar')"),entry.indexOf("if(step==='save')"));
+ assert.match(avatar,/enterApp\('home'\)/);
+ assert.equal(avatar.includes("openMuseum("),false);
 });
