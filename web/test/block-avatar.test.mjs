@@ -11,20 +11,21 @@ const models=fs.readFileSync(new URL('../src/engine/avatar-models.js',import.met
 const home=fs.readFileSync(new URL('../src/ui/avatar-home.js',import.meta.url),'utf8');
 
 test('avatar platform exposes four scalable archetypes and item slots',()=>{
-  assert.equal(AVATAR_SCHEMA_VERSION,3);
+  assert.equal(AVATAR_SCHEMA_VERSION,4);
   assert.deepEqual(AVATAR_ARCHETYPES.map(x=>x.id),['minecraft','renegade','aero','islander']);
-  for(const slot of ['skin','hair','top','bottoms','shoes','accessory','tattoo']){
+  for(const slot of ['skin','hair','trisuit','top','bottoms','shoes','accessory','tattoo']){
     assert.ok(AVATAR_SLOTS.includes(slot));
     assert.ok(Array.isArray(AVATAR_ITEMS[slot])&&AVATAR_ITEMS[slot].length>=2);
   }
 });
 
-test('legacy voxel settings migrate into v3 without losing choices',()=>{
+test('legacy voxel settings migrate into v4 without losing choices',()=>{
   const migrated=normaliseAvatarStyle({v:2,model:'voxel',skin:'deep',hair:'crop',top:'lava',bottoms:'navy',shoes:'ocean',accessory:'visor',accent:'#138a8f'});
-  assert.equal(migrated.v,3);
+  assert.equal(migrated.v,4);
   assert.equal(migrated.archetype,'minecraft');
   assert.equal(migrated.items.skin.id,'deep');
   assert.equal(migrated.items.top.id,'lava');
+  assert.ok(migrated.items.trisuit);
   assert.equal(migrated.items.accessory.id,'visor');
   assert.equal(migrated.accent,'#138a8f');
 });
@@ -34,6 +35,9 @@ test('each avatar item supports independent custom colour and safe image overlay
   style=patchAvatarItem(style,'top',{color:'#123456',overlay:{src:'data:image/png;base64,AAAA',name:'team.png',opacity:.7}});
   assert.equal(avatarItem(style,'top').color,'#123456');
   assert.equal(style.items.top.overlay.name,'team.png');
+  style=patchAvatarItem(style,'trisuit',{color:'#222222',accentColor:'#ff00aa',overlay:{src:'data:image/webp;base64,AAAA',name:'club.webp',opacity:1}});
+  assert.equal(avatarItem(style,'trisuit').accentColor,'#ff00aa');
+  assert.equal(style.items.trisuit.overlay.name,'club.webp');
   const rejected=patchAvatarItem(style,'shoes',{overlay:{src:'javascript:alert(1)',name:'bad'}});
   assert.equal(rejected.items.shoes.overlay,null);
 });
@@ -58,6 +62,7 @@ test('avatar builder owns archetype, item, colour and image controls while bike 
   assert.match(home,/data-avatar-item/);
   assert.match(home,/data-avatar-color/);
   assert.match(home,/data-avatar-overlay/);
+  assert.match(home,/data-avatar-accent-color/);
   assert.match(home,/Choose & customize in 3D/);
   assert.doesNotMatch(home,/patchBike|setBikeStyle|bikeOverlay/);
 });
