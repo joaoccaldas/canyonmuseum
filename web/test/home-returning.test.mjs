@@ -10,7 +10,8 @@ test('returning Home reads canonical RaceIdentity through storage adapter',()=>{
 });
 
 test('first visit follows questions, avatar and install handoff before Home',()=>{
-  assert.match(source,/paintQuest\('questions'\)/);
+  assert.match(source,/step==='questions'/);
+  assert.match(source,/paintQuest\(firstRunStep\(\)\)/);
   assert.match(source,/onDone:\(\)=>paintQuest\('avatar'\)/);
   assert.match(source,/onContinue:\(\)=>paintQuest\('install'\)/);
   assert.match(source,/data-handoff-continue[\s\S]*enterApp\('home'\)/);
