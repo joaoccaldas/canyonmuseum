@@ -5,6 +5,7 @@ import { applyEvent, canUnlock, migratePassport, levelFor, COLLECTIBLES, UNLOCKS
 test('xp maps onto named levels and does not skip the table', () => {
   assert.equal(levelFor(0).name, 'Visitor');
   assert.equal(levelFor(40).name, 'Explorer');
+  assert.match(levelFor(40).unlock,/first bike/i);
   assert.equal(levelFor(2000).name, 'Kahuna');
   assert.equal(levelFor(99999).level, 10);
 });
@@ -62,4 +63,15 @@ test('unlocks follow requirements and do not reopen', () => {
   const granted = applyEvent(state, { type: 'ROOM_COMPLETED', subject: 'hall' });
   assert.ok(granted.state.unlocks.includes('unlock:archive-frame'));
   assert.equal(canUnlock(granted.state, unlock), false);
+});
+
+
+test('three onboarding answers reach level 2 exactly once',()=>{
+  let state=emptyProgression();
+  for(const q of ['intent','history','energy']) state=applyEvent(state,{type:'ONBOARDING_ANSWER',id:'onboarding:'+q,subject:q}).state;
+  assert.equal(state.xp,45);
+  assert.equal(state.level,2);
+  const duplicate=applyEvent(state,{type:'ONBOARDING_ANSWER',id:'onboarding:intent',subject:'intent'});
+  assert.equal(duplicate.duplicate,true);
+  assert.equal(duplicate.state.xp,45);
 });
