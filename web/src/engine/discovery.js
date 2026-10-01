@@ -1,18 +1,29 @@
-// engine/discovery.js — canonical "what is over the horizon?" projection.
-// Teasers may hint at future content. They never grant inventory or currency by themselves.
-export const DISCOVERY_HORIZON=Object.freeze([
-  {id:'horizon:ocean-kit',level:2,kind:'customization',tease:'A new look for your Race Self',silhouette:'KIT',reveal:'Ocean training kit'},
-  {id:'horizon:cfr',level:3,kind:'bike',tease:'Something very fast is hiding in the lava',silhouette:'BIKE',reveal:'Canyon Speedmax CFR · 2027'},
-  {id:'horizon:trisuit',level:4,kind:'trisuit',tease:'A trisuit we are not showing you yet',silhouette:'SUIT',reveal:'Advanced trisuit customization'},
-  {id:'horizon:credits',level:5,kind:'credits',tease:'There is something spendable up ahead',silhouette:'KC',reveal:'KONA Credits reward'},
-  {id:'horizon:lava-night',level:6,kind:'place',tease:'One room is keeping the lights off',silhouette:'ROOM',reveal:'Lava Night'},
-  {id:'horizon:gear',level:7,kind:'gear',tease:'A new equipment slot is coming into focus',silhouette:'GEAR',reveal:'Race gear collection'},
-]);
+// engine/discovery.js — "what is over the horizon?" projected from canonical progression.
+import { LEVELS } from './progression.js';
 
-export function discoveryHorizon(progression={},count=4){
-  const level=Math.max(1,Number(progression.level)||1);
+const kindOf=reward=>reward?.type==='room'||reward?.type==='room-group'?'place':reward?.type==='bike'||reward?.type==='bike-group'?'bike':reward?.type==='avatar-item'?'customization':reward?.type==='surprise-tier'?'surprise':reward?.type==='feature'?'feature':reward?.type||'reward';
+const silhouette=kind=>({place:'ROOM',bike:'BIKE',customization:'KIT',surprise:'?',feature:'+',cosmetic:'STYLE','equipment-slot':'SLOT','garage-bay':'BAY'}[kind]||'NEW');
+
+export const DISCOVERY_HORIZON=Object.freeze(
+  LEVELS.filter(row=>row.level>1).map(row=>{
+    const reward=(row.rewards||[]).find(x=>['room','bike','avatar-item','surprise-tier','feature'].includes(x.type))||(row.rewards||[])[0];
+    const kind=kindOf(reward);
+    return Object.freeze({
+      id:'horizon:level-'+row.level,
+      level:row.level,
+      kind,
+      tease:row.summary||'Something new is getting closer.',
+      silhouette:silhouette(kind),
+      reveal:reward?.label||row.summary||row.name,
+    });
+  })
+);
+
+export function discoveryHorizon(progression={},count=4,{admin=false}={}){
+  const actual=Math.max(1,Number(progression.level)||1);
+  const visibleLevel=admin?(LEVELS.at(-1)?.level||actual):actual;
   return DISCOVERY_HORIZON
-    .map(row=>Object.freeze({...row,unlocked:level>=row.level,levelsAway:Math.max(0,row.level-level)}))
-    .filter(row=>row.level>=Math.max(2,level-1))
+    .map(row=>Object.freeze({...row,unlocked:visibleLevel>=row.level,levelsAway:Math.max(0,row.level-actual)}))
+    .filter(row=>admin||row.level>=Math.max(2,actual-1))
     .slice(0,count);
 }
