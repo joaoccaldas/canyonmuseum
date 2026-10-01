@@ -11,6 +11,7 @@ import { renderFeed, renderTravel } from './companion.js';
 import { renderAdminAssets } from './admin-assets.js';
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 import { readStorage, writeStorage } from '../engine/storage.js';
+import { initReturnJourney } from './return-journey.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon = name => {
@@ -45,6 +46,10 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
   document.body.append(shell);
 
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
+  const returnJourney=initReturnJourney({openProgress:async()=>{
+    await raceSelf();
+    body.querySelector('[data-race-self-action="progress"]')?.click();
+  }});
   const setActive=id=>shell.querySelectorAll('[data-tab]').forEach(x=>(x.classList.toggle('on',x.dataset.tab===id),x.setAttribute('aria-current',x.dataset.tab===id?'page':'false')));
   let tourNode=null,tourTarget=null;
   const dismissTour=()=>{
@@ -95,6 +100,9 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
 
     });
     requestAnimationFrame(()=>requestAnimationFrame(()=>startTour()));
+    setTimeout(()=>{
+      if(!panel.hidden&&title.textContent==='Home'&&!document.querySelector('.kona-tour'))returnJourney.maybeShow();
+    },1200);
   }
 
   async function raceSelf(){
