@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/room-totem-v1.json",
+  "title": "KONA Room Totem V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "grant",
+    "source"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9:._-]*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "theme": {
+      "type": "string"
+    },
+    "rarity": {
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary",
+        "mythic"
+      ]
+    },
+    "grant": {
+      "type": "object",
+      "required": [
+        "room_ids"
+      ],
+      "properties": {
+        "room_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "early_access": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "enum": [
+        "progression",
+        "door-challenge",
+        "find",
+        "trade",
+        "special-event",
+        "athlete-drop",
+        "brand-event"
+      ]
+    },
+    "presentation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "key",
+            "token",
+            "pass",
+            "fragment",
+            "sample",
+            "tag",
+            "other"
+          ]
+        },
+        "silhouette": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "public": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}
