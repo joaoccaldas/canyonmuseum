@@ -1,0 +1,9 @@
+/* EXPERIENCE mobile/coarse-pointer layout only. */
+
+@media (max-width) in this block.
+   Museum hall: web/styles/hall-web.css and hall-mobile.css. KONA shell phone: web/styles/shell-mobile.css */
+*{box-sizing:border-box;margin:0;padding:0}
+
+@media (max-width:640px){#card{left:10px;right:10px;width:auto;bottom:calc(128px + env(safe-area-inset-bottom));max-height:50dvh}#actions{flex-direction:row;left:10px;right:10px;justify-content:center;bottom:calc(70px + env(safe-area-inset-bottom))}#actions .pill{min-width:0;flex:1}#switch{justify-content:flex-start}}
+
+@media (max-width:420px){header .long{display:none}.ttl b{font-size:23px}}
