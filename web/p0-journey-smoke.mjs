@@ -76,6 +76,28 @@ try{
  await page.evaluate(()=>window.__konaShell.now());
  assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i);
 
+ // Direct Plan entry must wait for real entry-data instead of showing placeholders.
+ const planPage=await browser.newPage();planPage.setDefaultTimeout(30000);
+ await planPage.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
+ const planErrors=[];planPage.on('pageerror',e=>planErrors.push(String(e?.stack||e)));planPage.on('console',m=>{if(m.type()==='error')planErrors.push(m.text())});
+ await planPage.goto(new URL('?view=plan',base).href,{waitUntil:'domcontentloaded'});
+ await planPage.waitForFunction(()=>/Plan/i.test(document.querySelector('#konaPanelTitle')?.textContent||''));
+ await planPage.waitForFunction(()=>document.querySelectorAll('.kona-timeline article').length>0);
+ const planText=await planPage.$eval('#konaPanelBody',e=>e.textContent);
+ assert.doesNotMatch(planText,/details are being verified|Place notes are being prepared/i,'direct Plan entry must render loaded schedule data');
+ assert.deepEqual(planErrors,[],'direct Plan entry must have no page errors');
+ await planPage.close();
+
+ // Collection sparse records must not crash Dimensions or Full components.
+ const collectionPage=await browser.newPage();collectionPage.setDefaultTimeout(30000);
+ const collectionErrors=[];collectionPage.on('pageerror',e=>collectionErrors.push(String(e?.stack||e)));collectionPage.on('console',m=>{if(m.type()==='error')collectionErrors.push(m.text())});
+ await collectionPage.goto(new URL('Canyon_Collection.html',base).href,{waitUntil:'domcontentloaded'});
+ await collectionPage.waitForSelector('[data-compare="geometry"]');
+ await collectionPage.click('[data-compare="geometry"]');await collectionPage.waitForSelector('#comparison table');
+ await collectionPage.click('[data-compare="components"]');await collectionPage.waitForSelector('#comparison table');
+ assert.deepEqual(collectionErrors,[],'Collection comparison tabs must not crash on sparse product records');
+ await collectionPage.close();
+
  // Registration path: prove the browser is allowed to issue the Supabase OTP request.
  const auth=await browser.newPage();auth.setDefaultTimeout(30000);
  await auth.setRequestInterception(true);let otpSeen=false;
