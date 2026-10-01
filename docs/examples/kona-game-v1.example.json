@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "note": "Examples only. Runtime generation must use current source evidence and never copy these as facts.",
+  "totems": [
+    {
+      "schema_version": 1,
+      "id": "totem:wind-tunnel:smoke-wand",
+      "name": "Smoke Wand",
+      "theme": "aero",
+      "rarity": "rare",
+      "grant": {
+        "room_ids": [
+          "room:wind-tunnel"
+        ],
+        "early_access": true
+      },
+      "source": "door-challenge",
+      "presentation": {
+        "kind": "key",
+        "silhouette": "wand",
+        "description": "A tool-shaped key for a room about making invisible air visible."
+      },
+      "public": true
+    },
+    {
+      "schema_version": 1,
+      "id": "totem:lava-night:obsidian-key",
+      "name": "Obsidian Key",
+      "theme": "lava-night",
+      "rarity": "epic",
+      "grant": {
+        "room_ids": [
+          "hween"
+        ],
+        "early_access": false
+      },
+      "source": "progression",
+      "presentation": {
+        "kind": "key",
+        "silhouette": "obsidian",
+        "description": "Looks more like a rock than a key. That is intentional."
+      },
+      "public": true
+    }
+  ],
+  "door_challenge": {
+    "schema_version": 1,
+    "id": "door:wind-tunnel:2026-10-04",
+    "room_id": "room:wind-tunnel",
+    "door_mode": "hinted",
+    "opens_at": "2026-10-04T08:00:00Z",
+    "closes_at": "2026-10-07T08:00:00Z",
+    "clues": [
+      {
+        "kind": "measurement",
+        "value": "CdA"
+      },
+      {
+        "kind": "sound",
+        "value": "low-airflow-loop"
+      },
+      {
+        "kind": "crop",
+        "value": "pressure-dot-closeup"
+      }
+    ],
+    "answer": {
+      "theme": "engineering",
+      "era": "modern",
+      "discipline": "bike",
+      "category": "wind-tunnel",
+      "family": null
+    },
+    "scoring": {
+      "version": "door-score-v1",
+      "weights": {
+        "theme": 0.25,
+        "era": 0.1,
+        "discipline": 0.15,
+        "category": 0.4,
+        "family": 0.1
+      }
+    },
+    "reward": {
+      "totem_id": "totem:wind-tunnel:smoke-wand",
+      "early_access_band": 0.05,
+      "exact_badge_id": "badge:exact-read",
+      "first_read_badge_id": "badge:first-read"
+    }
+  },
+  "ranking": {
+    "schema_version": 1,
+    "season_id": "kona-2026",
+    "minimum_population": 25,
+    "score_version": "season-score-v1",
+    "weights": {
+      "find": 1,
+      "collection": 20,
+      "guess_accuracy": 15,
+      "early_access": 5,
+      "first_discovery": 4,
+      "room_completion": 10
+    },
+    "caps": {
+      "early_access": 50,
+      "first_discovery": 40
+    },
+    "excluded_events": [
+      "affiliate-click",
+      "purchase",
+      "share-attempt",
+      "ad-view"
+    ]
+  },
+  "intern_examples": [
+    {
+      "mode": "tiny",
+      "text": "Everyone is discussing tyre pressure again. This is apparently a sport."
+    },
+    {
+      "mode": "too-important",
+      "text": "THE WIND IS BACK. This matters if you are racing. It also matters if you enjoy watching expensive bicycles move sideways."
+    },
+    {
+      "mode": "cosmic",
+      "text": "There are days when the ocean looks calm and every athlete suddenly trusts the universe. Anyway: the practical point is that the swim conditions changed."
+    },
+    {
+      "mode": "spreadsheet",
+      "text": "Three useful numbers, one unnecessary opinion, zero reasons to panic. The source has the full details."
+    }
+  ]
+}
