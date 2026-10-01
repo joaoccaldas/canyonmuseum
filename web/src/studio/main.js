@@ -242,7 +242,7 @@ async function shareRaceSetup() {
   if (!raceSetup?.slots?.bike) { toast('Add a bike to your setup first'); return; }
   const product = CAT.products.find(p => p.id === raceSetup.slots.bike.product_id);
   if (!product) return;
-  const blob = await captureView(renderer, scene, camera, { title: 'My Kona 2026 Setup', place: product.name, site: 'Speedmax Museum' });
+  const blob = await captureView(renderer, scene, camera, { title: 'My Kona 2026 Setup', place: product.name, site: 'KONA' });
   const r = await shareImage(blob, {
     title: 'My Kona 2026 Setup',
     text: `My Kona 2026 Setup · ${product.name}`,
@@ -313,8 +313,8 @@ $('shareBtn').onclick = async () => {
   if (!current) return;
   const film = look?.theme ? FILMS.find(f => f.id === look.theme) : null;
   const title = `${current.product.name}${film ? ` · ${film.name}` : look?.custom ? ' · my livery' : ''}`;
-  const blob = await captureView(renderer, scene, camera, { title, place: event ? `${event.name} · Studio` : 'Studio', site: 'Speedmax Museum' });
-  const r = await shareImage(blob, { title, text: event?.share_line ? `${event.share_line}: ${title}` : `${title} · built in the Speedmax Museum studio`, url: location.href, filename: `studio-${current.product.id}.jpg` });
+  const blob = await captureView(renderer, scene, camera, { title, place: event ? `${event.name} · Studio` : 'Studio', site: 'KONA' });
+  const r = await shareImage(blob, { title, text: event?.share_line ? `${event.share_line}: ${title}` : `${title} · built in KONA Bike Studio`, url: location.href, filename: `studio-${current.product.id}.jpg` });
   toast({ shared: 'Shared', link: 'Link shared', saved: 'Image saved', cancelled: 'Not shared' }[r]);
 };
 const settingsUI = initSettings({ profile, QUALITY, AVATARS, activeQuality: () => profile.get().quality,
