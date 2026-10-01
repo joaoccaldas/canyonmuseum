@@ -165,8 +165,13 @@ function islanderAvatar(style){
 export function buildAvatar(styleInput={}){
   const style=normaliseAvatarStyle(styleInput);
   const builders={minecraft:minecraftAvatar,renegade:renegadeAvatar,aero:aeroAvatar,islander:islanderAvatar};
-  const g=(builders[style.archetype]||minecraftAvatar)(style);
+  const body=(builders[style.archetype]||minecraftAvatar)(style);
+  // Presentation changes silhouette only. It never gates wardrobe, colors, hair or archetype.
+  const shape=style.presentation==='male'?{x:1.035,y:1,z:1.02}:style.presentation==='female'?{x:.94,y:1.015,z:.96}:{x:1,y:1,z:1};
+  body.scale.set(shape.x,shape.y,shape.z);
+  const g=new THREE.Group();g.add(body);
   g.userData.avatarArchetype=style.archetype;
+  g.userData.avatarPresentation=style.presentation;
   g.userData.avatarAnimation={minecraft:'bounce',renegade:'swagger',aero:'ready',islander:'sway'}[style.archetype]||'bounce';
   g.userData.baseY=0;
   g.rotation.y=-.08;
