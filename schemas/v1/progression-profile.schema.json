@@ -9,7 +9,7 @@
     "schema": { "const": "progression-v1" },
     "access_tier": { "enum": ["visitor", "passport", "athlete"] },
     "xp": { "type": "integer", "minimum": 0 },
-    "level": { "type": "integer", "minimum": 1, "maximum": 10 },
+    "level": { "type": "integer", "minimum": 1 },
     "level_name": { "type": "string" },
     "streak": { "type": "integer", "minimum": 0 },
     "discoveries": { "type": "array", "items": { "type": "string" } },
