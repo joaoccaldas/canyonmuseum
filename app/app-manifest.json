@@ -1,5 +1,5 @@
 {
- "version": "d5010ed48592",
+ "version": "02a54c4f0d1a",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -27,7 +27,7 @@
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
   "web/styles/entry-visual-v2.css": "psli1G5AtVc+VVkop+LkjFnLmIeEsm551aEE62VdK5g=",
   "web/styles/system.css": "SVSOVdZiaTAXK9YVcme3Vd9R+Rv4J4AB3Bib1hz5oZM=",
-  "web/styles/shell-mobile.css": "oMD4/yeW3cz2JkaZZrz2LEMZm1YmvJX//sB+6RDJwHc=",
+  "web/styles/shell-mobile.css": "iiitYYa81aehB9wECEmFvHK4lJS+im7scXD/c85Dg7E=",
   "web/styles/race-self.css": "f3gja0zKq9R7O1KbHfaNnR8jilC0vZvNVPM9pl4jzT0=",
   "brand/tokens.css": "QQHxGEUGC6R3vIPGGE9Gpyl/Z/2oHMxf84vOVhrk+e0=",
   "brand/themes.css": "Hhov5kE9vhLxeEzXh8a0Ybe0bdQ3LPnC1sxOpOZvrHo=",
