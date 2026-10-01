@@ -43,7 +43,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
         '<p>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</p>'+
-        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open Race Self <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Your setup</button></div>'+
+        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open User Studio <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Open Garage</button></div>'+
       '</div>'+
     '</section>'+
     '<section class="home-postcard artifact artifact--photo">'+
