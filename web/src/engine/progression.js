@@ -35,6 +35,7 @@ export const EVENTS = {
   STRAVA_CONNECTED: { xp: 20, credits: 0 },
   PASSPORT_CREATED: { xp: 250, credits: 500 },
   FIND_DISCOVERED: { xp: 0, credits: 0 },
+  MUSEUM_STAMP: { xp: 0, credits: 0 },
   CURRENCY_SPENT: { xp: 0, credits: 0 },
 };
 
@@ -151,6 +152,11 @@ export function applyEvent(state, event) {
     xp = pay.xp;
     credits = pay.credits;
     discovery = item.id;
+  }
+  if (event.type === 'MUSEUM_STAMP') {
+    xp = Math.max(0, Math.min(100, Number(event.xp) || 0));
+    credits = 0;
+    discovery = event.subject ? String(event.subject).slice(0,80) : null;
   }
   if (event.type === 'CURRENCY_SPENT') {
     const cost = Math.abs(Number(event.amount) || 0);
