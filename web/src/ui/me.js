@@ -63,7 +63,7 @@ export async function renderPassportSurface(root,{settings}={}) {
 
   const user=await currentUser().catch(()=>null);
   if(!user){
-    account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note" for="passportEmail">Email for a one-time sign-in link</label><input id="passportEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" style="width:100%;min-height:48px;padding:12px 14px;margin:8px 0;border:1px solid currentColor;border-radius:12px;background:transparent;color:inherit;font:inherit"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
+    account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note" for="passportEmail">Email for a one-time sign-in link</label><input id="passportEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" class="ui-input passport-email"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
     status.textContent='Play without an account, or sign in only for cross-device backup.';
     account.querySelector('[data-login]')?.addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('button');btn.disabled=true;try{await sendMagicLink(new FormData(e.currentTarget).get('email'));status.textContent='Check your email and open the sign-in link on this device.';e.currentTarget.hidden=true;}catch(err){status.textContent=err.message||'Could not send sign-in link.';btn.disabled=false;}});
     return;
