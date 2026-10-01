@@ -230,3 +230,15 @@ body.install-open{overflow:hidden}
   .race-card-actions{grid-template-columns:1fr}
   .race-card-actions button{padding-inline:12px}
 }
+
+
+/* Replayable first-visit KONA coach tour. */
+.kona-tour{position:fixed;z-index:1200;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(360px,calc(100vw - 32px));padding:18px;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius);background:color-mix(in srgb,var(--brand-surface) 97%,transparent);color:var(--brand-ink);box-shadow:0 28px 90px -30px rgba(0,0,0,.58);backdrop-filter:blur(20px)}
+.kona-tour>small{display:block;color:var(--brand-discovery);font:800 10px/1.2 var(--brand-font-ui);letter-spacing:.16em}
+.kona-tour h3{margin:7px 0 8px;font:400 30px/1 var(--brand-font-editorial);letter-spacing:-.02em}
+.kona-tour p{margin:0;color:var(--brand-muted);font:500 13px/1.55 var(--brand-font-ui)}
+.kona-tour-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.kona-tour-actions .btn-text,.kona-tour-actions .btn-primary{min-height:48px}
+.tour-target{outline:3px solid var(--brand-discovery)!important;outline-offset:4px;box-shadow:0 0 0 8px color-mix(in srgb,var(--brand-discovery) 18%,transparent)!important}
+@media(min-width:900px){.kona-tour{left:32px;bottom:32px;transform:none}}
+@media(prefers-reduced-motion:reduce){.tour-target{scroll-behavior:auto}}
