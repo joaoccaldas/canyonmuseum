@@ -76,6 +76,8 @@ async function capture(vp,state,theme){
    const small=els.map(x=>{const r=x.getBoundingClientRect();return{tag:x.tagName,text:(x.textContent||'').trim().slice(0,50),w:r.width,h:r.height};}).filter(x=>x.w<48||x.h<48);
    const intro=document.getElementById('intro');
    const nav=document.querySelector('.kona-bottom-nav');
+   const tour=document.querySelector('.kona-tour');
+   const tourText=tour&&visible(tour)?(tour.innerText||'').slice(0,600):'';
    const activeNav=[...document.querySelectorAll('.kona-bottom-nav .on,.kona-bottom-nav [aria-current="page"]')].map(x=>(x.textContent||'').trim());
    const visibleText=(document.body.innerText||'').replace(/\s+/g,' ').trim().slice(0,900);
    const stage=document.querySelector('.studio-canvas-frame');const sr=stage?.getBoundingClientRect?.();
@@ -85,7 +87,7 @@ async function capture(vp,state,theme){
    const enter=document.getElementById('buildSelf'),product=document.querySelector('#intro.kona-entry .entry-product');
    const er=enter?.getBoundingClientRect?.(),pr=product?.getBoundingClientRect?.();
    const rr=reg?.getBoundingClientRect?.(),rc=regCopy?.getBoundingClientRect?.(),rp=regPreview?.getBoundingClientRect?.();
-   return{landing:er?{ctaTop:er.top,ctaBottom:er.bottom,ctaLeft:er.left,ctaRight:er.right,ctaW:er.width,productTop:pr?.top??null,productBottom:pr?.bottom??null,productLeft:pr?.left??null,productRight:pr?.right??null,viewportH:innerHeight}:null,registration:rr&&rc&&rp?{w:rr.width,copyW:rc.width,previewW:rp.width,overlap:Math.max(0,Math.min(rc.right,rp.right)-Math.max(rc.left,rp.left))}:null,stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText};
+   return{landing:er?{ctaTop:er.top,ctaBottom:er.bottom,ctaLeft:er.left,ctaRight:er.right,ctaW:er.width,productTop:pr?.top??null,productBottom:pr?.bottom??null,productLeft:pr?.left??null,productRight:pr?.right??null,viewportH:innerHeight}:null,registration:rr&&rc&&rp?{w:rr.width,copyW:rc.width,previewW:rp.width,overlap:Math.max(0,Math.min(rc.right,rp.right)-Math.max(rc.left,rp.left))}:null,stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText,tourText};
  });
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const personal3D=requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
@@ -112,7 +114,7 @@ for(const r of report){
    const a=r.metrics.registration;
    if(a.w<900||a.copyW<420||a.previewW<340||a.overlap>1)violations.push(`desktop/${r.theme}: avatar registration grid collapsed ${Math.round(a.w)} total / ${Math.round(a.copyW)} copy / ${Math.round(a.previewW)} preview / ${Math.round(a.overlap)} overlap`);
  }
- if(r.state==='onboarding-tour'&&!/MAKE IT YOURS|Start with your athlete/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: onboarding tour missing`);
+ if(r.state==='onboarding-tour'&&!/MAKE IT YOURS|Start with your athlete/i.test(r.metrics.tourText))violations.push(`${r.viewport}/${r.theme}: onboarding tour missing`);
  if(r.state==='home'&&!/YOUR RACE SELF|OVER THE HORIZON/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: Home discovery surface missing`);
  if(r.state==='user-studio'&&!/Build the version of you|YOUR ATHLETE|USER STUDIO/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: User Studio content missing`);
  if(r.state==='avatar-editor'&&!/Your character|Minecraft|Customize/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: avatar editor missing`);
