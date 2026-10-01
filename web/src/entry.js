@@ -133,7 +133,8 @@ window.__konaShell = shell;
 function enterApp(first = 'home') {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
-  if (first === 'garage') shell.garage?.();
+  if (first === 'race-self') shell.raceSelf?.();
+  else if (first === 'garage') shell.garage?.();
   else if (first === 'collection') shell.collection?.();
   else if (first === 'discover') shell.explore?.();
   else if (first === 'plan') shell.plan?.();
@@ -325,4 +326,4 @@ const shared=decodeShare(q.get('kona'));
 if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
 else if (authReturned) enterApp('home');
-else if (['home','garage','collection','discover','plan','me'].includes(q.get('view'))) enterApp(q.get('view'));
+else if (['home','race-self','garage','collection','discover','plan','me'].includes(q.get('view'))) enterApp(q.get('view'));
