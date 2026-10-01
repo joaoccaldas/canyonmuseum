@@ -5,7 +5,7 @@ import { collectionSummary } from '../engine/items.js';
 import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
 import { ensureProgression } from '../engine/progression.js';
 import { discoveryHorizon } from '../engine/discovery.js';
-import { applyStoredEvent } from '../engine/progression.js';
+import { applyStoredEvent, ensureProgression } from '../engine/progression.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
@@ -61,5 +61,5 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
   root.querySelector('[data-home-garage]')?.addEventListener('click',()=>openGarage?.());
   root.querySelector('[data-home-discover]')?.addEventListener('click',()=>openDiscover?.());
   root.querySelector('[data-home-plan]')?.addEventListener('click',()=>openPlan?.());
-  root.querySelector('[data-home-nudge]')?.addEventListener('click',e=>{const before=e.currentTarget.textContent;const state=applyStoredEvent({type:'NUDGE_OPENED',id:'nudge:'+dayKey,subject:dayKey});e.currentTarget.textContent=state.seen?.includes?.('nudge:'+dayKey)?'5 XP. That was suspiciously easy.':before;e.currentTarget.disabled=true;});
+  root.querySelector('[data-home-nudge]')?.addEventListener('click',e=>{const id='nudge:'+dayKey,already=ensureProgression().seen.includes(id);applyStoredEvent({type:'NUDGE_OPENED',id,subject:dayKey});e.currentTarget.textContent=already?'Already collected. Still weird.':'5 XP. That was suspiciously easy.';e.currentTarget.disabled=true;});
 }
