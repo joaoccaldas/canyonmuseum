@@ -180,13 +180,31 @@ export function syncIdentityFromSetup(setup, products, storage = globalThis.loca
   try {
     const previousEquipment = JSON.parse(readStorage('userEquipment', storage) || '[]');
     const previousIdentity = JSON.parse(readStorage('raceIdentity', storage) || 'null');
+    const existingRows = Array.isArray(previousEquipment) ? previousEquipment : [];
+    const chosenByProjectedId = new Map();
+    const mergedEquipment = [...existingRows];
 
-    const projectedProducts = new Set(graph.equipment.map(row => row.product_id));
-    const preserved = Array.isArray(previousEquipment)
-      ? previousEquipment.filter(row => row?.product_id && !projectedProducts.has(row.product_id))
-      : [];
-    const mergedEquipment = [...preserved, ...graph.equipment];
+    for (const projected of graph.equipment) {
+      const existing = existingRows.find(row => row?.product_id === projected.product_id && row?.relationship !== 'try')
+        || existingRows.find(row => row?.product_id === projected.product_id);
+      if (existing) {
+        const merged = {
+          ...projected,
+          ...existing,
+          customization: { ...(existing.customization || {}), ...(projected.customization || {}) },
+        };
+        const i = mergedEquipment.findIndex(row => row?.id === existing.id);
+        if (i >= 0) mergedEquipment[i] = merged;
+        chosenByProjectedId.set(projected.id, existing.id);
+      } else {
+        mergedEquipment.push(projected);
+        chosenByProjectedId.set(projected.id, projected.id);
+      }
+    }
 
+    const projectedSetup = Object.fromEntries(
+      Object.entries(graph.identity.setup || {}).map(([field,id]) => [field, id ? (chosenByProjectedId.get(id) || id) : null])
+    );
     const identity = {
       ...graph.identity,
       ...(previousIdentity && typeof previousIdentity === 'object' ? {
@@ -198,7 +216,7 @@ export function syncIdentityFromSetup(setup, products, storage = globalThis.loca
         visibility: previousIdentity.visibility ?? graph.identity.visibility,
         share_slug: previousIdentity.share_slug ?? graph.identity.share_slug,
       } : {}),
-      setup: { ...(previousIdentity?.setup || {}), ...graph.identity.setup },
+      setup: { ...(previousIdentity?.setup || {}), ...projectedSetup },
     };
 
     writeStorage('userEquipment', JSON.stringify(mergedEquipment), storage);
