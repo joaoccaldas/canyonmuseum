@@ -1,0 +1,12 @@
+/* KONA entry WEB composition only. Shared visual language: entry-shared.css */
+@media(min-width:761px) and (pointer:fine){
+  #intro.kona-entry{padding:clamp(32px,5vw,72px);align-items:center}
+  #intro.kona-entry .intro-inner{width:min(62vw,720px);max-width:720px}
+  #intro.kona-entry h1{font-size:clamp(64px,7vw,108px);line-height:.88}
+  #intro.kona-entry .lede{font-size:clamp(16px,1.4vw,20px);max-width:38rem}
+  #intro.kona-entry .cta{margin-top:20px}
+  #intro.kona-entry .entry-utilities{margin-top:18px}
+  #intro.quest-active .intro-inner{width:min(56vw,680px)}
+  #intro.quest-active .kona-intents{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #intro.quest-active #konaQuest .race-id-card{max-width:640px}
+}
