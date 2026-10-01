@@ -15,7 +15,11 @@ async function capture(vp,state,theme){
  await p.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:vp.id==='desktop'?1:2,isMobile:vp.id!=='desktop',hasTouch:vp.id!=='desktop'});
  await p.evaluateOnNewDocument(({theme,state})=>{
    localStorage.clear();
-   // Visual evidence seeds known state; interaction evidence owns mutation/persistence behavior.\n   if(['bike-studio','collection','find-studio'].includes(state)){\n     const discoveries=['collection','find-studio'].includes(state)?['find:shore:lava']:[];\n     localStorage.setItem('kona.progression.v1',JSON.stringify({schema:'progression-v1',xp:40,level:2,access_tier:'visitor',streak:0,discoveries,badges:[],unlocks:[],seen:[],ledger:[],credits:0,history:[],acquisitions:[]}));\n   }
+   // Visual evidence seeds known state; interaction evidence owns mutation/persistence behavior.
+   if(['bike-studio','collection','find-studio'].includes(state)){
+     const discoveries=['collection','find-studio'].includes(state)?['find:shore:lava']:[];
+     localStorage.setItem('kona.progression.v1',JSON.stringify({schema:'progression-v1',xp:40,level:2,access_tier:'visitor',streak:0,discoveries,badges:[],unlocks:[],seen:[],ledger:[],credits:0,history:[],acquisitions:[]}));
+   }
    localStorage.setItem('kona.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));
    if(!['landing','sign-in','onboarding-profile','avatar-registration','install-handoff','onboarding-tour'].includes(state)){
      localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}}));
@@ -47,7 +51,7 @@ async function capture(vp,state,theme){
    if(state==='onboarding-tour'){await p.click('[data-handoff-continue]');await p.waitForSelector('.kona-tour');}
  }else if(state==='bike-studio'){
    await p.goto(new URL('Studio.html',base).href,{waitUntil:'domcontentloaded'});
-   await p.waitForFunction(()=>window.__studio?.current,{timeout:60000});
+   await p.waitForFunction(()=>window.__studio?.current,{timeout:120000});
  }else if(state!=='landing'){
    await p.click('#buildSelf');
    await p.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden,{timeout:60000});
