@@ -20,7 +20,9 @@ test('Museum Passport supports discovery progress and return resume', () => {
   assert.match(src, /function discover\(p\)/);
   assert.match(src, /passport\.discoveries\.push/);
   assert.match(src, /function savePose\(\)/);
-  assert.match(src, /Welcome back · Museum Passport/);
-  assert.match(tpl, /id="passportBtn"/);
-  assert.match(tpl, /id="passportCount"/);
+  assert.match(src, /passport\.discoveries\.push/);
+  assert.doesNotMatch(tpl, /id="passportBtn"|id="passportCount"/);
+  assert.doesNotMatch(tpl, />Passport\b|>Studio<|>Compare<|>Archive<|id="shareBtn"/);
+  assert.match(tpl,/id="backKonaBtn"/);
+  assert.match(tpl,/id="worldMoreBtn"/);
 });
