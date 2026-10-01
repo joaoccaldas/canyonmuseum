@@ -1,6 +1,6 @@
 // ui/avatar-registration.js — fast first-run Race Self setup.
 // Account creation remains optional; avatar/trisuit setup is part of becoming a Race Self.
-import { AVATAR_ARCHETYPES, AVATAR_ITEMS, avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype } from '../engine/avatar.js';
+import { AVATAR_ARCHETYPES, AVATAR_ITEMS, avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype, setAvatarPresentation } from '../engine/avatar.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function readImage(file){
@@ -15,7 +15,7 @@ function preview(style){
 
 export function renderAvatarRegistration(host,{profile,onContinue,onBack}={}){
   let style=normaliseAvatarStyle(profile?.get?.().avatarStyle);
-  let gender=profile?.get?.().gender||'prefer-not';
+  let gender=style.presentation||profile?.get?.().gender||'prefer-not';
   const paint=()=>{
     const tri=avatarItem(style,'trisuit');
     host.innerHTML='<section class="registration-avatar">'+
@@ -30,7 +30,7 @@ export function renderAvatarRegistration(host,{profile,onContinue,onBack}={}){
       '<div class="quest-nav"><button type="button" class="btn-secondary" data-reg-back>Back</button><button type="button" class="btn-primary" data-reg-continue>Good enough. Let’s make trouble →</button></div>'+
     '</section>';
     const commit=next=>{style=normaliseAvatarStyle(next);profile?.set?.({avatarStyle:style});paint();};
-    host.querySelectorAll('[data-reg-gender]').forEach(b=>b.addEventListener('click',()=>{gender=b.dataset.regGender;profile?.set?.({gender});paint();}));
+    host.querySelectorAll('[data-reg-gender]').forEach(b=>b.addEventListener('click',()=>{gender=b.dataset.regGender;style=setAvatarPresentation(style,gender);profile?.set?.({gender,avatarStyle:style});paint();}));
     host.querySelectorAll('[data-reg-archetype]').forEach(b=>b.addEventListener('click',()=>commit(setAvatarArchetype(style,b.dataset.regArchetype))));
     host.querySelectorAll('[data-reg-trisuit]').forEach(b=>b.addEventListener('click',()=>commit(patchAvatarItem(style,'trisuit',{id:b.dataset.regTrisuit}))));
     host.querySelector('[data-reg-color]')?.addEventListener('input',e=>{style=normaliseAvatarStyle(patchAvatarItem(style,'trisuit',{color:e.target.value}));profile?.set?.({avatarStyle:style});host.querySelector('.registration-avatar-preview').innerHTML=preview(style)+'<p class="t-hand">Progress looks good on you.</p>';});
