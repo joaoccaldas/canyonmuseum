@@ -5,7 +5,8 @@
     "name": "IRONMAN World Championship",
     "date": "2026-10-10",
     "location": "Kailua-Kona, Hawaiʻi",
-    "venue": "Kailua Pier"
+    "venue": "Kailua Pier",
+    "source": "https://regwcusa.ironman.com/event/2026-ironman-world-championship-kona"
   },
   "race_week": [
     {
@@ -39,6 +40,33 @@
       "start": "10:00",
       "end": "14:00",
       "venue": "Hale Hālāwai Park, Aliʻi Drive"
+    },
+    {
+      "id": "kona-2026-town-fun-run-oct-03",
+      "kind": "community",
+      "date": "2026-10-03",
+      "start": "07:30",
+      "end": null,
+      "venue": "Hale Hālāwai Park, 75-5768 Aliʻi Drive",
+      "source": "https://regwcusa.ironman.com/event/2026-kona-town-fun-run-supported-by-hoka---saturday-october-3-2026"
+    },
+    {
+      "id": "kona-2026-e-komo-mai-oct-08",
+      "kind": "banquet",
+      "date": "2026-10-08",
+      "start": "18:00",
+      "end": null,
+      "venue": "KBR Parking Lot, 75-5660 Palani Rd",
+      "source": "https://regwcusa.ironman.com/event/2026-ironman-world-championship-kailua-kona-hawaii-usa---banquets"
+    },
+    {
+      "id": "kona-2026-banquet-champions-oct-11",
+      "kind": "banquet",
+      "date": "2026-10-11",
+      "start": null,
+      "end": null,
+      "venue": "KBR Parking Lot, 75-5660 Palani Rd",
+      "source": "https://regwcusa.ironman.com/event/2026-ironman-world-championship-kailua-kona-hawaii-usa---banquets"
     }
   ],
   "places": [
@@ -54,6 +82,20 @@
       "region": "Aliʻi Drive",
       "name": "Hale Hālāwai Park",
       "purpose": "Official 2026 IRONMAN Expo venue",
+      "visit_with_care": false
+    },
+    {
+      "id": "kona-race-center",
+      "region": "Kailua-Kona",
+      "name": "Kona Race Center",
+      "purpose": "Athlete orientation: pier, transition, hot corner, Aliʻi finish and recovery",
+      "visit_with_care": false
+    },
+    {
+      "id": "kbr",
+      "region": "Palani Road",
+      "name": "King Kamehameha's Kona Beach Hotel / KBR",
+      "purpose": "Race-week athlete services and 2026 banquet venue",
       "visit_with_care": false
     }
   ]
