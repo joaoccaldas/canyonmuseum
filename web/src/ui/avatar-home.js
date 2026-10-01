@@ -103,8 +103,8 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   const drawerKicker=root.querySelector('[data-hub-kicker]');
   let drawerTrigger=null;
   const siblings=[...root.querySelector('.race-self-experience').children].filter(x=>x!==drawer);
-  const openDrawer=()=>{drawerTrigger=document.activeElement;drawer.hidden=false;siblings.forEach(x=>x.inert=true);root.querySelector('[data-hub-close]').focus();};
-  const closeDrawer=()=>{drawer.hidden=true;siblings.forEach(x=>x.inert=false);drawerBody.replaceChildren();drawerTrigger?.focus?.();};
+  const openDrawer=()=>{drawerTrigger=document.activeElement;drawer.hidden=false;document.body.classList.add('studio-drawer-open');siblings.forEach(x=>x.inert=true);root.querySelector('[data-hub-close]').focus();};
+  const closeDrawer=()=>{drawer.hidden=true;document.body.classList.remove('studio-drawer-open');siblings.forEach(x=>x.inert=false);drawerBody.replaceChildren();drawerTrigger?.focus?.();};
   const handleKey=e=>{
     if(drawer.hidden)return;
     if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeDrawer();}
@@ -266,5 +266,5 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
-  return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();document.removeEventListener('keydown',handleKey);};
+  return ()=>{disposed=true;document.body.classList.remove('studio-drawer-open');stageApi?.dispose?.();script?.remove();document.removeEventListener('keydown',handleKey);};
 }
