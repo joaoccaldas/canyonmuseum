@@ -201,3 +201,10 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   .registration-upload{grid-column:auto}
   .registration-avatar .quest-nav{display:grid;grid-template-columns:1fr}
 }
+
+/* Presentation only changes silhouette. Every wardrobe/style option stays available. */
+.registration-avatar-figure.presentation-male .raf-body{width:76px;left:20px}
+.registration-avatar-figure.presentation-male .raf-arm.l{left:1px}.registration-avatar-figure.presentation-male .raf-arm.r{right:1px}
+.registration-avatar-figure.presentation-female .raf-body{width:66px;left:25px}
+.registration-avatar-figure.presentation-female .raf-leg.l{left:29px}.registration-avatar-figure.presentation-female .raf-leg.r{right:29px}
+.registration-avatar-figure.presentation-prefer-not .raf-body{width:72px;left:22px}
