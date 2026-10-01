@@ -23,7 +23,9 @@ test('entry, home and garage composition have a single stylesheet owner',()=>{
  assert.doesNotMatch(shell,/\.home-|\.garage-/);
  assert.match(read('web/styles/home.css'),/\.home-race-self/);
  assert.match(read('web/styles/garage.css'),/\.garage-setup-hero/);
- assert.match(read('tools/harden_pages.mjs'),/entry-visual-v2\.css/);
+ assert.match(read('tools/harden_pages.mjs'),/entry\.css/);
+ const landing=read('web/landing.template.html');
+ for(const rel of ['home.css','garage.css','race-self.css','companion.css','admin-assets.css']) assert.doesNotMatch(landing,new RegExp(rel.replace('.','\\.')));
  assert.doesNotMatch(system,/body:not\(\.museum-open\) > header/,'consumer chrome must not hide standalone headers');
 });
 test('staged deploy rejects missing or corrupt service-worker core CSS',()=>{
