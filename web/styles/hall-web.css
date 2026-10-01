@@ -343,3 +343,21 @@ body.map-open #joy{opacity:0;pointer-events:none}
 .map-list li.future>div,.map-list button{min-height:52px}
 .map-list li.future>div{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px dashed rgba(18,24,29,.18);border-radius:12px;opacity:.72}
 .map-list li.future b::after{content:" · LOCKED";font-size:9px;letter-spacing:.12em;color:var(--faint)}
+
+/* RC5 map brand convergence */
+#map{background:color-mix(in srgb,var(--brand-ink,#12181d) 62%,transparent)}
+.map-card{
+  background:var(--brand-surface,#fbf9f5)!important;
+  color:var(--brand-ink,#12181d)!important;
+  border-color:var(--brand-line,rgba(18,24,29,.12))!important;
+  border-radius:var(--brand-sheet-radius,24px)!important;
+}
+.map-head small,.map-foot,.map-list small{color:var(--brand-faint,#8e979d)!important}
+.map-head>div:first-child p{color:var(--brand-muted,#5f6a72)!important}
+.map-tabs{background:color-mix(in srgb,var(--brand-ink,#12181d) 5%,var(--brand-bg,#f4efe7))!important}
+.map-tabs button[aria-selected=true]{background:var(--brand-ink,#12181d)!important;color:var(--brand-bg,#f4efe7)!important}
+.map-close{background:color-mix(in srgb,var(--brand-ink,#12181d) 6%,var(--brand-surface,#fbf9f5))!important}
+.map-plan{background:color-mix(in srgb,var(--brand-accent-2,#1db7d8) 5%,var(--brand-bg,#f4efe7))!important;border-color:var(--brand-line)!important}
+.map-list button,.map-list li.future>div{border-color:var(--brand-line)!important;background:var(--brand-surface)!important;color:var(--brand-ink)!important}
+.map-me circle{fill:color-mix(in srgb,var(--brand-accent-2,#1db7d8) 24%,transparent)!important}
+.map-me path{fill:var(--brand-accent-2,#1db7d8)!important;stroke:var(--brand-surface,#fbf9f5)!important}

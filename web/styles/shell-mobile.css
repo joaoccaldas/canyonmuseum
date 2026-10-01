@@ -110,3 +110,26 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
 .garage-bike-mark{position:absolute;z-index:1;right:20px;top:26px;width:min(46%,220px);fill:none;stroke:rgba(255,255,255,.76);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 8px 18px rgba(0,0,0,.25))}
 .garage-setup-media img{filter:saturate(.82) contrast(1.02)}
 @media(max-width:430px){.garage-bike-mark{right:12px;top:20px;width:44%;opacity:.86}}
+
+/* RC5 Race Self + personal controls use the same mobile sheet grammar */
+.hub-drawer{
+  border-radius:var(--brand-sheet-radius)!important;
+  background:var(--brand-surface-glass-strong)!important;
+  color:var(--brand-ink)!important;
+  border:1px solid var(--brand-line)!important;
+  box-shadow:0 18px 60px rgba(0,0,0,.28)!important;
+}
+.hub-drawer-head{background:var(--brand-surface-glass-strong)!important;border-color:var(--brand-line)!important}
+.hub-drawer-head small{color:var(--brand-accent-2)!important}
+.avatar-options button{
+  min-height:var(--brand-touch)!important;
+  border-color:var(--brand-line)!important;
+  border-radius:var(--brand-control-radius)!important;
+  background:var(--brand-surface)!important;
+  color:var(--brand-ink)!important;
+}
+.avatar-options button.on{border-color:var(--brand-ink)!important}
+.race-self-controls>a,.race-self-controls>button{
+  min-height:var(--brand-touch)!important;
+  border-color:var(--brand-line)!important;
+}
