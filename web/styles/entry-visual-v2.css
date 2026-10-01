@@ -183,3 +183,40 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
  #intro.kona-entry .entry-product-nav span{font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){#intro.kona-entry .entry-product-stage{transition:none}}
+
+/* RC8 first-run Race Self registration ------------------------------------ */
+.registration-avatar{width:min(100%,980px);margin:0 auto;display:grid;grid-template-columns:1fr;gap:20px;color:var(--brand-ink)}
+.registration-avatar-copy{display:grid;gap:8px}
+.registration-avatar-copy h2{margin:0;max-width:760px;font:400 clamp(38px,9vw,72px)/.92 var(--brand-font-editorial);letter-spacing:-.035em;text-wrap:balance}
+.registration-avatar-preview{position:relative;min-height:280px;display:grid;place-items:center;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius);background:
+  radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--brand-ocean) 14%,transparent),transparent 38%),
+  var(--brand-surface)}
+.registration-avatar-preview .t-hand{position:absolute;right:18px;bottom:16px;margin:0;color:var(--brand-personality);transform:rotate(-2deg)}
+.registration-avatar-figure{position:relative;width:116px;height:238px;filter:drop-shadow(0 20px 25px rgba(18,24,29,.16))}
+.registration-avatar-figure i{position:absolute;display:block}
+.raf-head{width:58px;height:58px;left:29px;top:28px;background:var(--skin)}
+.raf-hair{width:62px;height:15px;left:27px;top:21px;background:var(--hair);z-index:2}
+.raf-body{width:72px;height:86px;left:22px;top:86px;background:var(--kit)}
+.raf-panel{width:12px;height:76px;left:52px;top:91px;background:var(--kit-accent);z-index:1}
+.raf-arm{width:17px;height:80px;top:89px;background:var(--skin)}.raf-arm.l{left:3px}.raf-arm.r{right:3px}
+.raf-leg{width:28px;height:54px;top:170px;background:var(--kit)}.raf-leg.l{left:27px}.raf-leg.r{right:27px}
+.raf-shoe{width:32px;height:12px;top:220px;background:var(--shoes)}.raf-shoe.l{left:24px}.raf-shoe.r{right:24px}
+.registration-choice{display:grid;gap:10px}.registration-choice>small{font:700 10px/1.2 var(--brand-font-ui);letter-spacing:.18em;color:var(--brand-discovery)}
+.registration-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.registration-choice-grid .quest-choice{display:grid;gap:4px;min-height:76px;padding:12px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius);background:var(--brand-surface);color:var(--brand-ink);text-align:left}
+.registration-choice-grid .quest-choice b{font:700 13px/1.2 var(--brand-font-ui)}
+.registration-choice-grid .quest-choice span{font:500 11px/1.4 var(--brand-font-ui);color:var(--brand-muted)}
+.registration-choice-grid .quest-choice.on{border-color:var(--brand-ink);box-shadow:inset 0 0 0 1px var(--brand-ink)}
+.registration-choice-grid.trisuits .quest-choice{grid-template-columns:36px 1fr;align-items:center;min-height:62px}
+.registration-choice-grid.trisuits .quest-choice i{width:30px;height:36px;border-radius:5px;background:linear-gradient(90deg,var(--kit) 0 58%,var(--kit-accent) 58% 76%,var(--kit) 76%);border:1px solid var(--brand-line)}
+.registration-custom{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.registration-custom input[type=color]{width:100%;height:48px;padding:4px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius);background:var(--brand-surface)}
+.registration-upload{position:relative;overflow:hidden;grid-column:1/-1}
+.registration-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.registration-avatar .quest-nav{display:flex;justify-content:space-between;gap:12px;padding:8px 0 24px}
+@media(min-width:860px){
+  .registration-avatar{grid-template-columns:minmax(0,.9fr) minmax(340px,.7fr);grid-template-areas:"copy preview" "character preview" "trisuit preview" "custom preview" "nav preview";column-gap:42px;align-items:start}
+  .registration-avatar-copy{grid-area:copy}.registration-avatar-preview{grid-area:preview;position:sticky;top:26px;min-height:620px}
+  .registration-choice:nth-of-type(1){grid-area:character}.registration-choice:nth-of-type(2){grid-area:trisuit}
+  .registration-custom{grid-area:custom}.registration-avatar .quest-nav{grid-area:nav}
+}
