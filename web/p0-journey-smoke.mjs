@@ -46,16 +46,16 @@ try{
  await page.waitForFunction(()=>document.querySelector('#intro')?.hasAttribute('hidden'));
  await page.waitForSelector('[data-home-self]',{timeout:8000});
  assert.equal(museumHeavy().length,0,'Home must not request museum/world assets');
- assert.equal(personal3D().length,0,'Home must stay 2D until Race Self is explicitly opened');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Something worth doing today|What matters next/i,'post-onboarding state should be calm Home');
+ assert.equal(personal3D().length,0,'Home must stay 2D until User Studio is explicitly opened');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Something worth doing today|What matters next|Open User Studio/i,'post-onboarding state should be calm Home');
  assert.ok(await page.$eval('[data-tab="home"]',e=>e.classList.contains('on')),'Home nav should be active after reveal');
  await page.click('[data-home-self]');
  await page.waitForSelector('.race-self-experience',{timeout:8000});
  await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]'),{timeout:5000});
  await new Promise(r=>setTimeout(r,500));
- assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load only after explicit user action');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Customize|Bike|Races|Settings/i,'Race Self should expose contextual personal controls only');
- assert.doesNotMatch(await page.$eval('#konaPanelBody',e=>e.textContent),/3D World|Collection|Games|Garage|Discover/i,'Race Self must not duplicate global app navigation');
+ assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'User Studio 3D should load only after explicit user action');
+ assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR USER STUDIO|Avatar|Bike|Gear|Races|Passport|Settings/i,'User Studio should expose contextual player controls only');
+ assert.doesNotMatch(await page.$eval('#konaPanelBody',e=>e.textContent),/3D World|Collection|Games|Discover/i,'User Studio must not duplicate global app navigation');
  const identity=await page.evaluate(()=>localStorage.getItem('kona.raceIdentity.v1')||localStorage.getItem('speedmax.raceIdentity.v1'));
  assert.ok(identity,'RaceIdentity must persist locally before registration');
  await page.reload({waitUntil:'domcontentloaded'});
@@ -104,5 +104,5 @@ try{
  await installPage.close();
 
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → race search → identity → Home → explicit Race Self → reload + magic-link request; 3D stays user-triggered');
+ console.log('P0 browser journey PASS: entry-only data → race search → identity → Home → explicit User Studio → reload + magic-link request; 3D stays user-triggered');
 } finally {await browser.close();}
