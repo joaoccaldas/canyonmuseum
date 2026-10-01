@@ -245,3 +245,10 @@ html[data-theme="dark"]{
   .kona-discover-categories article:nth-child(odd),
   .kona-discover-categories article:nth-child(even){padding:14px 0;border-right:0}
 }
+
+/* User Studio is the player menu. One entry point, one destination. */
+.kona-user-menu{position:fixed;z-index:40;top:max(12px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));min-height:48px;padding:6px 12px 6px 7px;border:1px solid var(--kona-line);border-radius:999px;background:color-mix(in srgb,var(--kona-surface-strong) 92%,transparent);color:var(--kona-text);display:flex;align-items:center;gap:8px;box-shadow:0 12px 30px -18px rgba(0,0,0,.6);backdrop-filter:blur(16px)}
+.kona-user-menu i{width:34px;height:34px;border-radius:10px;background:linear-gradient(160deg,color-mix(in srgb,var(--user-accent,#e8471c) 85%,white),var(--user-accent,#e8471c));box-shadow:inset 0 0 0 2px rgba(255,255,255,.18)}
+.kona-user-menu span{font:750 11px/1 var(--sans)}
+body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu,body.race-self-open .kona-user-menu{display:none}
+@media(max-width:760px),(pointer:coarse){.kona-user-menu{top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));padding-right:10px}}
