@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 
 export const KONA_CENTER_BOUNDS={x0:28,x1:86,z0:-118,z1:-58};
+export const KONA_CENTER_OVERVIEW={to:{x:82,z:-110},face:{x:58,y:1.8,z:-82},roomId:'kona-center'};
 
 const mat=(color,rough=.75,metal=.02)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
 const box=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);return o};
@@ -149,7 +150,7 @@ export function buildKonaRaceCenter(ctx){
   const floors=[...group.children.filter(o=>o.isMesh&&o.position.y<=.15)];
   return {
     group,floors,bounds:KONA_CENTER_BOUNDS,
-    overview:{to:{x:82,z:-110},face:{x:58,y:1.8,z:-82},roomId:'kona-center'},
+    overview:KONA_CENTER_OVERVIEW,
     data,
   };
 }
