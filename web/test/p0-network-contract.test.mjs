@@ -14,8 +14,10 @@ test('hall runtime is requested only inside explicit openMuseum function',()=>{
  assert.ok(start>=0&&end>start);
  assert.ok(entry.slice(start,end).includes("loadScript('app/hall.js')"));
 });
-test('first entry starts optional lightweight questions before avatar setup',()=>{
- assert.match(entry,/buildButton\?\.addEventListener\('click', \(\) => paintQuest\('questions'\)\)/);
+test('first entry shows one-time playful questions before avatar setup',()=>{
+ assert.match(entry,/function firstRunStep\(\)/);
+ assert.match(entry,/onboardingCards/);
+ assert.match(entry,/paintQuest\(firstRunStep\(\)\)/);
  assert.match(entry,/renderOnboardingQuestions/);
  assert.match(entry,/onSkip:\(\)=>paintQuest\('avatar'\)/);
  assert.match(entry,/renderAvatarRegistration/);
