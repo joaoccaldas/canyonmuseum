@@ -129,7 +129,7 @@ function openMuseum(room) {
 }
 
 initAppShell();
-const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum, openUserStudio:()=>enterApp('me'), featureStyle });
+const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum, entryDataReady, openUserStudio:()=>enterApp('me'), featureStyle });
 window.__konaShell = shell;
 
 function enterApp(first = 'home') {
