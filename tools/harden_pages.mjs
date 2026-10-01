@@ -11,7 +11,7 @@ const NAME = 'KONA';
 const DISCLAIMER = 'An independent, unofficial fan and research project. Not affiliated with, endorsed by or sponsored by Canyon Bicycles GmbH. Canyon and Speedmax are trademarks of their owners.';
 
 // The only third parties the pages load (measured with a request log): Google Fonts and Wikimedia images.
-const CSP = [
+const CSP_BASE = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",       // hall and studio load app/*.js; meshopt decoder is WebAssembly
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -21,7 +21,8 @@ const CSP = [
   "media-src 'self' data: blob:",
   "worker-src 'self' blob:",
   "object-src 'none'", "base-uri 'self'", "form-action 'none'",
-].join('; ');
+];
+const cspFor=file=>CSP_BASE.map(x=>x.startsWith("script-src ")?(file==='index.html'?"script-src 'self' 'wasm-unsafe-eval'":x):x).join('; ');
 
 const PAGES = [
   { file: 'index.html', type: 'SoftwareApplication', image: 'assets/share/museum.jpg',
@@ -68,7 +69,7 @@ function block(p) {
     disambiguatingDescription: DISCLAIMER,
   };
   return `<!--harden:start-->
-<meta http-equiv="Content-Security-Policy" content="${CSP}">
+<meta http-equiv="Content-Security-Policy" content="${cspFor(p.file)}">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="${url}">
