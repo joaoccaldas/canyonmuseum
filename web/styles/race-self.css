@@ -159,7 +159,6 @@ body.studio-drawer-open .kona-bottom-nav{visibility:hidden;pointer-events:none}
 /* Mobile game-flow convergence: global navigation never disappears inside User Studio. */
 @media(max-width:899px){
   body.race-self-open .kona-panel-head,
-  body.race-self-open .kona-user-menu{display:none}
   body.race-self-open .kona-bottom-nav{display:grid}
   .studio-home{display:none}
   .race-self-experience{
