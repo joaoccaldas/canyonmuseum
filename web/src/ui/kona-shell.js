@@ -24,7 +24,7 @@ const icon = name => {
   return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+d+'"/></svg>';
 };
 
-export function initKonaShell({ profile, settings, enter }) {
+export function initKonaShell({ profile, settings, enter, featureStyle=async()=>{} }) {
   const facts = () => ({
     event: window.__ENTRY_EVENT || window.__ENTRY_DATA?.event || {},
   });
@@ -80,8 +80,9 @@ export function initKonaShell({ profile, settings, enter }) {
   const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
 
-  function now(){
-    leaveRaceSelf();
+  async function now(){
+    dismissTour();leaveRaceSelf();
+    await featureStyle('home','web/styles/home.css');
     title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
     renderHomeSurface(body,{
@@ -98,6 +99,7 @@ export function initKonaShell({ profile, settings, enter }) {
 
   async function raceSelf(){
     dismissTour();leaveRaceSelf();
+    await featureStyle('race-self','web/styles/race-self.css');
     const request=studioRequest;
     title.textContent='User Studio'; eyebrow.textContent='KONA · YOUR ATHLETE';
     panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('me');
@@ -121,8 +123,9 @@ export function initKonaShell({ profile, settings, enter }) {
     if(request===studioRequest) disposeStudio=cleanup; else cleanup?.();
   }
 
-  function companion(view){
+  async function companion(view){
     dismissTour();leaveRaceSelf();
+    await featureStyle('companion','web/styles/companion.css');
     title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
     panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
     document.body.classList.add('kona-panel-open');setActive('discover');
@@ -132,6 +135,7 @@ export function initKonaShell({ profile, settings, enter }) {
 
   async function collection(){
     dismissTour();leaveRaceSelf();
+    await featureStyle('',null);
     title.textContent='Collection'; eyebrow.textContent='KONA · CARDS & ITEMS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('');
     await renderCollectionSurface(body);
@@ -139,13 +143,15 @@ export function initKonaShell({ profile, settings, enter }) {
 
   async function garage(){
     dismissTour();leaveRaceSelf();
+    await featureStyle('garage','web/styles/garage.css');
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
     await renderGarageSurface(body);
   }
 
-  function plan(){
+  async function plan(){
     dismissTour();leaveRaceSelf();
+    await featureStyle('',null);
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
     renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
@@ -158,6 +164,7 @@ export function initKonaShell({ profile, settings, enter }) {
 
   async function adminAssets(){
     dismissTour();leaveRaceSelf();
+    await featureStyle('admin','web/styles/admin-assets.css');
     title.textContent='Asset Portfolio';eyebrow.textContent='KONA · ADMIN';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
     await renderAdminAssets(body);
@@ -171,6 +178,7 @@ export function initKonaShell({ profile, settings, enter }) {
   }
   async function explore(){
     dismissTour();leaveRaceSelf();
+    await featureStyle('',null);
     title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
     await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});
