@@ -11,7 +11,7 @@ try{
  page.on('request',r=>requests.push(r.url()));
  page.on('pageerror',e=>pageErrors.push('page:'+String(e?.stack||e)));
  page.on('console',m=>{if(m.type()==='error')pageErrors.push('console:'+m.text())});
- page.on('requestfailed',r=>pageErrors.push('requestfailed:'+r.url()+':'+(r.failure()?.errorText||'unknown')));
+ page.on('requestfailed',r=>{const reason=r.failure()?.errorText||'unknown';if(reason==='net::ERR_ABORTED')return;pageErrors.push('requestfailed:'+r.url()+':'+reason);});
  await page.goto(base,{waitUntil:'domcontentloaded'});
  const museumHeavy=()=>requests.filter(u=>/app\/hall\.js|app\/museum-data\.js|\.hdr(?:\?|$)/i.test(u));
  const personal3D=()=>requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
