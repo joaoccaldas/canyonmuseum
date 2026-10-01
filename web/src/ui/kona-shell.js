@@ -7,6 +7,8 @@ import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
+import { renderAdminAssets } from './admin-assets.js';
+import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon = name => {
@@ -67,6 +69,7 @@ export function initKonaShell({ profile, settings, enter }) {
     const request=studioRequest;
     title.textContent='User Studio'; eyebrow.textContent='KONA · YOUR ATHLETE';
     panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('me');
+    const admin=isAdminUser(await currentUser().catch(()=>null));
     const cleanup=await renderAvatarHome(body,{
       profile,
       settings,
@@ -77,6 +80,8 @@ export function initKonaShell({ profile, settings, enter }) {
       isCurrent:()=>request===studioRequest,
       openMuseum:()=>{ close(); enter?.(); },
       openCollection:collection,
+      isAdmin:admin,
+      openAssets:adminAssets,
     });
     if(request===studioRequest) disposeStudio=cleanup; else cleanup?.();
   }
@@ -107,6 +112,13 @@ export function initKonaShell({ profile, settings, enter }) {
     setActive('me');
   }
 
+  async function adminAssets(){
+    leaveRaceSelf();
+    title.textContent='Asset Portfolio';eyebrow.textContent='KONA · ADMIN';
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
+    await renderAdminAssets(body);
+  }
+
   function walkTo(id){
     close();
     const go=window.__museumGo;
@@ -120,7 +132,7 @@ export function initKonaShell({ profile, settings, enter }) {
     await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});
   }
 
-  shell.querySelector('[data-tab=home]').onclick=raceSelf;
+  shell.querySelector('[data-tab=home]').onclick=now;
   shell.querySelector('[data-tab=discover]').onclick=explore;
   shell.querySelector('[data-tab=garage]').onclick=garage;
   shell.querySelector('[data-tab=plan]').onclick=plan;
@@ -137,5 +149,5 @@ export function initKonaShell({ profile, settings, enter }) {
     }
   };
   syncUserMenu(profile?.get?.()); profile?.subscribe?.(syncUserMenu);
-  return { now, raceSelf, garage, plan, me, explore, collection, close };
+  return { now, raceSelf, garage, plan, me, explore, collection, adminAssets, close };
 }
