@@ -188,3 +188,61 @@ html.phone-fit #card{left:8px;right:auto;width:calc((100vw - 16px)/var(--fit))!i
   body.touch #konaWorld>header nav{display:none}
   body.touch #konaWorld>header .logo{background:color-mix(in srgb,var(--kona-surface-strong) 82%,transparent);border-color:var(--kona-line);color:var(--kona-text)}
 }
+
+/* RC5 mobile world interaction grammar ----------------------------------- */
+@media(max-width:760px),(pointer:coarse){
+  body.card-open #rail{opacity:1;pointer-events:auto}
+  #card{
+    left:var(--brand-mobile-gutter,12px)!important;
+    right:var(--brand-mobile-gutter,12px)!important;
+    top:auto!important;
+    bottom:calc(82px + env(safe-area-inset-bottom))!important;
+    width:auto!important;
+    max-width:none!important;
+    max-height:min(42dvh,430px)!important;
+    padding:14px 14px 12px!important;
+    border-radius:var(--brand-sheet-radius,24px)!important;
+    background:var(--brand-surface-glass-strong,#fbf9f5)!important;
+    color:var(--brand-ink,#12181d)!important;
+    border:1px solid var(--brand-line,rgba(18,24,29,.12))!important;
+    box-shadow:0 18px 60px rgba(0,0,0,.26)!important;
+    backdrop-filter:blur(18px) saturate(1.05)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(1.05)!important;
+    overscroll-behavior:contain;
+  }
+  #card::before{width:36px;height:4px;margin:0 auto 9px;background:color-mix(in srgb,var(--brand-ink,#12181d) 18%,transparent)}
+  #card .close{top:9px!important;right:9px!important;width:48px!important;height:48px!important}
+  #card .card-share{top:9px!important;right:63px!important;width:48px!important;height:48px!important}
+  .c-years{padding-right:110px!important;font-size:9px!important;letter-spacing:.18em!important;color:var(--brand-accent-2,#1db7d8)!important}
+  #card h2{font-size:clamp(27px,8vw,36px)!important;line-height:.96!important;margin:7px 0 6px!important;padding-right:104px!important;color:var(--brand-ink,#12181d)!important}
+  .c-mat{font-size:9px!important;letter-spacing:.13em!important;color:var(--brand-muted,#5f6a72)!important}
+  .c-note{font-size:12.5px!important;line-height:1.45!important;margin:10px 0 0!important;color:var(--brand-muted,#5f6a72)!important}
+  .c-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin:10px 0 0!important;padding:9px 0!important}
+  .c-stats b{font-size:16px!important;color:var(--brand-ink,#12181d)!important}.c-stats small{font-size:8px!important;letter-spacing:.08em!important}
+  .c-actions{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;margin-top:10px!important}
+  .c-actions .btn{width:100%!important;min-height:48px!important;height:auto!important;padding:11px 14px!important;justify-content:space-between!important;white-space:normal!important;border-radius:var(--brand-control-radius,12px)!important;font-size:12px!important}
+  .c-actions .btn.primary{background:var(--brand-accent-2,#1db7d8)!important;color:#071116!important;border-color:transparent!important}
+  .c-parts,.c-photo,.c-view,.c-unc{margin-top:10px!important}
+  .c-photo img{max-height:120px!important}
+  #rail{left:0!important;right:0!important;padding:0 8px calc(8px + env(safe-area-inset-bottom))!important}
+  .rail-inner{
+    width:100%!important;
+    max-width:100%!important;
+    gap:6px!important;
+    padding:5px!important;
+    border-radius:16px!important;
+    background:color-mix(in srgb,var(--brand-surface,#fbf9f5) 95%,transparent)!important;
+    border:1px solid var(--brand-line,rgba(18,24,29,.12))!important;
+    box-shadow:0 10px 26px rgba(0,0,0,.16)!important;
+  }
+  .chip{min-height:50px!important;padding:5px 10px 5px 5px!important;border-radius:12px!important}
+  .chip .n{width:38px!important;height:38px!important;border-radius:10px!important}
+  .chip b{font-size:11.5px!important}.chip small{font-size:8.5px!important;letter-spacing:.09em!important}
+  body.touch #joy{width:86px!important;height:86px!important;bottom:calc(138px + env(safe-area-inset-bottom))!important}
+  body.touch.card-open #joy{opacity:.12!important;pointer-events:none}
+}
+@media(max-width:390px){
+  #card{max-height:min(40dvh,390px)!important;bottom:calc(76px + env(safe-area-inset-bottom))!important}
+  #card h2{font-size:29px!important}
+  .c-note{font-size:12px!important}
+}
