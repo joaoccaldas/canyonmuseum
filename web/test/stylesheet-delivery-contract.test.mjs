@@ -26,7 +26,7 @@ test('feature styles are staged and sealed but not eager landing imports',()=>{
  for(const rel of feature){
    assert.ok(!landing.includes('href="'+rel+'"'),rel+' must not be eagerly imported');
    assert.ok(stage.includes(rel),rel+' missing from staged-site allowlist');
-   assert.ok(build.includes("'"+rel+"'"),rel+' missing from PWA lazy manifest');
+   assert.ok(build.includes("'"+rel+"'"),rel+' missing from PWA integrity/cache manifest');
  }
 });
 
