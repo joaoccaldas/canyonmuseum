@@ -12,6 +12,10 @@ async function capture(vp,state,theme){
  await p.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:vp.id==='desktop'?1:2,isMobile:vp.id!=='desktop',hasTouch:vp.id!=='desktop'});
  await p.evaluateOnNewDocument((theme)=>{localStorage.clear();localStorage.setItem('speedmax.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));},theme);
  await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});await new Promise(r=>setTimeout(r,700));
+ if(!['landing','sign-in'].includes(state)){
+   await p.evaluate(()=>localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}})));
+   await p.reload({waitUntil:'domcontentloaded'});await new Promise(r=>setTimeout(r,500));
+ }
  if(state==='sign-in'){
    await p.click('#entrySignIn');await p.waitForSelector('#saveForm');
  }else if(state==='bike-studio'){
