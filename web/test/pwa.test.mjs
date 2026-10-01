@@ -38,8 +38,11 @@ test('sealed service worker verifies release files and keeps GLBs out of the cor
   const app = JSON.parse(fs.readFileSync(path.join(root, 'app/app-manifest.json'), 'utf8'));
   assert.ok(app.version && app.files && app.core?.length);
   assert.ok(app.core.every(p => !/\.glb$/i.test(p)));
-  assert.ok(app.core.includes('app/viewport.js') && app.core.includes('app/kona-core.js') && app.core.includes('app/entry-data.json') && app.core.includes('integrations/public-catalog.json'));
-  for(const css of ['web/styles/home.css','web/styles/garage.css','web/styles/race-self.css','web/styles/companion.css']) assert.ok(app.core.includes(css),css+' should be offline-ready without eager DOM import');
+  assert.ok(app.core.includes('app/kona-core.js') && app.core.includes('app/entry-data.json') && app.core.includes('integrations/public-catalog.json'));
+  const builder=fs.readFileSync(path.join(root,'tools/build_app.mjs'),'utf8');
+  assert.match(builder,/['"]app\/viewport\.js['"]/,'manifest builder must seal viewport runtime');
+  for(const css of ['web/styles/home.css','web/styles/garage.css','web/styles/race-self.css','web/styles/companion.css']) assert.match(builder,new RegExp(css.replace(/[./]/g,'\\  assert.ok(app.core.includes('app/viewport.js') && app.core.includes('app/kona-core.js') && app.core.includes('app/entry-data.json') && app.core.includes('integrations/public-catalog.json'));
+  for(const css of ['web/styles/home.css','web/styles/garage.css','web/styles/race-self.css','web/styles/companion.css']) assert.ok(app.core.includes(css),css+' should be offline-ready without eager DOM import');')),css+' should be offline-ready without eager DOM import');
   assert.ok(!app.core.includes('app/museum-data.js') && app.files['app/museum-data.js']);
   assert.ok(!app.core.includes('app/hall.js') && app.files['app/hall.js']);
   assert.ok(!app.core.includes('app/race-self-stage.js') && app.files['app/race-self-stage.js']);
