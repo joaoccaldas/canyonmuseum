@@ -82,7 +82,7 @@ const ensureWorldShell = () => {
     .then(r=>r.ok?r.text():Promise.reject(new Error('world shell unavailable')))
     .then(html=>{
       const t=document.createElement('template'); t.innerHTML=html.trim();
-      const anchor=document.getElementById('appSheet');
+      const anchor=document.getElementById('appOverlayRoot');
       document.body.insertBefore(t.content,anchor||document.body.firstChild);
     });
   return worldShellReady;
