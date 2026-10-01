@@ -34,3 +34,8 @@ test('build emits world shell as deterministic output',()=>{
   assert.match(build,/src\/runtime\/viewport\.js/);
   assert.match(build,/app\/viewport\.js/);
 });
+
+test('immersive world has contextual controls rather than a second global navigation',()=>{
+  for(const id of ['backKonaBtn','mapBtn','soundBtn','worldMoreBtn','worldMoreMenu']) assert.match(world,new RegExp('id=["\\\']'+id+'["\\\']'));
+  for(const legacy of ['passportBtn','studioLink','shareBtn','>Compare<','>Archive<']) assert.doesNotMatch(world,new RegExp(legacy));
+});
