@@ -65,6 +65,7 @@ export function emptyProgression() {
     ledger: [],
     credits: 0,
     history: [],
+    acquisitions: [],
   };
 }
 
@@ -108,13 +109,20 @@ export function applyEvent(state, event) {
   let xp = EVENTS[event.type].xp;
   let credits = EVENTS[event.type].credits;
   let discovery = null;
-  if (event.type === 'FIND_DISCOVERED') {
+  if (event.type === 'FIND_DISCOVERED' || event.type === 'FIND_ACQUIRED') {
     const item = collectibleById(event.subject);
     if (!item) return { state: base, granted: null, error: 'unknown-collectible' };
     const pay = RARITY[item.rarity] || RARITY.common;
     xp = pay.xp;
     credits = pay.credits;
     discovery = item.id;
+    const method = event.type === 'FIND_DISCOVERED'
+      ? 'hidden'
+      : ['hidden','trade','event'].includes(event.method) ? event.method : item.acquisition || 'hidden';
+    base.acquisitions = Array.isArray(base.acquisitions) ? base.acquisitions : [];
+    if (!base.acquisitions.some(x=>x.item_id===item.id)) {
+      base.acquisitions.push({ item_id:item.id, method, at:String(event.at||new Date().toISOString()) });
+    }
   }
   if (event.type === 'CURRENCY_SPENT') {
     const cost = Math.abs(Number(event.amount) || 0);
@@ -197,7 +205,10 @@ export function migratePassport({ passport = null, finds = [] } = {}) {
 export function readProgression(storage = globalThis.localStorage) {
   try {
     const raw = JSON.parse(readStorage('progression',storage) || 'null');
-    if (raw?.schema === 'progression-v1') return withLevel(raw);
+    if (raw?.schema === 'progression-v1') {
+      if(!Array.isArray(raw.acquisitions))raw.acquisitions=[];
+      return withLevel(raw);
+    }
   } catch (_) { /* keep going into migration */ }
   return null;
 }
