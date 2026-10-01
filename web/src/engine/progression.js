@@ -73,6 +73,13 @@ export function collectibleById(id) {
   return COLLECTIBLES.find(c => c.id === id) || null;
 }
 
+export function collectibleReward(itemOrId){
+  const item=typeof itemOrId==='string'?collectibleById(itemOrId):itemOrId;
+  if(!item)return Object.freeze({xp:0,credits:0});
+  const pay=RARITY[item.rarity]||RARITY.common||{xp:0,credits:0};
+  return Object.freeze({xp:Math.max(0,Number(pay.xp)||0),credits:Math.max(0,Number(pay.credits)||0)});
+}
+
 function countPrefix(state, prefix) {
   return (state.discoveries||[]).filter(id => id.startsWith(prefix)).length;
 }
