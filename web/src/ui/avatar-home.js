@@ -28,7 +28,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   const intent=String(identity.intent||identity.mode||'exploring').replace(/[-_]+/g,' ');
   const bikeTitle=bike?[bike.brand,bike.name||bike.label||bike.model].filter(Boolean).join(' '):'Choose a bike';
   const shoeTitle=shoe?.name||shoe?.label||shoe?.model||'Choose shoes';
-  const studioHref=bike?'Studio.html?p='+encodeURIComponent(bike.id)+'#setup':'Studio.html#setup';
+  const studioHref=bike?'Studio.html?p='+encodeURIComponent(bike.id):'Studio.html';
   const raceCount=(snapshot.race_history||[]).length;
 
   root.innerHTML=
@@ -39,8 +39,8 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
         '<div class="race-self-identity"><small>YOUR RACE SELF</small><h2>'+esc(goal)+'</h2><p>'+esc(intent)+' · '+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
       '</div>'+
       '<nav class="race-self-controls" aria-label="Race Self controls">'+
-        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Customize</b><small>Avatar & kit</small></span></button>'+
-        '<a href="'+studioHref+'"><i>△</i><span><b>Bike</b><small>'+esc(bikeTitle)+'</small></span></a>'+
+        '<button type="button" data-race-self-action="customize"><i>●</i><span><b>Avatar</b><small>Voxel figure</small></span></button>'+
+        '<a href="'+studioHref+'"><i>△</i><span><b>Bike</b><small>Choose in 3D</small></span></a>'+
         '<button type="button" data-race-self-action="races"><i>◉</i><span><b>Races</b><small>'+raceCount+' badges</small></span></button>'+
         '<button type="button" data-race-self-action="settings"><i>⚙</i><span><b>Settings</b><small>'+(summary.total||0)+' collected</small></span></button>'+
       '</nav>'+
@@ -76,7 +76,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
       const color=AVATAR_COLORS[slot]?.[v]||'#777';
       return '<button type="button" data-avatar-slot="'+slot+'" data-avatar-value="'+v+'" class="'+(style[slot]===v?'on':'')+'" style="--slot-color:'+color+'"><i></i><span>'+v.replace(/-/g,' ')+'</span></button>';
     }).join('')+'</div></section>';
-    drawerKicker.textContent='SELF';drawerTitle.textContent='Customize your avatar';
+    drawerKicker.textContent='VOXEL SELF';drawerTitle.textContent='Build your figure';
     drawerBody.innerHTML='<div class="hub-self-grid avatar-builder">'+
       optionRow('skin',AVATAR_OPTIONS.skin)+
       optionRow('hair',AVATAR_OPTIONS.hair)+

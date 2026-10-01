@@ -6,6 +6,7 @@ const read=rel=>fs.readFileSync(new URL('../../'+rel,import.meta.url),'utf8');
 const tokens=read('brand/tokens.css');
 const system=read('web/styles/system.css');
 const shell=read('web/styles/shell-mobile.css');
+const raceSelf=read('web/styles/race-self.css');
 const hall=read('web/styles/hall-web.css');
 const hallMobile=read('web/styles/hall-mobile.css');
 const studioTpl=read('web/studio.template.html');
@@ -40,7 +41,9 @@ test('map and generic artifacts consume brand semantics',()=>{
 test('consumer and personal surfaces share touch and card rules',()=>{
   assert.match(system,/--brand-touch/);
   assert.match(system,/--brand-card-radius/);
-  assert.match(shell,/--brand-sheet-radius/);
+  assert.match(raceSelf,/--brand-touch/);
+  assert.match(raceSelf,/--brand-sheet-radius/);
+  assert.doesNotMatch(shell,/\.race-self-experience|\.race-self-controls/);
 });
 
 test('active consumer templates do not own inline design systems',()=>{

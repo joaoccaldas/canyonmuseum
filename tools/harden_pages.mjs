@@ -44,13 +44,15 @@ for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.t
   PAGES.push({ file: f, type: 'WebPage', image: 'assets/share/museum.jpg', title: t, description: d, keepTitle: true });
 }
 
-const DESIGN_LINKS = [
-  'web/styles/system.css',
-  'web/styles/shell-mobile.css',
+const COMMON_DESIGN_LINKS = [
   'brand/tokens.css',
   'brand/themes.css',
   'brand/artifacts.css',
-].map(href => `<link rel="stylesheet" href="${href}">`).join('');
+  'web/styles/system.css',
+];
+const pageDesignLinks = file => file === 'index.html'
+  ? [...COMMON_DESIGN_LINKS, 'web/styles/shell-mobile.css', 'web/styles/race-self.css']
+  : COMMON_DESIGN_LINKS;
 const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
@@ -85,10 +87,13 @@ for (const p of PAGES) {
   else html = html.replace(/<\/title>/, `</title>\n<meta name="description" content="${esc(p.description)}">`);
   html = html.replace(/<meta charset="utf-8">/i, m => `${m}\n${block(p)}`);
   if (!html.includes('<!--harden:start-->')) throw new Error('no <meta charset> in ' + p.file);
-  // One external design system on every page. Generated HTML never becomes a second CSS source of truth.
+  // The hardener may add missing shared links, but never duplicates page-owned CSS.
+  // shell-mobile and race-self belong only to the consumer app, not standalone Studio/Collection/Experiences.
   html = html.replace(/<!--design-system:start-->[\s\S]*?<!--design-system:end-->\n?/, '');
   const fonts = /fonts\.googleapis\.com\/css2\?family=Instrument\+Serif[^"]*Manrope/.test(html) ? '' : `<link rel="stylesheet" href="${FONTS}">`;
-  html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}${DESIGN_LINKS}<!--design-system:end-->\n</head>`);
+  const missing = pageDesignLinks(p.file).filter(href => !html.includes(`href="${href}"`))
+    .map(href => `<link rel="stylesheet" href="${href}">`).join('');
+  html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}${missing}<!--design-system:end-->\n</head>`);
   fs.writeFileSync(f, html);
 }
 

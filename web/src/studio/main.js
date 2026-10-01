@@ -140,7 +140,7 @@ function drawPanel() {
     P.append(h('p', { class: 'count' }, `${list.length} of ${CAT.products.length} · ${CAT.studio_only} only in the studio`));
     P.append(h('div', { class: 'grid' }, list.map(p => {
       const sw = p.skins?.[0]?.frame || '#8e979d';
-      return h('button', { type: 'button', class: 'prod', 'aria-current': String(current?.product === p), onclick: () => { show(p); if (innerWidth < 900) dock(true); } },
+      return h('button', { type: 'button', class: 'prod', 'aria-current': String(current?.product === p), onclick: async () => { await show(p); saveCurrentToSetup({stay:true,announce:true}); if (innerWidth < 900) dock(true); } },
         h('i', { class: 'sw', style: `background:${sw}` }), h('small', {}, [p.year || p.years || p.era, p.brand].filter(Boolean).join(' · ')), h('b', {}, p.name),
         p.origin === 'studio-design' ? h('span', { class: 'tag' }, 'Studio only') : event?.featured?.includes(p.id) ? h('span', { class: 'tag' }, event.name) : null);
     })));
@@ -196,13 +196,13 @@ function setupShareUrl() {
   u.searchParams.set('setup', enc);
   return u.href;
 }
-function saveCurrentToSetup() {
+function saveCurrentToSetup({stay=false,announce=false}={}) {
   if (!current) return;
   raceSetup = setSetupSlot(raceSetup, 'bike', current.product, { look:encodeLook(look), scene:sceneId }, CAT.products);
   raceSetup = raceSetupStore.save(raceSetup, CAT.products);
   syncIdentityFromSetup(raceSetup, CAT.products);
-  toast('Saved to My Kona Setup');
-  tab = 'setup'; dock(false); drawPanel();
+  toast(announce ? 'Bike selected for your Race Self' : 'Saved to My Kona Setup');
+  if (!stay) { tab = 'setup'; dock(false); drawPanel(); }
 }
 async function shareRaceSetup() {
   if (!raceSetup?.slots?.bike) { toast('Add a bike to your setup first'); return; }

@@ -7,34 +7,38 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
 
 function mat(color,roughness=.72){ return new THREE.MeshStandardMaterial({color,roughness,metalness:.02}); }
-function proceduralAvatar(styleInput={}){
+function voxelAvatar(styleInput={}){
   const style=normaliseAvatarStyle(styleInput);
-  const g=new THREE.Group();
-  const skin=mat(AVATAR_COLORS.skin[style.skin],.88);
+  const g=new THREE.Group(); g.userData.avatarModel='voxel';
+  const skin=mat(AVATAR_COLORS.skin[style.skin],.9);
   const hairColor=AVATAR_COLORS.hair[style.hair];
-  const top=mat(AVATAR_COLORS.top[style.top],.6);
-  const bottoms=mat(AVATAR_COLORS.bottoms[style.bottoms],.68);
-  const shoes=mat(AVATAR_COLORS.shoes[style.shoes],.55);
-  const accent=mat(style.accent,.52);
-  const box=(w,h,d,m)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+  const top=mat(AVATAR_COLORS.top[style.top],.68);
+  const bottoms=mat(AVATAR_COLORS.bottoms[style.bottoms],.72);
+  const shoes=mat(AVATAR_COLORS.shoes[style.shoes],.62);
+  const accent=mat(style.accent,.58);
+  const dark=mat('#15191b',.78), white=mat('#f4f1e8',.8);
+  const box=(w,h,d,m,x=0,y=0,z=0)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);return o;};
 
-  const head=box(.34,.34,.34,skin);head.position.y=1.72;
-  const torso=box(.5,.56,.26,top);torso.position.y=1.27;
-  const hips=box(.46,.2,.25,bottoms);hips.position.y=.88;
-  const armL=box(.16,.55,.18,skin),armR=armL.clone();armL.position.set(-.34,1.27,0);armR.position.set(.34,1.27,0);
-  const legL=box(.19,.64,.22,bottoms),legR=legL.clone();legL.position.set(-.13,.46,0);legR.position.set(.13,.46,0);
-  const shoeL=box(.2,.12,.34,shoes),shoeR=shoeL.clone();shoeL.position.set(-.13,.09,.06);shoeR.position.set(.13,.09,.06);
-  g.add(head,torso,hips,armL,armR,legL,legR,shoeL,shoeR);
+  // Minecraft-style proportions: square head, rectangular torso, independent block limbs.
+  const head=box(.52,.52,.52,skin,0,1.72,0);
+  const torso=box(.52,.72,.28,top,0,1.10,0);
+  const armL=box(.19,.70,.22,skin,-.36,1.10,0),armR=box(.19,.70,.22,skin,.36,1.10,0);
+  const legL=box(.23,.70,.25,bottoms,-.14,.40,0),legR=box(.23,.70,.25,bottoms,.14,.40,0);
+  const shoeL=box(.24,.15,.38,shoes,-.14,.075,.065),shoeR=box(.24,.15,.38,shoes,.14,.075,.065);
+  g.add(head,torso,armL,armR,legL,legR,shoeL,shoeR);
+
+  // Pixel-like face details keep the figure readable without textures.
+  const eyeL=box(.075,.075,.018,dark,-.115,1.76,.269),eyeR=box(.075,.075,.018,dark,.115,1.76,.269);
+  const eyeGlintL=box(.022,.022,.02,white,-.097,1.778,.279),eyeGlintR=box(.022,.022,.02,white,.133,1.778,.279);
+  const mouth=box(.13,.035,.019,dark,0,1.61,.269); g.add(eyeL,eyeR,eyeGlintL,eyeGlintR,mouth);
 
   if(style.hair!=='none'){
-    const h=box(.36,style.hair==='crop'?.11:.15,.36,mat(hairColor,.8));h.position.y=1.94;g.add(h);
-    if(style.hair==='cap'){const brim=box(.22,.04,.16,mat(style.accent,.55));brim.position.set(0,1.92,.23);g.add(brim);}
+    const h=box(.54,style.hair==='crop'?.13:.17,.54,mat(hairColor,.82),0,2.015,0);g.add(h);
+    if(style.hair==='short') g.add(box(.54,.20,.08,mat(hairColor,.82),0,1.91,-.27));
+    if(style.hair==='cap') g.add(box(.34,.055,.24,accent,0,1.95,.34));
   }
-  if(style.accessory==='visor'){
-    const visor=box(.38,.08,.05,mat('#151a1e',.3));visor.position.set(0,1.73,.195);g.add(visor);
-  }else if(style.accessory==='headband'){
-    const band=box(.37,.06,.37,accent);band.position.y=1.83;g.add(band);
-  }
+  if(style.accessory==='visor') g.add(box(.48,.10,.045,dark,0,1.76,.30));
+  else if(style.accessory==='headband') g.add(box(.55,.075,.55,accent,0,1.86,0));
   g.rotation.y=-.08;
   return g;
 }
@@ -56,7 +60,7 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
   const rim=new THREE.DirectionalLight(accent,1.3);rim.position.set(-3,2,-2);scene.add(rim);
   const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.62,.055,64),mat('#20272c',.52));platform.position.y=.025;scene.add(platform);
   const ground=new THREE.Mesh(new THREE.CircleGeometry(2.8,64),new THREE.MeshStandardMaterial({color:'#0e1519',roughness:.95,metalness:0}));ground.rotation.x=-Math.PI/2;ground.position.y=-.005;scene.add(ground);
-  let avatar=proceduralAvatar({...avatarStyle,accent});avatar.scale.setScalar(1.0);avatar.position.set(bike?-.62:0,.03,.04);scene.add(avatar);
+  let avatar=voxelAvatar({...avatarStyle,accent});avatar.scale.setScalar(1.0);avatar.position.set(bike?-.62:0,.03,.04);scene.add(avatar);
 
   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
   const load=async(product,pos,scale=1.5)=>{
@@ -85,7 +89,7 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
     setAccent(c){rim.color.set(c);},
     setAvatarStyle(next){
       const pos=avatar.position.clone(),rot=avatar.rotation.clone(),scale=avatar.scale.clone();
-      scene.remove(avatar);avatar=proceduralAvatar(next);avatar.position.copy(pos);avatar.rotation.copy(rot);avatar.scale.copy(scale);scene.add(avatar);
+      scene.remove(avatar);avatar=voxelAvatar(next);avatar.position.copy(pos);avatar.rotation.copy(rot);avatar.scale.copy(scale);scene.add(avatar);
       rim.color.set(next?.accent||accent);
     },
     dispose(){disposed=true;ro.disconnect();renderer.setAnimationLoop(null);controls.dispose();renderer.dispose();}

@@ -41,7 +41,7 @@ test('Home is lightweight and Race Self is contextual personal depth, not a seco
   assert.match(home,/data-home-self/);
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
-  for(const control of ['Customize','Bike','Races','Settings']) assert.match(avatarHome,new RegExp(control));
+  for(const control of ['Avatar','Bike','Races','Settings']) assert.match(avatarHome,new RegExp(control));
   for(const duplicate of ['3D World','Collection','Games','Garage','Discover']) assert.doesNotMatch(avatarHome,new RegExp(duplicate));
   assert.doesNotMatch(avatarHome,/hub-launcher/);
   assert.match(avatarHome,/race-self-controls/);
