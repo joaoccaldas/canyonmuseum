@@ -16,12 +16,14 @@ const wings=wingIndex.wings.map(file=>J('museum/world/wings/'+file));
 const floors=Object.fromEntries((rooms.floors||[]).map(f=>[f.id,f.name]));
 
 const roomMap=new Map();
+const roomSource=new Map();
 const order=[];
 const addRoom=r=>{
   if(!r?.id)return null;
   const row={id:r.id,name:r.name||r.short||r.id,floor:r.floor||'unassigned',floor_name:floors[r.floor]||r.floor||'Unassigned',kind:r.kind||'room'};
   if(!roomMap.has(row.id)){roomMap.set(row.id,row);order.push(row.id);}
   else Object.assign(roomMap.get(row.id),row);
+  roomSource.set(row.id,{...(roomSource.get(row.id)||{}),...r});
   return roomMap.get(row.id);
 };
 for(const r of rooms.areas||[])addRoom(r);
@@ -87,7 +89,29 @@ for(const p of decorations.props||[])rows.push({
 for(const p of decorations.installations||[])rows.push({
   id:'installation:'+p.id,kind:'installation',type:'installation',brand:'KONA World',name:p.name||p.id,year:'',category:'Room installation',material:'',glb:'',image:p.image||'',facts:[],stats:[[p.builder,'builder'],[p.min_width?String(p.min_width)+' m':'','min width'],[p.min_depth?String(p.min_depth)+' m':'','min depth']].filter(x=>x[0]),locations:[]
 });
-const out={schema_version:1,generated_by:'tools/build_admin_assets.mjs',count:rows.length,rooms:[...roomMap.values()],assets:rows};
+for(const room of roomMap.values()){
+  const src=roomSource.get(room.id)||{};
+  const presentation=src.presentation||src.theme||{};
+  rows.push({
+    id:'room:'+room.id,kind:'world',type:'room',brand:'KONA World',name:room.name,year:'',category:src.kind||room.kind||'room',material:'',
+    glb:'',image:src.image||src.thumbnail||'',facts:[src.sub?{text:src.sub}:null,src.text?{text:src.text}:null].filter(Boolean),stats:[],
+    preview:{kind:'room',floor:presentation.floor||presentation.wall||'#12181d',accent:presentation.vein||presentation.accent||'#ff6a00',fog:presentation.fog||'#0b1116'},
+    locations:[room]
+  });
+}
+const proceduralPalettes={
+  'decor:kona-palm':['#173827','#7d5f43'],
+  'decor:race-marker':['#111820','#ff6a00'],
+  'installation:bio':['#10281a','#3dba55'],
+  'installation:horror':['#10080c','#ff2a3c'],
+  'installation:alien':['#070b12','#3dffe0'],
+  'installation:zombie':['#16180c','#d2e06a']
+};
+for(const row of rows)if(!row.image&&!row.glb&&!row.preview){
+  const [floor,accent]=proceduralPalettes[row.id]||['#12181d','#20b8d5'];
+  row.preview={kind:row.type||'asset',floor,accent,fog:'#0b1116'};
+}
+const out={schema_version:2,generated_by:'tools/build_admin_assets.mjs',count:rows.length,rooms:[...roomMap.values()],assets:rows};
 fs.mkdirSync(path.join(root,'app'),{recursive:true});
 fs.writeFileSync(path.join(root,'app/admin-assets.json'),JSON.stringify(out,null,1)+'\n');
 console.log('admin assets',rows.length,'across',roomMap.size,'rooms');
