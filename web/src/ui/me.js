@@ -36,7 +36,7 @@ async function raceIdentityMarkup(snapshot) {
   '</section>';
 }
 
-export async function renderMeSurface(root,{settings}={}) {
+export async function renderPassportSurface(root,{settings}={}) {
   try { ensureProgression(); } catch (_) { /* Passport remains readable without repair */ }
   const snapshot = readGameState();
   const p = gameProgress(snapshot);
@@ -75,3 +75,5 @@ export async function renderMeSurface(root,{settings}={}) {
   account.querySelector('[data-restore]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await restoreGameState();status.textContent='Cloud state restored. Reloading…';location.reload();}catch(err){status.textContent=err.message;e.currentTarget.disabled=false;}});
   account.querySelector('[data-signout]')?.addEventListener('click',async()=>{await signOut();await renderMeSurface(root,{settings});});
 }
+
+export async function renderMeSurface(root,{settings}={}) { return renderPassportSurface(root,{settings}); }
