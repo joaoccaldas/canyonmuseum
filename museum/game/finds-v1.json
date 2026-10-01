@@ -550,12 +550,9 @@
       "acquisition": "hidden",
       "place": "queen-k",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A tiny piece of a very long day.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A tiny piece of a very long day."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -568,12 +565,9 @@
       "acquisition": "hidden",
       "place": "queen-k",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Someone knew where to go.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Someone knew where to go."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -586,12 +580,9 @@
       "acquisition": "hidden",
       "place": "queen-k",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "The wind left evidence.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "The wind left evidence."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -604,12 +595,9 @@
       "acquisition": "trade",
       "place": "shore",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Same ocean. New pin.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Same ocean. New pin."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -622,12 +610,9 @@
       "acquisition": "trade",
       "place": "shore",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Blue enough to make you stop scrolling.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Blue enough to make you stop scrolling."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -640,12 +625,9 @@
       "acquisition": "hidden",
       "place": "town",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Race week has a smell.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Race week has a smell."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -658,12 +640,9 @@
       "acquisition": "event",
       "place": "check-in",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Temporary ink. Permanent story.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Temporary ink. Permanent story."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -676,12 +655,9 @@
       "acquisition": "event",
       "place": "check-in",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Officially somewhere you once imagined.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Officially somewhere you once imagined."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -694,12 +670,9 @@
       "acquisition": "hidden",
       "place": "transition",
       "category": "race",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Your bike was definitely here.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Your bike was definitely here."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -712,12 +685,9 @@
       "acquisition": "event",
       "place": "transition",
       "category": "race",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A tiny coordinate for a very expensive machine.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A tiny coordinate for a very expensive machine."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -730,12 +700,9 @@
       "acquisition": "trade",
       "place": "garage",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Someone waxed this. Of course they did.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Someone waxed this. Of course they did."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -748,12 +715,9 @@
       "acquisition": "hidden",
       "place": "garage",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Small enough to ruin a morning.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Small enough to ruin a morning."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -766,12 +730,9 @@
       "acquisition": "trade",
       "place": "garage",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Read the number. Then read it again.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Read the number. Then read it again."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -784,12 +745,9 @@
       "acquisition": "trade",
       "place": "engineering",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Light, stiff, and slightly obsessive.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Light, stiff, and slightly obsessive."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -802,12 +760,9 @@
       "acquisition": "hidden",
       "place": "engineering",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A sticker that knows too much about drag.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A sticker that knows too much about drag."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -820,12 +775,9 @@
       "acquisition": "event",
       "place": "engineering",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Admit one person and several opinions.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Admit one person and several opinions."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -838,12 +790,9 @@
       "acquisition": "event",
       "place": "swim",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "The race starts before the bike gets to be dramatic.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "The race starts before the bike gets to be dramatic."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -856,12 +805,9 @@
       "acquisition": "trade",
       "place": "swim",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Not glamorous. Essential.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Not glamorous. Essential."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -874,12 +820,9 @@
       "acquisition": "hidden",
       "place": "swim",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "The ocean signs its work.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "The ocean signs its work."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -892,12 +835,9 @@
       "acquisition": "event",
       "place": "swim",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A small piece of a big first leg.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A small piece of a big first leg."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -910,12 +850,9 @@
       "acquisition": "event",
       "place": "check-in",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Passed inspection. Passed the vibe check.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Passed inspection. Passed the vibe check."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -928,12 +865,9 @@
       "acquisition": "trade",
       "place": "garage",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Because somebody will ask where the valve is.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Because somebody will ask where the valve is."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -946,12 +880,9 @@
       "acquisition": "hidden",
       "place": "garage",
       "category": "gear",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Evidence of race nutrition, allegedly.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Evidence of race nutrition, allegedly."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -964,12 +895,9 @@
       "acquisition": "trade",
       "place": "run",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Heat management, but collectible.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Heat management, but collectible."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -982,12 +910,9 @@
       "acquisition": "hidden",
       "place": "run",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Crushed with purpose.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Crushed with purpose."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1000,12 +925,9 @@
       "acquisition": "event",
       "place": "run",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A tiny monument to relief.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A tiny monument to relief."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1018,12 +940,9 @@
       "acquisition": "hidden",
       "place": "run",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Forward is still forward.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Forward is still forward."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1036,12 +955,9 @@
       "acquisition": "event",
       "place": "finish",
       "category": "race",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A few fibers from the last few meters.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A few fibers from the last few meters."
-      },
+      "model": null,
       "tradeable": false,
       "event_only": true,
       "public": true
@@ -1054,12 +970,9 @@
       "acquisition": "event",
       "place": "finish",
       "category": "race",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "The line matters at every hour.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "The line matters at every hour."
-      },
+      "model": null,
       "tradeable": false,
       "event_only": true,
       "public": true
@@ -1072,12 +985,9 @@
       "acquisition": "trade",
       "place": "community",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "The race is bigger than racers.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "The race is bigger than racers."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1090,12 +1000,9 @@
       "acquisition": "trade",
       "place": "community",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A small reminder not to take yourself too seriously.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A small reminder not to take yourself too seriously."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1108,12 +1015,9 @@
       "acquisition": "event",
       "place": "community",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Somebody showed up for somebody.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Somebody showed up for somebody."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1126,12 +1030,9 @@
       "acquisition": "trade",
       "place": "community",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Subtlety did not qualify.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Subtlety did not qualify."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1144,12 +1045,9 @@
       "acquisition": "hidden",
       "place": "travel",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "You made it to the island. Your bike box may disagree.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "You made it to the island. Your bike box may disagree."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1162,12 +1060,9 @@
       "acquisition": "trade",
       "place": "travel",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Fragile. Expensive. Somehow still optimistic.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Fragile. Expensive. Somehow still optimistic."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1180,12 +1075,9 @@
       "acquisition": "hidden",
       "place": "travel",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Sleep is part of the plan, apparently.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Sleep is part of the plan, apparently."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1198,12 +1090,9 @@
       "acquisition": "trade",
       "place": "community",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A handwritten welcome from another athlete.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A handwritten welcome from another athlete."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1216,12 +1105,9 @@
       "acquisition": "event",
       "place": "plan",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Wind: yes. Heat: also yes.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Wind: yes. Heat: also yes."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1234,12 +1120,9 @@
       "acquisition": "trade",
       "place": "plan",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Tiny numbers, enormous confidence.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Tiny numbers, enormous confidence."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1252,12 +1135,9 @@
       "acquisition": "trade",
       "place": "plan",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A plan for eating while moving very fast.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A plan for eating while moving very fast."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1270,12 +1150,9 @@
       "acquisition": "hidden",
       "place": "plan",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "You folded the map exactly wrong.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "You folded the map exactly wrong."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1288,12 +1165,9 @@
       "acquisition": "event",
       "place": "race-week",
       "category": "race",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Everything is quieter before it starts.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Everything is quieter before it starts."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1306,12 +1180,9 @@
       "acquisition": "event",
       "place": "race-week",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Race week briefly stops pretending to be normal.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Race week briefly stops pretending to be normal."
-      },
+      "model": null,
       "tradeable": false,
       "event_only": true,
       "public": true
@@ -1324,12 +1195,9 @@
       "acquisition": "event",
       "place": "race-week",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A small strip of pre-race electricity.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A small strip of pre-race electricity."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1342,12 +1210,9 @@
       "acquisition": "event",
       "place": "race-week",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "You went in for one thing.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "You went in for one thing."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1360,12 +1225,9 @@
       "acquisition": "trade",
       "place": "check-in",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Names, numbers, promises.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Names, numbers, promises."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1378,12 +1240,9 @@
       "acquisition": "hidden",
       "place": "check-in",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Four of these can hold an identity together.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Four of these can hold an identity together."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1396,12 +1255,9 @@
       "acquisition": "trade",
       "place": "check-in",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "For people who have opinions about safety pins.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "For people who have opinions about safety pins."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1414,12 +1270,9 @@
       "acquisition": "event",
       "place": "race",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Beep. Evidence.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Beep. Evidence."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1432,12 +1285,9 @@
       "acquisition": "event",
       "place": "race",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A race reduced to beautiful little numbers.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A race reduced to beautiful little numbers."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1450,12 +1300,9 @@
       "acquisition": "trade",
       "place": "race",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Rare in inventory. Rarer in life.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Rare in inventory. Rarer in life."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1468,12 +1315,9 @@
       "acquisition": "event",
       "place": "race",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Not every brave day gets a finish line.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Not every brave day gets a finish line."
-      },
+      "model": null,
       "tradeable": false,
       "event_only": true,
       "public": true
@@ -1486,12 +1330,9 @@
       "acquisition": "event",
       "place": "race",
       "category": "kona",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "The next chapter sometimes starts after the bad one.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "The next chapter sometimes starts after the bad one."
-      },
+      "model": null,
       "tradeable": false,
       "event_only": true,
       "public": true
@@ -1504,12 +1345,9 @@
       "acquisition": "trade",
       "place": "progress",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Boring days built the exciting one.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Boring days built the exciting one."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1522,12 +1360,9 @@
       "acquisition": "hidden",
       "place": "progress",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Doing less, professionally.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Doing less, professionally."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1540,12 +1375,9 @@
       "acquisition": "trade",
       "place": "progress",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Numbers attached to feelings.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Numbers attached to feelings."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1558,12 +1390,9 @@
       "acquisition": "hidden",
       "place": "progress",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Calibrate first. Brag later.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Calibrate first. Brag later."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1576,12 +1405,9 @@
       "acquisition": "trade",
       "place": "progress",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "One number. Hundreds of arguments.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "One number. Hundreds of arguments."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1594,12 +1420,9 @@
       "acquisition": "event",
       "place": "progress",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "A tiny badge for very large breathing.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "A tiny badge for very large breathing."
-      },
+      "model": null,
       "tradeable": false,
       "event_only": true,
       "public": true
@@ -1612,12 +1435,9 @@
       "acquisition": "trade",
       "place": "training",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Two sports. One set of tired legs.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Two sports. One set of tired legs."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1630,12 +1450,9 @@
       "acquisition": "hidden",
       "place": "training",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Hard to find for reasons nobody understands.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Hard to find for reasons nobody understands."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1648,12 +1465,9 @@
       "acquisition": "trade",
       "place": "training",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Time spent moving, itemized.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Time spent moving, itemized."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1666,12 +1480,9 @@
       "acquisition": "hidden",
       "place": "training",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Again. But slightly different.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Again. But slightly different."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1684,12 +1495,9 @@
       "acquisition": "trade",
       "place": "training",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Black line appreciation society.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Black line appreciation society."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
@@ -1702,12 +1510,9 @@
       "acquisition": "event",
       "place": "training",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "The lane rope has left the chat.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "The lane rope has left the chat."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": true,
       "public": true
@@ -1720,12 +1525,9 @@
       "acquisition": "trade",
       "place": "training",
       "category": "training",
-      "tagline": "Small thing. Bigger meaning.",
+      "tagline": "Progress occasionally looks horizontal.",
       "lore": "An original KONA game collectible inspired by the details athletes notice when they slow down long enough to look.",
-      "model": {
-        "glb": "assets/kona-years/finds.glb",
-        "node": "Progress occasionally looks horizontal."
-      },
+      "model": null,
       "tradeable": true,
       "event_only": false,
       "public": true
