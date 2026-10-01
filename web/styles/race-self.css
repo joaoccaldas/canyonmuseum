@@ -128,6 +128,7 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
     scrollbar-width:none;border-top:1px solid var(--stage-line)
   }
   .studio-destinations::-webkit-scrollbar{display:none}
+  .studio-destinations{mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent)}
   .studio-destinations>.studio-menu-label{display:none}
   .studio-destinations>button{
     flex:0 0 min(42vw,168px);min-width:132px;max-width:168px;min-height:68px;
