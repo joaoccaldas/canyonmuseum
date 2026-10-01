@@ -1,4 +1,4 @@
-web/node_modules/
+web/node_modules
 assets/*_raw.glb
 *.blend
 *.blend1
@@ -9,3 +9,5 @@ __pycache__/
 
 output/
 artifacts/artworld-visual/
+
+_site/

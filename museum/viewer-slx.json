@@ -795,5 +795,12 @@
   "compatiblePriceParts": [
     "arm_pads",
     "udh_hanger"
-  ]
+  ],
+  "hero": {
+    "title": "Speedmax",
+    "titleSpan": "CF SLX 8 Di2",
+    "sub": "The CF SLX, explored in three dimensions.",
+    "lede": "Inspect the frame, customize your finish and explore the Shimano Di2 build. An independent reconstruction.",
+    "eyebrow": "Canyon collection \u00b7 CF SLX"
+  }
 }

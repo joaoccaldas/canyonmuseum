@@ -1,4 +1,4 @@
-import { installInstructions, installState } from './engine/install-state.js';
+import { initInstall } from './ui/install.js';
 // The museum as an installable app.
 //  - Web (Android Chrome, desktop, iOS Safari): a service worker (sw.js) keeps the museum offline and
 //    installs updates only after verifying every file's SHA-256 against the release manifest. When a
@@ -34,85 +34,7 @@ export function initAppShell() {
   if (window.__appShell) return;
   window.__appShell = true;
   if (window.Capacitor?.isNativePlatform?.()) { document.body.classList.add('native'); nativeUpdateCheck(); return; }
-  const standalone = matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches || navigator.standalone;
-  if (standalone) document.body.classList.add('installed');
-
-  // --- install
-  const btn = $('installBtn'), entryBtn = $('entryInstall'), sheet = $('appSheet');
-  let deferred = null;
-  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const android = /android/i.test(navigator.userAgent);
-  const native = Boolean(window.Capacitor?.isNativePlatform?.());
-  const state = () => installState({ standalone, native, ios, android, deferred: Boolean(deferred) });
-
-  function syncInstallUI() {
-    const s = state();
-    if (btn) { btn.hidden = !s.show; btn.textContent = s.label || 'Install KONA'; }
-    if (entryBtn) { entryBtn.hidden = !s.show; entryBtn.dataset.installKind = s.kind; entryBtn.textContent = s.label || 'Install KONA'; }
-    return s;
-  }
-  syncInstallUI();
-
-  addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferred = e;
-    syncInstallUI();
-  });
-  addEventListener('appinstalled', () => {
-    deferred = null;
-    if (btn) btn.hidden = true;
-    if (sheet) sheet.hidden = true;
-    document.body.classList.add('installed');
-  });
-
-  async function beginInstall() {
-    const s = state();
-    if (!sheet) return;
-    const iosRow = sheet.querySelector('[data-ios]');
-    const pwaRow = sheet.querySelector('[data-pwa]');
-    const pwaAction = sheet.querySelector('[data-pwa-action]');
-    const apk = sheet.querySelector('[data-apk]');
-    const apkUnavailable = sheet.querySelector('[data-apk-unavailable]');
-    if (pwaAction) {
-      pwaAction.hidden = !(s.action === 'prompt' && deferred);
-      pwaAction.onclick = async () => {
-        if (!deferred) return;
-        const prompt = deferred;
-        deferred = null;
-        await prompt.prompt();
-        await prompt.userChoice.catch(() => {});
-        syncInstallUI();
-        if (document.body.classList.contains('installed')) sheet.hidden = true;
-      };
-    }
-    if (iosRow) {
-      iosRow.hidden = s.kind !== 'ios-instructions';
-      const small = iosRow.querySelector('small');
-      if (small) small.textContent = installInstructions(s.kind);
-    }
-    if (pwaRow) {
-      pwaRow.hidden = s.action === 'prompt' || !['android-instructions','unavailable'].includes(s.kind);
-      const small = pwaRow.querySelector('small');
-      if (small) small.textContent = installInstructions(s.kind);
-    }
-    if (apk) apk.hidden = true;
-    if (apkUnavailable) apkUnavailable.hidden = true;
-    if (android) {
-      fetch('app/android-version.json',{cache:'no-store',credentials:'same-origin'}).then(r=>r.ok?r.json():null).then(v=>{
-        if(v?.published && typeof v.apk==='string' && !/^[a-z]+:/i.test(v.apk)){
-          apk.href=v.apk; apk.hidden=false;
-          if(apkUnavailable) apkUnavailable.hidden=true;
-          const small=apk.querySelector('small'); if(small) small.textContent='Signed native Android build · '+(v.versionName||'current');
-        } else if(apkUnavailable) apkUnavailable.hidden=false;
-      }).catch(()=>{if(apkUnavailable) apkUnavailable.hidden=false;});
-    }
-    sheet.hidden = false;
-  }
-  btn?.addEventListener('click', beginInstall);
-  entryBtn?.addEventListener('click', beginInstall);
-
-  sheet?.querySelector('.close')?.addEventListener('click', () => { sheet.hidden = true; });
-  sheet?.addEventListener('click', e => { if (e.target === sheet) sheet.hidden = true; });
+  initInstall();
 
   // --- offline + verified updates
   if (!('serviceWorker' in navigator) || !window.isSecureContext) return;

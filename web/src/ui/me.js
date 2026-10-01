@@ -19,7 +19,7 @@ async function equipmentProduct(snapshot, equipmentId) {
 async function raceIdentityMarkup(snapshot) {
   const identity = snapshot?.race_identity;
   if (!identity?.event_id) {
-    return '<section class="kona-hero-card artifact artifact--hero"><small>YOUR KONA</small><h3>Start with a RaceIdentity.</h3><p>Your intent, goal and equipment become the anchor for Garage, Plan and Passport.</p></section>';
+    return '<section class="kona-hero-card artifact artifact--hero"><small>YOUR KONA</small><h3>Your next chapter starts here.</h3><p>Explore the museum to collect discoveries, earn badges and build your Passport. Your progress stays with you on this device.</p></section>';
   }
   const [bike, shoe] = await Promise.all([equipmentProduct(snapshot, identity.setup?.bike), equipmentProduct(snapshot, identity.setup?.shoe)]);
   const gear = [
@@ -32,11 +32,11 @@ async function raceIdentityMarkup(snapshot) {
     '<small>YOUR KONA · 2026</small>'+
     '<h3>'+esc(goal)+'</h3>'+
     '<p>'+esc(intent)+(gear?' · '+esc(gear):'')+'</p>'+
-    '<span class="kona-source-note">RaceIdentity is private on this device unless you choose to save or share it.</span>'+
+    '<span class="kona-source-note">Your race profile stays on this device unless you choose to back it up or share it.</span>'+
   '</section>';
 }
 
-export async function renderMeSurface(root,{settings}={}) {
+export async function renderPassportSurface(root,{settings}={}) {
   try { ensureProgression(); } catch (_) { /* Passport remains readable without repair */ }
   const snapshot = readGameState();
   const p = gameProgress(snapshot);
@@ -44,13 +44,13 @@ export async function renderMeSurface(root,{settings}={}) {
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Passport</h3><small>'+esc(p.levelName||'Visitor')+'</small></div>'+
       '<div class="kona-list"><article><i>XP</i><div><b>'+p.xp+' XP</b><span>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds</span></div></article>'+
       '<article><i>↗</i><div><b>'+p.streak+' day streak</b><span>Progress follows what you actually explore.</span></div></article>'+
-      (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Secondary to your identity and Passport.</span></div></article>':'')+
+      (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Earned as you explore KONA.</span></div></article>':'')+
       '</div></section>'+
-    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Your collection</h3><small>Derived from your graph</small></div><div class="kona-place-grid">'+
+    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Your collection</h3><small>Every discovery counts</small></div><div class="kona-place-grid">'+
       '<article><small>Bikes</small><b>'+p.bikes+'</b><span>visited</span></article>'+
       '<article><small>Kona years</small><b>'+p.konaYears+'</b><span>discovered</span></article>'+
       '<article><small>Parts</small><b>'+p.parts+'</b><span>inspected</span></article>'+
-      '<article><small>Garage</small><b>'+p.garage+'</b><span>equipment links</span></article>'+
+      '<article><small>Garage</small><b>'+p.garage+'</b><span>saved items</span></article>'+
     '</div></section>'+
     '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Race badges</h3><small>Past & future</small></div><div data-profile-races></div></section>'+
     '<section class="kona-section artifact artifact--label" id="konaAccount"><div class="kona-section-head"><h3>Sync across devices</h3><small>Optional · beta</small></div><p class="kona-source-note" data-status>Checking account…</p></section>'+
@@ -63,7 +63,7 @@ export async function renderMeSurface(root,{settings}={}) {
 
   const user=await currentUser().catch(()=>null);
   if(!user){
-    account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note">Email for a one-time sign-in link</label><input name="email" type="email" autocomplete="email" required placeholder="you@example.com" style="width:100%;min-height:48px;padding:12px 14px;margin:8px 0;border:1px solid currentColor;border-radius:12px;background:transparent;color:inherit;font:inherit"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
+    account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note" for="passportEmail">Email for a one-time sign-in link</label><input id="passportEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" style="width:100%;min-height:48px;padding:12px 14px;margin:8px 0;border:1px solid currentColor;border-radius:12px;background:transparent;color:inherit;font:inherit"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
     status.textContent='Play without an account, or sign in only for cross-device backup.';
     account.querySelector('[data-login]')?.addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('button');btn.disabled=true;try{await sendMagicLink(new FormData(e.currentTarget).get('email'));status.textContent='Check your email and open the sign-in link on this device.';e.currentTarget.hidden=true;}catch(err){status.textContent=err.message||'Could not send sign-in link.';btn.disabled=false;}});
     return;
@@ -75,3 +75,5 @@ export async function renderMeSurface(root,{settings}={}) {
   account.querySelector('[data-restore]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await restoreGameState();status.textContent='Cloud state restored. Reloading…';location.reload();}catch(err){status.textContent=err.message;e.currentTarget.disabled=false;}});
   account.querySelector('[data-signout]')?.addEventListener('click',async()=>{await signOut();await renderMeSurface(root,{settings});});
 }
+
+export async function renderMeSurface(root,{settings}={}) { return renderPassportSurface(root,{settings}); }

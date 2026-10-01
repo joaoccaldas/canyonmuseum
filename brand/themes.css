@@ -42,4 +42,5 @@ html[data-theme="random"][data-random-family="lime"]{--brand-accent:#b7d63d;--br
   --kona-accent:var(--brand-accent);
   --kona-cyan:var(--brand-accent-2);
   --kona-success:var(--brand-success);
+  --kona-shadow:var(--artifact-shadow);
 }

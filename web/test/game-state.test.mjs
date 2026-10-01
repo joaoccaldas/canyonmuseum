@@ -31,3 +31,21 @@ test('modern KONA graph fields round-trip through the canonical storage registry
   assert.equal(out.race_history.length,1);
   assert.notEqual(s.getItem('kona.userEquipment.v1'),null);
 });
+
+
+test('failed cloud restore reports failure and rolls back writes',()=>{
+  const s=memory();
+  writeGameState({schema_version:1,profile:{name:'Before'},progression:{xp:7},finds:{bib:true}},s);
+  const before=readGameState(s), original=s.setItem;
+  let calls=0;
+  s.setItem=(k,v)=>{if(++calls===3)throw new Error('QuotaExceededError');original(k,v);};
+  assert.throws(()=>writeGameState({schema_version:1,profile:{name:'After'},progression:{xp:99},finds:{}},s),/previous progress was kept/);
+  const after=readGameState(s);
+  delete before.exported_at;delete after.exported_at;
+  assert.deepEqual(after,before);
+});
+test('restoring an empty field does not resurrect a legacy value',()=>{
+  const s=memory({'speedmax.profile.v1':JSON.stringify({name:'Legacy'})});
+  writeGameState({schema_version:1,profile:null,progression:{},finds:{}},s);
+  assert.equal(readGameState(s).profile,null);
+});

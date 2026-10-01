@@ -16,8 +16,8 @@ test('hall runtime is requested only inside explicit openMuseum function',()=>{
  assert.ok(entry.slice(start,end).includes("loadScript('app/hall.js')"));
 });
 
-test('Build enters quest state instead of appending below hero',()=>{
- assert.match(entry,/buildButton\?\.addEventListener\('click', \(\) => paintQuest\('intent'\)\)/);
+test('Entry opens User Studio without a quest gate',()=>{
+ assert.match(entry,/buildButton\?\.addEventListener\('click', \(\) => enterApp\(\)\)/);
  assert.match(entry,/setEntryMode\('quest'\)/);
 });
 

@@ -2,7 +2,7 @@
 // Home is the shell's navigation surface. Race Self is a deep experience entered explicitly.
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
-import { AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
+import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
@@ -10,7 +10,7 @@ const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/8
 
 function avatarPreview(styleInput){
   const s=normaliseAvatarStyle(styleInput);
-  const skin=AVATAR_COLORS.skin[s.skin], hair=AVATAR_COLORS.hair[s.hair], top=AVATAR_COLORS.top[s.top], bottoms=AVATAR_COLORS.bottoms[s.bottoms], shoes=AVATAR_COLORS.shoes[s.shoes];
+  const [skin,hair,top,bottoms,shoes]=['skin','hair','top','bottoms','shoes'].map(slot=>avatarItem(s,slot).color);
   return '<div class="home-avatar" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
     '<i class="ha-hair"></i><i class="ha-head"></i><i class="ha-body"></i><i class="ha-arm l"></i><i class="ha-arm r"></i><i class="ha-leg l"></i><i class="ha-leg r"></i><i class="ha-shoe l"></i><i class="ha-shoe r"></i>'+
   '</div>';

@@ -1,0 +1,21 @@
+/* RC4 Home continuity: calm shell, Race Self as explicit depth. */
+.home-today{min-height:220px}
+.home-race-self{display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;padding:18px;border:1px solid var(--kona-line);border-radius:24px;background:
+  radial-gradient(circle at 12% 18%,color-mix(in srgb,var(--kona-accent) 18%,transparent),transparent 32%),
+  color-mix(in srgb,var(--kona-surface-strong) 96%,transparent);box-shadow:var(--kona-shadow)}
+.home-race-self-visual{display:grid;place-items:center;min-height:148px;border-radius:18px;background:linear-gradient(160deg,color-mix(in srgb,var(--kona-cyan) 10%,var(--kona-surface-strong)),var(--kona-surface-strong));overflow:hidden}
+.home-race-self-copy{min-width:0}.home-race-self-copy small,.home-postcard-copy small{display:block;font:800 9px/1 var(--sans);letter-spacing:.16em;color:var(--kona-cyan)}
+.home-race-self-copy h3,.home-postcard-copy h3{font:400 clamp(28px,7vw,42px)/.95 var(--serif);letter-spacing:-.025em;margin:7px 0}
+.home-race-self-copy p,.home-postcard-copy p{font-size:11.5px;line-height:1.45;color:var(--kona-muted)}
+.home-race-self-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.home-race-self-actions .kona-primary{margin-top:0;min-height:48px;padding-inline:15px}
+.kona-link-btn{min-height:48px;padding:0 10px;border:0;background:transparent;color:var(--kona-accent);font:750 11px/1 var(--sans)}
+.home-avatar{position:relative;width:62px;height:128px;transform:translateY(4px)}.home-avatar i{position:absolute;display:block}
+.ha-head{width:34px;height:34px;left:14px;top:16px;background:var(--skin)}.ha-hair{width:36px;height:9px;left:13px;top:12px;background:var(--hair);z-index:2}
+.ha-body{width:44px;height:43px;left:9px;top:50px;background:var(--top)}.ha-arm{width:10px;height:42px;top:51px;background:var(--skin)}.ha-arm.l{left:-2px}.ha-arm.r{right:-2px}
+.ha-leg{width:17px;height:31px;top:93px;background:var(--bottoms)}.ha-leg.l{left:12px}.ha-leg.r{right:12px}.ha-shoe{width:19px;height:7px;top:121px;background:var(--shoes)}.ha-shoe.l{left:11px}.ha-shoe.r{right:11px}
+.home-postcard{position:relative;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);min-height:210px;border-radius:24px;overflow:hidden;border:1px solid var(--kona-line);background:var(--kona-surface);box-shadow:var(--kona-shadow)}
+.home-postcard-photo{min-height:210px}.home-postcard-photo img{width:100%;height:100%;object-fit:cover;display:block}.home-postcard-copy{padding:18px;display:flex;flex-direction:column;justify-content:end}
+@media(max-width:430px){
+  .home-race-self{grid-template-columns:92px minmax(0,1fr);padding:14px;gap:12px}.home-race-self-visual{min-height:132px}.home-avatar{transform:scale(.9)}
+  .home-postcard{grid-template-columns:1fr;min-height:0}.home-postcard-photo{height:155px;min-height:155px}.home-postcard-copy{padding:16px}
+}

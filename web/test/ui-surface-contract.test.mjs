@@ -19,7 +19,7 @@ test('shell orchestrates calm Home, deep Race Self, Discover, Plan and Me surfac
   assert.match(shell,/renderAvatarHome/);
   assert.match(shell,/renderDiscoverSurface/);
   assert.match(shell,/renderPlanSurface/);
-  assert.match(shell,/renderMeSurface/);
+  assert.match(avatarHome,/renderPassportSurface/);
   assert.doesNotMatch(shell,/Every room, one museum/);
 });
 
@@ -37,12 +37,13 @@ test('Garage and Me resolve Product presentation from the shared public projecti
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Home is lightweight and Race Self is contextual personal depth, not a second app menu',()=>{
+test('Home is lightweight and User Studio provides the main navigation',()=>{
   assert.match(home,/data-home-self/);
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
   for(const control of ['Avatar','Bike','Races','Settings']) assert.match(avatarHome,new RegExp(control));
-  for(const duplicate of ['3D World','Collection','Games','Garage','Discover']) assert.doesNotMatch(avatarHome,new RegExp(duplicate));
+  assert.match(avatarHome,/Canyon Museum/);
+  assert.match(avatarHome,/openDiscover/);
   assert.doesNotMatch(avatarHome,/hub-launcher/);
   assert.match(avatarHome,/race-self-controls/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
@@ -63,12 +64,12 @@ test('Me is RaceIdentity-first and owns no independent persistence',()=>{
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('post-onboarding entry opens canonical Home',()=>{
-  assert.match(entry,/enterApp\('home'\)/);
+test('entry opens canonical User Studio',()=>{
+  assert.match(entry,/function enterApp\(first = 'me'\)/);
   assert.match(entry,/Enter KONA/);
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','onboarding','reveal','home','race-self','discover','garage','plan','me']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','sign-in','user-studio','avatar-editor','discover','garage','plan','passport','bike-studio']) assert.match(visual,new RegExp(view));
 });

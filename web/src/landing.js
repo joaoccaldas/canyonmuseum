@@ -13,6 +13,7 @@ import { buildHalloween, hweenWalkable, HDOOR, HROOM } from './halloween.js';
 import { buildSanctuary, sanctuaryWalkable, SDOOR, SROOM } from './sanctuary.js';
 import { buildGalleries, galleryWalkable, galleryFloorY, EDOOR, UPPER } from './galleries.js';
 import { createRoomSound } from './roomSound.js';
+import { decorateRoom } from './engine/decoration-props.js';
 import { buildWings } from './engine/wing.js';
 import { renderCard, bikeCard, paintingCard, sculptureCard, photoCard, roomCard } from './engine/card.js';
 import { initMap } from './map.js';
@@ -693,39 +694,8 @@ async function loadWyldBikes() {
 const infos = [];                                                   // decor with a story: picked like pieces
 // (spinners declared at the top: the WYLD room registers its disc before the decor section)
 {
-  // potted palms — a tall, slender indoor palm in a basalt pot
-  const potM = new THREE.MeshStandardMaterial({ map: basaltTex, color: '#9a938c', roughness: .6 });
-  const trunkM = new THREE.MeshStandardMaterial({ color: '#9b8467', roughness: .95 });
-  const leafM = new THREE.MeshStandardMaterial({ color: '#3e7a4c', roughness: .7, side: THREE.DoubleSide });
-  const leaf = (() => { const len = 1.35, g = new THREE.PlaneGeometry(len, .34, 12, 2), pos = g.attributes.position;
-    for (let i = 0; i < pos.count; i++) { const u = (pos.getX(i) + len / 2) / len, y = pos.getY(i);
-      pos.setY(i, y * Math.sin(Math.PI * Math.min(1, u * 1.1)) * (1 - u * .3)); pos.setZ(i, -u * u * len * .5 + Math.abs(y) * .2); pos.setX(i, u * len); }
-    g.computeVertexNormals(); g.rotateX(-Math.PI / 2); return g; })();
-  const pot = new THREE.CylinderGeometry(.34, .27, .56, 28), soil = new THREE.CircleGeometry(.31, 20);
-  function pottedPalm(x, z, h = 2.3, seed = 1) {
-    const g = new THREE.Group(); g.position.set(x, 0, z);
-    const pm = new THREE.Mesh(pot, potM); pm.position.y = .28; pm.castShadow = !lite; g.add(pm);
-    const sl = new THREE.Mesh(soil, new THREE.MeshStandardMaterial({ color: '#3b2f27', roughness: 1 })); sl.rotation.x = -Math.PI / 2; sl.position.y = .545; g.add(sl);
-    const stems = [], leaves = [], o = new THREE.Object3D();                // merged: one mesh for stems, one for leaves
-    for (let s2 = 0; s2 < 3; s2++) {                                   // a small clump of stems
-      const lean = (s2 - 1) * .22 + Math.sin(seed * 3.1) * .08, hh = h * (1 - s2 * .12);
-      const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, .5, 0), new THREE.Vector3(lean * .4, .5 + hh * .5, s2 * .05 - .05), new THREE.Vector3(lean, .5 + hh, s2 * .1 - .1)]);
-      stems.push(new THREE.TubeGeometry(curve, 10, .035, 6));
-      const top = curve.getPoint(1);
-      for (let i = 0; i < 9; i++) {
-        o.position.copy(top); o.rotation.set(0, i / 9 * Math.PI * 2 + s2 + seed, 0); o.rotateZ(.35 - ((i * 7 + seed * 13) % 5) * .09); o.updateMatrix();
-        leaves.push(leaf.clone().applyMatrix4(o.matrix));
-      }
-    }
-    g.add(new THREE.Mesh(mergeGeometries(stems), trunkM));
-    const crown = new THREE.Mesh(mergeGeometries(leaves), leafM); crown.castShadow = true; g.add(crown);
-    sway.push({ o: crown, phase: seed * 1.7, amp: .012, pivot: true });
-    scene.add(g); obstacles.push({ c: new THREE.Vector3(x, 0, z), r: .55 }); return g;
-  }
-  [[6.1, 0.35], [6.1, -11.8], [6.1, -22.6], [6.1, -33.6], [-6.1, -3.9], KY ? [-6.1, -37.4] : [6.1, -44.6], [-6.1, -44.6], [-6.1, -14.4], [-6.1, -20.1], [-6.1, -26.4], [-6.1, -32]]
-    .forEach(([x, z], i) => pottedPalm(x, z, 2.2 + (i % 3) * .25, i + 1));
-  if (false && WROOMDATA) [[WROOM.x0 + 3.2, WROOM.z0 - .8], [WROOM.x0 + 3.2, WROOM.z1 + .8], [WROOM.x1 - 1.1, WROOM.z1 + .8]].forEach(([x, z], i) => pottedPalm(x, z, 2.6, i + 7));   // the WYLD gallery stays botanically empty: clean white, bikes only
-  [[ROOM.x0 + .9, ROOM.z0 - .9], [ROOM.x0 + .9, ROOM.z1 + .9]].forEach(([x, z], i) => pottedPalm(x, z, 2.4, i + 11));
+  // Room registry placements share a single reusable prop implementation.
+  for(const room of window.__ROOMS?.areas||[])decorateRoom(room.decorations,{group:scene,lite,obstacles,sway,basaltTex});
 
   // race paintings on the plaster wall: swim, run, finish (Wikimedia Commons, CC BY)
   const tl3 = new THREE.TextureLoader(); tl3.setCrossOrigin('anonymous');

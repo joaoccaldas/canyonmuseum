@@ -1,9 +1,9 @@
 /* Experience page. WEB is the default. MOBILE: @media (max-width) in this block.
    Museum hall: web/styles/hall-web.css and hall-mobile.css. KONA shell phone: web/styles/shell-mobile.css */
 *{box-sizing:border-box;margin:0;padding:0}[hidden]{display:none!important}
-:root{--accent:#ff7a1a;--ink:#f3eee6;--glass:rgba(12,12,16,.62);--line:rgba(255,255,255,.12);--sans:'Manrope',system-ui,sans-serif;--serif:'Instrument Serif',Georgia,serif}
-html,body{height:100%;background:#050507;color:var(--ink);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
-body[data-theme=history]{--ink:#1b1712;--glass:rgba(251,248,242,.78);--line:rgba(27,23,18,.12);background:#d9e2e6}
+:root{--accent:#ff7a1a;--experience-ink:#f3eee6;--glass:rgba(12,12,16,.62);--line:rgba(255,255,255,.12);--sans:'Manrope',system-ui,sans-serif;--serif:'Instrument Serif',Georgia,serif}
+html,body{height:100%;background:#050507;color:var(--experience-ink);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+body[data-theme=history]{--experience-ink:#1b1712;--glass:rgba(251,248,242,.78);--line:rgba(27,23,18,.12);background:#d9e2e6}
 a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none}
 .glass{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line)}
@@ -43,5 +43,5 @@ body:not([data-theme=history]) #prog{display:none}
 @media (max-width:420px){header .long{display:none}.ttl b{font-size:23px}}
 
 /* RC5 shared KONA brand convergence */
-:root{--sand:var(--brand-bg,#f4efe7);--paper:var(--brand-surface,#fbf9f5);--ink:var(--brand-ink,#12181d);--muted:var(--brand-muted,#5f6a72);--faint:var(--brand-faint,#8e979d);--line:var(--brand-line,rgba(18,24,29,.12));--reef:var(--brand-accent-2,#1db7d8);--lava:var(--brand-accent,#e85a22)}
+
 button,a,[role="button"]{min-height:var(--brand-touch,48px)}

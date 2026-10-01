@@ -20,49 +20,18 @@ try{
  assert.equal(museumData().length,0,'landing must not request museum catalog data');
  assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
- try { await page.waitForSelector('#konaQuest',{timeout:8000}); }
- catch(err){ throw new Error('Onboarding did not start. Page errors: '+pageErrors.join(' | ')+' Body: '+(await page.$eval('body',e=>e.innerText.slice(0,1200)))); }
- assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Why are you here/i);
- await page.click('[data-set="intent"][data-value="dreaming"]');
- assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Your races/i);
- await page.waitForSelector('[data-race-search]');
- assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Search IRONMAN races/i);
- await page.click('[data-race-continue]');
- await page.waitForFunction(()=>/Choose your bike/i.test(document.querySelector('#konaQuest')?.textContent||''));
- assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Choose your bike/i);
- await page.click('[data-set="bikeId"]:not([data-value=""])');
- await page.waitForFunction(()=>/Choose your shoes/i.test(document.querySelector('#konaQuest')?.textContent||''));
- assert.match(await page.$eval('#konaQuest',e=>e.textContent),/Choose your shoes/i);
- const shoe=await page.$('[data-set="shoeId"]:not([data-value=""])'); if(shoe) await shoe.click(); else await page.click('[data-set="shoeId"][data-value=""]');
- await page.waitForFunction(()=>/What would make Kona a win/i.test(document.querySelector('#konaQuest')?.textContent||''));
- assert.match(await page.$eval('#konaQuest',e=>e.textContent),/What would make Kona a win/i);
- await page.click('[data-set="goal"][data-value="Finish"]');
- await page.waitForFunction(()=>{const q=localStorage.getItem('kona.konaSelf.v1')||localStorage.getItem('speedmax.konaSelf.v1');try{return JSON.parse(q||'{}').goal==='Finish'}catch{return false}}, {timeout:5000}).catch(async()=>{throw new Error('Goal click did not persist. Quest: '+await page.$eval('#konaQuest',e=>e.textContent));});
- try { await page.waitForSelector('#enterKona',{timeout:8000}); }
- catch(err){ throw new Error('Reveal did not render. Page errors: '+pageErrors.join(' | ')+' Quest: '+await page.$eval('#konaQuest',e=>e.textContent)); }
- assert.match(await page.$eval('#konaQuest',e=>e.textContent),/This is your Kona/i);
- assert.equal(museumHeavy().length,0,'onboarding/reveal must request zero museum/world assets');
- await page.click('#enterKona');
- await page.waitForFunction(()=>document.querySelector('#intro')?.hasAttribute('hidden'));
- await page.waitForSelector('[data-home-self]',{timeout:8000});
- assert.equal(museumHeavy().length,0,'Home must not request museum/world assets');
- assert.equal(personal3D().length,0,'Home must stay 2D until Race Self is explicitly opened');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Something worth doing today|What matters next/i,'post-onboarding state should be calm Home');
- assert.ok(await page.$eval('[data-tab="home"]',e=>e.classList.contains('on')),'Home nav should be active after reveal');
- await page.click('[data-home-self]');
- await page.waitForSelector('.race-self-experience',{timeout:8000});
- await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]'),{timeout:5000});
- await new Promise(r=>setTimeout(r,500));
- assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'Race Self 3D should load only after explicit user action');
- assert.match(await page.$eval('#konaPanelBody',e=>e.textContent),/YOUR RACE SELF|Customize|Bike|Races|Settings/i,'Race Self should expose contextual personal controls only');
- assert.doesNotMatch(await page.$eval('#konaPanelBody',e=>e.textContent),/3D World|Collection|Games|Garage|Discover/i,'Race Self must not duplicate global app navigation');
- const identity=await page.evaluate(()=>localStorage.getItem('kona.raceIdentity.v1')||localStorage.getItem('speedmax.raceIdentity.v1'));
- assert.ok(identity,'RaceIdentity must persist locally before registration');
+ await page.waitForSelector('.race-self-experience');
+ await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
+ assert.equal(await page.$('#konaQuest'),null,'no onboarding gate');
+ assert.equal(museumHeavy().length,0,'User Studio must not request museum/world assets');
+ assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'personal stage loads after Enter KONA');
+ await page.click('[data-race-self-action="customize"]');
+ await page.click('[data-avatar-archetype="aero"]');
+ await page.keyboard.press('Escape');
  await page.reload({waitUntil:'domcontentloaded'});
- await page.waitForSelector('#buildSelf');
- assert.match(await page.$eval('#buildSelf',e=>e.textContent),/Continue your Kona/i);
- assert.equal(museumHeavy().length,0,'returning shell must request zero museum/world assets');
- assert.equal(museumData().length,0,'returning Home must not request museum catalog data');
+ await page.click('#buildSelf');await page.waitForSelector('.race-self-experience');
+ assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.archetype),'aero','customization survives reload');
+ assert.equal(museumHeavy().length,0,'returning studio must not request museum/world assets');
  // Registration path: prove the browser is allowed to issue the Supabase OTP request.
  const auth=await browser.newPage();auth.setDefaultTimeout(30000);
  await auth.setRequestInterception(true);let otpSeen=false;
@@ -104,5 +73,5 @@ try{
  await installPage.close();
 
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → race search → identity → Home → explicit Race Self → reload + magic-link request; 3D stays user-triggered');
+ console.log('P0 browser journey PASS: entry-only data → User Studio → avatar customization → reload + magic-link request; 3D stays user-triggered');
 } finally {await browser.close();}

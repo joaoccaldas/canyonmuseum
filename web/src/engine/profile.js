@@ -16,7 +16,7 @@ export const QUALITY = {
 export const AVATARS = ['#e8471c', '#138a8f', '#1d4fd6', '#c9a13b', '#ff3d8e', '#12181d', '#5fd8d3', '#8a3316'];
 
 export const defaults = () => ({
-  v: 1, name: '', avatar: AVATARS[0], avatarStyle: defaultAvatarStyle(), quality: 'auto', sound: false, motion: 'auto', appearance: 'auto', travel: 'teleport', units: 'metric',
+  v: 1, name: '', avatar: AVATARS[0], avatarStyle: defaultAvatarStyle(), quality: 'auto', sound: false, motion: 'auto', appearance: 'random', travel: 'teleport', units: 'metric',
   favourites: [], liveries: [], notifications: {enabled:false,whatsNew:true,raceWeek:true,newRooms:true}, analytics: false, createdAt: new Date().toISOString(), sync: null,
 });
 
@@ -56,19 +56,21 @@ export function renderSettings(quality, device) {
 
 export const localStore = {
   load() { try { return JSON.parse(readStorage('profile') || 'null'); } catch (_) { return null; } },
-  save(p) { try { writeStorage('profile',JSON.stringify(p)); return true; } catch (_) { return false; } },
+  save(p) { try { return writeStorage('profile',JSON.stringify(p)); } catch (_) { return false; } },
   clear() { try { removeStorage('profile'); } catch (_) { } },
 };
 
 export function createProfile(store = localStore) {
   let p = normalise(store.load());
   const exists = !!store.load();
+  let saved=true;
   const subs = new Set();
   const emit = () => subs.forEach(f => f(p));
   return {
     get: () => p,
+    get saved() { return saved; },
     get exists() { return exists || !!p.name; },
-    set(patch) { p = normalise({ ...p, ...patch }); store.save(p); emit(); return p; },
+    set(patch) { p = normalise({ ...p, ...patch }); saved=store.save(p)!==false; emit(); return p; },
     toggleFavourite(id) { const f = new Set(p.favourites); f.has(id) ? f.delete(id) : f.add(id); return this.set({ favourites: [...f] }); },
     subscribe(f) { subs.add(f); return () => subs.delete(f); },
     export() {

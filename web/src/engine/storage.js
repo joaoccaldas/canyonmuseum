@@ -15,6 +15,7 @@ const MAP = Object.freeze({
   konaSelf: { current: 'kona.konaSelf.v1', legacy: ['speedmax.konaSelf.v1'] },
   entryIntent: { current: 'kona.entryIntent.v1', legacy: ['speedmax.entryIntent.v1'] },
   raceHistory: { current: 'kona.raceHistory.v1', legacy: ['speedmax.raceHistory.v1'] },
+  otpCooldown: { current: 'kona.supabase.otp.cooldown.v1', legacy: [] },
   session: { current: 'kona.supabase.session.v1', legacy: ['kona.supabase.session.v1'] },
 });
 
@@ -44,10 +45,12 @@ export function readStorage(name, storage = globalThis.localStorage) {
 export function writeStorage(name, value, storage = globalThis.localStorage) {
   const row = MAP[name];
   if (!row) throw new Error(`Unknown storage key: ${name}`);
+  if(!storage)return false;
   try {
     if (value == null) storage?.removeItem?.(row.current);
     else storage?.setItem?.(row.current, String(value));
-  } catch (_) {}
+    return true;
+  } catch (_) { return false; }
 }
 
 export function removeStorage(name, storage = globalThis.localStorage) {

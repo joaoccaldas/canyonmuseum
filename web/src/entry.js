@@ -1,5 +1,6 @@
 // KONA entry. HTML is already on screen. This file does not import Three.js.
 // The museum runtime loads only after the visitor chooses to explore.
+import { renderEntryProductStage } from './ui/visual-primitives.js';
 import { createProfile, QUALITY, AVATARS } from './engine/profile.js';
 import { initSettings } from './ui/settings.js';
 import { desktopViewPhone, coarse } from './detect.js';
@@ -41,7 +42,7 @@ const settingsUI = initSettings({
   onQuality:id=>window.__konaWorldSettings?.onQuality?.(id) ?? true,
   onSound:on=>window.__konaWorldSettings?.onSound?.(on),
   onMotion:()=>window.__konaWorldSettings?.onMotion?.() ?? true,
-  sync:{available:false},
+  sync:{available:true,start:async()=>{settingsUI.close();await enterApp('me');document.querySelector('[data-race-self-action=passport]')?.click();}},
 });
 window.__konaSettingsUI = settingsUI;
 
@@ -128,15 +129,15 @@ initAppShell();
 const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum });
 window.__konaShell = shell;
 
-function enterApp(first = 'home') {
+function enterApp(first = 'me') {
   setEntryMode('app');
   intro?.setAttribute('hidden','');
-  if (first === 'garage') shell.garage?.();
-  else if (first === 'collection') shell.collection?.();
-  else if (first === 'discover') shell.explore?.();
-  else if (first === 'plan') shell.plan?.();
-  else if (first === 'me') shell.me?.();
-  else shell.now?.();
+  if (first === 'garage') return shell.garage?.();
+  else if (first === 'collection') return shell.collection?.();
+  else if (first === 'discover') return shell.explore?.();
+  else if (first === 'plan') return shell.plan?.();
+  else if (first === 'me') return shell.me?.();
+  else return shell.me?.();
 }
 
 function paintIntent() {
@@ -234,7 +235,7 @@ function paintQuest(step) {
       <button type="button" class="btn primary" id="enterKona">Enter KONA</button>
       <button type="button" class="btn secondary" id="shareSelf">Share my Kona</button>
       <button type="button" class="btn text" id="saveSelf">Save across devices</button>
-      <p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;
+      <p class="kona-note" role="status" id="saveNote">Your Kona is already safe on this device.</p>`;
     host.querySelector('#enterKona')?.addEventListener('click', () => enterApp('home'));
     host.querySelector('#shareSelf')?.addEventListener('click', async () => {
       const note = host.querySelector('#saveNote');
@@ -246,20 +247,21 @@ function paintQuest(step) {
     return;
   }
   if (step === 'save') {
-    host.innerHTML = `<p class="eyebrow">Sign in or save</p><form id="saveForm"><input name="email" type="email" required placeholder="you@example.com" autocomplete="email"><button class="btn primary" type="submit">Send magic link</button></form><button class="btn text" type="button" id="continueLocal">Continue without account</button><button class="btn text" type="button" id="backFromSave">Back</button><p class="kona-note" id="saveNote">No password. Your local experience works without signing in.</p>`;
+    host.innerHTML = `<p class="eyebrow">Sign in or create your account</p><form id="saveForm"><input name="email" type="email" required placeholder="you@example.com" aria-label="Email address" autocomplete="email"><button class="btn primary" type="submit">Send sign-in link</button></form><button class="btn text" type="button" id="continueLocal">Continue without account</button><button class="btn text" type="button" id="backFromSave">Back</button><p class="kona-note" role="status" id="saveNote">New here? Your first link creates your account. No password needed. You can also continue without an account.</p>`;
     host.querySelector('#continueLocal')?.addEventListener('click', enterApp);
-    host.querySelector('#backFromSave')?.addEventListener('click',()=>{ const q=readQuest(); paintQuest(questReady(q)?'reveal':'intent'); });
+    host.querySelector('#backFromSave')?.addEventListener('click',()=>{setEntryMode('landing');host.hidden=true;document.getElementById('entrySignIn')?.focus();});
     host.querySelector('#saveForm')?.addEventListener('submit', async (event) => {
       event.preventDefault();
       const email = new FormData(event.currentTarget).get('email');
-      const note = host.querySelector('#saveNote');
+      const note = host.querySelector('#saveNote'),button=event.currentTarget.querySelector('button[type=submit]');
+      button.disabled=true;button.textContent='Sending…';
       try {
         const { sendMagicLink } = await import('./cloud/supabase-lite.js');
         await sendMagicLink(email);
         if (note) note.textContent = 'Check your email. Your Kona is already on this device.';
       } catch (err) {
-        if (note) note.textContent = 'The link could not be sent. Your Kona is still saved on this device.';
-      }
+        if (note) note.textContent = (err?.message||'The link could not be sent.')+' You can continue without an account.';
+      }finally{button.disabled=false;button.textContent='Send sign-in link';}
     });
     return;
   }
@@ -303,12 +305,13 @@ if (existingIdentity) {
     : 'Your Kona is saved. Pick up where you left off.';
   if (buildButton) {
     buildButton.textContent = 'Continue your Kona';
-    buildButton.addEventListener('click', enterApp);
+    buildButton.addEventListener('click', () => enterApp());
   }
   if (note) note.textContent = 'Your RaceIdentity stays private on this device unless you choose to save or share it.';
 } else {
-  buildButton?.addEventListener('click', () => paintQuest('intent'));
+  buildButton?.addEventListener('click', () => enterApp());
 }
+renderEntryProductStage(document.getElementById('entryProductStage'), {profile});
 paintIntent();
 entryDataReady.then(data=>{ window.__ENTRY_DATA=data||{}; window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
 
@@ -322,5 +325,5 @@ const q = new URLSearchParams(location.search);
 const shared=decodeShare(q.get('kona'));
 if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
-else if (authReturned) enterApp('home');
+else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=passport]')?.click());
 else if (['home','garage','collection','discover','plan','me'].includes(q.get('view'))) enterApp(q.get('view'));
