@@ -1,6 +1,40 @@
-// engine/items.js — collection projection over canonical personal state.
-// No independent persistence: items derive from Progression discoveries + UserEquipment.
-const clean = value => String(value || '').replace(/^(?:product|bike|part|find|kona):/, '');
+// engine/items.js — collection projections over canonical personal state.
+// No independent persistence. Finds are defined by the generated game registry and
+// collected state comes only from Progression.
+import { FIND_REGISTRY } from '../generated/game-config.js';
+
+const clean = value => String(value || '').replace(/^(?:product|bike|part|find|kona|relic):/, '');
+export const FIND_COUNT=Number(FIND_REGISTRY.count)||100;
+export const FIND_ITEMS=Object.freeze((FIND_REGISTRY.items||[]).map(x=>Object.freeze({...x})));
+export const FIND_METHODS=Object.freeze(FIND_REGISTRY.acquisition_methods||{});
+
+export function findById(id){return FIND_ITEMS.find(x=>x.id===id)||null;}
+
+export function findCollection(snapshot={}){
+  const engine=snapshot.progression_engine||{};
+  const found=new Set(Array.isArray(engine.discoveries)?engine.discoveries:[]);
+  const acquisitions=Array.isArray(engine.acquisitions)?engine.acquisitions:[];
+  const byAcquisition=new Map(acquisitions.map(x=>[x.item_id,x]));
+  return FIND_ITEMS.map(item=>Object.freeze({
+    ...item,
+    collected:found.has(item.id),
+    acquired:byAcquisition.get(item.id)||null,
+  }));
+}
+
+export function findSummary(snapshot={}){
+  const items=findCollection(snapshot);
+  const collected=items.filter(x=>x.collected);
+  const count=method=>collected.filter(x=>(x.acquired?.method||x.acquisition)===method).length;
+  return Object.freeze({
+    total:items.length,
+    collected:collected.length,
+    hidden:count('hidden'),
+    trade:count('trade'),
+    event:count('event'),
+    percent:items.length?Math.round(collected.length/items.length*100):0,
+  });
+}
 
 export function itemCollection(snapshot = {}) {
   const rows = [];
@@ -32,12 +66,24 @@ export function itemCollection(snapshot = {}) {
     });
   }
 
+  for(const item of findCollection(snapshot).filter(x=>x.collected)){
+    push({
+      id:'find-card:'+item.id,
+      entity_id:item.id,
+      kind:'find',
+      relationship:item.acquired?.method||item.acquisition||'hidden',
+      label:item.name,
+      collected:true,
+    });
+  }
+
   const discoveries = Array.isArray(snapshot.progression_engine?.discoveries)
     ? snapshot.progression_engine.discoveries
     : Object.keys(snapshot.progression?.stamps || {});
   for (const id of discoveries) {
     const raw=String(id);
-    const kind=raw.startsWith('bike:')?'bike':raw.startsWith('part:')?'part':raw.startsWith('find:')?'find':raw.startsWith('kona:')?'story':'card';
+    if(findById(raw))continue;
+    const kind=raw.startsWith('bike:')?'bike':raw.startsWith('part:')?'part':raw.startsWith('kona:')?'story':'card';
     push({
       id:'discovery:' + raw,
       entity_id:raw,
@@ -53,6 +99,16 @@ export function itemCollection(snapshot = {}) {
 
 export function collectionSummary(snapshot = {}) {
   const items=itemCollection(snapshot);
+  const finds=findSummary(snapshot);
   const count=kind=>items.filter(x=>x.kind===kind).length;
-  return { total:items.length, equipment:count('equipment'), bikes:count('bike'), parts:count('part'), finds:count('find'), stories:count('story'), races:count('race') };
+  return {
+    total:items.length,
+    equipment:count('equipment'),
+    bikes:count('bike'),
+    parts:count('part'),
+    finds:finds.collected,
+    findSlots:finds.total,
+    stories:count('story'),
+    races:count('race')
+  };
 }
