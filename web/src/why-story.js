@@ -6,7 +6,7 @@ const stories = {
     title:'The Short Version',
     estimate:'~ 15 seconds',
     paragraphs:[
-      'My favorite person got me back into training.',
+      'One of my favourite persons recently inspired me to get back to triathlon.',
       'So, naturally, I made an Excel sheet to track my progress.',
       'One thing led to another.',
       '<strong>Now there\'s an island.</strong>',
@@ -45,7 +45,7 @@ const stories = {
     paragraphs:[
       'Okay, so…',
       'I\'ve been taking some time for myself. Slowing down a bit. Trying to get some energy back.',
-      'My favorite person got me back into training.',
+      'One of my favourite persons recently inspired me to get back to triathlon.',
       'Normal response: <strong>start training.</strong>',
       'My response: <strong>Excel.</strong>',
       'Then the Excel sheet got a little more complicated. Then AI. Then bikes. Then 3D bikes. Then a room. Then several rooms. Then apparently an island.',
@@ -129,7 +129,7 @@ function home(){
     ${wordmarkHero()}
     <section class="why-choices" aria-label="Choose a version of the story">
       ${choice('short','01','The Short Version','~ 15 seconds','▤',
-        ['My favorite person got me back into training. So, naturally, I made an Excel sheet to track my progress.','One thing led to another. Now there\'s an island. Here we are.'],
+        ['One of my favourite persons recently inspired me to get back to triathlon. So, naturally, I made an Excel sheet to track my progress.','One thing led to another. Now there\'s an island. Here we are.'],
         'Sometimes simple is enough.')}
       ${choice('scenic','02','The Scenic Route','~ 1 minute','🧩',
         ['It started with training. Then an Excel sheet. Then AI. Then bikes. Then 3D bikes. Then a room. Then, well… an island.','I just kept taking the next puzzle piece.'],
