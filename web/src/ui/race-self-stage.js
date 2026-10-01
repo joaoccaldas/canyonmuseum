@@ -57,11 +57,11 @@ export async function mountRaceSelfStage(canvas,{accent='#e8471c',avatarStyle=nu
     renderer.setSize(w,h,false);camera.aspect=w/h;fitCamera();
   }
   const ro=new ResizeObserver(resize);ro.observe(canvas);resize();
-  const clock=new THREE.Clock();
+  let startedAt=performance.now();
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-  renderer.setAnimationLoop(()=>{
+  renderer.setAnimationLoop(now=>{
     if(disposed||document.hidden||document.body.classList.contains('settings-open'))return;
-    const t=reducedMotion.matches?0:clock.getElapsedTime(),base=avatar.userData.baseY??.03,kind=avatar.userData.avatarAnimation;
+    const t=reducedMotion.matches?0:(now-startedAt)/1000,base=avatar.userData.baseY??.03,kind=avatar.userData.avatarAnimation;
     if(kind==='bounce')avatar.position.y=base+Math.sin(t*2.1)*.012;
     else if(kind==='swagger'){avatar.position.y=base+Math.sin(t*1.45)*.006;avatar.rotation.z=Math.sin(t*.85)*.012;}
     else if(kind==='ready'){avatar.position.y=base+Math.sin(t*1.8)*.005;avatar.rotation.y=-.08+Math.sin(t*.55)*.018;}
