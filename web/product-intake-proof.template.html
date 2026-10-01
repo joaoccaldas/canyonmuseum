@@ -1,14 +1,7 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Product Intake Proof V0</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,sans-serif;background:#dfe7e8;color:#162126}
-#proof{position:fixed;inset:0;width:100%;height:100%;touch-action:none}
-.chrome{position:fixed;z-index:3;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
-button{pointer-events:auto;border:1px solid #ffffff99;background:#ffffffdd;backdrop-filter:blur(10px);height:44px;padding:0 14px;border-radius:999px;font-weight:700}
-#loadCandidates{background:#162126;color:#fff}
-#info{position:fixed;z-index:4;left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));max-height:45vh;overflow:auto;background:#fffffff0;border-radius:18px;padding:14px 16px;box-shadow:0 12px 36px #0003}
-#info h2{margin:0 0 4px;font-size:20px}#info p{margin:6px 0;font-size:12px;line-height:1.4;overflow-wrap:anywhere}#info [data-claim]{font-weight:700}
-@media (min-width:800px){#info{left:auto;width:390px}}
-</style></head><body>
+<title>Product Intake Proof V0</title><link rel="stylesheet" href="web/styles/features/product-intake-shared.css">
+<link rel="stylesheet" href="web/styles/features/product-intake-web.css" media="(min-width:761px) and (pointer:fine)">
+<link rel="stylesheet" href="web/styles/features/product-intake-mobile.css" media="(max-width:760px), (pointer:coarse)"></head><body>
 <canvas id="proof" aria-label="Test-only product intake rooms"></canvas>
 <div class="chrome"><button id="loadCandidates">Load deferred candidates</button>__ROOM_BUTTONS__</div>
 <aside id="info" hidden><h2></h2><p data-type></p><p data-claim></p><p><b>Asset</b> <span data-path></span></p><p><b>Capabilities</b> <span data-cap></span></p><p><b>Sources</b> <span data-source></span></p></aside>
