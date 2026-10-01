@@ -1,0 +1,27 @@
+/* KONA consumer WEB composition only. Shared components: shell-shared.css */
+@media(min-width:760px){
+  .race-self-stage-wrap{right:320px;bottom:0;border-right:1px solid #ffffff12}
+  .race-self-controls{left:auto;top:0;width:320px;height:100%;grid-template-columns:1fr;grid-template-rows:repeat(4,100px);align-content:center;padding:24px;background:#10191e}
+  .race-self-controls>a,.race-self-controls>button{justify-content:flex-start;padding:14px;border-bottom:1px solid #ffffff10}
+  .race-self-controls b{font-size:14px}.race-self-controls small{font-size:10px;max-width:200px}
+}
+
+@media(min-width:761px){
+  .kona-panel{padding:clamp(24px,3vw,48px);padding-bottom:48px}
+  .kona-panel-head,.kona-panel-body{max-width:1180px}
+  .kona-panel-head{margin-bottom:28px}
+  .kona-panel-head h2{font-size:clamp(54px,5vw,84px)}
+  .kona-panel-body{grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
+  .kona-panel-body>*{grid-column:span 12}
+  .home-today{grid-column:span 7}
+  .home-race-self{grid-column:span 5}
+  .home-postcard{grid-column:span 12;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+  .garage-setup-hero{grid-column:span 8;min-height:460px}
+  .garage-group{grid-column:span 4}
+  .kona-discover-categories{grid-column:span 5}
+  .kona-discover-feed{grid-column:span 7}
+  .kona-timeline{grid-column:span 8}
+  .kona-place-grid{grid-column:span 4}
+  .race-self-experience{height:100dvh}
+  .hub-drawer{left:auto;right:24px;width:min(520px,42vw)}
+}
