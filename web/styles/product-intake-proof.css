@@ -9,3 +9,23 @@ button{pointer-events:auto;border:1px solid #ffffff99;background:#ffffffdd;backd
 
 /* Shared interaction floor; semantic brand tokens are prepended by the builder. */
 button,a[role="button"]{min-height:var(--brand-touch,48px)}
+
+/* RC6 KONA semantic bridge */
+html,body{
+  font-family:var(--brand-font-ui,system-ui,sans-serif);
+  background:var(--brand-bg,#f4efe7);
+  color:var(--brand-ink,#12181d);
+}
+button{
+  min-height:var(--brand-touch,48px);
+  border-color:var(--brand-line,rgba(18,24,29,.12));
+  background:var(--brand-surface-glass-strong,#fbf9f5);
+  border-radius:var(--brand-pill-radius,999px);
+}
+#loadCandidates{background:var(--brand-ink,#12181d);color:var(--brand-bg,#f4efe7)}
+#info{
+  background:var(--brand-surface-glass-strong,#fbf9f5);
+  color:var(--brand-ink,#12181d);
+  border:1px solid var(--brand-line,rgba(18,24,29,.12));
+  border-radius:var(--brand-sheet-radius,24px);
+}
