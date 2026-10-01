@@ -43,14 +43,14 @@ try{
      const parent=e.parentElement,r=rect(e),pr=rect(parent);
      return {name:e.textContent.trim(),...r,scrollable:parent.scrollWidth>parent.clientWidth+1,parentRight:pr.right,parentBottom:pr.bottom,scrollLeft:parent.scrollLeft,scrollWidth:parent.scrollWidth,clientWidth:parent.clientWidth,offsetLeft:e.offsetLeft,offsetWidth:e.offsetWidth};
    });
-   return {stage,menus,targets,projected,overflow:document.documentElement.scrollWidth>innerWidth,quest:!!document.querySelector('#konaQuest')};
+   return {stage,menus,targets,projected,overflow:document.documentElement.scrollWidth>innerWidth,docHeight:document.documentElement.scrollHeight,navVisible:!!document.querySelector('.kona-bottom-nav')&&getComputedStyle(document.querySelector('.kona-bottom-nav')).display!=='none',quest:!!document.querySelector('#konaQuest')};
   });
   assert.ok(!layout.quest,`${width}: onboarding gate appeared`);
   assert.ok(!layout.overflow,`${width}: horizontal overflow`);
   assert.ok(layout.projected.every(([x,y])=>Math.abs(x)<.94&&Math.abs(y)<.94),`${width}: athlete is clipped`);
   for(const t of layout.targets){
     assert.ok(t.w>=44&&t.h>=44,`${width}: small control ${t.name}`);
-    assert.ok(t.y>=0&&t.bottom<=height+1,`${width}: menu vertically outside viewport: ${t.name}`);
+    assert.ok(t.y>=0&&t.bottom<=layout.docHeight+1,`${width}: menu is not vertically reachable: ${t.name}`);
     if(t.scrollable){
       assert.ok(t.offsetLeft>=0&&t.offsetLeft+t.offsetWidth<=t.scrollWidth+1,`${width}: unreachable scroll-strip item: ${t.name}`);
     }else{
@@ -58,6 +58,7 @@ try{
     }
   }
   for(const m of layout.menus){const s=layout.stage;assert.ok(Math.min(s.right,m.right)-Math.max(s.x,m.x)<=0||Math.min(s.bottom,m.bottom)-Math.max(s.y,m.y)<=0,`${width}: stage covered by menu`);}
+  if(width<900)assert.equal(layout.navVisible,true,`${width}: global bottom navigation must remain visible in User Studio`);
   await page.screenshot({path:new URL(`studio-${width}.png`,out).pathname});
   report.push({width,height,status:'PASS',stage:layout.stage});
  }
