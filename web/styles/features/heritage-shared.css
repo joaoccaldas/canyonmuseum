@@ -57,3 +57,5 @@ html.phone-fit .chip{flex:0 0 auto}
 html.phone-fit #loader div{zoom:var(--fit)}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.heritage-eyebrow-offset{margin-top:18px}
