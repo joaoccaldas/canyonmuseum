@@ -14,7 +14,7 @@
 }
 [hidden]{display:none!important}
 *{box-sizing:border-box}
-html,body{width:100%;max-width:100%;overflow-x:hidden}
+html,body{width:100%;max-width:100%;margin:0;padding:0;overflow-x:hidden}
 html{font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 body{font-family:var(--sans)}
 button,input,select,textarea{font-family:inherit}
