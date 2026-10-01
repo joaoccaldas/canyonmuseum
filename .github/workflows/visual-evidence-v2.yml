@@ -8,6 +8,11 @@ on:
       - 'museum/**'
       - 'assets/**'
       - 'tools/build_pages.mjs'
+      - 'tools/score-visual-evidence.mjs'
+      - 'web/visual-evidence-v2.mjs'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - '.github/workflows/visual-evidence-v2.yml'
   workflow_dispatch:
 permissions:
   contents: read
