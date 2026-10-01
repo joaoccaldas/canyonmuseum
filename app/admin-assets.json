@@ -1,7 +1,7 @@
 {
- "schema_version": 1,
+ "schema_version": 2,
  "generated_by": "tools/build_admin_assets.mjs",
- "count": 74,
+ "count": 110,
  "rooms": [
   {
    "id": "hall",
@@ -2305,7 +2305,13 @@
      "floor_name": "Ground floor",
      "kind": "trophy"
     }
-   ]
+   ],
+   "preview": {
+    "kind": "decoration",
+    "floor": "#173827",
+    "accent": "#7d5f43",
+    "fog": "#0b1116"
+   }
   },
   {
    "id": "decor:race-marker",
@@ -2337,7 +2343,13 @@
      "floor_name": "Ground floor",
      "kind": "brand"
     }
-   ]
+   ],
+   "preview": {
+    "kind": "decoration",
+    "floor": "#111820",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   }
   },
   {
    "id": "installation:bio",
@@ -2365,7 +2377,13 @@
      "min depth"
     ]
    ],
-   "locations": []
+   "locations": [],
+   "preview": {
+    "kind": "installation",
+    "floor": "#10281a",
+    "accent": "#3dba55",
+    "fog": "#0b1116"
+   }
   },
   {
    "id": "installation:horror",
@@ -2393,7 +2411,13 @@
      "min depth"
     ]
    ],
-   "locations": []
+   "locations": [],
+   "preview": {
+    "kind": "installation",
+    "floor": "#10080c",
+    "accent": "#ff2a3c",
+    "fog": "#0b1116"
+   }
   },
   {
    "id": "installation:alien",
@@ -2421,7 +2445,13 @@
      "min depth"
     ]
    ],
-   "locations": []
+   "locations": [],
+   "preview": {
+    "kind": "installation",
+    "floor": "#070b12",
+    "accent": "#3dffe0",
+    "fog": "#0b1116"
+   }
   },
   {
    "id": "installation:zombie",
@@ -2449,7 +2479,1197 @@
      "min depth"
     ]
    ],
-   "locations": []
+   "locations": [],
+   "preview": {
+    "kind": "installation",
+    "floor": "#16180c",
+    "accent": "#d2e06a",
+    "fog": "#0b1116"
+   }
+  },
+  {
+   "id": "room:hall",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Queen K Hall",
+   "year": "",
+   "category": "timeline",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Every Speedmax generation, 1999–2027"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "hall",
+     "name": "The Queen K Hall",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "timeline"
+    }
+   ]
+  },
+  {
+   "id": "room:sanctuary",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Sanctuary",
+   "year": "",
+   "category": "chapel",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Eight Bike Porn films, eight bikes"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "sanctuary",
+     "name": "The Sanctuary",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "chapel"
+    }
+   ]
+  },
+  {
+   "id": "room:hween",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Lava Night",
+   "year": "",
+   "category": "themed",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The Halloween room"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "hween",
+     "name": "Lava Night",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "themed"
+    }
+   ]
+  },
+  {
+   "id": "room:kona",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Kona Champions",
+   "year": "",
+   "category": "trophy",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The machines under the titles"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "kona",
+     "name": "Kona Champions",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "trophy"
+    }
+   ]
+  },
+  {
+   "id": "room:wyld",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The WYLD Room",
+   "year": "",
+   "category": "themed",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Four hand-dyed liveries"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "wyld",
+     "name": "The WYLD Room",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "themed"
+    }
+   ]
+  },
+  {
+   "id": "room:pier",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Kona by Year",
+   "year": "",
+   "category": "timeline",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The pier, 2014–2025, and the finish"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "pier",
+     "name": "Kona by Year",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "timeline"
+    }
+   ]
+  },
+  {
+   "id": "room:secret",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Secret Collection",
+   "year": "",
+   "category": "hidden",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Found, not signposted"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "secret",
+     "name": "The Secret Collection",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "hidden"
+    }
+   ]
+  },
+  {
+   "id": "room:stair",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Glass Stair",
+   "year": "",
+   "category": "passage",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Up to the galleries"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "stair",
+     "name": "The Glass Stair",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "passage"
+    }
+   ]
+  },
+  {
+   "id": "room:nave",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Gallery Nave",
+   "year": "",
+   "category": "passage",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Four themed floors, four themed rooms"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "nave",
+     "name": "The Gallery Nave",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "passage"
+    }
+   ]
+  },
+  {
+   "id": "room:bay-st-george",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "St. George",
+   "year": "",
+   "category": "art",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Red rock"
+    },
+    {
+     "text": "One canyon silhouette from the aisle. Up here the floor is the rock itself: terracotta, with a warm seam."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#8a3b28",
+    "accent": "#e7b089",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "bay-st-george",
+     "name": "St. George",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "art"
+    }
+   ]
+  },
+  {
+   "id": "room:bay-las-vegas",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Las Vegas",
+   "year": "",
+   "category": "art",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Neon"
+    },
+    {
+     "text": "A dark floor that keeps the light. The sculpture in the hall is the same study, seen from the Queen K."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#14151c",
+    "accent": "#ff3d8e",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "bay-las-vegas",
+     "name": "Las Vegas",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "art"
+    }
+   ]
+  },
+  {
+   "id": "room:bay-nice",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Nice",
+   "year": "",
+   "category": "art",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Sea glass"
+    },
+    {
+     "text": "Pale glass underfoot, the colour of the bay on a still morning."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#d7f3f2",
+    "accent": "#7ec8c4",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "bay-nice",
+     "name": "Nice",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "art"
+    }
+   ]
+  },
+  {
+   "id": "room:bay-kona",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Kona",
+   "year": "",
+   "category": "art",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Obsidian"
+    },
+    {
+     "text": "Basalt, and a line of heat. The same coast as the hall, one storey closer to the weather."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#1a1c20",
+    "accent": "#ff592c",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "bay-kona",
+     "name": "Kona",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "art"
+    }
+   ]
+  },
+  {
+   "id": "room:room-bio",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Bio",
+   "year": "",
+   "category": "themed",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The growth"
+    },
+    {
+     "text": "A Speedmax taken by the room. Vines have the frame, pods sit on the floor, and the walls are the same green as the growth."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#10281a",
+    "accent": "#3dba55",
+    "fog": "#123024"
+   },
+   "locations": [
+    {
+     "id": "room-bio",
+     "name": "Bio",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "themed"
+    }
+   ]
+  },
+  {
+   "id": "room:room-horror",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Horror",
+   "year": "",
+   "category": "themed",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The passage"
+    },
+    {
+     "text": "One bulb over a Speedmax at the end of the passage. The corridor is narrower than the room. If the eyes blink, you were looking."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#10080c",
+    "accent": "#ff2a3c",
+    "fog": "#1a0a10"
+   },
+   "locations": [
+    {
+     "id": "room-horror",
+     "name": "Horror",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "themed"
+    }
+   ]
+  },
+  {
+   "id": "room:room-alien",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Alien",
+   "year": "",
+   "category": "themed",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The bay"
+    },
+    {
+     "text": "Four rings over a Speedmax, and a scan that does not care what it passes through. Cold light, no weather."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#070b12",
+    "accent": "#3dffe0",
+    "fog": "#0c2430"
+   },
+   "locations": [
+    {
+     "id": "room-alien",
+     "name": "Alien",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "themed"
+    }
+   ]
+  },
+  {
+   "id": "room:room-zombie",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Zombie",
+   "year": "",
+   "category": "themed",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The yard"
+    },
+    {
+     "text": "They keep to the walls. A Speedmax is still on the block in the middle of the yard. The air is the colour of a bruise that has started to heal."
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#16180c",
+    "accent": "#d2e06a",
+    "fog": "#2a2c18"
+   },
+   "locations": [
+    {
+     "id": "room-zombie",
+     "name": "Zombie",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "themed"
+    }
+   ]
+  },
+  {
+   "id": "room:hour",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Hour",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "One rider, sixty minutes"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "hour",
+     "name": "The Hour",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:mono",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Monocoque",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "One piece, no tubes"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "mono",
+     "name": "Monocoque",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:tri",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Long course",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Triathlon machines"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "tri",
+     "name": "Long course",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:types",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Types",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "No maker named"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "types",
+     "name": "Types",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:paint",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Paint shop",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Every livery in the wing"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "paint",
+     "name": "Paint shop",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:refs",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "References",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The photographs behind the models"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "refs",
+     "name": "References",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:queen-k",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Queen K",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Lava, wind and one road"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "queen-k",
+     "name": "The Queen K",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:clipon",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Clip-ons",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "How the rider got low"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "clipon",
+     "name": "Clip-ons",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:velodrome",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Velodrome",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Indoors, against the clock"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "velodrome",
+     "name": "Velodrome",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:bay",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Bay",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Where the day begins"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "bay",
+     "name": "The Bay",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:after-dark",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "After dark",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "The finish at midnight"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "after-dark",
+     "name": "After dark",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:tunnel",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Workshop & tunnel",
+   "year": "",
+   "category": "wing-room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [
+    {
+     "text": "Tubes, air and patience"
+    }
+   ],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "tunnel",
+     "name": "Workshop & tunnel",
+     "floor": "upper",
+     "floor_name": "Upper floor",
+     "kind": "wing-room"
+    }
+   ]
+  },
+  {
+   "id": "room:nike-running",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Nike Running Lab",
+   "year": "",
+   "category": "brand",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "marble",
+    "accent": "#ff3d00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "nike-running",
+     "name": "Nike Running Lab",
+     "floor": "ground",
+     "floor_name": "Ground floor",
+     "kind": "brand"
+    }
+   ]
+  },
+  {
+   "id": "room:atlas-against-the-clock-hour",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "The Hour · Against the Clock",
+   "year": "",
+   "category": "room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "atlas-against-the-clock-hour",
+     "name": "The Hour · Against the Clock",
+     "floor": "unassigned",
+     "floor_name": "Unassigned",
+     "kind": "room"
+    }
+   ]
+  },
+  {
+   "id": "room:atlas-against-the-clock-mono",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Monocoque · Against the Clock",
+   "year": "",
+   "category": "room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "atlas-against-the-clock-mono",
+     "name": "Monocoque · Against the Clock",
+     "floor": "unassigned",
+     "floor_name": "Unassigned",
+     "kind": "room"
+    }
+   ]
+  },
+  {
+   "id": "room:atlas-against-the-clock-tri",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Long course · Against the Clock",
+   "year": "",
+   "category": "room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "atlas-against-the-clock-tri",
+     "name": "Long course · Against the Clock",
+     "floor": "unassigned",
+     "floor_name": "Unassigned",
+     "kind": "room"
+    }
+   ]
+  },
+  {
+   "id": "room:atlas-against-the-clock-types",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Types · Against the Clock",
+   "year": "",
+   "category": "room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "atlas-against-the-clock-types",
+     "name": "Types · Against the Clock",
+     "floor": "unassigned",
+     "floor_name": "Unassigned",
+     "kind": "room"
+    }
+   ]
+  },
+  {
+   "id": "room:atlas-kona-light-clipon",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Clip-ons · Kona Light",
+   "year": "",
+   "category": "room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "atlas-kona-light-clipon",
+     "name": "Clip-ons · Kona Light",
+     "floor": "unassigned",
+     "floor_name": "Unassigned",
+     "kind": "room"
+    }
+   ]
+  },
+  {
+   "id": "room:atlas-kona-light-velodrome",
+   "kind": "world",
+   "type": "room",
+   "brand": "KONA World",
+   "name": "Velodrome · Kona Light",
+   "year": "",
+   "category": "room",
+   "material": "",
+   "glb": "",
+   "image": "",
+   "facts": [],
+   "stats": [],
+   "preview": {
+    "kind": "room",
+    "floor": "#12181d",
+    "accent": "#ff6a00",
+    "fog": "#0b1116"
+   },
+   "locations": [
+    {
+     "id": "atlas-kona-light-velodrome",
+     "name": "Velodrome · Kona Light",
+     "floor": "unassigned",
+     "floor_name": "Unassigned",
+     "kind": "room"
+    }
+   ]
   }
  ]
 }

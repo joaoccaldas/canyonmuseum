@@ -6,15 +6,16 @@
   <div class="brand"><a class="logo" href="./" aria-label="Speedmax Museum home"><b>KONA</b><small>Triathlon world · beta</small></a>
   <button id="where" class="where" hidden aria-label="Where you are: open the map"><i></i><span><small></small><b></b></span></button></div>
   <nav>
-    <button id="mapBtn" aria-label="Museum map" title="Map (M)">Map</button>
-    <button id="shareBtn" aria-label="Share this view" title="Share this view">Share</button>
-    <a id="studioLink" href="Studio.html" title="Paint and share any bike">Studio</a>
+    <button id="backKonaBtn" aria-label="Back to KONA">← KONA</button>
+    <button id="mapBtn" aria-label="World map" title="Map (M)">Map</button>
     <button id="soundBtn" class="wide" aria-pressed="false" title="Ocean ambience">Sound</button>
-    <button id="passportBtn" aria-label="Museum Passport progress">Passport <span id="passportCount">0/0</span></button>
-    <a href="Canyon_Collection.html#compare">Compare</a>
-    <a class="wide" href="Canyon_Collection.html#archive">Archive</a>
-    <button id="meBtn" class="me" aria-label="Profile and settings"><i aria-hidden="true"></i><span>Sign in</span></button>
+    <button id="worldMoreBtn" aria-label="More world options" aria-expanded="false">More</button>
   </nav>
+  <div id="worldMoreMenu" class="world-more-menu" hidden role="menu" aria-label="World options">
+    <button type="button" data-world-share role="menuitem">Share view</button>
+    <button type="button" data-world-tour role="menuitem">Guided tour</button>
+    <button type="button" data-world-settings role="menuitem">Settings</button>
+  </div>
 </header>
 <div id="rail" aria-label="Pieces in the collection"><div class="rail-inner" id="railInner"></div></div>
 
