@@ -8,7 +8,7 @@
   body.kona-panel-open>#konaWorld,body.kona-panel-open>#intro{visibility:hidden}
   body.touch #intro{padding-bottom:calc(102px + env(safe-area-inset-bottom))}
 }
-@media(max-width:380px){.kona-place-grid{grid-template-columns:1fr}.kona-panel{padding-left:12px;padding-right:12px}.kona-section{padding:14px}}
+@media(max-width:380px){.kona-place-grid{grid-template-columns:1fr}.kona-section{padding:14px}}
 
 /* The 2D app is the canonical surface, not a modal. Close appears only when returning to a loaded world makes sense. */
 body:not(.museum-open) .kona-panel-head>button{display:none!important}
@@ -18,7 +18,7 @@ body.museum-open .kona-panel-head>button{display:grid}
 .kona-panel,.kona-bottom-nav{box-sizing:border-box;max-width:100dvw}
 .kona-panel *,.kona-bottom-nav *{box-sizing:border-box}
 @media(max-width:899px){
-  .kona-panel{inset:0;width:100dvw;max-width:100dvw;padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+  .kona-panel{inset:0;width:100dvw;max-width:100dvw;padding-left:max(var(--brand-mobile-gutter),env(safe-area-inset-left));padding-right:max(var(--brand-mobile-gutter),env(safe-area-inset-right))}
   .kona-panel-head,.kona-panel-body{width:100%;max-width:100%;min-width:0}
   .kona-panel-head h2{font-size:clamp(36px,11vw,58px);overflow-wrap:anywhere}
   .kona-hero-card{min-height:200px;padding:20px}
