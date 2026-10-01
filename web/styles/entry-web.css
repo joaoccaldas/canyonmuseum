@@ -1,0 +1,6 @@
+/* DESKTOP entry/onboarding layout only. */
+#intro.kona-entry{padding-left:max(42px,7vw);padding-right:max(42px,7vw)}
+#intro.kona-entry .intro-inner{width:min(620px,52vw)}
+#intro.kona-entry .entry-media img{object-position:58% center}
+#intro.quest-active .intro-inner{width:min(600px,52vw);padding:64px 0}
+#intro.quest-active .kona-intents{max-width:560px}
