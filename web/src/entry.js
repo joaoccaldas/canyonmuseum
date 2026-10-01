@@ -136,6 +136,8 @@ function enterApp(first = 'home') {
   if (first === 'garage') return shell.garage?.();
   else if (first === 'collection') return shell.collection?.();
   else if (first === 'discover') return shell.explore?.();
+  else if (first === 'feed') return shell.feed?.();
+  else if (first === 'travel') return shell.travel?.();
   else if (first === 'plan') return shell.plan?.();
   else if (first === 'me') return shell.me?.();
   else return shell.now?.();
@@ -330,4 +332,4 @@ if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
 else if (authReturned && existingRaceIdentity()) enterApp('home');
 else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=passport]')?.click());
-else if (['home','garage','collection','discover','plan','me'].includes(q.get('view'))) enterApp(q.get('view'));
+else if (['home','garage','collection','discover','plan','me','feed','travel'].includes(q.get('view'))) enterApp(q.get('view'));
