@@ -5,6 +5,7 @@ import fs from 'node:fs';
 const companion=fs.readFileSync(new URL('../src/ui/companion.js',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../styles/companion.css',import.meta.url),'utf8');
 const registry=JSON.parse(fs.readFileSync(new URL('../../integrations/companion/sources.json',import.meta.url),'utf8'));
+const hardener=fs.readFileSync(new URL('../../tools/harden_pages.mjs',import.meta.url),'utf8');
 
 test('Kona Now is the existing companion route, not a duplicate feed implementation',()=>{
   assert.match(companion,/What's going on in Kona\?/);
@@ -30,4 +31,11 @@ test('curated source registry adds athletes without breaking the bounded provide
   assert.ok(ids.has('laura-philipp'));
   assert.ok(registry.sources.filter(s=>s.kind==='video').length>=8);
   assert.ok(registry.sources.length<=12,'default sources must fit the edge provider bound');
+});
+
+
+test('Kona Now thumbnails stay inside the explicit image CSP',()=>{
+  assert.match(companion,/i\.ytimg\.com/);
+  assert.match(hardener,/img-src[^\n]*https:\/\/i\.ytimg\.com/);
+  assert.match(companion,/u\.hostname==='i\.ytimg\.com'\|\|u\.origin===location\.origin/);
 });
