@@ -29,11 +29,11 @@ async function raceSetupHero(){
   return {bike,title,meta,goal,href};
 }
 
-export async function renderGarageSurface(root) {
+export async function renderGarageSurface(root,{admin=false}={}) {
   const groups = groupGarage(readGarage());
   const setup=await raceSetupHero();
   const progression=ensureProgression();
-  const bikeUnlocked=progression.level>=2;
+  const bikeUnlocked=admin||progression.level>=2;
   root.replaceChildren();
 
   const hero=node('section','garage-setup-hero artifact artifact--hero');
