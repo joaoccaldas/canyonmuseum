@@ -2,6 +2,9 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const registration=fs.readFileSync(new URL('../src/ui/avatar-registration.js',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../landing.template.html',import.meta.url),'utf8');
+const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'utf8');
+const system=fs.readFileSync(new URL('../styles/system.css',import.meta.url),'utf8');
+const studio=fs.readFileSync(new URL('../studio.template.html',import.meta.url),'utf8');
 
 test('landing always exposes Enter, Sign in and Install',()=>{
   assert.match(html,/id="buildSelf"/);assert.match(html,/id="entrySignIn"/);assert.match(html,/id="entryInstall"/);
@@ -30,4 +33,13 @@ test('P0 entry uses canonical storage adapter, never raw localStorage',()=>{
   assert.match(entry,/readStorage/);
   assert.equal(/localStorage/.test(entry),false);
   assert.equal(/speedmax\.(?:entryIntent|konaSelf)/.test(entry),false);
+});
+
+test('User Studio is reachable from every primary surface',()=>{
+  assert.match(shell,/data-user-studio/);
+  assert.match(shell,/routeToUserStudio/);
+  assert.match(entry,/openUserStudio:\(\)=>enterApp\('me'\)/);
+  assert.equal(/entry-landing \.kona-user-menu[^\n]*display:none/.test(system),false);
+  assert.equal(/entry-quest \.kona-user-menu[^\n]*display:none/.test(system),false);
+  assert.match(studio,/href="index\.html\?view=me"[^>]*aria-label="Back to User Studio"/);
 });
