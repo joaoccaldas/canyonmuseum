@@ -1,5 +1,5 @@
 import { readStorage, writeStorage, storageKey } from './storage.js';
-import { PROGRESSION_CONFIG, RELIC_REGISTRY, UNLOCK_REGISTRY } from '../generated/game-config.js';
+import { PROGRESSION_CONFIG, RELIC_REGISTRY, UNLOCK_REGISTRY, FIND_REGISTRY } from '../generated/game-config.js';
 // Progression runtime is generated from museum/game/*.json.
 // JSON registries are the source of truth; UI code never owns reward values.
 
@@ -8,10 +8,7 @@ export const TIERS = Object.freeze(['visitor','passport','athlete']);
 export const LEVELS = Object.freeze((PROGRESSION_CONFIG.levels||[]).map(row=>Object.freeze({...row,unlock:row.summary||''})));
 export const EVENTS = Object.freeze(PROGRESSION_CONFIG.events||{});
 const RARITY = Object.freeze(PROGRESSION_CONFIG.rarity_rewards||{});
-export const COLLECTIBLES = Object.freeze([
-  ...(PROGRESSION_CONFIG.legacy_collectibles||[]),
-  ...(RELIC_REGISTRY.relics||[]),
-].map(x=>Object.freeze({...x})));
+export const COLLECTIBLES = Object.freeze((FIND_REGISTRY.items||[]).map(x=>Object.freeze({...x})));
 export const UNLOCKS = Object.freeze((UNLOCK_REGISTRY.unlocks||[]).map(x=>Object.freeze({...x})));
 export const COLLECTIONS = Object.freeze((PROGRESSION_CONFIG.collections||[]).map(x=>Object.freeze({...x})));
 export const SURPRISE_POLICY = Object.freeze(PROGRESSION_CONFIG.surprise_policy||{});
