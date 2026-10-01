@@ -11,6 +11,7 @@ import {
 } from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
 import { renderProgressSurface } from './me.js';
+import { avatarItemAccess } from '../engine/access.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -138,9 +139,10 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     ).join('');
     const rows=AVATAR_SLOTS.map(slot=>{
       const selected=avatarItem(avatarStyle,slot);
-      const options=(AVATAR_ITEMS[slot]||[]).map(item=>
-        '<button type="button" data-avatar-item="'+slot+':'+item.id+'" class="'+(selected.id===item.id?'on':'')+'" style="--slot-color:'+(item.color||'#777')+'"><i></i><span>'+esc(item.label)+'</span></button>'
-      ).join('');
+      const options=(AVATAR_ITEMS[slot]||[]).map(item=>{
+        const gate=avatarItemAccess(slot,item.id,{admin:isAdmin});
+        return '<button type="button" data-avatar-item="'+slot+':'+item.id+'" class="'+(selected.id===item.id?'on':'')+(gate.unlocked?'':' locked')+'" style="--slot-color:'+(item.color||'#777')+'"'+(gate.unlocked?'':' disabled aria-label="'+esc(item.label)+' · unlocks at Level '+gate.requiredLevel+'"')+'><i></i><span>'+esc(item.label)+(gate.unlocked?'':' · LVL '+gate.requiredLevel)+'</span></button>';
+      }).join('');
       const overlay=avatarStyle.items[slot]?.overlay;
       return '<section class="avatar-slot" data-avatar-slot-card="'+slot+'">'+
         '<div class="avatar-slot-title"><small>'+slot.toUpperCase()+'</small><span>'+esc(selected.label||selected.id)+'</span></div>'+
