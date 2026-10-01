@@ -7,7 +7,7 @@ import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
-import { renderFeed, renderTravel } from './companion.js';
+import { renderFeed, renderTravel, renderKonaNowPreview } from './companion.js';
 import { renderAdminAssets } from './admin-assets.js';
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 import { readStorage, writeStorage } from '../engine/storage.js';
@@ -37,12 +37,12 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       '<div class="kona-panel-head"><div><small id="konaPanelEyebrow">KONA · BETA</small><h2 id="konaPanelTitle">Now</h2></div><button id="konaPanelClose" type="button" aria-label="Close">×</button></div>'+
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
     '</div>'+
-    '<nav class="kona-bottom-nav" aria-label="Main navigation">'+
-      '<button type="button" data-tab="home">'+icon('now')+'<span>Home</span></button>'+
-      '<button type="button" data-tab="discover">'+icon('explore')+'<span>Discover</span></button>'+
-      '<button type="button" data-tab="garage">'+icon('setup')+'<span>Garage</span></button>'+
-      '<button type="button" data-tab="plan">'+icon('plan')+'<span>Plan</span></button>'+
-      '<button type="button" data-tab="me">'+icon('me')+'<span>Me</span></button>'+
+    '<nav class="kona-bottom-nav" aria-label="KONA main navigation">'+
+      '<button type="button" data-tab="home" aria-label="Home, what matters now" title="Home">'+icon('now')+'<span>Home</span></button>'+
+      '<button type="button" data-tab="discover" aria-label="Explore places, stories and the world" title="Explore">'+icon('explore')+'<span>Explore</span></button>'+
+      '<button type="button" data-tab="garage" aria-label="Gear, bike and race setup" title="Gear">'+icon('setup')+'<span>Gear</span></button>'+
+      '<button type="button" data-tab="plan" aria-label="Race week, weather and logistics" title="Race">'+icon('plan')+'<span>Race</span></button>'+
+      '<button type="button" data-tab="me" aria-label="You, avatar, progress and collection" title="You">'+icon('me')+'<span>You</span></button>'+
     '</nav>';
   document.body.append(shell);
 
@@ -108,7 +108,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
     await featureStyle('home','web/styles/home.css');
     if(request!==studioRequest)return;
-    title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
+    title.textContent='Home'; eyebrow.textContent='KONA · WHAT MATTERS NOW';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
     disposeStudio=renderHomeSurface(body,{
       event:facts().event,
@@ -120,6 +120,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       openCollection:collection,
       admin:accessContext.admin,
     });
+    renderKonaNowPreview(body.querySelector('[data-home-kona-now]'),{open:feed});
     requestAnimationFrame(()=>requestAnimationFrame(()=>{if(request===studioRequest)startTour();}));
     scheduleSurprise('home');
     setTimeout(()=>{
@@ -131,7 +132,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
     await featureStyle('race-self','web/styles/race-self.css');
     if(request!==studioRequest)return;
-    title.textContent='User Studio'; eyebrow.textContent='KONA · YOUR ATHLETE';
+    title.textContent='User Studio'; eyebrow.textContent='KONA · AVATAR / PROGRESS / COLLECTION';
     panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('me');
     const admin=isAdminUser(await currentUser().catch(()=>null));
     if(request!==studioRequest)return;
@@ -157,7 +158,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
     await featureStyle('companion','web/styles/companion.css');
     if(request!==studioRequest)return;
-    title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
+    title.textContent=view==='feed'?'Kona Now':'Travel to Kona';eyebrow.textContent=view==='feed'?'KONA · PEOPLE / PLACES / PROGRESS':'KONA · EXPLORE MORE';
     panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
     document.body.classList.add('kona-panel-open');setActive('discover');
     disposeStudio=(view==='feed'?renderFeed:renderTravel)(body,{back:raceSelf});
@@ -178,7 +179,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
     await featureStyle('garage','web/styles/garage.css');
     if(request!==studioRequest)return;
-    title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
+    title.textContent='Garage'; eyebrow.textContent='KONA · BIKE / KIT / SETUP';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
     await renderGarageSurface(body,{admin:accessContext.admin});
     scheduleSurprise('garage');
@@ -188,7 +189,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
     await featureStyle('',null);
     if(request!==studioRequest)return;
-    title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
+    title.textContent='Plan'; eyebrow.textContent='KONA · PLAN / WEATHER / LOGISTICS';
     const readyData = entryDataReady ? await entryDataReady.catch(()=>null) : null;
     if(request!==studioRequest)return;
     disposeStudio=renderPlanSurface(body,{data:readyData || window.__ENTRY_DATA || { event:facts().event }});
@@ -218,7 +219,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
     await featureStyle('',null);
     if(request!==studioRequest)return;
-    title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
+    title.textContent='Discover'; eyebrow.textContent='KONA · PLACES / STORIES / WORLD';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
     await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});
     scheduleSurprise('discover');
