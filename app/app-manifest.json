@@ -1,5 +1,5 @@
 {
- "version": "3dded0a90b67",
+ "version": "e8288e62de0e",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -62,7 +62,7 @@
   "web/styles/studio.css": "4D5pIKk59Hb5rAbQmLcz1UOcPlSmNYwPpSfsVb8vLpE=",
   "web/styles/experience.css": "AfmOkRKFxbC3GgvRj9fLfy6euyeAzf/1eMHIDxiqjXY=",
   "web/styles/collection.css": "VOT+lHFB3ry9TcR7aujWEXWT2coiISfeIt+OZC/aPIQ=",
-  "app/race-self-stage.js": "I1qEgy0ne7msZNgMHCQSH1u1lilwnoEnmkclDqfwHFA=",
+  "app/race-self-stage.js": "gUK1p8DwdxyINqrNzLNoyWoPD/Zy3zpSkoc0CiY/QLQ=",
   "integrations/ironman-races-2016-2026.json": "P7vUgV+atNEkd1fjhGBhii8UZFqiskskE6hN0bbVE+Q=",
   "app/museum-data.js": "KKS1rQo6bo7DcNvLQ0KauUTq5Z32mu+FzOKdz7GpHXI=",
   "app/hall.js": "dpov0+G2A+gwA07IgyiKmu18/ukU9rMN7sF0SGG2JnE=",
