@@ -46,12 +46,12 @@ const settingsUI = initSettings({
 window.__konaSettingsUI = settingsUI;
 
 const loads = new Map();
-function loadStyle(href) {
-  const key='css:'+href;
+function loadStyle(href, media='all') {
+  const key='css:'+href+'@'+media;
   if (loads.has(key)) return loads.get(key);
   const pending = new Promise((resolve,reject)=>{
     const link=document.createElement('link');
-    link.rel='stylesheet'; link.href=href;
+    link.rel='stylesheet'; link.href=href; link.media=media;
     link.onload=()=>resolve(); link.onerror=()=>reject(new Error(href));
     document.head.append(link);
   });
@@ -79,8 +79,9 @@ const ensureWorldShell = () => {
   if (document.getElementById('hall')) return Promise.resolve();
   if (worldShellReady) return worldShellReady;
   worldShellReady = Promise.all([
-    loadStyle('web/styles/hall-web.css'),
-    loadStyle('web/styles/hall-mobile.css'),
+    loadStyle('web/styles/world-shared.css'),
+    loadStyle('web/styles/hall-web.css','(min-width:761px) and (pointer:fine)'),
+    loadStyle('web/styles/hall-mobile.css','(max-width:760px), (pointer:coarse)'),
   ]).then(()=>fetch('app/world-shell.html',{cache:'no-store',credentials:'same-origin'}))
     .then(r=>r.ok?r.text():Promise.reject(new Error('world shell unavailable')))
     .then(html=>{
