@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
-  AVATAR_SCHEMA_VERSION, AVATAR_ARCHETYPES, AVATAR_ITEMS, AVATAR_SLOTS,
-  avatarItem, defaultAvatarStyle, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype,
+  AVATAR_SCHEMA_VERSION, AVATAR_ARCHETYPES, AVATAR_PRESENTATIONS, AVATAR_ITEMS, AVATAR_SLOTS,
+  avatarItem, defaultAvatarStyle, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype, setAvatarPresentation,
 } from '../src/engine/avatar.js';
 
 const stage=fs.readFileSync(new URL('../src/ui/race-self-stage.js',import.meta.url),'utf8');
@@ -11,7 +11,7 @@ const models=fs.readFileSync(new URL('../src/engine/avatar-models.js',import.met
 const home=fs.readFileSync(new URL('../src/ui/avatar-home.js',import.meta.url),'utf8');
 
 test('avatar platform exposes four scalable archetypes and item slots',()=>{
-  assert.equal(AVATAR_SCHEMA_VERSION,4);
+  assert.equal(AVATAR_SCHEMA_VERSION,5);
   assert.deepEqual(AVATAR_ARCHETYPES.map(x=>x.id),['minecraft','renegade','aero','islander']);
   for(const slot of ['skin','hair','trisuit','top','bottoms','shoes','accessory','tattoo']){
     assert.ok(AVATAR_SLOTS.includes(slot));
@@ -19,15 +19,16 @@ test('avatar platform exposes four scalable archetypes and item slots',()=>{
   }
 });
 
-test('legacy voxel settings migrate into v4 without losing choices',()=>{
+test('legacy voxel settings migrate into v5 without losing choices',()=>{
   const migrated=normaliseAvatarStyle({v:2,model:'voxel',skin:'deep',hair:'crop',top:'lava',bottoms:'navy',shoes:'ocean',accessory:'visor',accent:'#138a8f'});
-  assert.equal(migrated.v,4);
+  assert.equal(migrated.v,5);
   assert.equal(migrated.archetype,'minecraft');
   assert.equal(migrated.items.skin.id,'deep');
   assert.equal(migrated.items.top.id,'lava');
   assert.ok(migrated.items.trisuit);
   assert.equal(migrated.items.accessory.id,'visor');
   assert.equal(migrated.accent,'#138a8f');
+  assert.equal(migrated.presentation,'prefer-not');
 });
 
 test('each avatar item supports independent custom colour and safe image overlay',()=>{
@@ -42,6 +43,15 @@ test('each avatar item supports independent custom colour and safe image overlay
   assert.equal(rejected.items.shoes.overlay,null);
 });
 
+test('presentation is independent from archetype and wardrobe',()=>{
+  assert.deepEqual(AVATAR_PRESENTATIONS.map(x=>x.id),['male','female','prefer-not']);
+  const styled=patchAvatarItem(defaultAvatarStyle(),'trisuit',{id:'split-wave',color:'#112233'});
+  const next=setAvatarPresentation(styled,'female');
+  assert.equal(next.presentation,'female');
+  assert.equal(next.archetype,'minecraft');
+  assert.equal(next.items.trisuit.id,'split-wave');
+  assert.equal(next.items.trisuit.color,'#112233');
+});
 test('archetype switching preserves customized items',()=>{
   const styled=patchAvatarItem(defaultAvatarStyle(),'bottoms',{id:'navy',color:'#112233'});
   const next=setAvatarArchetype(styled,'renegade');
@@ -55,9 +65,11 @@ test('Race Self stage renders distinct procedural archetypes and live updates',(
   assert.match(stage,/setAvatarStyle/);
   assert.match(stage,/avatarAnimation/);
   assert.match(models,/textureLoader\.load/);
+  assert.match(models,/avatarPresentation/);
 });
 
 test('avatar builder owns archetype, item, colour and image controls while bike stays separate',()=>{
+  assert.match(home,/data-avatar-presentation/);
   assert.match(home,/data-avatar-archetype/);
   assert.match(home,/data-avatar-item/);
   assert.match(home,/data-avatar-color/);
