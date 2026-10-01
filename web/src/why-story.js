@@ -98,7 +98,7 @@ function wire(){
 function nav(prev,next,progress){
   return `<nav class="why-story-nav" aria-label="Story navigation">
     <a href="${href(prev)}" data-route="${prev}">← Back</a>
-    <div class="why-progress" aria-hidden="true"><span style="width:${progress}%"></span></div>
+    <div class="why-progress why-progress--${progress}" aria-hidden="true"><span></span></div>
     <a class="why-next" href="${href(next)}" data-route="${next}">Next <span aria-hidden="true">→</span></a>
   </nav>`;
 }
