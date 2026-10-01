@@ -74,14 +74,14 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
     };
     paint();
   }
-  const replayTour=()=>{now();requestAnimationFrame(()=>requestAnimationFrame(()=>startTour({force:true})));};
+  const replayTour=async()=>{await now();requestAnimationFrame(()=>requestAnimationFrame(()=>startTour({force:true})));};
   let disposeStudio=null, studioRequest=0;
   const leaveRaceSelf=()=>{panel.classList.remove('companion-panel');studioRequest++;disposeStudio?.();disposeStudio=null;document.body.classList.remove('race-self-open');};
   const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
 
   async function now(){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('home','web/styles/home.css');
     title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
@@ -98,7 +98,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
   }
 
   async function raceSelf(){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('race-self','web/styles/race-self.css');
     const request=studioRequest;
     title.textContent='User Studio'; eyebrow.textContent='KONA · YOUR ATHLETE';
@@ -124,7 +124,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
   }
 
   async function companion(view){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('companion','web/styles/companion.css');
     title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
     panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
@@ -134,7 +134,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
   const feed=()=>companion('feed'),travel=()=>companion('travel');
 
   async function collection(){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('',null);
     title.textContent='Collection'; eyebrow.textContent='KONA · CARDS & ITEMS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('');
@@ -142,7 +142,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
   }
 
   async function garage(){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('garage','web/styles/garage.css');
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
@@ -150,7 +150,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
   }
 
   async function plan(){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('',null);
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
     renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
@@ -163,7 +163,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
   }
 
   async function adminAssets(){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('admin','web/styles/admin-assets.css');
     title.textContent='Asset Portfolio';eyebrow.textContent='KONA · ADMIN';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
@@ -177,7 +177,7 @@ export function initKonaShell({ profile, settings, enter, featureStyle=async()=>
     enter?.(id);
   }
   async function explore(){
-    dismissTour();leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
     await featureStyle('',null);
     title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
