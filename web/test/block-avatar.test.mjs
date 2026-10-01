@@ -29,6 +29,7 @@ test('legacy voxel settings migrate into v5 without losing choices',()=>{
   assert.equal(migrated.items.accessory.id,'visor');
   assert.equal(migrated.accent,'#138a8f');
   assert.equal(migrated.presentation,'prefer-not');
+  assert.equal(migrated.presentation,'prefer-not');
 });
 
 test('each avatar item supports independent custom colour and safe image overlay',()=>{
@@ -52,6 +53,15 @@ test('presentation is independent from archetype and wardrobe',()=>{
   assert.equal(next.items.trisuit.id,'split-wave');
   assert.equal(next.items.trisuit.color,'#112233');
 });
+test('presentation is independent from archetype and wardrobe',()=>{
+  assert.deepEqual(AVATAR_PRESENTATIONS.map(x=>x.id),['male','female','prefer-not']);
+  const styled=patchAvatarItem(defaultAvatarStyle(),'trisuit',{id:'split-wave',color:'#112233'});
+  const next=setAvatarPresentation(styled,'female');
+  assert.equal(next.presentation,'female');
+  assert.equal(next.archetype,'minecraft');
+  assert.equal(next.items.trisuit.id,'split-wave');
+  assert.equal(next.items.trisuit.color,'#112233');
+});
 test('archetype switching preserves customized items',()=>{
   const styled=patchAvatarItem(defaultAvatarStyle(),'bottoms',{id:'navy',color:'#112233'});
   const next=setAvatarArchetype(styled,'renegade');
@@ -66,9 +76,11 @@ test('Race Self stage renders distinct procedural archetypes and live updates',(
   assert.match(stage,/avatarAnimation/);
   assert.match(models,/textureLoader\.load/);
   assert.match(models,/avatarPresentation/);
+  assert.match(models,/avatarPresentation/);
 });
 
 test('avatar builder owns archetype, item, colour and image controls while bike stays separate',()=>{
+  assert.match(home,/data-avatar-presentation/);
   assert.match(home,/data-avatar-presentation/);
   assert.match(home,/data-avatar-archetype/);
   assert.match(home,/data-avatar-item/);
