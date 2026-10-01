@@ -19,7 +19,8 @@ test('native APK metadata is safe whether unpublished or signed and public',()=>
 test('Android pipeline rebuilds current KONA sources and publishes KONA.apk',()=>{
   assert.match(androidWorkflow,/name: KONA Android App/);
   assert.match(androidWorkflow,/'web\/src\/\*\*'/);
-  assert.match(androidWorkflow,/node web\/build_landing\.mjs/);
+  assert.match(androidWorkflow,/node tools\/build_pages\.mjs/);
   assert.match(androidWorkflow,/node tools\/build_app\.mjs/);
+  assert.match(androidWorkflow,/if: needs\.build\.outputs\.signed == 'true' && github\.ref == 'refs\/heads\/main'/);
   assert.match(androidWorkflow,/downloads\/KONA\.apk/);
 });
