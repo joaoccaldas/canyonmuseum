@@ -38,6 +38,7 @@ jobs:
         run: |
           (cd web && npm ci --ignore-scripts && npm test)
           node tools/validate-bikes.mjs
+          node tools/validate-product-wiring.mjs
 
       - name: Stage static site (allowlist — only what the pages load or link)
         run: |
