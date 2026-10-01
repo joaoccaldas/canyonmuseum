@@ -124,9 +124,9 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
 /* RC8 mobile exploration strip: new destinations must not steal the Race Self stage. */
 @media(max-width:899px){
   .studio-destinations{
-    display:flex;align-items:stretch;gap:8px;overflow-x:auto;overflow-y:hidden;
-    padding:10px 0 12px;scroll-snap-type:x proximity;overscroll-behavior-inline:contain;
-    scrollbar-width:none;border-top:1px solid var(--stage-line)
+    position:relative;display:flex;align-items:stretch;gap:8px;overflow-x:auto;overflow-y:hidden;
+    padding:10px 36px 12px 0;scroll-padding-inline:0 36px;scroll-snap-type:x proximity;overscroll-behavior-inline:contain;
+    box-sizing:border-box;scrollbar-width:none;border-top:1px solid var(--stage-line)
   }
   .studio-destinations::-webkit-scrollbar{display:none}
   .studio-destinations{mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent)}
