@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caldas.studio/schemas/kona-season-ranking-v1.json",
+  "title": "KONA Season Ranking Config V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "season_id",
+    "minimum_population",
+    "score_version",
+    "weights",
+    "caps",
+    "excluded_events"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "season_id": {
+      "type": "string"
+    },
+    "minimum_population": {
+      "type": "integer",
+      "minimum": 25
+    },
+    "score_version": {
+      "type": "string"
+    },
+    "weights": {
+      "type": "object",
+      "required": [
+        "find",
+        "collection",
+        "guess_accuracy",
+        "early_access",
+        "first_discovery",
+        "room_completion"
+      ],
+      "properties": {
+        "find": {
+          "type": "number",
+          "minimum": 0
+        },
+        "collection": {
+          "type": "number",
+          "minimum": 0
+        },
+        "guess_accuracy": {
+          "type": "number",
+          "minimum": 0
+        },
+        "early_access": {
+          "type": "number",
+          "minimum": 0
+        },
+        "first_discovery": {
+          "type": "number",
+          "minimum": 0
+        },
+        "room_completion": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "caps": {
+      "type": "object",
+      "properties": {
+        "early_access": {
+          "type": "number",
+          "minimum": 0
+        },
+        "first_discovery": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "early_access",
+        "first_discovery"
+      ]
+    },
+    "excluded_events": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "affiliate-click",
+          "purchase",
+          "share-attempt",
+          "ad-view"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 4,
+      "maxItems": 4
+    }
+  },
+  "additionalProperties": false
+}
