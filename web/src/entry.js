@@ -243,4 +243,4 @@ if(shared) paintShared(shared);
 else if (q.get('room') || q.get('map')) openMuseum();
 else if (authReturned && existingRaceIdentity()) enterApp('home');
 else if (authReturned) enterApp('me').then(()=>document.querySelector('[data-race-self-action=passport]')?.click());
-else if (['home','garage','collection','discover','plan','me','feed','travel'].includes(q.get('view'))) enterApp(q.get('view'));
+else if (returningVisit && ['home','garage','collection','discover','plan','me','feed','travel'].includes(q.get('view'))) enterApp(q.get('view'));
