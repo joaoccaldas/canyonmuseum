@@ -214,3 +214,5 @@ html.phone-fit #lab-hud{zoom:var(--fit);left:12px;top:72px}
 html.phone-fit body.in-lab .dock{display:none}
 html.phone-fit #loader .load{zoom:var(--fit);width:min(420px,calc(82vw / var(--fit)))}
 html.phone-fit #toast{zoom:var(--fit)}
+
+.ridebox-cadence{width:110px}.lab-upload-offset{margin-top:8px}.actions-tight{margin-top:6px}
