@@ -9,8 +9,8 @@
     "remote_writes": false
   },
   "counts": {
-    "nodes": 71,
-    "edges": 54
+    "nodes": 98,
+    "edges": 77
   },
   "nodes": [
     {
@@ -112,6 +112,306 @@
       ],
       "product_type": "bike",
       "representation": "geometry-study"
+    },
+    {
+      "id": "brand-trek",
+      "kind": "brand",
+      "public": true,
+      "label": "Trek"
+    },
+    {
+      "id": "multibrand-trek-speed-concept-kona",
+      "kind": "product",
+      "public": true,
+      "label": "Speed Concept \"Kona\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-speed-concept-kona/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-trek-madone-wyld",
+      "kind": "product",
+      "public": true,
+      "label": "Madone SLR \"Wyld\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-madone-wyld/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-trek-domane-custom",
+      "kind": "product",
+      "public": true,
+      "label": "Domane SL \"Customizable\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-domane-custom/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-trek-checkpoint-desert",
+      "kind": "product",
+      "public": true,
+      "label": "Checkpoint SLR \"Desert\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-checkpoint-desert/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-trek-us-postal-2004",
+      "kind": "product",
+      "public": true,
+      "label": "5500 OCLV \"US Postal\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-us-postal-2004/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "brand-pinarello",
+      "kind": "brand",
+      "public": true,
+      "label": "Pinarello"
+    },
+    {
+      "id": "multibrand-pinarello-bolide-kona",
+      "kind": "product",
+      "public": true,
+      "label": "Bolide F \"Kona Night\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-bolide-kona/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-pinarello-dogma-wyld",
+      "kind": "product",
+      "public": true,
+      "label": "Dogma F \"Wyld\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-dogma-wyld/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-pinarello-bolide-custom",
+      "kind": "product",
+      "public": true,
+      "label": "Bolide F \"Customizable\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-bolide-custom/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-pinarello-dogma-splatter",
+      "kind": "product",
+      "public": true,
+      "label": "Dogma \"Splatter\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-dogma-splatter/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "brand-felt",
+      "kind": "brand",
+      "public": true,
+      "label": "Felt"
+    },
+    {
+      "id": "multibrand-felt-ia-kona",
+      "kind": "product",
+      "public": true,
+      "label": "IA FRD \"Kona\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-kona/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-felt-ia-wyld",
+      "kind": "product",
+      "public": true,
+      "label": "IA \"Wyld Mint\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-wyld/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-felt-ia-custom",
+      "kind": "product",
+      "public": true,
+      "label": "IA \"Customizable\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-custom/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-canyon-speedmax-kona",
+      "kind": "product",
+      "public": true,
+      "label": "Speedmax CFR \"Kona Lava\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-kona/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-canyon-speedmax-wyld",
+      "kind": "product",
+      "public": true,
+      "label": "Speedmax CFR \"Wyld Mint\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-wyld/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-canyon-speedmax-custom",
+      "kind": "product",
+      "public": true,
+      "label": "Speedmax CFR \"Customizable\"",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-custom/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "brand-tour-de-france",
+      "kind": "brand",
+      "public": true,
+      "label": "Tour de France"
+    },
+    {
+      "id": "multibrand-tdf-steel-1937",
+      "kind": "product",
+      "public": true,
+      "label": "\"La Course\" steel",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-steel-1937/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-tdf-molteni-1972",
+      "kind": "product",
+      "public": true,
+      "label": "Era classic",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-molteni-1972/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-tdf-aero-1989",
+      "kind": "product",
+      "public": true,
+      "label": "Final-stage aero era",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-aero-1989/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-tdf-carbon-1999",
+      "kind": "product",
+      "public": true,
+      "label": "Early carbon era",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-carbon-1999/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-tdf-aero-2013",
+      "kind": "product",
+      "public": true,
+      "label": "Modern aero era",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-aero-2013/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-tdf-monocoque-2022",
+      "kind": "product",
+      "public": true,
+      "label": "Current monocoque",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-monocoque-2022/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-tdf-2027-wyld",
+      "kind": "product",
+      "public": true,
+      "label": "\"2027\" aero study",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-2027-wyld/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
+    },
+    {
+      "id": "multibrand-tdf-2027-kona",
+      "kind": "product",
+      "public": true,
+      "label": "2027 tri study",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-2027-kona/receipts.json"
+      ],
+      "product_type": "bike",
+      "representation": "provisional"
     },
     {
       "id": "brand-colnago",
@@ -819,6 +1119,236 @@
       "evidence": "published",
       "source_records": [
         "assets/kona-years/bikes/cfr-2019/build-meta.json"
+      ]
+    },
+    {
+      "from": "multibrand-trek-speed-concept-kona",
+      "relationship": "manufactured_by",
+      "to": "brand-trek",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-speed-concept-kona/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-trek-madone-wyld",
+      "relationship": "manufactured_by",
+      "to": "brand-trek",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-madone-wyld/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-trek-domane-custom",
+      "relationship": "manufactured_by",
+      "to": "brand-trek",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-domane-custom/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-trek-checkpoint-desert",
+      "relationship": "manufactured_by",
+      "to": "brand-trek",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-checkpoint-desert/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-trek-us-postal-2004",
+      "relationship": "manufactured_by",
+      "to": "brand-trek",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/trek-us-postal-2004/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-pinarello-bolide-kona",
+      "relationship": "manufactured_by",
+      "to": "brand-pinarello",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-bolide-kona/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-pinarello-dogma-wyld",
+      "relationship": "manufactured_by",
+      "to": "brand-pinarello",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-dogma-wyld/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-pinarello-bolide-custom",
+      "relationship": "manufactured_by",
+      "to": "brand-pinarello",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-bolide-custom/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-pinarello-dogma-splatter",
+      "relationship": "manufactured_by",
+      "to": "brand-pinarello",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/pinarello-dogma-splatter/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-felt-ia-kona",
+      "relationship": "manufactured_by",
+      "to": "brand-felt",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-kona/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-felt-ia-wyld",
+      "relationship": "manufactured_by",
+      "to": "brand-felt",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-wyld/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-felt-ia-custom",
+      "relationship": "manufactured_by",
+      "to": "brand-felt",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/felt-ia-custom/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-canyon-speedmax-kona",
+      "relationship": "manufactured_by",
+      "to": "brand-canyon",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-kona/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-canyon-speedmax-wyld",
+      "relationship": "manufactured_by",
+      "to": "brand-canyon",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-wyld/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-canyon-speedmax-custom",
+      "relationship": "manufactured_by",
+      "to": "brand-canyon",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/canyon-speedmax-custom/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-steel-1937",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-steel-1937/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-molteni-1972",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-molteni-1972/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-aero-1989",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-aero-1989/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-carbon-1999",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-carbon-1999/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-aero-2013",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-aero-2013/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-monocoque-2022",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-monocoque-2022/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-2027-wyld",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-2027-wyld/receipts.json"
+      ]
+    },
+    {
+      "from": "multibrand-tdf-2027-kona",
+      "relationship": "manufactured_by",
+      "to": "brand-tour-de-france",
+      "evidence": "provisional",
+      "source_records": [
+        "museum/multibrand/bikes.json",
+        "assets/multibrand/tdf-2027-kona/receipts.json"
       ]
     },
     {
