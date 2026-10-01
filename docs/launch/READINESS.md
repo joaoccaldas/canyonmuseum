@@ -15,13 +15,13 @@ The entry point is User Studio. Enter KONA opens it immediately; account creatio
 
 ## Verified locally
 
-- 271 unit checks before the final auth/install regression additions.
+- 276 unit checks, including auth redirect, throttle, refresh concurrency, offline-session preservation and safe exports.
 - 29 GLB asset contracts; no failing models.
 - All 10 published HTML pages at phone and desktop widths: no page errors, local missing resources or horizontal overflow.
 - User Studio at 360×640, 390×844, 430×932, 768×1024, 1280×800, 1440×900 and 844×390: usable controls, framed avatar, persistence, destinations and Escape/focus behavior.
 - Previous stress pass: 20 Studio visits, 40 avatar changes, 24 bike switches; GPU geometry/texture counts stable across bike cycles. Re-run after visual changes.
 - Staged-site worker install and offline reload; customization/navigation fallback with WebGL disabled. Re-run after final sealing.
-- Supabase production project healthy; registration and email enabled. App-state ownership policies verified, including UPDATE ownership check. One authorized live email request returned HTTP 200. Inbox delivery and callback still require confirmation.
+- Supabase production project healthy; registration and email enabled. App-state ownership policies verified, including UPDATE ownership check. One authorized live email request returned HTTP 200. Inbox delivery confirmed by the user; callback exposed a production Site URL of localhost. Site URL and exact production callback allowlist were corrected in Supabase. Custom SMTP is disabled; a second live email hit HTTP 429. Public registration remains blocked on production email delivery configuration.
 
 ## Required before broad launch
 

@@ -12,6 +12,6 @@ export function fitPerspectiveBounds(camera,controls,bounds,{direction=[.24,.08,
   controls.target.copy(center);
   camera.position.copy(center).add(center.clone().set(...direction).normalize().multiplyScalar(distance));
   controls.minDistance=distance*.65;controls.maxDistance=distance*2;
-  camera.far=Math.max(50,distance*4);camera.updateProjectionMatrix();controls.update();
+  camera.far=Math.max(50,distance*4);camera.updateProjectionMatrix();controls.update();camera.updateMatrixWorld(true);
   return distance;
 }

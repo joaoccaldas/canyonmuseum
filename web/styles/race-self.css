@@ -17,7 +17,7 @@ body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:
 .studio-stage-status{position:absolute;top:45%;left:10%;right:10%;font:500 14px/1.5 var(--sans);color:var(--stage-muted)}
 .studio-stage-caption{display:flex;align-items:center;justify-content:center;gap:4px 12px;flex-wrap:wrap;padding:0 0 16px;font:700 14px/1.5 var(--sans)}
 .studio-stage-caption small{flex-basis:100%;font:500 12px/1.5 var(--sans);color:var(--stage-muted)}
-.studio-stage-caption button{border:0;background:transparent;color:var(--stage-muted);min-height:44px;padding:6px 10px;font:500 12px/1 var(--sans);cursor:pointer}
+.studio-stage-caption button{border:0;background:transparent;color:var(--stage-muted);min-height:48px;padding:6px 10px;font:500 12px/1 var(--sans);cursor:pointer}
 .studio-destinations,.race-self-controls{min-width:0;display:grid;align-content:center;gap:8px;padding:12px 0;border-top:1px solid var(--stage-line)}
 .studio-destinations{grid-template-columns:repeat(2,minmax(0,1fr))}
 .race-self-controls{grid-template-columns:repeat(5,minmax(0,1fr))}
@@ -96,5 +96,7 @@ body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:none
 
 .studio-save-state.save-failed{font-size:12px;color:#ffc195}.studio-save-state.save-failed::after{content:none}
 
-.studio-install{margin-left:auto;min-height:44px;padding:0 12px;border:1px solid #ffffff26;border-radius:99px;background:transparent;color:#dce8e9;font:600 11px var(--brand-font-ui);cursor:pointer}
+.studio-install{margin-left:auto;min-height:48px;padding:0 12px;border:1px solid #ffffff26;border-radius:99px;background:transparent;color:#dce8e9;font:600 11px var(--brand-font-ui);cursor:pointer}
 @media(max-width:599px){.studio-heading .studio-save-state{display:none}}
+
+@media(max-width:379px){.studio-wordmark span{display:none}}

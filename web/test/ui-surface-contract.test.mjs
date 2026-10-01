@@ -64,12 +64,12 @@ test('Me is RaceIdentity-first and owns no independent persistence',()=>{
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('post-onboarding entry opens canonical Home',()=>{
-  assert.match(entry,/enterApp\('home'\)/);
+test('entry opens canonical User Studio',()=>{
+  assert.match(entry,/function enterApp\(first = 'me'\)/);
   assert.match(entry,/Enter KONA/);
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','onboarding','reveal','home','race-self','discover','garage','plan','me']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','sign-in','user-studio','avatar-editor','discover','garage','plan','passport','bike-studio']) assert.match(visual,new RegExp(view));
 });
