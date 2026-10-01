@@ -92,6 +92,11 @@
       "xp": 0,
       "credits": 0,
       "repeat": "ledger"
+    },
+    "FIND_ACQUIRED": {
+      "xp": 0,
+      "credits": 0,
+      "repeat": "once-per-item"
     }
   },
   "rarity_rewards": {
