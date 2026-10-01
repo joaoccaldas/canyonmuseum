@@ -23,6 +23,18 @@ async function capture(vp,state,theme){
    }
  },{theme,state});
  await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});await new Promise(r=>setTimeout(r,700));
+ await p.evaluate(()=>document.fonts.ready);
+ const press=async selector=>{
+   const element=await p.waitForSelector(selector,{visible:true});
+   await element.evaluate(e=>e.scrollIntoView({block:'center',inline:'center',behavior:'instant'}));
+   await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   await p.waitForFunction(selector=>{
+     const e=document.querySelector(selector),r=e?.getBoundingClientRect();if(!r)return false;
+     const hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+     return !!hit&&(hit===e||e.contains(hit));
+   },{},selector);
+   if(vp.id==='desktop')await element.click();else await element.tap();
+ };
  if(state==='sign-in'){
    await p.click('#entrySignIn');await p.waitForSelector('#saveForm');
  }else if(state==='onboarding-profile'){
@@ -42,8 +54,8 @@ async function capture(vp,state,theme){
    if(state==='home'){
      // Returning users land here. No personal/world 3D should be required.
    }else if(['collection','find-studio'].includes(state)){
-     await p.$eval('[data-first-find]',e=>e.scrollIntoView({block:'center',behavior:'instant'}));await p.click('[data-first-find]');await p.waitForFunction(()=>document.querySelector('[data-first-find]')?.disabled);await p.$eval('[data-home-finds]',e=>e.scrollIntoView({block:'center',behavior:'instant'}));await p.click('[data-home-finds]');await p.waitForSelector('[data-find]');
-     if(state==='find-studio'){await p.click('[data-find="find:shore:lava"]');await p.waitForSelector('.find-studio');}
+     await press('[data-first-find]');await p.waitForFunction(()=>document.querySelector('[data-first-find]')?.disabled);await press('[data-home-finds]');await p.waitForSelector('[data-find]');
+     if(state==='find-studio'){await press('[data-find="find:shore:lava"]');await p.waitForSelector('.find-studio');}
    }else if(['user-studio','avatar-editor','progress'].includes(state)){
      const switched=await p.evaluate(async()=>{const shell=window.__konaShell;if(!shell?.me)return false;await shell.me();return true;});
      if(!switched)throw new Error('could not enter User Studio');
