@@ -17,12 +17,8 @@ const registration=fs.readFileSync(new URL('../src/ui/avatar-registration.js',im
 const admin=fs.readFileSync(new URL('../src/ui/admin-assets.js',import.meta.url),'utf8');
 const adminBuild=fs.readFileSync(new URL('../../tools/build_admin_assets.mjs',import.meta.url),'utf8');
 
-test('shell orchestrates calm Home, deep Race Self, Discover, Plan and Me surfaces',()=>{
-  assert.match(shell,/renderHomeSurface/);
-  assert.match(shell,/renderAvatarHome/);
-  assert.match(shell,/renderDiscoverSurface/);
-  assert.match(shell,/renderPlanSurface/);
-  assert.match(avatarHome,/renderPassportSurface/);
+test('shell orchestrates Home, User Studio, Discover, Garage, Plan and companion surfaces',()=>{
+  for(const marker of ['renderHomeSurface','renderAvatarHome','renderDiscoverSurface','renderGarageSurface','renderPlanSurface','renderFeed','renderTravel']) assert.match(shell,new RegExp(marker));
   assert.doesNotMatch(shell,/Every room, one museum/);
 });
 
@@ -33,21 +29,21 @@ test('Discover is lightweight before optional 3D',()=>{
   assert.match(discover,/Enter the world/);
 });
 
-test('Garage and Me resolve Product presentation from the shared public projection',()=>{
+test('Garage and Passport resolve Product presentation from the shared public projection',()=>{
   assert.match(garage,/getPublicProduct/);
   assert.match(me,/getPublicProduct/);
   assert.doesNotMatch(garage,/BIKES|SHOES|questLabels/);
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Home is lightweight while User Studio remains personal depth',()=>{
+test('Home is lightweight while User Studio owns personal depth and tour replay',()=>{
   assert.match(home,/data-home-self/);
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
-  for(const control of ['Avatar','Bike','Races','Settings']) assert.match(avatarHome,new RegExp(control));
+  for(const control of ['Avatar','Bike Studio','Races','Settings','Quick tour']) assert.match(avatarHome,new RegExp(control));
   assert.match(avatarHome,/Canyon Museum/);
   assert.match(avatarHome,/openDiscover/);
-  assert.doesNotMatch(avatarHome,/hub-launcher/);
+  assert.match(avatarHome,/openTour/);
   assert.match(avatarHome,/race-self-controls/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
   assert.doesNotMatch(avatarHome,/app\/hall\.js|museum-data\.js|__museum/);
@@ -60,33 +56,35 @@ test('Plan is lightweight and independent of museum globals',()=>{
   assert.doesNotMatch(shell,/__EVENT|__ISLAND/);
 });
 
-test('Me is RaceIdentity-first and owns no independent persistence',()=>{
+test('Passport owns no independent persistence',()=>{
   assert.match(me,/race_identity/);
   assert.match(me,/Passport/);
   assert.doesNotMatch(me,/localStorage|writeStorage/);
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('entry has explicit first-run avatar setup and returning Home',()=>{
+test('entry has fast first-run avatar setup, direct Home and replayable contextual onboarding',()=>{
   assert.match(entry,/function enterApp\(first = 'home'\)/);
   assert.match(entry,/paintQuest\('avatar'\)/);
   assert.match(entry,/renderAvatarRegistration/);
   assert.match(entry,/onContinue:\(\)=>enterApp\('home'\)/);
+  assert.doesNotMatch(entry,/data-race-picker/);
   assert.match(shell,/tour:replayTour/);
-  assert.match(avatarHome,/Quick tour/);
+  assert.match(shell,/writeStorage\('onboarding','seen'\)/);
   assert.match(registration,/TRISUIT LAYOUT/);
   assert.match(registration,/data-reg-overlay/);
-  assert.match(entry,/Enter KONA/);
 });
-test('Home button means Home and admin assets stay a Me-only capability',()=>{
+
+test('Home button means Home and Admin Assets stays a generated, Me-only capability',()=>{
   assert.match(shell,/\[data-tab=home\]'\)\.onclick=now/);
   assert.match(shell,/renderAdminAssets/);
   assert.match(admin,/app\/admin-assets\.json/);
-  for(const source of ['museum/catalog/products.json','museum/world/rooms.json','museum/world/brand_rooms.json','museum/world/decorations.json']) assert.match(adminBuild,new RegExp(source.replace(/[./]/g,'\\  assert.match(admin,/museum\/catalog\/products\.json/);
-  assert.match(admin,/museum\/world\/decorations\.json/);')));
+  for(const source of ['museum/catalog/products.json','museum/world/rooms.json','museum/world/brand_rooms.json','museum/world/decorations.json']){
+    assert.ok(adminBuild.includes(source),'admin projection must derive from '+source);
+  }
 });
 
-test('visual evidence captures first pages across Random mode',()=>{
+test('visual evidence covers launch, companion and museum-return states across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','sign-in','avatar-registration','home','user-studio','avatar-editor','discover','garage','plan','passport','bike-studio']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','sign-in','avatar-registration','home','user-studio','avatar-editor','discover','garage','plan','passport','feed','travel','museum-return-home','bike-studio']) assert.match(visual,new RegExp(view));
 });
