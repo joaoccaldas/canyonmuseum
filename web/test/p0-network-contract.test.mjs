@@ -28,3 +28,7 @@ test('avatar completion enters Home without loading hall runtime',()=>{
  assert.match(avatar,/enterApp\('home'\)/);
  assert.equal(avatar.includes("openMuseum("),false);
 });
+
+test('first-time shortcuts cannot bypass onboarding',()=>{
+ assert.match(entry,/returningVisit && \['home','garage','collection','discover','plan','me','feed','travel'\]\.includes\(q\.get\('view'\)\)/);
+});
