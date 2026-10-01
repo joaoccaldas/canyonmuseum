@@ -16,6 +16,16 @@ const corefile = path.join(root, 'app/kona-core.js');
 const raceselffile = path.join(root, 'app/race-self-stage.js');
 const adminpreviewfile = path.join(root, 'app/admin-asset-preview.js');
 const worldshellfile = path.join(root, 'app/world-shell.html');
+const viewportfile = path.join(root, 'app/viewport.js');
+await build({
+  entryPoints: [path.join(here, 'src/runtime/viewport.js')],
+  bundle: true,
+  format: 'iife',
+  minify: true,
+  outfile: viewportfile,
+  target: 'es2020',
+  legalComments: 'none',
+});
 await build({
   entryPoints: [path.join(here, 'src/entry.js')],
   bundle: true,
@@ -66,4 +76,4 @@ fs.writeFileSync(worldshellfile, worldShell);
 const out = process.env.OUT_HTML || path.join(root, 'index.html');
 fs.writeFileSync(out, html);
 const pieces = data.pieces;
-console.log(`wrote ${path.relative(root, out)} + ${path.relative(root, worldshellfile)} · ${pieces.length} pieces (${pieces.filter(p => p.glb).length} modelled) · shell ${(html.length / 1024).toFixed(0)} kB · core ${(coreBundled.length / 1024).toFixed(0)} kB · race-self ${(raceSelfBundled.length / 1024).toFixed(0)} kB · admin-preview ${(adminPreviewBundled.length / 1024).toFixed(0)} kB · data ${(dataBytes / 1024).toFixed(0)} kB · hall ${(bundled.length / 1024).toFixed(0)} kB`);
+console.log(`wrote ${path.relative(root, out)} + ${path.relative(root, worldshellfile)} + ${path.relative(root, viewportfile)} · ${pieces.length} pieces (${pieces.filter(p => p.glb).length} modelled) · shell ${(html.length / 1024).toFixed(0)} kB · core ${(coreBundled.length / 1024).toFixed(0)} kB · race-self ${(raceSelfBundled.length / 1024).toFixed(0)} kB · admin-preview ${(adminPreviewBundled.length / 1024).toFixed(0)} kB · data ${(dataBytes / 1024).toFixed(0)} kB · hall ${(bundled.length / 1024).toFixed(0)} kB`);
