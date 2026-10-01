@@ -117,7 +117,8 @@ function openMuseum(room) {
   const btn = document.getElementById('enterBtn');
   if (btn && !window.__museum) btn.innerHTML = 'Opening the coast…';
   if (!opening) {
-    opening = ensureWorldShell()
+    opening = Promise.resolve(window.__konaShell?.accessReady)
+      .then(() => ensureWorldShell())
       .then(() => ensureMuseumData())
       .then(() => loadScript('app/hall.js'))
       .then(() => window.__museum?.enter?.())
