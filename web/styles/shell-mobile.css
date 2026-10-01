@@ -89,3 +89,13 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
 .kona-list a,.kona-list button{display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border-radius:12px}
 .race-card-actions button{padding-inline:12px}
 #entryInstall,#installBtn{min-height:48px;padding:0 16px;border-radius:999px}
+
+/* RC4 Garage: setup first, ownership lists second. */
+.garage-setup-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:14px;align-items:end;min-height:260px;padding:18px;border:1px solid var(--kona-line);border-radius:24px;background:
+  radial-gradient(circle at 24% 22%,color-mix(in srgb,var(--kona-cyan) 13%,transparent),transparent 34%),
+  linear-gradient(145deg,var(--kona-surface),var(--kona-surface-strong));overflow:hidden}
+.garage-bike-visual{min-width:0;align-self:center}.garage-bike-visual svg{display:block;width:100%;height:auto;overflow:visible}.garage-bike-visual circle,.garage-bike-visual path{fill:none;stroke:var(--kona-text);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}.garage-bike-visual circle{stroke-width:4}
+.garage-setup-copy{min-width:0}.garage-setup-copy small{font:750 9px/1.2 var(--sans);letter-spacing:.16em;color:var(--kona-cyan)}.garage-setup-copy h3{font:400 clamp(32px,8vw,46px)/.94 var(--serif);letter-spacing:-.03em;margin:8px 0}.garage-setup-copy p{font-size:11px;color:var(--kona-muted)}
+.garage-setup-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.garage-setup-actions a,.garage-setup-actions button{min-height:48px;padding:0 14px;border-radius:999px;border:1px solid var(--kona-line);background:var(--kona-surface-strong);color:inherit;font:700 10.5px/1 var(--sans);display:inline-flex;align-items:center;text-decoration:none}
+.garage-setup-actions a{background:var(--kona-text);color:var(--kona-bg)}
+@media(max-width:520px),(pointer:coarse){.garage-setup-hero{grid-template-columns:1fr;min-height:0}.garage-bike-visual{max-width:310px;margin:auto}.garage-setup-copy h3{font-size:clamp(30px,9vw,42px)}}
