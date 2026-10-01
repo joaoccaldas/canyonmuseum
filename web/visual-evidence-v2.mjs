@@ -70,7 +70,16 @@ async function capture(vp,state,theme){
  await p.evaluate(()=>document.fonts.ready);
  await new Promise(r=>setTimeout(r,250));
  const metrics=await p.evaluate(touchViewport=>{
-   const visible=el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&+s.opacity>.02&&r.width>0&&r.height>0};
+   const visible=el=>{
+     const r=el.getBoundingClientRect();if(!r.width||!r.height)return false;
+     // A hidden Museum parent can retain child geometry while fading out.
+     // Its controls are not visible Home controls and must not be scored.
+     for(let node=el;node;node=node.parentElement){
+       const s=getComputedStyle(node);
+       if(s.display==='none'||s.visibility==='hidden'||+s.opacity<=.02)return false;
+     }
+     return true;
+   };
    const els=[...document.querySelectorAll('button,a,[role=button]')].filter(visible);
    const primary=els.filter(x=>x.matches('.primary,[data-primary=true]'));
    // Canonical touch targets apply to phone captures; desktop mouse controls
