@@ -28,7 +28,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack}={}){
   const intent=String(identity.intent||identity.mode||'exploring').replace(/[-_]+/g,' ');
   const bikeTitle=bike?[bike.brand,bike.name||bike.label||bike.model].filter(Boolean).join(' '):'Choose a bike';
   const shoeTitle=shoe?.name||shoe?.label||shoe?.model||'Choose shoes';
-  const studioHref=bike?'Studio.html?p='+encodeURIComponent(bike.id):'Studio.html';
+  const studioHref='Studio.html?from=race-self'+(bike?'&p='+encodeURIComponent(bike.id):'');
   const raceCount=(snapshot.race_history||[]).length;
 
   root.innerHTML=
