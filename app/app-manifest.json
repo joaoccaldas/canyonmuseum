@@ -1,5 +1,5 @@
 {
- "version": "54031ab72eb1",
+ "version": "d5010ed48592",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -28,6 +28,7 @@
   "web/styles/entry-visual-v2.css": "psli1G5AtVc+VVkop+LkjFnLmIeEsm551aEE62VdK5g=",
   "web/styles/system.css": "SVSOVdZiaTAXK9YVcme3Vd9R+Rv4J4AB3Bib1hz5oZM=",
   "web/styles/shell-mobile.css": "oMD4/yeW3cz2JkaZZrz2LEMZm1YmvJX//sB+6RDJwHc=",
+  "web/styles/race-self.css": "f3gja0zKq9R7O1KbHfaNnR8jilC0vZvNVPM9pl4jzT0=",
   "brand/tokens.css": "QQHxGEUGC6R3vIPGGE9Gpyl/Z/2oHMxf84vOVhrk+e0=",
   "brand/themes.css": "Hhov5kE9vhLxeEzXh8a0Ybe0bdQ3LPnC1sxOpOZvrHo=",
   "brand/artifacts.css": "eFVVXE91n+Pf8sBFwoFhdF13k9k1Adq8NN/gdKfWyUg=",
@@ -171,7 +172,6 @@
   "assets/reference/paintings/speedmax-three-2005.jpg": "7aHIi/BnX+O+QmSh1Bi8mgKnIBhMB1WE4N0sjLq1/aM=",
   "assets/reference/zipp-super9-b1.png": "u/4HdUUzE+jWzYsEqshqCwIO96h+M7WWhcWMQA/HuRs=",
   "assets/share/collection.jpg": "W6lRq4vdhYr3rNejeGLQnYbIlPXgnmvRBkAD6wN8+vo=",
-  "assets/share/museum.jpg": "MR9MD9E1O+efqEOc6xucgpUDOD9++PbpLjoyrd0S2PU=",
-  "web/styles/race-self.css": "f3gja0zKq9R7O1KbHfaNnR8jilC0vZvNVPM9pl4jzT0="
+  "assets/share/museum.jpg": "MR9MD9E1O+efqEOc6xucgpUDOD9++PbpLjoyrd0S2PU="
  }
 }
