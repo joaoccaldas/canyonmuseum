@@ -171,8 +171,21 @@ function paintQuest(step) {
     renderAvatarRegistration(host,{
       profile,
       onBack:()=>{setEntryMode('landing');host.hidden=true;document.getElementById('buildSelf')?.focus();},
-      onContinue:()=>enterApp('home')
+      onContinue:()=>paintQuest('install')
     });
+    return;
+  }
+  if(step==='install'){
+    const landscape=matchMedia('(orientation: landscape)').matches;
+    host.innerHTML='<section class="onboarding-handoff">'+
+      '<div class="onboarding-handoff-copy"><p class="eyebrow">ONE TINY THING</p><h2>Make KONA feel less like a browser.</h2><p>Then turn your phone sideways when the world gets serious.</p></div>'+
+      '<div class="onboarding-handoff-grid">'+
+        '<article class="onboarding-tip install-tip"><span class="handoff-mark">↓</span><small>01 · INSTALL</small><h3>Put KONA on your phone.</h3><p>If our arrow points somewhere stupid: sorry. Browsers move things.</p><button type="button" class="btn-primary" data-install-app>Install KONA</button></article>'+
+        '<article class="onboarding-tip rotate-tip '+(landscape?'is-landscape':'')+'"><div class="phone-rotate" aria-hidden="true"><i></i><b>↻</b></div><small>02 · ROTATE</small><h3>'+(landscape?'Perfect. Keep it sideways.':'Turn your phone sideways.')+'</h3><p>The 3D world is much better there. Sorry. We’re learning to build a real app.</p></article>'+
+      '</div>'+
+      '<div class="quest-nav"><button type="button" class="btn-primary" data-handoff-continue>Fine. Show me KONA →</button></div>'+
+    '</section>';
+    host.querySelector('[data-handoff-continue]')?.addEventListener('click',()=>enterApp('home'));
     return;
   }
   if(step==='save'){
