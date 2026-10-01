@@ -21,7 +21,8 @@ test('privacy export and cloud snapshot derive from canonical storage authority'
 
 test('Studio bike picker writes the canonical race setup from the 3D choice',()=>{
   const studio=fs.readFileSync(new URL('../src/studio/main.js',import.meta.url),'utf8');
-  assert.match(studio,/onclick: async \(\) => \{ await show\(p\); saveCurrentToSetup\(\{stay:true,announce:true\}\)/);
+  assert.match(studio,/productAccess/);
+  assert.match(studio,/saveCurrentToSetup\(\{stay:true,announce:true\}\)/);
   assert.match(studio,/setSetupSlot\(raceSetup, 'bike', current\.product/);
   assert.doesNotMatch(studio,/localStorage\.setItem\([^\n]*bike/i);
 });
