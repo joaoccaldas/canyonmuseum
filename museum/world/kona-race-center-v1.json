@@ -1,0 +1,314 @@
+{
+  "schema": "kona-race-center-v1",
+  "updated_at": "2026-10-01",
+  "status": "provisional-detailed-layout",
+  "event": {
+    "id": "kona-2026",
+    "name": "IRONMAN World Championship",
+    "date": "2026-10-10",
+    "venue": "Kailua Pier",
+    "confirmed_2026": true,
+    "source": "https://regwcusa.ironman.com/event/2026-ironman-world-championship-kona"
+  },
+  "geometry_basis": {
+    "coordinate_system": "local-schematic-metres",
+    "note": "Relative athlete-flow reconstruction for orientation. Not surveying-grade. Detailed race-day zones follow the latest official Kona athlete-guide venue diagram available (2025) until the 2026 Athlete Guide is published.",
+    "detailed_reference_year": 2025,
+    "source": "https://www.ironman.com/sites/default/files/2025-09/2025%20IMWC%20Kona%20Athlete%20Guide%209.29.25.pdf"
+  },
+  "bounds": {
+    "x0": 28,
+    "x1": 86,
+    "z0": -118,
+    "z1": -58
+  },
+  "landmarks": [
+    {
+      "id": "kailua-pier",
+      "name": "Kailua Pier",
+      "kind": "race-critical",
+      "x": 46,
+      "z": -96,
+      "importance": "highest",
+      "confirmed_2026": true
+    },
+    {
+      "id": "kamakahonu-beach",
+      "name": "Kamakahonu Beach",
+      "kind": "swim",
+      "x": 44,
+      "z": -75,
+      "importance": "high"
+    },
+    {
+      "id": "king-kamehameha-hotel",
+      "name": "King Kamehameha's Kona Beach Hotel",
+      "kind": "hotel",
+      "x": 62,
+      "z": -66,
+      "importance": "high"
+    },
+    {
+      "id": "ahuena-heiau",
+      "name": "Ahuʻena Heiau",
+      "kind": "cultural-landmark",
+      "x": 54,
+      "z": -78,
+      "importance": "high",
+      "interaction": "view-only"
+    },
+    {
+      "id": "alii-drive",
+      "name": "Aliʻi Drive",
+      "kind": "road",
+      "x": 72,
+      "z": -91,
+      "importance": "highest"
+    },
+    {
+      "id": "palani-road",
+      "name": "Palani Road",
+      "kind": "road",
+      "x": 72,
+      "z": -63,
+      "importance": "high"
+    },
+    {
+      "id": "hot-corner",
+      "name": "Hot Corner",
+      "kind": "race-critical",
+      "x": 72,
+      "z": -67,
+      "importance": "highest"
+    },
+    {
+      "id": "finish-line",
+      "name": "Finish Line",
+      "kind": "finish",
+      "x": 72,
+      "z": -82,
+      "importance": "highest"
+    },
+    {
+      "id": "transition",
+      "name": "Kailua Pier Transition",
+      "kind": "transition",
+      "x": 47,
+      "z": -94,
+      "importance": "highest"
+    }
+  ],
+  "athlete_zones": [
+    {
+      "id": "swim-start",
+      "name": "Swim start",
+      "x0": 36,
+      "x1": 43,
+      "z0": -78,
+      "z1": -70,
+      "kind": "swim"
+    },
+    {
+      "id": "transition-racks",
+      "name": "Bike racks",
+      "x0": 43,
+      "x1": 51,
+      "z0": -103,
+      "z1": -84,
+      "kind": "transition"
+    },
+    {
+      "id": "run-bags",
+      "name": "Run bags",
+      "x0": 51,
+      "x1": 55,
+      "z0": -94,
+      "z1": -84,
+      "kind": "transition"
+    },
+    {
+      "id": "change-tents",
+      "name": "Change tents",
+      "x0": 54,
+      "x1": 58,
+      "z0": -91,
+      "z1": -84,
+      "kind": "transition"
+    },
+    {
+      "id": "athlete-food",
+      "name": "Athlete food",
+      "x0": 57,
+      "x1": 61,
+      "z0": -88,
+      "z1": -82,
+      "kind": "recovery"
+    },
+    {
+      "id": "medical",
+      "name": "Medical",
+      "x0": 59,
+      "x1": 63,
+      "z0": -81,
+      "z1": -75,
+      "kind": "medical"
+    },
+    {
+      "id": "recovery",
+      "name": "Recovery",
+      "x0": 63,
+      "x1": 68,
+      "z0": -87,
+      "z1": -77,
+      "kind": "recovery"
+    },
+    {
+      "id": "finish-chute",
+      "name": "Finish chute",
+      "x0": 69,
+      "x1": 75,
+      "z0": -88,
+      "z1": -75,
+      "kind": "finish"
+    },
+    {
+      "id": "morning-clothes",
+      "name": "Morning clothes / streetwear pickup",
+      "x0": 59,
+      "x1": 65,
+      "z0": -72,
+      "z1": -66,
+      "kind": "athlete-service"
+    }
+  ],
+  "flows": [
+    {
+      "id": "swim-in",
+      "name": "Swim in",
+      "kind": "swim",
+      "points": [
+        [
+          39,
+          -71
+        ],
+        [
+          42,
+          -76
+        ],
+        [
+          46,
+          -83
+        ]
+      ]
+    },
+    {
+      "id": "bike-out",
+      "name": "Bike out",
+      "kind": "bike",
+      "points": [
+        [
+          48,
+          -90
+        ],
+        [
+          55,
+          -88
+        ],
+        [
+          64,
+          -80
+        ],
+        [
+          71,
+          -69
+        ],
+        [
+          78,
+          -64
+        ]
+      ]
+    },
+    {
+      "id": "bike-in",
+      "name": "Bike in",
+      "kind": "bike",
+      "points": [
+        [
+          78,
+          -64
+        ],
+        [
+          71,
+          -69
+        ],
+        [
+          63,
+          -81
+        ],
+        [
+          54,
+          -90
+        ],
+        [
+          48,
+          -96
+        ]
+      ]
+    },
+    {
+      "id": "run-out",
+      "name": "Run out",
+      "kind": "run",
+      "points": [
+        [
+          50,
+          -96
+        ],
+        [
+          58,
+          -90
+        ],
+        [
+          66,
+          -83
+        ],
+        [
+          72,
+          -74
+        ],
+        [
+          73,
+          -68
+        ]
+      ]
+    },
+    {
+      "id": "run-finish",
+      "name": "Run finish",
+      "kind": "run",
+      "points": [
+        [
+          73,
+          -68
+        ],
+        [
+          72,
+          -73
+        ],
+        [
+          72,
+          -80
+        ],
+        [
+          72,
+          -84
+        ]
+      ]
+    }
+  ],
+  "athlete_notes": [
+    "The 2026 race venue is confirmed at Kailua Pier.",
+    "Transition and finish-zone geometry is based on the latest detailed official Kona venue map currently available (2025) and should be updated when the 2026 Athlete Guide is published.",
+    "The model is designed for athlete orientation and expected flow, not precise surveying or emergency navigation."
+  ]
+}

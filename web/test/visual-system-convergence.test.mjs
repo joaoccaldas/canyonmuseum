@@ -23,11 +23,12 @@ test('Studio no longer owns an inline design system',()=>{
   assert.match(studioCss,/--brand-touch/);
   assert.match(studioCss,/--brand-sheet-radius/);
 });
-test('mobile world cards are compact branded sheets',()=>{
+test('mobile world cards are isolated opaque branded sheets',()=>{
   assert.match(hallMobile,/RC5 mobile world interaction grammar/);
-  assert.match(hallMobile,/max-height:min\(42dvh,430px\)/);
+  assert.match(hallMobile,/max-height:min\(48dvh,460px\)/);
   assert.match(hallMobile,/--brand-sheet-radius/);
-  assert.match(hallMobile,/--brand-surface-glass-strong/);
+  assert.match(hallMobile,/background:var\(--brand-surface/);
+  assert.match(hallMobile,/body\.card-open #rail[^{]*\{[^}]*opacity:\.12/);
   assert.match(hallMobile,/grid-template-columns:1fr/);
 });
 test('map and generic artifacts consume brand semantics',()=>{

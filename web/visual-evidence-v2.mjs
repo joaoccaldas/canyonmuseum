@@ -5,14 +5,17 @@ const out=process.argv[3]||'visual-evidence-v2';fs.mkdirSync(out,{recursive:true
 const chrome=process.env.CHROME_PATH;if(!chrome)throw new Error('CHROME_PATH required');
 const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader']});
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'desktop',width:1440,height:900}];
-const states=['landing','onboarding','reveal','home','race-self','discover','garage','plan','me'];const report=[];
+const states=['landing','onboarding','reveal','home','race-self','discover','garage','plan','me','kona-center'];const report=[];
 async function capture(vp,state,theme){
  const p=await browser.newPage();const requests=[];const errors=[];
  p.on('request',r=>requests.push(r.url()));p.on('pageerror',e=>errors.push(e.message));
  await p.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:vp.id==='desktop'?1:2,isMobile:vp.id!=='desktop',hasTouch:vp.id!=='desktop'});
  await p.evaluateOnNewDocument((theme)=>{localStorage.clear();localStorage.setItem('speedmax.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));},theme);
- await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});await new Promise(r=>setTimeout(r,700));
- if(state==='onboarding'){
+ await p.goto(state==='kona-center'?base+'?room=kona-center':base,{waitUntil:'domcontentloaded',timeout:180000});await new Promise(r=>setTimeout(r,700));
+ if(state==='kona-center'){
+   await p.waitForFunction(()=>window.__museum?.renderer&&window.__konaCenter?.group,{timeout:180000});
+   await new Promise(r=>setTimeout(r,1100));
+ } else if(state==='onboarding'){
    await p.click('#buildSelf'); await new Promise(r=>setTimeout(r,250));
  } else if(state==='reveal'){
    await p.click('#buildSelf');
@@ -49,7 +52,7 @@ async function capture(vp,state,theme){
    const nav=document.querySelector('.kona-bottom-nav');
    const activeNav=[...document.querySelectorAll('.kona-bottom-nav .on,.kona-bottom-nav [aria-current="page"]')].map(x=>(x.textContent||'').trim());
    const visibleText=(document.body.innerText||'').replace(/\s+/g,' ').trim().slice(0,600);
-   return{scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText};
+   return{scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText,konaCenterReady:!!window.__konaCenter?.group};
  });
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const personal3D=requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
@@ -76,6 +79,7 @@ for(const r of report){
  if(r.viewport!=='desktop' && ['home','garage'].includes(r.state) && r.metrics.smallTargets.length) violations.push(`${r.viewport}/${r.theme}/${r.state}: touch targets below 48px: ${r.metrics.smallTargets.map(x=>x.text||x.tag).join(', ')}`);
  if(r.state==='plan' && !/Plan|race week|Expo|October/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/plan: no Plan content detected`);
  if(r.state==='me' && !/Me|Passport|XP|Credits/i.test(r.metrics.visibleText)) violations.push(`${r.viewport}/${r.theme}/me: no Me/Passport content detected`);
+ if(r.state==='kona-center' && !r.metrics.konaCenterReady) violations.push(`${r.viewport}/${r.theme}/kona-center: detailed race center did not build`);
 }
 if(violations.length){console.error(violations.join('\n'));process.exitCode=1}
 console.log(`visual evidence: ${report.length} captures, ${violations.length} blocking violations`);

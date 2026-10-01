@@ -32,6 +32,7 @@ const ALIASES = {
   __PRODUCTS: 'products',
   __CANDIDATES: 'candidates',
   __EVENTS: 'events',
+  __KONACENTER: 'konacenter',
 };
 
 function studio(key) {
@@ -151,6 +152,7 @@ export async function assembleMuseumData() {
     products: readJson('integrations/public-catalog.json'),
     candidates,
     events,
+    konacenter: readJson('museum/world/kona-race-center-v1.json'),
   };
 }
 
