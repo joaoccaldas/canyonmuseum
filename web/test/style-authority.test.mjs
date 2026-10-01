@@ -4,12 +4,15 @@ import fs from 'node:fs';
 
 const system=fs.readFileSync(new URL('../styles/system.css',import.meta.url),'utf8');
 const shell=fs.readFileSync(new URL('../styles/shell-mobile.css',import.meta.url),'utf8');
+const raceSelf=fs.readFileSync(new URL('../styles/race-self.css',import.meta.url),'utf8');
 const hall=fs.readFileSync(new URL('../styles/hall-web.css',import.meta.url),'utf8');
 const hallMobile=fs.readFileSync(new URL('../styles/hall-mobile.css',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../styles/entry-visual-v2.css',import.meta.url),'utf8');
 
 test('Race Self immersive surface has one stylesheet owner',()=>{
-  assert.match(shell,/\.race-self-experience/);assert.match(shell,/\.race-self-controls/);
+  assert.match(raceSelf,/\.race-self-experience/);
+  assert.match(raceSelf,/\.race-self-controls/);
+  assert.doesNotMatch(shell,/\.race-self-experience|\.race-self-controls|\.hub-drawer|\.avatar-options/);
   assert.doesNotMatch(system,/\.race-self-experience|\.race-self-controls/);
   assert.doesNotMatch(hall,/\.race-self-experience|\.race-self-controls/);
   assert.doesNotMatch(hallMobile,/\.race-self-experience|\.race-self-controls/);
