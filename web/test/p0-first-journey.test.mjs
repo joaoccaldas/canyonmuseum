@@ -6,7 +6,8 @@ const harden=fs.readFileSync(new URL('../../tools/harden_pages.mjs',import.meta.
 
 test('landing exposes build and sign-in without requiring 3D',()=>{assert.match(html,/id="buildSelf"/);assert.match(html,/id="entrySignIn"/);});
 test('first run moves through questions, avatar and install handoff without gear gates',()=>{
-  assert.match(entry,/paintQuest\('questions'\)/);
+  assert.match(entry,/step==='questions'/);
+  assert.match(entry,/paintQuest\(firstRunStep\(\)\)/);
   assert.match(entry,/renderOnboardingQuestions/);
   assert.match(entry,/renderAvatarRegistration/);
   assert.match(entry,/onContinue:\(\)=>paintQuest\('install'\)/);
