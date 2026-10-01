@@ -9,6 +9,7 @@ import { initAppShell } from './app-shell.js';
 import { readStorage } from './engine/storage.js';
 import { decodeShare, questLabels } from './quest.js';
 import { renderAvatarRegistration } from './ui/avatar-registration.js';
+import { renderOnboardingQuestions } from './ui/onboarding-questions.js';
 
 const intro = document.getElementById('intro');
 const authReturned = consumeAuthCallback();
@@ -162,6 +163,10 @@ function paintQuest(step) {
   const host = questHost();
   if (!host) return;
   host.hidden = false;
+  if(step==='questions'){
+    renderOnboardingQuestions(host,{onDone:()=>paintQuest('avatar'),onSkip:()=>paintQuest('avatar')});
+    return;
+  }
   if(step==='avatar'){
     renderAvatarRegistration(host,{
       profile,
@@ -217,7 +222,7 @@ if (returningVisit) {
   }
   if (note) note.textContent = 'Your RaceIdentity stays private on this device unless you choose to save or share it.';
 } else {
-  buildButton?.addEventListener('click', () => paintQuest('avatar'));
+  buildButton?.addEventListener('click', () => paintQuest('questions'));
 }
 renderEntryProductStage(document.getElementById('entryProductStage'), {profile});
 entryDataReady.then(data=>{ window.__ENTRY_DATA=data||{}; window.__ENTRY_EVENT=data?.event||{}; paintCount(); }).catch(()=>{});
@@ -226,7 +231,7 @@ function paintShared(draft){
   const host=questHost(); if(!host) return;
   const labels=questLabels(draft);
   host.innerHTML=`<p class="eyebrow">A Kona setup</p><h2>${labels.bike}</h2><p>${labels.shoe}</p><p>${labels.goal}</p><p class="kona-note">Someone shared this setup with you. Build yours to make it your own.</p><button class="btn primary" id="buildShared" type="button">Build yours</button>`;
-  host.querySelector('#buildShared')?.addEventListener('click',()=>paintQuest('avatar'));
+  host.querySelector('#buildShared')?.addEventListener('click',()=>paintQuest('questions'));
 }
 const q = new URLSearchParams(location.search);
 const shared=decodeShare(q.get('kona'));
