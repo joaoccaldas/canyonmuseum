@@ -46,6 +46,7 @@ test('Home is lightweight and Race Self is contextual personal depth, not a seco
   assert.doesNotMatch(avatarHome,/hub-launcher/);
   assert.match(avatarHome,/race-self-controls/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
+  assert.match(avatarHome,/from=race-self/,'Bike Studio entry must preserve Race Self context');
   assert.doesNotMatch(avatarHome,/app\/hall\.js|museum-data\.js|__museum/);
   assert.match(raceCards,/Search IRONMAN races/);
 });
@@ -66,6 +67,7 @@ test('Me is RaceIdentity-first and owns no independent persistence',()=>{
 test('post-onboarding entry opens canonical Home',()=>{
   assert.match(entry,/enterApp\('home'\)/);
   assert.match(entry,/Enter KONA/);
+  assert.match(entry,/race-self/,'Studio return route must be able to reopen Race Self');
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
