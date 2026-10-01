@@ -15,7 +15,7 @@ async function capture(vp,state,theme){
  await p.evaluate(({theme,state})=>{
    localStorage.clear();
    localStorage.setItem('kona.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));
-   if(!['landing','sign-in','avatar-registration','onboarding-tour'].includes(state)){
+   if(!['landing','sign-in','onboarding-profile','avatar-registration','onboarding-tour'].includes(state)){
      localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}}));
      localStorage.setItem('kona.onboarding.v1','seen');
    }
