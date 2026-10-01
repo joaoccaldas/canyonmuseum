@@ -12,7 +12,7 @@ const consumer=[
  'brand/tokens.css','brand/themes.css','brand/artifacts.css','brand/typography.css',
  'web/styles/components.css','web/styles/system.css','web/styles/shell-mobile.css',
  'web/styles/home.css','web/styles/garage.css','web/styles/race-self.css',
- 'web/styles/admin-assets.css','web/styles/companion.css','web/styles/entry-visual-v2.css'
+ 'web/styles/admin-assets.css','web/styles/companion.css','web/styles/entry.css'
 ];
 
 test('every consumer stylesheet has all four delivery owners',()=>{
