@@ -6,7 +6,6 @@ import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
 import { AVATAR_OPTIONS, AVATAR_COLORS, normaliseAvatarStyle } from '../engine/avatar.js';
-import { renderRacePicker } from './race-cards.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -22,7 +21,7 @@ const tile=(id,icon,title,note,{href='',accent='ocean'}={})=>
     ? '<a class="hub-tile '+accent+'" href="'+href+'" data-hub="'+id+'"><i>'+icon+'</i><b>'+title+'</b><span>'+note+'</span></a>'
     : '<button type="button" class="hub-tile '+accent+'" data-hub="'+id+'"><i>'+icon+'</i><b>'+title+'</b><span>'+note+'</span></button>';
 
-export async function renderAvatarHome(root,{profile,settings,openMuseum,openGarage,openPlan,openCollection,openDiscover}={}){
+export async function renderAvatarHome(root,{profile,settings,onBack,openMuseum,openCollection}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const summary=collectionSummary(snapshot);
@@ -41,6 +40,7 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
   root.innerHTML=
     '<section class="player-hub">'+
       '<header class="hub-topbar">'+
+        '<button type="button" class="hub-back" data-hub-back aria-label="Back to Home">‹</button>'+
         '<div class="hub-player"><i style="--avatar:'+esc(accent)+'"></i><div><small>RACE SELF</small><b>'+esc(p.name||'Player')+'</b></div></div>'+
         '<div class="hub-stats"><span><small>ITEMS</small><b>'+itemCount+'</b></span><span><small>RACES</small><b>'+raceCount+'</b></span></div>'+
         '<button type="button" class="hub-settings" data-hub="settings" aria-label="Settings">⚙</button>'+
@@ -49,15 +49,12 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
         '<canvas class="hub-stage" data-race-self-stage aria-label="Interactive 3D Race Self hub"></canvas>'+
         '<div class="hub-stage-copy"><small>'+esc(intent)+'</small><h2>'+esc(goal)+'</h2><p>'+esc(bikeTitle)+' · '+esc(shoeTitle)+'</p></div>'+
       '</div>'+
-      '<section class="hub-launcher" aria-label="KONA hub">'+
-        tile('world','◎','3D World','Enter the Canyon Museum',{accent:'ocean'})+
-        tile('bike','△','Bike Studio','Customize bike and setup',{href:studioHref,accent:'lava'})+
-        tile('garage','▣','Garage','Your bikes and gear',{accent:'lime'})+
-        tile('collection','✦','Collection','Items, cards and finds',{accent:'lilac'})+
-        tile('races','◉','Races','Past and future badges',{accent:'hibiscus'})+
-        tile('discover','⌁','Discover','Machines, people, stories',{accent:'ocean'})+
-        tile('games','▶','Games','Experiences and challenges',{href:'Experiences.html',accent:'lava'})+
-        tile('self','●','Self','Avatar and kit',{accent:'lime'})+
+      '<section class="hub-launcher" aria-label="Race Self actions">'+
+        tile('self','●','Customize','Avatar and kit',{accent:'lime'})+
+        tile('bike','△','Bike Studio','Build your setup',{href:studioHref,accent:'lava'})+
+        tile('world','◎','3D World','Walk the deeper world',{accent:'ocean'})+
+        tile('collection','✦','Collection','Things you found',{accent:'lilac'})+
+        tile('games','▶','Games','Experiences and challenges',{href:'Experiences.html',accent:'hibiscus'})+
       '</section>'+
       '<section class="hub-drawer" data-hub-drawer hidden><div class="hub-drawer-head"><div><small data-hub-kicker>SELF</small><h3 data-hub-title>Your Race Self</h3></div><button type="button" data-hub-close aria-label="Close">×</button></div><div data-hub-body></div></section>'+
     '</section>';
@@ -117,19 +114,14 @@ export async function renderAvatarHome(root,{profile,settings,openMuseum,openGar
       const marker=root.querySelector('.hub-player i'); if(marker) marker.style.setProperty('--avatar',nextAccent);
     }));
   };
-  const showRaces=()=>{
-    drawerKicker.textContent='RACES';drawerTitle.textContent='Your race cards';
-    const host=document.createElement('div');drawerBody.replaceChildren(host);renderRacePicker(host,{onChange:()=>{}});drawer.hidden=false;
-  };
 
+
+  root.querySelector('[data-hub-back]')?.addEventListener('click',()=>onBack?.());
   root.querySelectorAll('[data-hub]').forEach(el=>el.addEventListener('click',e=>{
     if(el.tagName==='A') return;
     const id=el.dataset.hub;
     if(id==='world') openMuseum?.();
-    else if(id==='garage') openGarage?.();
     else if(id==='collection') openCollection?.();
-    else if(id==='races') showRaces();
-    else if(id==='discover') openDiscover?.();
     else if(id==='self') showSelf();
     else if(id==='settings') settings?.open?.();
   }));

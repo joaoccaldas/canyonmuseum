@@ -231,7 +231,7 @@ function paintQuest(step) {
         <div class="race-id-stamp">RACE SELF</div>
       </section>
       <p class="race-id-reward">+${xp} XP · +${credits} KONA CREDITS</p>
-      <button type="button" class="btn primary" id="enterKona">Open your Race Self</button>
+      <button type="button" class="btn primary" id="enterKona">Enter KONA</button>
       <button type="button" class="btn secondary" id="shareSelf">Share my Kona</button>
       <button type="button" class="btn text" id="saveSelf">Save across devices</button>
       <p class="kona-note" id="saveNote">Your Kona is already safe on this device.</p>`;

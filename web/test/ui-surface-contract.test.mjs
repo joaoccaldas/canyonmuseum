@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'utf8');
+const home=fs.readFileSync(new URL('../src/ui/home.js',import.meta.url),'utf8');
 const avatarHome=fs.readFileSync(new URL('../src/ui/avatar-home.js',import.meta.url),'utf8');
 const raceCards=fs.readFileSync(new URL('../src/ui/race-cards.js',import.meta.url),'utf8');
 const discover=fs.readFileSync(new URL('../src/ui/discover.js',import.meta.url),'utf8');
@@ -13,7 +14,8 @@ const me=fs.readFileSync(new URL('../src/ui/me.js',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url),'utf8');
 
-test('shell orchestrates Race Self Home, Discover, Plan and Me surfaces',()=>{
+test('shell orchestrates calm Home, deep Race Self, Discover, Plan and Me surfaces',()=>{
+  assert.match(shell,/renderHomeSurface/);
   assert.match(shell,/renderAvatarHome/);
   assert.match(shell,/renderDiscoverSurface/);
   assert.match(shell,/renderPlanSurface/);
@@ -35,8 +37,12 @@ test('Garage and Me resolve Product presentation from the shared public projecti
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Race Self Home is a game-style launcher hub and keeps museum/world optional',()=>{
-  for(const tile of ['3D World','Bike Studio','Garage','Collection','Races','Discover','Games','Self']) assert.match(avatarHome,new RegExp(tile));
+test('Home is lightweight and Race Self is explicit depth, not a second app menu',()=>{
+  assert.match(home,/data-home-self/);
+  assert.match(home,/YOUR RACE SELF/);
+  assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
+  for(const tile of ['Customize','Bike Studio','3D World','Collection','Games']) assert.match(avatarHome,new RegExp(tile));
+  for(const duplicate of ['Garage','Discover','Races']) assert.doesNotMatch(avatarHome,new RegExp("'>"+duplicate+"<"));
   assert.match(avatarHome,/hub-launcher/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
   assert.doesNotMatch(avatarHome,/app\/hall\.js|museum-data\.js|__museum/);
@@ -56,12 +62,12 @@ test('Me is RaceIdentity-first and owns no independent persistence',()=>{
   assert.doesNotMatch(shell,/gameProgress|readGameState|sendMagicLink|backupGameState/);
 });
 
-test('post-onboarding entry opens canonical Race Self Home',()=>{
+test('post-onboarding entry opens canonical Home',()=>{
   assert.match(entry,/enterApp\('home'\)/);
-  assert.match(entry,/Open your Race Self/);
+  assert.match(entry,/Enter KONA/);
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','onboarding','reveal','home','discover','garage','plan','me']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','onboarding','reveal','home','race-self','discover','garage','plan','me']) assert.match(visual,new RegExp(view));
 });
