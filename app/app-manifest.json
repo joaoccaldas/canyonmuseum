@@ -1,5 +1,5 @@
 {
- "version": "e6fd7628bfbd",
+ "version": "bc6afa7861ac",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -33,7 +33,7 @@
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
-  "web/styles/entry.css": "JarGxwHJq89HZh+ZLHSngPEFo7d1WgQj3c9qB01PNrg=",
+  "web/styles/entry.css": "WkdlFotOmmZv+KgUP84SnZLJdYeOGoV6Qv9Ez01VOl8=",
   "web/styles/system.css": "GAe9XQk5q8gX8A07QcvClS4EdKSRbPdvQ7/iUO8/dM0=",
   "web/styles/shell-mobile.css": "2PCyyG0IIOPEKgVLsUd2CRxFlxpu/RDEscF8NpKNV/I=",
   "web/styles/home.css": "M2QUd913oyU1YuRybHiuaPh6VSJUEJninKnS85efSig=",
