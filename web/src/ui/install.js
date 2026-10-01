@@ -1,8 +1,23 @@
 // One install controller for entry, User Studio and the lazily mounted museum.
 // Native browser prompts are single-use and may only run from a visitor's click.
 import {installState,installInstructions} from '../engine/install-state.js';
+
+function ensureInstallSheet(){
+ let sheet=document.getElementById('appSheet');if(sheet)return sheet;
+ const root=document.getElementById('appOverlayRoot')||document.body;
+ root.insertAdjacentHTML('beforeend',`<div id="appSheet" hidden role="dialog" aria-modal="true" aria-labelledby="appSheetTitle"><div>
+  <button class="close" aria-label="Close">×</button>
+  <img src="assets/pwa/icon-v3-192.png" alt="">
+  <h3 id="appSheetTitle">KONA, on your phone</h3>
+  <p>Install KONA as a lightweight app. The 3D world stays optional and loads only when you enter it.</p>
+  <button class="opt" type="button" data-pwa-action hidden><b>Install KONA now</b><small>Use Chrome's native app-install prompt.</small></button>
+  <div class="opt" data-pwa hidden><b>Add KONA to your phone</b><small>Chrome: menu ⋮ → Install app / Add to Home screen. KONA then opens full-screen from your Home screen.</small></div>
+  <div class="opt" data-ios hidden><b>On iPhone or iPad</b><small>Safari: tap Share, then “Add to Home Screen”.</small></div>
+ </div></div>`);
+ return document.getElementById('appSheet');
+}
 export function initInstall(){
- const sheet=document.getElementById('appSheet');if(!sheet)return;
+ const sheet=ensureInstallSheet();
  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const android=/android/i.test(navigator.userAgent);
  const display=matchMedia('(display-mode: standalone), (display-mode: fullscreen)');
