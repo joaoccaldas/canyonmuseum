@@ -1,0 +1,25 @@
+{
+  "id": "gear-visor-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Aero helmet visor",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Completes helmet/accessory ecosystem",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 864,
+  "bytes": 18292,
+  "sha256": "14509541e42c6189c2044ec80f3ddd2eafff02a206f6a34c1291903d104c8e06",
+  "asset": "assets/3d/generated/next100/gear/gear-visor-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

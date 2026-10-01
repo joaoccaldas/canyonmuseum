@@ -1,0 +1,29 @@
+{
+  "id": "hoka-cielo-x1-2-study",
+  "type": "shoe",
+  "brand": "HOKA",
+  "model": "Cielo X1 2.0",
+  "representation": "geometry-study",
+  "room": "nike-running",
+  "why": "Expands the run-leg engineering story and Race Setup choice",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 976,
+  "bytes": 20900,
+  "sha256": "98d07084b121f6b2c03c1a1ab12079cb2e79eba32eaa4e41996a10518ca95591",
+  "asset": "assets/3d/generated/next100/shoe/hoka-cielo-x1-2-study/model.glb",
+  "semantic_parts": [
+    "upper",
+    "midsole",
+    "outsole",
+    "plate",
+    "laces",
+    "heel"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

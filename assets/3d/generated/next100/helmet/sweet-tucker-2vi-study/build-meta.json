@@ -1,0 +1,27 @@
+{
+  "id": "sweet-tucker-2vi-study",
+  "type": "helmet",
+  "brand": "Sweet Protection",
+  "model": "Tucker 2Vi",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27952,
+  "sha256": "c61f965722a803ea15e139a87bc6faaa3ec4a587cc7257fafd31b9ae193c9924",
+  "asset": "assets/3d/generated/next100/helmet/sweet-tucker-2vi-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

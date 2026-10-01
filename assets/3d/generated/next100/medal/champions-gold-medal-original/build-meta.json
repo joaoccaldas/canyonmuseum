@@ -1,0 +1,27 @@
+{
+  "id": "champions-gold-medal-original",
+  "type": "medal",
+  "brand": "KONA Original",
+  "model": "Champions Gold Token",
+  "representation": "geometry-study",
+  "room": "kona",
+  "why": "Adds collectible race-memory objects and timeline decoration",
+  "rarity": "epic",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 640,
+  "bytes": 13876,
+  "sha256": "d09ee48d6198abcb20ed615c8712de7a1c198091af0d41cdccafacf47885cf9f",
+  "asset": "assets/3d/generated/next100/medal/champions-gold-medal-original/model.glb",
+  "semantic_parts": [
+    "medallion",
+    "ribbon",
+    "relief"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

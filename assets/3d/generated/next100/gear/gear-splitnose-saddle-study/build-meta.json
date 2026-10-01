@@ -1,0 +1,25 @@
+{
+  "id": "gear-splitnose-saddle-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Split-nose tri saddle",
+  "representation": "geometry-study",
+  "room": "atlas-against-the-clock-tri",
+  "why": "Tri-specific fit story",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 320,
+  "bytes": 7400,
+  "sha256": "bc35509fb647ef735d8a7f9441a573d1b5b6ebe974e4be29998ac82e5ea28f9c",
+  "asset": "assets/3d/generated/next100/gear/gear-splitnose-saddle-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "artifact-transition-rack-tag",
+  "type": "artifact",
+  "brand": "Race Archive",
+  "model": "Transition rack tag",
+  "representation": "geometry-study",
+  "room": "kona",
+  "why": "Makes transition choreography tangible",
+  "rarity": "rare",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 204,
+  "bytes": 5072,
+  "sha256": "d65544514d37e4e251d7e6128c1f3e57ef0fbbaffe69d35e049d07c4cbc018e5",
+  "asset": "assets/3d/generated/next100/artifact/artifact-transition-rack-tag/model.glb",
+  "semantic_parts": [
+    "body",
+    "detail"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

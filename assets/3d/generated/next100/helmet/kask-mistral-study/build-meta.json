@@ -1,0 +1,27 @@
+{
+  "id": "kask-mistral-study",
+  "type": "helmet",
+  "brand": "KASK",
+  "model": "Mistral",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27956,
+  "sha256": "1bf0d91b3eaef35f2693ac6f54a2df97ca287ef3f01ff32f4a89b82e291d6755",
+  "asset": "assets/3d/generated/next100/helmet/kask-mistral-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

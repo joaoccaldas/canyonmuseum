@@ -1,0 +1,31 @@
+{
+  "id": "quintana-roo-superform-1990-study",
+  "type": "bike",
+  "brand": "Quintana Roo",
+  "model": "Superform 1990",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-clipon",
+  "why": "Early triathlon-specific geometry artifact",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 3380,
+  "bytes": 69088,
+  "sha256": "911bc0709dc6723db24138b6067eeb5fa9395fec608646677cb8caa9ebc95280",
+  "asset": "assets/3d/generated/next100/bike/quintana-roo-superform-1990-study/model.glb",
+  "semantic_parts": [
+    "frame",
+    "rim",
+    "tyre",
+    "saddle",
+    "aerobar",
+    "fork",
+    "crank",
+    "storage"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "gear-between-arms-hydration-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Between-arms hydration",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Race setup hydration story",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 44,
+  "bytes": 1896,
+  "sha256": "8cfe3f35881d7da20d3aad4dc72de20c621f58314f8e25f3e9a3635e1de8dbb3",
+  "asset": "assets/3d/generated/next100/gear/gear-between-arms-hydration-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "giro-aerohead-mips-study",
+  "type": "helmet",
+  "brand": "Giro",
+  "model": "Aerohead MIPS",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27956,
+  "sha256": "9cd53bdc4d208326408d1097cb74c86c39dcb05f47d96188f7d61dae71dfc0e1",
+  "asset": "assets/3d/generated/next100/helmet/giro-aerohead-mips-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

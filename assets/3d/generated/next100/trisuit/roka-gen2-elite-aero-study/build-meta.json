@@ -1,0 +1,28 @@
+{
+  "id": "roka-gen2-elite-aero-study",
+  "type": "trisuit",
+  "brand": "ROKA",
+  "model": "Gen II Elite Aero II",
+  "representation": "geometry-study",
+  "room": "kona",
+  "why": "Makes athlete identity and championship-room mannequins tangible",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 808,
+  "bytes": 17356,
+  "sha256": "6261b977d2f05c825d1a413aff8e6384956823d491489757d02a64e1bb44356d",
+  "asset": "assets/3d/generated/next100/trisuit/roka-gen2-elite-aero-study/model.glb",
+  "semantic_parts": [
+    "torso",
+    "sleeves",
+    "legs",
+    "zipper",
+    "paneling"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

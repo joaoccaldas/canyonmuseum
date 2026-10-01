@@ -1,0 +1,31 @@
+{
+  "id": "wilier-turbine-study",
+  "type": "bike",
+  "brand": "Wilier",
+  "model": "Turbine",
+  "representation": "geometry-study",
+  "room": "atlas-against-the-clock-tri",
+  "why": "Italian TT/tri machine with distinctive silhouette",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 3380,
+  "bytes": 69092,
+  "sha256": "7de29f7b99f97bb1767cf23dfc134d15c423369fca4cfd6040014c39512f9ea7",
+  "asset": "assets/3d/generated/next100/bike/wilier-turbine-study/model.glb",
+  "semantic_parts": [
+    "frame",
+    "rim",
+    "tyre",
+    "saddle",
+    "aerobar",
+    "fork",
+    "crank",
+    "storage"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

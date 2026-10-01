@@ -1,0 +1,29 @@
+{
+  "id": "mizuno-wave-rebellion-pro3-study",
+  "type": "shoe",
+  "brand": "Mizuno",
+  "model": "Wave Rebellion Pro 3",
+  "representation": "geometry-study",
+  "room": "bay-kona",
+  "why": "Expands the run-leg engineering story and Race Setup choice",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 848,
+  "bytes": 18276,
+  "sha256": "f6ab898f61fe184c42186dae8281a781d4e28e1b3851ff6cc529a99e1873a6ab",
+  "asset": "assets/3d/generated/next100/shoe/mizuno-wave-rebellion-pro3-study/model.glb",
+  "semantic_parts": [
+    "upper",
+    "midsole",
+    "outsole",
+    "plate",
+    "laces",
+    "heel"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

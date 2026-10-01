@@ -1,0 +1,31 @@
+{
+  "id": "ceepo-venom-study",
+  "type": "bike",
+  "brand": "CEEPO",
+  "model": "Venom",
+  "representation": "geometry-study",
+  "room": "atlas-against-the-clock-tri",
+  "why": "Japanese triathlon-specific aero design",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 3380,
+  "bytes": 69092,
+  "sha256": "b1bc439a2bbfa70e736303ccd695dd38696ba099548a838b8e6bb9d792a432b0",
+  "asset": "assets/3d/generated/next100/bike/ceepo-venom-study/model.glb",
+  "semantic_parts": [
+    "frame",
+    "rim",
+    "tyre",
+    "saddle",
+    "aerobar",
+    "fork",
+    "crank",
+    "storage"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

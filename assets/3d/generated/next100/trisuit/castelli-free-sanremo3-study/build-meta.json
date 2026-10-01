@@ -1,0 +1,28 @@
+{
+  "id": "castelli-free-sanremo3-study",
+  "type": "trisuit",
+  "brand": "Castelli",
+  "model": "Free Sanremo 3 Suit",
+  "representation": "geometry-study",
+  "room": "kona",
+  "why": "Makes athlete identity and championship-room mannequins tangible",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 808,
+  "bytes": 17356,
+  "sha256": "34e117f8a7d2847fe0e8fe7a77d684846bb64c627c8d7ee69f10046c9f46f91d",
+  "asset": "assets/3d/generated/next100/trisuit/castelli-free-sanremo3-study/model.glb",
+  "semantic_parts": [
+    "torso",
+    "sleeves",
+    "legs",
+    "zipper",
+    "paneling"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

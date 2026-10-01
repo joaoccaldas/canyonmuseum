@@ -1,0 +1,40 @@
+name: Generate next 100 3D assets
+
+on:
+  push:
+    branches: [asset/next-100-3d-v1]
+    paths:
+      - tools/next100_asset_catalog.py
+      - tools/generate_next100_assets.py
+      - tools/validate_next100_assets.py
+      - .github/workflows/generate-next100-assets.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deterministic mesh toolchain
+        run: python -m pip install --disable-pip-version-check numpy scipy trimesh
+      - name: Build catalogue and GLBs
+        run: |
+          python tools/next100_asset_catalog.py --out museum/assets/next100-v1.json
+          python tools/generate_next100_assets.py --spec museum/assets/next100-v1.json --out assets/3d/generated/next100 --registry museum/assets/registry-next100-v1.json
+          python tools/validate_next100_assets.py --registry museum/assets/registry-next100-v1.json
+      - name: Commit generated assets to this isolated branch
+        run: |
+          git config user.name "canyonmuseum-asset-bot"
+          git config user.email "asset-bot@users.noreply.github.com"
+          git add museum/assets/next100-v1.json museum/assets/registry-next100-v1.json assets/3d/generated/next100
+          git diff --cached --quiet && exit 0
+          git commit -m "assets: generate next 100 GLBs [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}

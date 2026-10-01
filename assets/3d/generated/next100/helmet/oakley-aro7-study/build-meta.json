@@ -1,0 +1,28 @@
+{
+  "id": "oakley-aro7-study",
+  "type": "helmet",
+  "brand": "Oakley",
+  "model": "ARO7",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "source": "https://www.oakley.com/en-se/product/99468",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27952,
+  "sha256": "99910e5e0f3b270fd33376d95ba17cee9b47309bf48f5859f5081f0572d42f05",
+  "asset": "assets/3d/generated/next100/helmet/oakley-aro7-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

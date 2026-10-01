@@ -1,0 +1,2808 @@
+{
+  "schema_version": 1,
+  "generated_from": "museum/assets/next100-v1.json",
+  "asset_count": 100,
+  "assets": [
+    {
+      "id": "cervelo-p3c-2006-study",
+      "type": "bike",
+      "brand": "Cerv\u00e9lo",
+      "model": "P3C 2006",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Kona-era carbon superbike milestone",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "eca41ef0124d86872dc481e93559ce31b199a00161194e0a8f9a755972fa2ac4",
+      "asset": "assets/3d/generated/next100/bike/cervelo-p3c-2006-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "cervelo-p5x-2017-study",
+      "type": "bike",
+      "brand": "Cerv\u00e9lo",
+      "model": "P5X 2017",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-mono",
+      "why": "Radical non-traditional long-course architecture",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3296,
+      "bytes": 67380,
+      "sha256": "5081083747839e96f5322de3eef3bf1d8efb35ef2e42ffe4dfbff1845df0fce7",
+      "asset": "assets/3d/generated/next100/bike/cervelo-p5x-2017-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "trek-ttx-2009-study",
+      "type": "bike",
+      "brand": "Trek",
+      "model": "Equinox TTX 2009",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Historic Kona-era integrated TT platform",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "7de29f7b99f97bb1767cf23dfc134d15c423369fca4cfd6040014c39512f9ea7",
+      "asset": "assets/3d/generated/next100/bike/trek-ttx-2009-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "specialized-shiv-2011-study",
+      "type": "bike",
+      "brand": "Specialized",
+      "model": "Shiv 2011",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Early superbike integration and hydration story",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69088,
+      "sha256": "9b0edd39a9e506e1eec8f6002e59b9fff8bca4e58544c7eb2a87fc136f777e3e",
+      "asset": "assets/3d/generated/next100/bike/specialized-shiv-2011-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "felt-da-2011-study",
+      "type": "bike",
+      "brand": "Felt",
+      "model": "DA 2011",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Iconic narrow-profile triathlon machine",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69088,
+      "sha256": "911bc0709dc6723db24138b6067eeb5fa9395fec608646677cb8caa9ebc95280",
+      "asset": "assets/3d/generated/next100/bike/felt-da-2011-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "scott-plasma-3-2012-study",
+      "type": "bike",
+      "brand": "Scott",
+      "model": "Plasma 3 2012",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Distinctive early aero frame family",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "eca41ef0124d86872dc481e93559ce31b199a00161194e0a8f9a755972fa2ac4",
+      "asset": "assets/3d/generated/next100/bike/scott-plasma-3-2012-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "giant-trinity-advanced-2016-study",
+      "type": "bike",
+      "brand": "Giant",
+      "model": "Trinity Advanced Pro 2016",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Championship-era integrated triathlon bike",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "b1bc439a2bbfa70e736303ccd695dd38696ba099548a838b8e6bb9d792a432b0",
+      "asset": "assets/3d/generated/next100/bike/giant-trinity-advanced-2016-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "bmc-timemachine-tm01-2017-study",
+      "type": "bike",
+      "brand": "BMC",
+      "model": "Timemachine TM01 2017",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Swiss superbike integration study",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "7de29f7b99f97bb1767cf23dfc134d15c423369fca4cfd6040014c39512f9ea7",
+      "asset": "assets/3d/generated/next100/bike/bmc-timemachine-tm01-2017-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "cannondale-slice-2014-study",
+      "type": "bike",
+      "brand": "Cannondale",
+      "model": "Slice 2014",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Minimalist lightweight tri-bike contrast",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69088,
+      "sha256": "9b0edd39a9e506e1eec8f6002e59b9fff8bca4e58544c7eb2a87fc136f777e3e",
+      "asset": "assets/3d/generated/next100/bike/cannondale-slice-2014-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "pinarello-bolide-tr-2020-study",
+      "type": "bike",
+      "brand": "Pinarello",
+      "model": "Bolide TR+ 2020",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Italian aero design contrast",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69088,
+      "sha256": "911bc0709dc6723db24138b6067eeb5fa9395fec608646677cb8caa9ebc95280",
+      "asset": "assets/3d/generated/next100/bike/pinarello-bolide-tr-2020-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "ventum-one-2021-study",
+      "type": "bike",
+      "brand": "Ventum",
+      "model": "One 2021",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-mono",
+      "why": "Beam/monocoque long-course architecture",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3332,
+      "bytes": 68100,
+      "sha256": "3abac54ce6b50de69236a9b2101488ad11bb131376e84899c4024110016cde6a",
+      "asset": "assets/3d/generated/next100/bike/ventum-one-2021-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "quintana-roo-vpri-study",
+      "type": "bike",
+      "brand": "Quintana Roo",
+      "model": "V-PRi",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Triathlon-native modern superbike lineage",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "b1bc439a2bbfa70e736303ccd695dd38696ba099548a838b8e6bb9d792a432b0",
+      "asset": "assets/3d/generated/next100/bike/quintana-roo-vpri-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "cube-aerium-c68x-study",
+      "type": "bike",
+      "brand": "CUBE",
+      "model": "Aerium C:68X",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "World-championship proven integrated platform",
+      "source": "https://www.cube.eu/bikes/road/triathlon-time-trial/aerium/aerium-c-68x",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "7de29f7b99f97bb1767cf23dfc134d15c423369fca4cfd6040014c39512f9ea7",
+      "asset": "assets/3d/generated/next100/bike/cube-aerium-c68x-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "giant-trinity-advanced-sl-2027-study",
+      "type": "bike",
+      "brand": "Giant",
+      "model": "Trinity Advanced SL 2027",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Latest integrated hydration/fueling aero platform",
+      "source": "https://www.giant-bicycles.com/se/trinity-advanced-sl-1-2027",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69088,
+      "sha256": "9b0edd39a9e506e1eec8f6002e59b9fff8bca4e58544c7eb2a87fc136f777e3e",
+      "asset": "assets/3d/generated/next100/bike/giant-trinity-advanced-sl-2027-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "argon18-e119-triplus-study",
+      "type": "bike",
+      "brand": "Argon 18",
+      "model": "E-119 Tri+",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Modern Canadian long-course superbike",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69088,
+      "sha256": "911bc0709dc6723db24138b6067eeb5fa9395fec608646677cb8caa9ebc95280",
+      "asset": "assets/3d/generated/next100/bike/argon18-e119-triplus-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "cadex-tri-study",
+      "type": "bike",
+      "brand": "CADEX",
+      "model": "Tri",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-mono",
+      "why": "Rare boundary-pushing monocoque tri concept",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3296,
+      "bytes": 67380,
+      "sha256": "a6e9ec3e20e76c64804bedc35ef245f95060003ae824fced2895b79930df8598",
+      "asset": "assets/3d/generated/next100/bike/cadex-tri-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "ceepo-venom-study",
+      "type": "bike",
+      "brand": "CEEPO",
+      "model": "Venom",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Japanese triathlon-specific aero design",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "b1bc439a2bbfa70e736303ccd695dd38696ba099548a838b8e6bb9d792a432b0",
+      "asset": "assets/3d/generated/next100/bike/ceepo-venom-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "wilier-turbine-study",
+      "type": "bike",
+      "brand": "Wilier",
+      "model": "Turbine",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Italian TT/tri machine with distinctive silhouette",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69092,
+      "sha256": "7de29f7b99f97bb1767cf23dfc134d15c423369fca4cfd6040014c39512f9ea7",
+      "asset": "assets/3d/generated/next100/bike/wilier-turbine-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "softride-powerwing-1999-study",
+      "type": "bike",
+      "brand": "Softride",
+      "model": "PowerWing 1999",
+      "representation": "geometry-study",
+      "room": "secret",
+      "why": "Rare beam-bike chapter in triathlon history",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3332,
+      "bytes": 68096,
+      "sha256": "1edc536366e5e93cdce4915afe1e2b82c9c8ee823060f6b9a660458f2403cd84",
+      "asset": "assets/3d/generated/next100/bike/softride-powerwing-1999-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "quintana-roo-superform-1990-study",
+      "type": "bike",
+      "brand": "Quintana Roo",
+      "model": "Superform 1990",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-clipon",
+      "why": "Early triathlon-specific geometry artifact",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 3380,
+      "bytes": 69088,
+      "sha256": "911bc0709dc6723db24138b6067eeb5fa9395fec608646677cb8caa9ebc95280",
+      "asset": "assets/3d/generated/next100/bike/quintana-roo-superform-1990-study/model.glb",
+      "semantic_parts": [
+        "frame",
+        "rim",
+        "tyre",
+        "saddle",
+        "aerobar",
+        "fork",
+        "crank",
+        "storage"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "asics-metaspeed-sky-paris-study",
+      "type": "shoe",
+      "brand": "ASICS",
+      "model": "METASPEED SKY PARIS",
+      "representation": "geometry-study",
+      "room": "nike-running",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "source": "https://corp.asics.com/en/press/article/asics-launches-metaspeedtm-sky-paris-and-metaspeedtm-edge-paris-helping-elite-runners-achieve-new-level-of-performance",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 976,
+      "bytes": 20900,
+      "sha256": "ce2c98463a4e975060be9ae3a989d73f580fdf932848cea824b866d8f244e27c",
+      "asset": "assets/3d/generated/next100/shoe/asics-metaspeed-sky-paris-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "asics-metaspeed-edge-paris-study",
+      "type": "shoe",
+      "brand": "ASICS",
+      "model": "METASPEED EDGE PARIS",
+      "representation": "geometry-study",
+      "room": "nike-running",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "source": "https://corp.asics.com/en/press/article/asics-launches-metaspeedtm-sky-paris-and-metaspeedtm-edge-paris-helping-elite-runners-achieve-new-level-of-performance",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "ab20f91005fcd1a12f39510a1953a1d1429133202b7d2cbe9ecfc72847b3bb4c",
+      "asset": "assets/3d/generated/next100/shoe/asics-metaspeed-edge-paris-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "adidas-adizero-adios-pro-evo1-study",
+      "type": "shoe",
+      "brand": "adidas",
+      "model": "Adizero Adios Pro Evo 1",
+      "representation": "geometry-study",
+      "room": "nike-running",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "100403849d429334ab86b5c865680c4ea6ac6504367ad545850d5ccbc4f9f6f8",
+      "asset": "assets/3d/generated/next100/shoe/adidas-adizero-adios-pro-evo1-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "adidas-adizero-adios-pro4-study",
+      "type": "shoe",
+      "brand": "adidas",
+      "model": "Adizero Adios Pro 4",
+      "representation": "geometry-study",
+      "room": "nike-running",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "fad0b148cd26c816edf05d2fce0e9aec1fd7ddbc2474f9e9c0bf50a038733b5f",
+      "asset": "assets/3d/generated/next100/shoe/adidas-adizero-adios-pro4-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "hoka-cielo-x1-2-study",
+      "type": "shoe",
+      "brand": "HOKA",
+      "model": "Cielo X1 2.0",
+      "representation": "geometry-study",
+      "room": "nike-running",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 976,
+      "bytes": 20900,
+      "sha256": "98d07084b121f6b2c03c1a1ab12079cb2e79eba32eaa4e41996a10518ca95591",
+      "asset": "assets/3d/generated/next100/shoe/hoka-cielo-x1-2-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "hoka-rocket-x2-study",
+      "type": "shoe",
+      "brand": "HOKA",
+      "model": "Rocket X 2",
+      "representation": "geometry-study",
+      "room": "nike-running",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "95ddf76e759cdd5ebbb6c676ed8db24dbb0c267f4cff9dd465a9a74f755035d3",
+      "asset": "assets/3d/generated/next100/shoe/hoka-rocket-x2-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "saucony-endorphin-elite2-study",
+      "type": "shoe",
+      "brand": "Saucony",
+      "model": "Endorphin Elite 2",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "ab20f91005fcd1a12f39510a1953a1d1429133202b7d2cbe9ecfc72847b3bb4c",
+      "asset": "assets/3d/generated/next100/shoe/saucony-endorphin-elite2-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "saucony-endorphin-pro4-study",
+      "type": "shoe",
+      "brand": "Saucony",
+      "model": "Endorphin Pro 4",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "100403849d429334ab86b5c865680c4ea6ac6504367ad545850d5ccbc4f9f6f8",
+      "asset": "assets/3d/generated/next100/shoe/saucony-endorphin-pro4-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "newbalance-sc-elite-v4-study",
+      "type": "shoe",
+      "brand": "New Balance",
+      "model": "FuelCell SC Elite v4",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 976,
+      "bytes": 20900,
+      "sha256": "09814f3cb0c3cd4bb597c532249e650acc20a9ec39964af32d705d5535e8de35",
+      "asset": "assets/3d/generated/next100/shoe/newbalance-sc-elite-v4-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "brooks-hyperion-elite5-study",
+      "type": "shoe",
+      "brand": "Brooks",
+      "model": "Hyperion Elite 5",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "f6ab898f61fe184c42186dae8281a781d4e28e1b3851ff6cc529a99e1873a6ab",
+      "asset": "assets/3d/generated/next100/shoe/brooks-hyperion-elite5-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "on-cloudboom-strike-study",
+      "type": "shoe",
+      "brand": "On",
+      "model": "Cloudboom Strike",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "95ddf76e759cdd5ebbb6c676ed8db24dbb0c267f4cff9dd465a9a74f755035d3",
+      "asset": "assets/3d/generated/next100/shoe/on-cloudboom-strike-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "on-cloudboom-strike-ls-study",
+      "type": "shoe",
+      "brand": "On",
+      "model": "Cloudboom Strike LS",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "ab20f91005fcd1a12f39510a1953a1d1429133202b7d2cbe9ecfc72847b3bb4c",
+      "asset": "assets/3d/generated/next100/shoe/on-cloudboom-strike-ls-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "puma-fast-r-nitro-elite3-study",
+      "type": "shoe",
+      "brand": "PUMA",
+      "model": "Fast-R NITRO Elite 3",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 976,
+      "bytes": 20900,
+      "sha256": "755755056947c0e3e4d0c0332ad369b79e1f791488b88f237847329fa563638f",
+      "asset": "assets/3d/generated/next100/shoe/puma-fast-r-nitro-elite3-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "puma-deviate-nitro-elite3-study",
+      "type": "shoe",
+      "brand": "PUMA",
+      "model": "Deviate NITRO Elite 3",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "fad0b148cd26c816edf05d2fce0e9aec1fd7ddbc2474f9e9c0bf50a038733b5f",
+      "asset": "assets/3d/generated/next100/shoe/puma-deviate-nitro-elite3-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "mizuno-wave-rebellion-pro3-study",
+      "type": "shoe",
+      "brand": "Mizuno",
+      "model": "Wave Rebellion Pro 3",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "f6ab898f61fe184c42186dae8281a781d4e28e1b3851ff6cc529a99e1873a6ab",
+      "asset": "assets/3d/generated/next100/shoe/mizuno-wave-rebellion-pro3-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "under-armour-velociti-elite2-study",
+      "type": "shoe",
+      "brand": "Under Armour",
+      "model": "Velociti Elite 2",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "95ddf76e759cdd5ebbb6c676ed8db24dbb0c267f4cff9dd465a9a74f755035d3",
+      "asset": "assets/3d/generated/next100/shoe/under-armour-velociti-elite2-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "craft-kype-pro-study",
+      "type": "shoe",
+      "brand": "Craft",
+      "model": "Kype Pro",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 976,
+      "bytes": 20900,
+      "sha256": "5329e0c2d44b4e1aa65ad450ff9f423618a36719240cc6fc1031a253186aa5b8",
+      "asset": "assets/3d/generated/next100/shoe/craft-kype-pro-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "skechers-speed-beast-study",
+      "type": "shoe",
+      "brand": "Skechers",
+      "model": "GO RUN Speed Beast",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "100403849d429334ab86b5c865680c4ea6ac6504367ad545850d5ccbc4f9f6f8",
+      "asset": "assets/3d/generated/next100/shoe/skechers-speed-beast-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "adidas-prime-x2-strung-study",
+      "type": "shoe",
+      "brand": "adidas",
+      "model": "Prime X 2 Strung",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "fad0b148cd26c816edf05d2fce0e9aec1fd7ddbc2474f9e9c0bf50a038733b5f",
+      "asset": "assets/3d/generated/next100/shoe/adidas-prime-x2-strung-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "asics-superblast2-study",
+      "type": "shoe",
+      "brand": "ASICS",
+      "model": "Superblast 2",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Expands the run-leg engineering story and Race Setup choice",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 848,
+      "bytes": 18276,
+      "sha256": "f6ab898f61fe184c42186dae8281a781d4e28e1b3851ff6cc529a99e1873a6ab",
+      "asset": "assets/3d/generated/next100/shoe/asics-superblast2-study/model.glb",
+      "semantic_parts": [
+        "upper",
+        "midsole",
+        "outsole",
+        "plate",
+        "laces",
+        "heel"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "giro-aerohead-mips-study",
+      "type": "helmet",
+      "brand": "Giro",
+      "model": "Aerohead MIPS",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27956,
+      "sha256": "9cd53bdc4d208326408d1097cb74c86c39dcb05f47d96188f7d61dae71dfc0e1",
+      "asset": "assets/3d/generated/next100/helmet/giro-aerohead-mips-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "oakley-aro7-study",
+      "type": "helmet",
+      "brand": "Oakley",
+      "model": "ARO7",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "source": "https://www.oakley.com/en-se/product/99468",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "99910e5e0f3b270fd33376d95ba17cee9b47309bf48f5859f5081f0572d42f05",
+      "asset": "assets/3d/generated/next100/helmet/oakley-aro7-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "met-drone-widebody-study",
+      "type": "helmet",
+      "brand": "MET",
+      "model": "Drone Wide Body",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "d49ead0eab822a9f054ee4048f6714d2b27c66df6e11e3f8e812a9d63ff59be6",
+      "asset": "assets/3d/generated/next100/helmet/met-drone-widebody-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "poc-cerebel-study",
+      "type": "helmet",
+      "brand": "POC",
+      "model": "Cerebel",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "c29bfa3a18d9392c7ee4386c223cd864682613af64c46476a0242db403133ea8",
+      "asset": "assets/3d/generated/next100/helmet/poc-cerebel-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kask-mistral-study",
+      "type": "helmet",
+      "brand": "KASK",
+      "model": "Mistral",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27956,
+      "sha256": "1bf0d91b3eaef35f2693ac6f54a2df97ca287ef3f01ff32f4a89b82e291d6755",
+      "asset": "assets/3d/generated/next100/helmet/kask-mistral-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "rudy-wingdream-study",
+      "type": "helmet",
+      "brand": "Rudy Project",
+      "model": "Wingdream",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "f51c14be443cf8287e7f309c9437aec60dfa44724a075e391e6c33cbcb0185cb",
+      "asset": "assets/3d/generated/next100/helmet/rudy-wingdream-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "hjc-adwatt-15-study",
+      "type": "helmet",
+      "brand": "HJC",
+      "model": "Adwatt 1.5",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "37d051ea3c739e3e4244a6a7c24182873592c30d02bb7878bee17c83210b253c",
+      "asset": "assets/3d/generated/next100/helmet/hjc-adwatt-15-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "lazer-volante-study",
+      "type": "helmet",
+      "brand": "Lazer",
+      "model": "Volante",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "a113d92c759397b4068b80316fc5e9cb0a450304dbba41e73e33d2b242c85d96",
+      "asset": "assets/3d/generated/next100/helmet/lazer-volante-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "specialized-sworks-tt5-study",
+      "type": "helmet",
+      "brand": "Specialized",
+      "model": "S-Works TT 5",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "b995d781446b6604c3e6c6f68e040c9c418123d702c967c4a60fa8d4b329e8c7",
+      "asset": "assets/3d/generated/next100/helmet/specialized-sworks-tt5-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "limar-air-king-evo-study",
+      "type": "helmet",
+      "brand": "Limar",
+      "model": "Air King Evo",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "e0da02810b12db281b4ef893efb99cc4f5ed4400b15412fbcd63377ea7b4586f",
+      "asset": "assets/3d/generated/next100/helmet/limar-air-king-evo-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "ekoi-aerodinamica-study",
+      "type": "helmet",
+      "brand": "EKO\u00cf",
+      "model": "Aerodinamica",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "5ee4108c15d6eb0039abb50d409c5d90d64ace84d0adcfbd97595321b2e77755",
+      "asset": "assets/3d/generated/next100/helmet/ekoi-aerodinamica-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "sweet-tucker-2vi-study",
+      "type": "helmet",
+      "brand": "Sweet Protection",
+      "model": "Tucker 2Vi",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Fills missing aero-helmet engineering layer in setup and museum",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1340,
+      "bytes": 27952,
+      "sha256": "c61f965722a803ea15e139a87bc6faaa3ec4a587cc7257fafd31b9ae193c9924",
+      "asset": "assets/3d/generated/next100/helmet/sweet-tucker-2vi-study/model.glb",
+      "semantic_parts": [
+        "shell",
+        "visor",
+        "vents",
+        "retention"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "castelli-free-sanremo3-study",
+      "type": "trisuit",
+      "brand": "Castelli",
+      "model": "Free Sanremo 3 Suit",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "34e117f8a7d2847fe0e8fe7a77d684846bb64c627c8d7ee69f10046c9f46f91d",
+      "asset": "assets/3d/generated/next100/trisuit/castelli-free-sanremo3-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "roka-gen2-elite-aero-study",
+      "type": "trisuit",
+      "brand": "ROKA",
+      "model": "Gen II Elite Aero II",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "6261b977d2f05c825d1a413aff8e6384956823d491489757d02a64e1bb44356d",
+      "asset": "assets/3d/generated/next100/trisuit/roka-gen2-elite-aero-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "zone3-aeroforce-x2-study",
+      "type": "trisuit",
+      "brand": "Zone3",
+      "model": "Aeroforce-X II",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "0122ec8b5affdc6198b7a3efdd0d9c1e48cc9075e0cf13f0c841aa44f8386f5c",
+      "asset": "assets/3d/generated/next100/trisuit/zone3-aeroforce-x2-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "huub-anemoi2-study",
+      "type": "trisuit",
+      "brand": "HUUB",
+      "model": "Anemoi 2",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "32dded1f2867605513a722743be56ac42fedd17d7d799e9f4070a73ad5c75cec",
+      "asset": "assets/3d/generated/next100/trisuit/huub-anemoi2-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "zoot-ultra-tri-aero-study",
+      "type": "trisuit",
+      "brand": "Zoot",
+      "model": "Ultra Tri Aero",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "34e117f8a7d2847fe0e8fe7a77d684846bb64c627c8d7ee69f10046c9f46f91d",
+      "asset": "assets/3d/generated/next100/trisuit/zoot-ultra-tri-aero-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "orca-athlex-aero-study",
+      "type": "trisuit",
+      "brand": "Orca",
+      "model": "Athlex Aero Race Suit",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "6261b977d2f05c825d1a413aff8e6384956823d491489757d02a64e1bb44356d",
+      "asset": "assets/3d/generated/next100/trisuit/orca-athlex-aero-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "2xu-light-speed-trisuit-study",
+      "type": "trisuit",
+      "brand": "2XU",
+      "model": "Light Speed Front Zip",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "0122ec8b5affdc6198b7a3efdd0d9c1e48cc9075e0cf13f0c841aa44f8386f5c",
+      "asset": "assets/3d/generated/next100/trisuit/2xu-light-speed-trisuit-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "sailfish-aerosuit-study",
+      "type": "trisuit",
+      "brand": "sailfish",
+      "model": "Aerosuit",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "32dded1f2867605513a722743be56ac42fedd17d7d799e9f4070a73ad5c75cec",
+      "asset": "assets/3d/generated/next100/trisuit/sailfish-aerosuit-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "fusion-tempo-one-study",
+      "type": "trisuit",
+      "brand": "Fusion",
+      "model": "TEMPO! ONE Suit",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "34e117f8a7d2847fe0e8fe7a77d684846bb64c627c8d7ee69f10046c9f46f91d",
+      "asset": "assets/3d/generated/next100/trisuit/fusion-tempo-one-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "trimtex-aero3-study",
+      "type": "trisuit",
+      "brand": "Trimtex",
+      "model": "Aero 3.0 Tri Suit",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "6261b977d2f05c825d1a413aff8e6384956823d491489757d02a64e1bb44356d",
+      "asset": "assets/3d/generated/next100/trisuit/trimtex-aero3-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kiwami-spider-ld-aero-study",
+      "type": "trisuit",
+      "brand": "Kiwami",
+      "model": "Spider LD Aero",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "0122ec8b5affdc6198b7a3efdd0d9c1e48cc9075e0cf13f0c841aa44f8386f5c",
+      "asset": "assets/3d/generated/next100/trisuit/kiwami-spider-ld-aero-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "santini-redux-tri-study",
+      "type": "trisuit",
+      "brand": "Santini",
+      "model": "Redux Tri Suit",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes athlete identity and championship-room mannequins tangible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 808,
+      "bytes": 17356,
+      "sha256": "32dded1f2867605513a722743be56ac42fedd17d7d799e9f4070a73ad5c75cec",
+      "asset": "assets/3d/generated/next100/trisuit/santini-redux-tri-study/model.glb",
+      "semantic_parts": [
+        "torso",
+        "sleeves",
+        "legs",
+        "zipper",
+        "paneling"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-1980s-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 1980s",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 616,
+      "bytes": 13396,
+      "sha256": "6547ec51c8077c104298f40ecf5c6b30db1e449888b22ec7c5a5f05995c72e10",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-1980s-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-1990s-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 1990s",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 624,
+      "bytes": 13556,
+      "sha256": "24ccf78e9446be0eb67bdfc2d5937e989be850c9e53459eaaa982ec0cbf2a4a5",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-1990s-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-2000s-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 2000s",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 640,
+      "bytes": 13876,
+      "sha256": "6eb514b27be3e288f79f14b943f9f20c7efe3539ad25a0d557b5c3d58a010e12",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-2000s-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-2010-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 2010",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 616,
+      "bytes": 13396,
+      "sha256": "46f05f397147c8960dba16d18368df95115f23e08dd5518966f8700d73b9ac22",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-2010-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-2015-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 2015",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 624,
+      "bytes": 13556,
+      "sha256": "705a4a2fe2598fca108cfd6d5c7d92bbcdc93c9f0efbdf3c144c81ad20a01e81",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-2015-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-2019-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 2019",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 640,
+      "bytes": 13876,
+      "sha256": "ea86e7b705b26851e2e841ecdc8d2ae10607680ae42189d3d9434d454f3ca142",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-2019-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "stgeorge-703wc-2022-medal-study",
+      "type": "medal",
+      "brand": "Race Archive",
+      "model": "70.3 WC St. George 2022 Medal",
+      "representation": "geometry-study",
+      "room": "bay-st-george",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 616,
+      "bytes": 13396,
+      "sha256": "49c9af41b4f270856e9c853f6406153e7904d3e9803bc509d11f8f34a24b6c4e",
+      "asset": "assets/3d/generated/next100/medal/stgeorge-703wc-2022-medal-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "nice-703wc-2019-medal-study",
+      "type": "medal",
+      "brand": "Race Archive",
+      "model": "70.3 WC Nice 2019 Medal",
+      "representation": "geometry-study",
+      "room": "bay-nice",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 624,
+      "bytes": 13556,
+      "sha256": "4297c65279549b906775f353750ae2b8ac00fac04aded7e9c2033ccd5b141c94",
+      "asset": "assets/3d/generated/next100/medal/nice-703wc-2019-medal-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-2022-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 2022",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 640,
+      "bytes": 13876,
+      "sha256": "25b1f27d917f8b1279ac862fa1e598faf2dd81aba2ef05db3f4dff7b611cd7fd",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-2022-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-2024-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 2024",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 616,
+      "bytes": 13396,
+      "sha256": "262e74bee703c03224899485550a4ef143277518b9cea463aeb25baa73e02990",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-2024-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "kona-medal-2025-study",
+      "type": "medal",
+      "brand": "KONA Archive",
+      "model": "Finisher Medal \u00b7 2025",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "epic",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 624,
+      "bytes": 13556,
+      "sha256": "602cbecb0f9e547d8a82428ba9b8ac7843fb720ea003aba1171b1c41204cd9da",
+      "asset": "assets/3d/generated/next100/medal/kona-medal-2025-study/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "champions-gold-medal-original",
+      "type": "medal",
+      "brand": "KONA Original",
+      "model": "Champions Gold Token",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Adds collectible race-memory objects and timeline decoration",
+      "rarity": "epic",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 640,
+      "bytes": 13876,
+      "sha256": "d09ee48d6198abcb20ed615c8712de7a1c198091af0d41cdccafacf47885cf9f",
+      "asset": "assets/3d/generated/next100/medal/champions-gold-medal-original/model.glb",
+      "semantic_parts": [
+        "medallion",
+        "ribbon",
+        "relief"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-kona-vintage-bib",
+      "type": "artifact",
+      "brand": "Race Archive",
+      "model": "Vintage Kona race bib",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Personal race-history object",
+      "rarity": "uncommon",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 88,
+      "bytes": 2844,
+      "sha256": "51c7b02f0d073201d5f5e2d47dba224304391828508c64d4dd184d4d62287c24",
+      "asset": "assets/3d/generated/next100/artifact/artifact-kona-vintage-bib/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-transition-rack-tag",
+      "type": "artifact",
+      "brand": "Race Archive",
+      "model": "Transition rack tag",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Makes transition choreography tangible",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 204,
+      "bytes": 5072,
+      "sha256": "d65544514d37e4e251d7e6128c1f3e57ef0fbbaffe69d35e049d07c4cbc018e5",
+      "asset": "assets/3d/generated/next100/artifact/artifact-transition-rack-tag/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-timing-chip-vintage",
+      "type": "artifact",
+      "brand": "Race Archive",
+      "model": "Vintage timing chip",
+      "representation": "geometry-study",
+      "room": "secret",
+      "why": "Hidden race-tech collectible",
+      "rarity": "epic",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 60,
+      "bytes": 2216,
+      "sha256": "1edcbce8c2e6db35d6397eb5369d7965160acf2f3eb26a10e0e5a5f43e2a0354",
+      "asset": "assets/3d/generated/next100/artifact/artifact-timing-chip-vintage/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-queen-k-windsock",
+      "type": "artifact",
+      "brand": "KONA Original",
+      "model": "Queen K windsock",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-queen-k",
+      "why": "Visualizes crosswind as a physical object",
+      "rarity": "uncommon",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 52,
+      "bytes": 2040,
+      "sha256": "945a2f16200447ea65342d67603c9143a3de6ade3c9ab58ae6f1fdba6cc73366",
+      "asset": "assets/3d/generated/next100/artifact/artifact-queen-k-windsock/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-swim-buoy-miniature",
+      "type": "artifact",
+      "brand": "KONA Original",
+      "model": "Kailua Bay buoy miniature",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-bay",
+      "why": "Adds swim-course identity",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 368,
+      "bytes": 8364,
+      "sha256": "5a3ad1f5eb5e3723ee6163e893021a1d878c0a5b25993f59fe30d6937caffcdc",
+      "asset": "assets/3d/generated/next100/artifact/artifact-swim-buoy-miniature/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-carbon-layup-coupon",
+      "type": "artifact",
+      "brand": "Engineering Archive",
+      "model": "Carbon layup coupon",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Explains material engineering",
+      "rarity": "epic",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 24,
+      "bytes": 1496,
+      "sha256": "e56cce7619f403fe0af5f941e99c2c69fae858b3a88f3fd14737089f6348f6fd",
+      "asset": "assets/3d/generated/next100/artifact/artifact-carbon-layup-coupon/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-prototype-aero-fork",
+      "type": "artifact",
+      "brand": "Engineering Archive",
+      "model": "Prototype aero fork",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Makes iteration/prototyping visible",
+      "rarity": "uncommon",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 144,
+      "bytes": 3912,
+      "sha256": "8a16accc320297cf8a1f776f7db8b1ced312aa03f86455f42cbf3dd9bbb9fdff",
+      "asset": "assets/3d/generated/next100/artifact/artifact-prototype-aero-fork/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-aero-hourglass-3d",
+      "type": "artifact",
+      "brand": "KONA Original",
+      "model": "Aero hourglass",
+      "representation": "geometry-study",
+      "room": "secret",
+      "why": "Turns existing legendary relic into a physical exhibit",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 288,
+      "bytes": 6832,
+      "sha256": "245ef15eed25a6b99eb9aaf0813881ccd39b7c60c9793cdcc36393fe040acb5f",
+      "asset": "assets/3d/generated/next100/artifact/artifact-aero-hourglass-3d/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-vintage-aero-bottle",
+      "type": "artifact",
+      "brand": "Engineering Archive",
+      "model": "Vintage aero bottle",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Shows hydration evolution",
+      "rarity": "epic",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 136,
+      "bytes": 3720,
+      "sha256": "4f904945c5080c1b2fdcba54592ae4f3b2d2d2783973ca0ac6d563ac23c00685",
+      "asset": "assets/3d/generated/next100/artifact/artifact-vintage-aero-bottle/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-race-week-wristband",
+      "type": "artifact",
+      "brand": "Race Archive",
+      "model": "Race-week wristband",
+      "representation": "geometry-study",
+      "room": "pier",
+      "why": "Small human-scale race-week memory",
+      "rarity": "uncommon",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 60,
+      "bytes": 2216,
+      "sha256": "cb30f35b54e8096710a7daf1c44773b3de71461b5b06146cbbcf4daae88f28d0",
+      "asset": "assets/3d/generated/next100/artifact/artifact-race-week-wristband/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-course-marker-pin",
+      "type": "artifact",
+      "brand": "Race Archive",
+      "model": "Course marker pin",
+      "representation": "geometry-study",
+      "room": "bay-kona",
+      "why": "Collectible place marker",
+      "rarity": "rare",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 60,
+      "bytes": 2216,
+      "sha256": "cfb5e48d0a9593f1ff09b4d4aaf9c0ca79eff7c8eb5b2b4140ef6c427da5eb5d",
+      "asset": "assets/3d/generated/next100/artifact/artifact-course-marker-pin/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "artifact-prototype-tag",
+      "type": "artifact",
+      "brand": "Engineering Archive",
+      "model": "Prototype test tag",
+      "representation": "geometry-study",
+      "room": "secret",
+      "why": "Physicalizes the existing prototype relic",
+      "rarity": "epic",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 204,
+      "bytes": 5072,
+      "sha256": "f7ea77adbcd3f1f8ac11ea2b0d8b7232ed4cc93de57405d49da1de81562ee6f8",
+      "asset": "assets/3d/generated/next100/artifact/artifact-prototype-tag/model.glb",
+      "semantic_parts": [
+        "body",
+        "detail"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-deep-front-wheel-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Deep front wheel",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Wheel depth comparison",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1216,
+      "bytes": 25300,
+      "sha256": "787ad79994696866e4dc7525c0c0cf342aedf55c1fe057a70dc68494c36e5b24",
+      "asset": "assets/3d/generated/next100/gear/gear-deep-front-wheel-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-rear-disc-wheel-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Rear disc wheel",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Canonical TT silhouette object",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 1216,
+      "bytes": 25300,
+      "sha256": "fa72a5b076db82d2631db40989f59d5697c519b9995a59c60d6b1b735f4eefe0",
+      "asset": "assets/3d/generated/next100/gear/gear-rear-disc-wheel-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-between-arms-hydration-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Between-arms hydration",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Race setup hydration story",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 44,
+      "bytes": 1896,
+      "sha256": "8cfe3f35881d7da20d3aad4dc72de20c621f58314f8e25f3e9a3635e1de8dbb3",
+      "asset": "assets/3d/generated/next100/gear/gear-between-arms-hydration-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-aero-bottle-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Aero frame bottle",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Integrated storage story",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 136,
+      "bytes": 3716,
+      "sha256": "a11bdaf79541c9c3f35711e294a7d4564586d539edc9add6edb05d8e7a9040c1",
+      "asset": "assets/3d/generated/next100/gear/gear-aero-bottle-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-openwater-goggles-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Open-water goggles",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-bay",
+      "why": "Adds swim leg equipment",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 864,
+      "bytes": 18288,
+      "sha256": "3e4f73c327ee4be76b1ca31934ee398b6dd1eac4b14aae5fd7cafb8b39c23ec8",
+      "asset": "assets/3d/generated/next100/gear/gear-openwater-goggles-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-gps-watch-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Multisport GPS watch",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Completes athlete setup silhouette",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 60,
+      "bytes": 2220,
+      "sha256": "1dcbd6836dce095f6afbcf56cb5e53c49bf2923833472f892fde2d297d0a0b11",
+      "asset": "assets/3d/generated/next100/gear/gear-gps-watch-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-carbon-pedal-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Carbon tri pedal",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Small engineering collectible",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 60,
+      "bytes": 2216,
+      "sha256": "2b381b37367f16209717090dab4773a153a74fe35f165705382776c385cb473d",
+      "asset": "assets/3d/generated/next100/gear/gear-carbon-pedal-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-splitnose-saddle-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Split-nose tri saddle",
+      "representation": "geometry-study",
+      "room": "atlas-against-the-clock-tri",
+      "why": "Tri-specific fit story",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 320,
+      "bytes": 7400,
+      "sha256": "bc35509fb647ef735d8a7f9441a573d1b5b6ebe974e4be29998ac82e5ea28f9c",
+      "asset": "assets/3d/generated/next100/gear/gear-splitnose-saddle-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-aerobar-extension-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Aero extension pair",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-clipon",
+      "why": "Shows cockpit evolution",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 108,
+      "bytes": 3192,
+      "sha256": "887af3e5ec9dded7884138ac71d30efca49fafd3190c514aea28296cb11d67ed",
+      "asset": "assets/3d/generated/next100/gear/gear-aerobar-extension-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-transition-bottle-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Transition bottle",
+      "representation": "geometry-study",
+      "room": "kona",
+      "why": "Race-day setup prop",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 136,
+      "bytes": 3716,
+      "sha256": "a11bdaf79541c9c3f35711e294a7d4564586d539edc9add6edb05d8e7a9040c1",
+      "asset": "assets/3d/generated/next100/gear/gear-transition-bottle-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-swimskin-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Race swimskin",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-bay",
+      "why": "Adds swim-to-bike clothing layer",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 88,
+      "bytes": 2844,
+      "sha256": "a59c2bfb0eb61b33c860a95163264634d7525d4e311bc5f63ec0d01208b89cec",
+      "asset": "assets/3d/generated/next100/gear/gear-swimskin-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    },
+    {
+      "id": "gear-visor-study",
+      "type": "gear",
+      "brand": "KONA Original",
+      "model": "Aero helmet visor",
+      "representation": "geometry-study",
+      "room": "atlas-kona-light-tunnel",
+      "why": "Completes helmet/accessory ecosystem",
+      "schema_version": 1,
+      "generator": "trimesh-parametric-v1",
+      "generated_at": "deterministic",
+      "tris": 864,
+      "bytes": 18292,
+      "sha256": "14509541e42c6189c2044ec80f3ddd2eafff02a206f6a34c1291903d104c8e06",
+      "asset": "assets/3d/generated/next100/gear/gear-visor-study/model.glb",
+      "semantic_parts": [
+        "body",
+        "mount"
+      ],
+      "status": "generated-unwired",
+      "mobile_budget": {
+        "target_bytes": 350000,
+        "target_tris": 12000
+      }
+    }
+  ]
+}

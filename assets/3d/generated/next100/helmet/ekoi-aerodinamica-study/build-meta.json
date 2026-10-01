@@ -1,0 +1,27 @@
+{
+  "id": "ekoi-aerodinamica-study",
+  "type": "helmet",
+  "brand": "EKO\u00cf",
+  "model": "Aerodinamica",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27952,
+  "sha256": "5ee4108c15d6eb0039abb50d409c5d90d64ace84d0adcfbd97595321b2e77755",
+  "asset": "assets/3d/generated/next100/helmet/ekoi-aerodinamica-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

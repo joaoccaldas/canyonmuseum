@@ -1,0 +1,26 @@
+{
+  "id": "artifact-race-week-wristband",
+  "type": "artifact",
+  "brand": "Race Archive",
+  "model": "Race-week wristband",
+  "representation": "geometry-study",
+  "room": "pier",
+  "why": "Small human-scale race-week memory",
+  "rarity": "uncommon",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 60,
+  "bytes": 2216,
+  "sha256": "cb30f35b54e8096710a7daf1c44773b3de71461b5b06146cbbcf4daae88f28d0",
+  "asset": "assets/3d/generated/next100/artifact/artifact-race-week-wristband/model.glb",
+  "semantic_parts": [
+    "body",
+    "detail"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "poc-cerebel-study",
+  "type": "helmet",
+  "brand": "POC",
+  "model": "Cerebel",
+  "representation": "geometry-study",
+  "room": "atlas-kona-light-tunnel",
+  "why": "Fills missing aero-helmet engineering layer in setup and museum",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 1340,
+  "bytes": 27952,
+  "sha256": "c29bfa3a18d9392c7ee4386c223cd864682613af64c46476a0242db403133ea8",
+  "asset": "assets/3d/generated/next100/helmet/poc-cerebel-study/model.glb",
+  "semantic_parts": [
+    "shell",
+    "visor",
+    "vents",
+    "retention"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

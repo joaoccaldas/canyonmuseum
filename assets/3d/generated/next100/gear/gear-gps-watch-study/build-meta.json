@@ -1,0 +1,25 @@
+{
+  "id": "gear-gps-watch-study",
+  "type": "gear",
+  "brand": "KONA Original",
+  "model": "Multisport GPS watch",
+  "representation": "geometry-study",
+  "room": "kona",
+  "why": "Completes athlete setup silhouette",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 60,
+  "bytes": 2220,
+  "sha256": "1dcbd6836dce095f6afbcf56cb5e53c49bf2923833472f892fde2d297d0a0b11",
+  "asset": "assets/3d/generated/next100/gear/gear-gps-watch-study/model.glb",
+  "semantic_parts": [
+    "body",
+    "mount"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}

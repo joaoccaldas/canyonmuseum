@@ -1,0 +1,30 @@
+{
+  "id": "asics-metaspeed-edge-paris-study",
+  "type": "shoe",
+  "brand": "ASICS",
+  "model": "METASPEED EDGE PARIS",
+  "representation": "geometry-study",
+  "room": "nike-running",
+  "why": "Expands the run-leg engineering story and Race Setup choice",
+  "source": "https://corp.asics.com/en/press/article/asics-launches-metaspeedtm-sky-paris-and-metaspeedtm-edge-paris-helping-elite-runners-achieve-new-level-of-performance",
+  "schema_version": 1,
+  "generator": "trimesh-parametric-v1",
+  "generated_at": "deterministic",
+  "tris": 848,
+  "bytes": 18276,
+  "sha256": "ab20f91005fcd1a12f39510a1953a1d1429133202b7d2cbe9ecfc72847b3bb4c",
+  "asset": "assets/3d/generated/next100/shoe/asics-metaspeed-edge-paris-study/model.glb",
+  "semantic_parts": [
+    "upper",
+    "midsole",
+    "outsole",
+    "plate",
+    "laces",
+    "heel"
+  ],
+  "status": "generated-unwired",
+  "mobile_budget": {
+    "target_bytes": 350000,
+    "target_tris": 12000
+  }
+}
