@@ -5,7 +5,7 @@ const out=process.argv[3]||'visual-evidence-v2';fs.mkdirSync(out,{recursive:true
 const chrome=process.env.CHROME_PATH;if(!chrome)throw new Error('CHROME_PATH required');
 const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader']});
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'landscape-phone',width:844,height:390},{id:'desktop',width:1440,height:900}];
-const states=['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','bike-studio'];const report=[];
+const states=['landing','sign-in','onboarding-profile','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','bike-studio'];const report=[];
 // deterministic storage per capture: seed after origin exists, then reload exactly once.
 async function capture(vp,state,theme){
  const p=await browser.newPage();p.setDefaultNavigationTimeout(180000);const requests=[];const errors=[];
@@ -23,10 +23,12 @@ async function capture(vp,state,theme){
  await p.reload({waitUntil:'domcontentloaded'});await new Promise(r=>setTimeout(r,700));
  if(state==='sign-in'){
    await p.click('#entrySignIn');await p.waitForSelector('#saveForm');
+ }else if(state==='onboarding-profile'){
+   await p.click('#buildSelf');await p.waitForSelector('[data-onboarding-question]');
  }else if(state==='avatar-registration'){
-   await p.click('#buildSelf');await p.waitForSelector('.registration-avatar');
+   await p.click('#buildSelf');await p.waitForSelector('[data-onboarding-question]');await p.click('[data-onboarding-skip]');await p.waitForSelector('.registration-avatar');
  }else if(state==='onboarding-tour'){
-   await p.click('#buildSelf');await p.waitForSelector('.registration-avatar');
+   await p.click('#buildSelf');await p.waitForSelector('[data-onboarding-question]');await p.click('[data-onboarding-skip]');await p.waitForSelector('.registration-avatar');
    await p.click('[data-reg-continue]');
    await p.waitForSelector('.kona-tour');
  }else if(state==='bike-studio'){
@@ -97,8 +99,9 @@ for(const r of report){
  if(r.state==='landing'&&r.heavyRequests.length)violations.push(`${r.viewport}/${r.theme}: heavy 3D requested on landing`);
  if(r.state==='landing'&&r.viewport!=='desktop'&&r.metrics.landing){const l=r.metrics.landing;if(l.ctaTop<0||l.ctaBottom>l.viewportH)violations.push(`${r.viewport}/${r.theme}: Enter KONA is not fully visible in first viewport`);if(l.ctaW<160)violations.push(`${r.viewport}/${r.theme}: Enter KONA is too narrow`);if(l.productTop!=null&&l.productBottom!=null&&l.productLeft!=null&&l.productRight!=null){const overlapX=Math.min(l.ctaRight,l.productRight)-Math.max(l.ctaLeft,l.productLeft),overlapY=Math.min(l.ctaBottom,l.productBottom)-Math.max(l.ctaTop,l.productTop);if(overlapX>1&&overlapY>1)violations.push(`${r.viewport}/${r.theme}: product teaser overlaps primary decision`);}}
  if(r.errors.length)violations.push(`${r.viewport}/${r.theme}/${r.state}: JS errors ${r.errors.join('; ')}`);
- if(!['landing','sign-in','avatar-registration'].includes(r.state)&&r.metrics.introVisible)violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
+ if(!['landing','sign-in','onboarding-profile','avatar-registration'].includes(r.state)&&r.metrics.introVisible)violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
  if(r.state==='sign-in'&&!/Sign in or create your account/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: sign-in form missing`);
+ if(r.state==='onboarding-profile'&&!/What brings you to Kona|WHY ARE YOU HERE/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: onboarding question missing`);
  if(r.state==='avatar-registration'&&!/TRISUIT LAYOUT|Who are we sending into the lava/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: avatar registration missing`);
  if(r.state==='avatar-registration'&&r.viewport==='desktop'&&r.metrics.registration){
    const a=r.metrics.registration;
