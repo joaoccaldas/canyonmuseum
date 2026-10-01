@@ -10,6 +10,10 @@
 }
 @media(max-width:380px){.kona-place-grid{grid-template-columns:1fr}.kona-panel{padding-left:12px;padding-right:12px}.kona-section{padding:14px}}
 
+/* The 2D app is the canonical surface, not a modal. Close appears only when returning to a loaded world makes sense. */
+body:not(.museum-open) .kona-panel-head>button{display:none!important}
+body.museum-open .kona-panel-head>button{display:grid}
+
 /* Batch 6: the consumer shell must fit physical phones even when the browser reports desktop width. */
 .kona-panel,.kona-bottom-nav{box-sizing:border-box;max-width:100dvw}
 .kona-panel *,.kona-bottom-nav *{box-sizing:border-box}
@@ -104,3 +108,7 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
   .home-postcard{grid-template-columns:1fr;min-height:0}.home-postcard-photo{height:155px;min-height:155px}.home-postcard-copy{padding:16px}
   .garage-setup-hero{min-height:300px}
 }
+
+.garage-bike-mark{position:absolute;z-index:1;right:20px;top:26px;width:min(46%,220px);fill:none;stroke:rgba(255,255,255,.76);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 8px 18px rgba(0,0,0,.25))}
+.garage-setup-media img{filter:saturate(.82) contrast(1.02)}
+@media(max-width:430px){.garage-bike-mark{right:12px;top:20px;width:44%;opacity:.86}}
