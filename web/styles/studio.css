@@ -14,7 +14,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}a{colo
 .pill.dark{background:rgba(18,24,29,.72);color:var(--brand-mist);border-color:rgba(255,255,255,.12)}
 .brand{font-weight:700;letter-spacing:.28em;font-size:12px}
 .grow{flex:1}
-.me i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;margin-left:-8px;color:#fff;font:700 11px var(--sans);font-style:normal}
+.me i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;margin-left:-8px;color:var(--brand-mist);font:700 11px var(--sans);font-style:normal}
 .event{font-size:11px;letter-spacing:.14em;text-transform:uppercase}
 /* title over the stage */
 .hero{position:fixed;left:max(16px,env(safe-area-inset-left));top:calc(max(10px,env(safe-area-inset-top)) + 54px);z-index:10;color:var(--brand-mist);max-width:min(560px,70vw);pointer-events:none;text-shadow:0 2px 24px rgba(0,0,0,.35);transition:opacity .4s}
@@ -66,16 +66,16 @@ body.light-scene .hero{color:var(--brand-ink);text-shadow:none}
 .fab{position:fixed;right:max(12px,env(safe-area-inset-right));z-index:16;display:flex;flex-direction:column;gap:8px;bottom:calc(var(--sheet) + 12px);transition:bottom .45s}
 body.dock-min .fab{bottom:calc(76px + var(--safe-b))}
 .fab button{width:48px;height:48px;border-radius:50%;background:rgba(251,249,245,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);font-size:18px;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.18)}
-.fab button[aria-pressed=true]{background:var(--lava);color:#fff;border-color:transparent}
+.fab button[aria-pressed=true]{background:var(--lava);color:var(--brand-mist);border-color:transparent}
 #loading{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:12;display:flex;align-items:center;gap:10px;color:var(--brand-mist);font-size:12.5px;font-weight:600;pointer-events:none}
-#loading i{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .9s linear infinite}
+#loading i{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:var(--brand-mist);animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 /* dream mode: letterbox and a title card */
 .letter{position:fixed;left:0;right:0;height:0;background:#000;z-index:9;transition:height .8s cubic-bezier(.2,.8,.2,1)}
 .letter.t{top:0}.letter.b{bottom:0}
 body.dreaming .letter{height:9vh}
 body.dreaming .dock{transform:translateY(110%)}body.dreaming .fab{bottom:calc(9vh + 16px)}body.dreaming .bar .pill:not(.keep){opacity:0;pointer-events:none}
-#dreamTitle{position:fixed;left:0;right:0;bottom:calc(9vh + 18px);z-index:11;text-align:center;color:#fff;pointer-events:none;opacity:0;transition:opacity 1s}
+#dreamTitle{position:fixed;left:0;right:0;bottom:calc(9vh + 18px);z-index:11;text-align:center;color:var(--brand-mist);pointer-events:none;opacity:0;transition:opacity 1s}
 body.dreaming #dreamTitle.on{opacity:1}
 #dreamTitle small{font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;opacity:.8}
 #dreamTitle h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,6vw,72px);line-height:1}
@@ -98,7 +98,7 @@ body.dreaming #dreamTitle.on{opacity:1}
 .card-facts{list-style:none;margin:14px 0 0;display:grid;gap:8px;font-size:12.5px;line-height:1.55;color:var(--muted)}
 .card-facts li{display:grid;grid-template-columns:22px 1fr;gap:8px}
 .card-facts b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;font-size:10px;background:var(--sand);color:var(--ink)}
-.card-facts b.P{background:#d5ecea}.card-facts b.F{background:#f6e6c8}.card-facts b.I{background:#ece6f6}.card-facts b.G{background:#fde2ec}
+.card-facts b.P{background:color-mix(in srgb,var(--brand-ocean) 18%,var(--brand-surface))}.card-facts b.F{background:color-mix(in srgb,var(--brand-ember) 18%,var(--brand-surface))}.card-facts b.I{background:color-mix(in srgb,var(--brand-lilac) 18%,var(--brand-surface))}.card-facts b.G{background:color-mix(in srgb,var(--brand-hibiscus) 14%,var(--brand-surface))}
 .card-note{margin-top:10px;font-size:12px;color:var(--muted)}.card-note summary{font-weight:600;color:var(--ink);cursor:pointer}.card-note p{margin-top:6px;line-height:1.6}
 .src{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.7}.src a{color:var(--reef);font-weight:600}
 /* My Kona Setup V0 */
@@ -125,8 +125,8 @@ body.dreaming #dreamTitle.on{opacity:1}
 .dock{border-radius:var(--brand-sheet-radius,24px) var(--brand-sheet-radius,24px) 0 0;background:var(--brand-surface-glass-strong,var(--paper))}
 .tabs button{min-height:var(--brand-touch,48px)}
 .prod,.slot,.chips button,.search{border-radius:var(--brand-control-radius,12px);border-color:var(--brand-line)}
-.prod,.slot,.chips button,.search{background:var(--brand-surface,#fbf9f5)}
-.setup-slot{border-radius:var(--brand-card-radius,20px);background:var(--brand-surface,#fbf9f5)}
+.prod,.slot,.chips button,.search{background:var(--brand-surface)}
+.setup-slot{border-radius:var(--brand-card-radius);background:var(--brand-surface,#fbf9f5)}
 .btn{min-height:var(--brand-touch,48px);height:auto;padding-block:10px}
 @media(max-width:899px){
   :root{--sheet:min(44dvh,430px)}
