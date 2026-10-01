@@ -84,6 +84,8 @@ export async function sendMagicLink(email) {
   }finally{otpPending=false;}
 }
 
+export const isAdminUser = user => user?.app_metadata?.role === 'admin';
+
 export async function currentUser() {
   const s = await validSession();
   if (!s?.access_token) return null;
