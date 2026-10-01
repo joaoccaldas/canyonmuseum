@@ -6,19 +6,21 @@ const chrome=process.env.CHROME_PATH;if(!chrome)throw new Error('CHROME_PATH req
 const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader']});
 const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'desktop',width:1440,height:900}];
 const states=['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','passport','feed','travel','museum-return-home','bike-studio'];const report=[];
+// deterministic storage per capture: seed after origin exists, then reload exactly once.
 async function capture(vp,state,theme){
  const p=await browser.newPage();p.setDefaultNavigationTimeout(180000);const requests=[];const errors=[];
  p.on('request',r=>requests.push(r.url()));p.on('pageerror',e=>errors.push(e.message));
  await p.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:vp.id==='desktop'?1:2,isMobile:vp.id!=='desktop',hasTouch:vp.id!=='desktop'});
- await p.evaluateOnNewDocument((theme)=>{localStorage.clear();localStorage.setItem('speedmax.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));},theme);
- await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});await new Promise(r=>setTimeout(r,700));
- if(!['landing','sign-in','avatar-registration','onboarding-tour'].includes(state)){
-   await p.evaluate(()=>{
+ await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});
+ await p.evaluate(({theme,state})=>{
+   localStorage.clear();
+   localStorage.setItem('kona.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));
+   if(!['landing','sign-in','avatar-registration','onboarding-tour'].includes(state)){
      localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026',goal:{label:'Race the version of yourself'}}));
      localStorage.setItem('kona.onboarding.v1','seen');
-   });
-   await p.reload({waitUntil:'domcontentloaded'});await new Promise(r=>setTimeout(r,500));
- }
+   }
+ },{theme,state});
+ await p.reload({waitUntil:'domcontentloaded'});await new Promise(r=>setTimeout(r,700));
  if(state==='sign-in'){
    await p.click('#entrySignIn');await p.waitForSelector('#saveForm');
  }else if(state==='avatar-registration'){
