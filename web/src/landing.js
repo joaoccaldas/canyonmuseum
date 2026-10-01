@@ -881,7 +881,7 @@ heritage.forEach((p, i) => {
 // ------------------------------------------------------------------ the Kona Pier: Kona by Year
 const pier = KY ? buildPier({ scene, data: KY, lettering, canvasTex, M, WYLD, FONT, SERIF, lite, coarse, pickables, obstacles }) : null;
 let konaCenter = null;
-const ensureKonaCenter = () => konaCenter || (konaCenter = buildKonaRaceCenter({ scene, data: KONA_CENTER_DATA, lettering, FONT, SERIF, lite, pickables, obstacles }));
+const ensureKonaCenter = () => konaCenter || (konaCenter = buildKonaRaceCenter({ scene, data: KONA_CENTER_DATA, lettering, FONT, SERIF, lite, pickables, obstacles }), window.__konaCenter=konaCenter, konaCenter);
 // ------------------------------------------------------------------ Lava Night: the Halloween room by the entrance
 const hween = buildHalloween({ scene, canvasTex, lettering, lightPool, basaltTex, FONT, SERIF, lite, coarse, pickables, obstacles, hallWallX: HALL.x0 });
 hall.add(hween.sign);
