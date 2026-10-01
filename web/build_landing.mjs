@@ -17,15 +17,7 @@ const raceselffile = path.join(root, 'app/race-self-stage.js');
 const adminpreviewfile = path.join(root, 'app/admin-asset-preview.js');
 const worldshellfile = path.join(root, 'app/world-shell.html');
 const viewportfile = path.join(root, 'app/viewport.js');
-await build({
-  entryPoints: [path.join(here, 'src/runtime/viewport.js')],
-  bundle: true,
-  format: 'iife',
-  minify: true,
-  outfile: viewportfile,
-  target: 'es2020',
-  legalComments: 'none',
-});
+fs.copyFileSync(path.join(here,'src/runtime/viewport.js'), viewportfile);
 await build({
   entryPoints: [path.join(here, 'src/entry.js')],
   bundle: true,
