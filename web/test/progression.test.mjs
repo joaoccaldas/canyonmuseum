@@ -5,16 +5,17 @@ import { applyEvent, canUnlock, migratePassport, levelFor, COLLECTIBLES, UNLOCKS
 test('xp maps onto named levels and does not skip the table', () => {
   assert.equal(levelFor(0).name, 'Visitor');
   assert.equal(levelFor(40).name, 'Explorer');
-  assert.match(levelFor(40).unlock,/first bike/i);
+  assert.ok(levelFor(40).rewards.some(r=>r.type==='bike'&&r.id==='canyon-cfr-2027'));
   assert.equal(levelFor(2000).name, 'Kahuna');
   assert.equal(levelFor(99999).level, 10);
 });
 
-test('the nine night finds are collectibles with fixed rarity', () => {
-  const night = COLLECTIBLES.filter(c => c.place !== 'shore');
+test('legacy night finds remain intact while V2 relic registry expands collectibles', () => {
+  const night = COLLECTIBLES.filter(c => c.id.startsWith('find:') && c.place !== 'shore');
   assert.equal(night.length, 9);
   assert.equal(new Set(night.map(c => c.id)).size, 9);
-  assert.ok(night.every(c => ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic'].includes(c.rarity)));
+  assert.ok(COLLECTIBLES.filter(c=>c.id.startsWith('relic:')).length>=20);
+  assert.ok(COLLECTIBLES.every(c => ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic'].includes(c.rarity)));
 });
 
 test('a find pays once and a repeat event does not', () => {
