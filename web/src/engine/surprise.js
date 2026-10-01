@@ -23,7 +23,7 @@ export function eligibleSurprises({surface,state=ensureProgression(),admin=false
 }
 export function nextSurprise({surface,state=ensureProgression(),admin=false,storage=globalThis.localStorage,session=globalThis.sessionStorage,date=new Date()}={}){
   const policy=SURPRISE_POLICY||{},visits=readReturnJourney(storage).visits||0;
-  if(visits<2)return null;
+  if(visits<Number(policy.start_visit||4))return null;
   const saved=readSurpriseState(storage);
   if(visits-saved.last_visit<Number(policy.min_visits_between||2))return null;
   try{if(session?.getItem?.(SESSION_KEY)==='1')return null}catch(_){}
@@ -45,6 +45,8 @@ export function collectSurprise(item,{storage=globalThis.localStorage}={}){
   const found=collectibleById(item?.id);if(!found)return{ok:false,reason:'unknown'};
   const before=ensureProgression(storage);
   const result=applyStoredEvent({type:'FIND_DISCOVERED',id:'surprise:'+found.id,subject:found.id},storage);
+  const persisted=ensureProgression(storage);
+  if(!(persisted.discoveries||[]).includes(found.id))return{ok:false,reason:'save-failed'};
   const s=readSurpriseState(storage);if(!s.collected.includes(found.id))s.collected.push(found.id);save(s,storage);
   const row=(result.history||[]).at(-1);
   return{ok:true,item:found,xp:result.xp-before.xp,credits:result.credits-before.credits,event:row||null,state:result};
