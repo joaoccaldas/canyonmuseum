@@ -1,6 +1,7 @@
 // ui/kona-shell.js — mobile-first app shell over the existing 3D museum.
 // Navigation/utility only. The 3D renderer remains the existing proven museum runtime.
 import { applyBrandMode } from '../brand/runtime.js';
+import { readStorage, writeStorage } from '../engine/storage.js';
 import { renderGarageSurface } from './garage.js';
 import { renderHomeSurface } from './home.js';
 import { renderAvatarHome } from './avatar-home.js';
@@ -43,6 +44,32 @@ export function initKonaShell({ profile, settings, enter }) {
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
   const setActive=id=>shell.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===id));
   const leaveRaceSelf=()=>document.body.classList.remove('race-self-open');
+  let tourStarted=false, dismissTour=null;
+  function maybeStartTour(){
+    if(tourStarted) return;
+    try { if(readStorage('onboarding')==='done') return; } catch (_) {}
+    tourStarted=true;
+    const steps=[
+      {target:'[data-home-self]',kicker:'1 · MAKE IT YOURS',title:'Start with your Race Self',copy:'Build the voxel version of you, then connect the bike and gear you actually care about.'},
+      {target:'[data-tab=discover]',kicker:'2 · LEARN KONA',title:'Discover the island',copy:'Use Discover for places, stories and race-week details. The immersive 3D world stays optional until you want it.'},
+      {target:'[data-tab=garage]',kicker:'3 · BUILD THE SETUP',title:'Your gear lives here',copy:'Choose your bike in 3D now. Helmet, shoes, kit and more are being added next.'},
+      {target:'[data-tab=plan]',kicker:'4 · MAKE IT USEFUL',title:'Turn curiosity into a plan',copy:'Plan keeps the practical race-week layer close when you need it.'}
+    ];
+    const card=document.createElement('aside'); card.className='kona-tour'; card.setAttribute('role','dialog'); card.setAttribute('aria-label','KONA quick tour');
+    document.body.append(card);
+    let i=0, active=null;
+    const finish=()=>{active?.classList.remove('tour-target');card.remove();dismissTour=null;try{writeStorage('onboarding','done')}catch(_){}};
+    dismissTour=finish;
+    const paint=()=>{
+      active?.classList.remove('tour-target');
+      const step=steps[i]; active=document.querySelector(step.target); active?.classList.add('tour-target');
+      card.innerHTML='<small>'+step.kicker+'</small><h3>'+step.title+'</h3><p>'+step.copy+'</p><div><button type="button" data-tour-skip>Skip</button><button type="button" data-tour-next>'+(i===steps.length-1?'Start exploring':'Next')+' <span>→</span></button></div>';
+      card.querySelector('[data-tour-skip]').onclick=finish;
+      card.querySelector('[data-tour-next]').onclick=()=>{ if(i===steps.length-1) finish(); else {i+=1;paint();} };
+      active?.scrollIntoView?.({block:'center',behavior:'smooth'});
+    };
+    paint();
+  }
   const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
   shell.querySelector('#konaPanelClose').onclick=close;
 
@@ -58,9 +85,11 @@ export function initKonaShell({ profile, settings, enter }) {
       openDiscover:explore,
       openPlan:plan,
     });
+    requestAnimationFrame(()=>requestAnimationFrame(maybeStartTour));
   }
 
   async function raceSelf(){
+    dismissTour?.();
     title.textContent='Race Self'; eyebrow.textContent='KONA · YOUR SELF';
     panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('home');
     await renderAvatarHome(body,{
@@ -80,6 +109,7 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   async function garage(){
+    dismissTour?.();
     leaveRaceSelf();
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
@@ -87,6 +117,7 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   function plan(){
+    dismissTour?.();
     leaveRaceSelf();
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
     renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
@@ -94,6 +125,7 @@ export function initKonaShell({ profile, settings, enter }) {
   }
 
   async function me(){
+    dismissTour?.();
     leaveRaceSelf();
     title.textContent='Me'; eyebrow.textContent='KONA · PASSPORT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
@@ -107,6 +139,7 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   async function explore(){
+    dismissTour?.();
     leaveRaceSelf();
     title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');

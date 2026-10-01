@@ -12,6 +12,7 @@ import { readStorage, writeStorage } from './engine/storage.js';
 import { BIKES, GOALS, INTENTS, SHOES, decodeShare, emptyQuest, questLabels, questReady, relationshipFor } from './quest.js';
 import { shareRaceIdentity } from './growth/share.js';
 import { renderRacePicker } from './ui/race-cards.js';
+import { renderEntryProductStage } from './ui/visual-primitives.js';
 
 const intro = document.getElementById('intro');
 const physicalPhone = coarse || Math.min(screen.width || 1e5, screen.height || 1e5) <= 600;
@@ -35,6 +36,7 @@ const setEntryMode = mode => {
 };
 const profile = createProfile();
 window.__konaProfile = profile;
+renderEntryProductStage(document.getElementById('entryProductStage'),{profile});
 const settingsUI = initSettings({
   profile, QUALITY, AVATARS,
   activeQuality:()=>profile.get().quality,

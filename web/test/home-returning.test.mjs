@@ -17,3 +17,9 @@ test('first visit still enters the person-first quest',()=>{
 test('returning identity remains private by default in copy',()=>{
   assert.match(source,/stays private on this device/);
 });
+
+test('first visit CTA is KONA-first without requiring an account',()=>{
+  const html=fs.readFileSync(new URL('../landing.template.html',import.meta.url),'utf8');
+  assert.match(html,/Enter KONA/);
+  assert.match(html,/No account required/);
+});

@@ -20,7 +20,7 @@
 })();
 </script>
 <title>KONA · Race the version of yourself</title>
-<meta name="description" content="Build your Kona setup, prepare for race week, and explore the sport. The 3D museum opens when you choose to walk the coast.">
+<meta name="description" content="Build your Race Self, choose your machine in 3D, prepare for race week, and explore Kona through a personal guide and living museum.">
 <meta name="theme-color" content="#f4efe7">
 <link rel="icon" href="assets/pwa/icon-v3.svg" type="image/svg+xml"><link rel="icon" href="assets/pwa/icon-v3-192.png" sizes="192x192" type="image/png">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -31,28 +31,44 @@
 <meta name="apple-mobile-web-app-title" content="KONA">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<!-- Source styles stay external: index.html is a thin generated shell, not a second CSS source of truth. -->
-<link rel="stylesheet" href="web/styles/entry-visual-v2.css">
+<!-- Source styles stay external: index.html is a thin shell. Order is tokens → shared shell → personal surfaces → entry authority. -->
 <!--design-system:start-->
-<link rel="stylesheet" href="web/styles/system.css">
-<link rel="stylesheet" href="web/styles/shell-mobile.css">\n<link rel="stylesheet" href="web/styles/race-self.css">
 <link rel="stylesheet" href="brand/tokens.css">
 <link rel="stylesheet" href="brand/themes.css">
 <link rel="stylesheet" href="brand/artifacts.css">
+<link rel="stylesheet" href="web/styles/system.css">
+<link rel="stylesheet" href="web/styles/shell-mobile.css">
+<link rel="stylesheet" href="web/styles/race-self.css">
+<link rel="stylesheet" href="web/styles/entry-visual-v2.css">
 <!--design-system:end-->
 </head>
 <body>
 <section id="intro" class="kona-entry">
   <div class="entry-media" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" decoding="async" fetchpriority="high"></div>
   <div class="intro-inner">
-    <div class="eyebrow">KONA</div>
-    <h1>Race the version of yourself<br><em>you haven't met yet.</em></h1>
-    <p class="lede">Start with one choice. The deeper world can wait.</p>
-    <p class="kona-count" id="konaCount">Kona race week</p>
-    <div class="cta">
-      <button class="btn primary" id="buildSelf" type="button">Start somewhere</button><button class="btn text" id="entrySignIn" type="button">Sign in</button>
+    <div class="entry-copy">
+      <div class="entry-mast"><span class="eyebrow">KONA</span><span class="entry-event">KAILUA-KONA · RACE WEEK</span></div>
+      <h1>Race the version of yourself<br><em>you haven't met yet.</em></h1>
+      <p class="lede">Build your athlete. Choose your machine. Know Kona before you arrive.</p>
     </div>
-    <div class="entry-utilities"><span>Your setup stays on this device.</span><button class="btn text" id="entryInstall" type="button">Install app</button></div>
+    <div class="entry-product">
+      <div class="entry-product-stage" id="entryProductStage" aria-label="Preview of your Race Self and bike"></div>
+      <div class="entry-product-nav" aria-label="What is inside KONA">
+        <span><b>01</b> Race Self</span><span><b>02</b> Bike Studio</span><span><b>03</b> Explore Kona</span>
+      </div>
+      <div class="entry-race-clock"><small>IRONMAN WORLD CHAMPIONSHIP</small><strong id="konaCount">Race week</strong></div>
+    </div>
+    <div class="entry-actions-wrap">
+      <div class="entry-actions">
+        <button class="btn primary" id="buildSelf" type="button">Enter KONA <span aria-hidden="true">→</span></button>
+        <button class="btn text" id="entrySignIn" type="button">Sign in</button>
+      </div>
+      <div class="entry-trust">
+        <span>No account required</span><span>Private on this device</span>
+        <button class="btn text" id="entryInstall" type="button">Install later</button>
+      </div>
+      <p class="entry-signin-note">Sign in when you want your Race Self across devices.</p>
+    </div>
     <div id="loadstate" aria-live="polite"></div>
   </div>
 </section>

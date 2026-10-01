@@ -16,7 +16,7 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
 .race-self-identity p{font:500 11px/1.35 var(--sans);color:#d4dfe1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* Same interaction grammar as Bike Studio: a contextual dock, not a second app nav. */
-.race-self-controls{position:absolute;z-index:9;left:0;right:0;bottom:0;min-height:min(40dvh,360px);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-content:start;gap:1px;padding:10px var(--brand-mobile-gutter,12px) calc(10px + env(safe-area-inset-bottom));background:var(--brand-surface-glass-strong,#f8f5ef);color:var(--brand-ink,#12181d);border-radius:var(--brand-sheet-radius,24px) var(--brand-sheet-radius,24px) 0 0;border-top:1px solid var(--brand-line);box-shadow:0 -18px 60px #0007}
+.race-self-controls{position:absolute;z-index:9;left:0;right:0;bottom:0;min-height:min(40dvh,360px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-content:start;gap:1px;padding:10px var(--brand-mobile-gutter,12px) calc(10px + env(safe-area-inset-bottom));background:var(--brand-surface-glass-strong,#f8f5ef);color:var(--brand-ink,#12181d);border-radius:var(--brand-sheet-radius,24px) var(--brand-sheet-radius,24px) 0 0;border-top:1px solid var(--brand-line);box-shadow:0 -18px 60px #0007}
 .race-self-controls::before{content:"";grid-column:1/-1;justify-self:center;width:44px;height:5px;border-radius:999px;background:color-mix(in srgb,var(--brand-ink) 18%,transparent);margin:0 0 6px}
 .race-self-controls>a,.race-self-controls>button{min-width:0;min-height:var(--brand-touch,48px);padding:8px 5px;border:0;background:transparent;color:inherit;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;text-align:center}
 .race-self-controls i{display:grid;place-items:center;width:36px;height:36px;border-radius:var(--brand-control-radius,12px);background:color-mix(in srgb,var(--brand-accent-2) 10%,var(--brand-surface));font-style:normal;flex:0 0 auto}
@@ -38,11 +38,16 @@ body.race-self-open .kona-panel-body{padding:0!important;max-width:none!importan
 .avatar-options button{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:8px;min-width:110px;min-height:var(--brand-touch,48px);padding:7px 10px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius,12px);background:var(--brand-surface);color:var(--brand-ink);text-align:left}
 .avatar-options button.on{border-color:var(--brand-ink);box-shadow:inset 0 0 0 1px var(--brand-ink)}
 .avatar-options i{width:28px;height:28px;border-radius:6px;background:var(--slot-color)}.avatar-options span{text-transform:capitalize;font-size:11px}
+.gear-coming-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gear-coming-grid article{min-height:88px;padding:14px;border:1px solid var(--brand-line);border-radius:16px;background:var(--brand-surface)}
+.gear-coming-grid b{display:block;font:400 22px/1 var(--serif)}
+.gear-coming-grid span{display:inline-block;margin-top:10px;padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--brand-accent) 10%,transparent);color:var(--brand-accent);font:800 8px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase}
+.gear-coming-note{margin:12px 2px 4px;color:var(--brand-muted);font-size:11px;line-height:1.5}
 
 @media(max-width:360px){.race-self-controls small{display:none}}
 @media(min-width:760px){
   .race-self-stage-wrap{right:360px;bottom:0;border-right:1px solid #ffffff12}
-  .race-self-controls{left:auto;top:0;width:360px;height:100%;min-height:0;grid-template-columns:1fr;grid-template-rows:auto repeat(4,82px);align-content:center;padding:24px;border-radius:0;background:var(--brand-surface-glass-strong,#f8f5ef)}
+  .race-self-controls{left:auto;top:0;width:360px;height:100%;min-height:0;grid-template-columns:1fr;grid-template-rows:auto repeat(5,82px);align-content:center;padding:24px;border-radius:0;background:var(--brand-surface-glass-strong,#f8f5ef)}
   .race-self-controls::before{display:none}
   .race-self-controls>a,.race-self-controls>button{flex-direction:row;justify-content:flex-start;text-align:left;padding:14px;border-bottom:1px solid var(--brand-line)}
   .race-self-controls b{font-size:14px}.race-self-controls small{font-size:10px;max-width:220px}

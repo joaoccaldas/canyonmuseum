@@ -1,0 +1,48 @@
+name: Full UI audit
+
+on:
+  push:
+    branches:
+      - 'refactor/entry-onboarding-wow'
+    paths:
+      - 'web/**'
+      - 'brand/**'
+      - 'app/**'
+      - '*.html'
+      - '.github/workflows/full-ui-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci --ignore-scripts
+        working-directory: web
+      - name: Build canonical pages
+        run: node tools/build_pages.mjs
+      - name: Start local site
+        run: |
+          python3 -m http.server 8762 --bind 127.0.0.1 >/tmp/full-ui-http.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:8762/ >/dev/null && break; sleep .5; done
+      - name: Capture every primary surface
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: node web/full-ui-audit.mjs http://127.0.0.1:8762/ full-ui-audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-ui-audit
+          path: full-ui-audit/
+          if-no-files-found: error
+          retention-days: 14
