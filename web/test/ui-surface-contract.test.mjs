@@ -37,13 +37,14 @@ test('Garage and Me resolve Product presentation from the shared public projecti
   assert.doesNotMatch(me,/BIKES|SHOES|questLabels/);
 });
 
-test('Home is lightweight and Race Self is explicit depth, not a second app menu',()=>{
+test('Home is lightweight and Race Self is contextual personal depth, not a second app menu',()=>{
   assert.match(home,/data-home-self/);
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
-  for(const tile of ['Customize','Bike Studio','3D World','Collection','Games']) assert.match(avatarHome,new RegExp(tile));
-  for(const duplicate of ['Garage','Discover','Races']) assert.doesNotMatch(avatarHome,new RegExp("'>"+duplicate+"<"));
-  assert.match(avatarHome,/hub-launcher/);
+  for(const control of ['Customize','Bike','Races','Settings']) assert.match(avatarHome,new RegExp(control));
+  for(const duplicate of ['3D World','Collection','Games','Garage','Discover']) assert.doesNotMatch(avatarHome,new RegExp(duplicate));
+  assert.doesNotMatch(avatarHome,/hub-launcher/);
+  assert.match(avatarHome,/race-self-controls/);
   assert.match(avatarHome,/app\/race-self-stage\.js/);
   assert.doesNotMatch(avatarHome,/app\/hall\.js|museum-data\.js|__museum/);
   assert.match(raceCards,/Search IRONMAN races/);
