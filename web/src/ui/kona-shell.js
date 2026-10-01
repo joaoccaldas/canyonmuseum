@@ -74,7 +74,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     {target:'[data-home-self]',kicker:'01 · MAKE IT YOURS',title:'Start with your athlete',copy:'Your Race Self is the anchor. Change the character, trisuit and attitude whenever you want.'},
     {target:'[data-home-discover]',kicker:'02 · GET CURIOUS',title:'Kona rewards wandering',copy:'Discover surfaces places, stories and small race-week details without making you enter the 3D world first.'},
     {target:'[data-home-garage]',kicker:'03 · BUILD THE MACHINE',title:'Your setup lives here',copy:'The Garage remembers what is yours. Bike Studio is where you inspect, paint and choose in 3D.'},
-    {target:'[data-user-studio]',kicker:'04 · YOUR UNIVERSE',title:'Me opens User Studio',copy:'Avatar, bike, races, collection, progress and settings live here. The wider world stays in the main navigation.'}
+    {target:'[data-tab="me"]',kicker:'04 · YOUR UNIVERSE',title:'Me opens User Studio',copy:'Avatar, bike, races, collection, progress and settings live here. The wider world stays in the main navigation.'}
   ];
   function startTour({force=false}={}){
     if(tourNode)return;
