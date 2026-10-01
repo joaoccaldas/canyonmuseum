@@ -316,6 +316,12 @@
           },
           "label": "Canyon archive bikes",
           "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "nike-running",
+          "label": "Nike Running Lab",
+          "status": "live"
         }
       ]
     },
@@ -427,6 +433,24 @@
           },
           "label": "Historic bike rebuilds",
           "status": "live"
+        },
+        {
+          "type": "room-group",
+          "id": "prefix:wing-against-the-clock",
+          "selector": {
+            "prefix": "wing-against-the-clock"
+          },
+          "label": "Against the Clock wing",
+          "status": "live"
+        },
+        {
+          "type": "room-group",
+          "id": "prefix:atlas-against-the-clock",
+          "selector": {
+            "prefix": "atlas-against-the-clock"
+          },
+          "label": "Against the Clock rooms",
+          "status": "live"
         }
       ]
     },
@@ -463,6 +487,24 @@
             "origin": "type-study"
           },
           "label": "Experimental bike type studies",
+          "status": "live"
+        },
+        {
+          "type": "room-group",
+          "id": "prefix:wing-kona-light",
+          "selector": {
+            "prefix": "wing-kona-light"
+          },
+          "label": "Kona Light wing",
+          "status": "live"
+        },
+        {
+          "type": "room-group",
+          "id": "prefix:atlas-kona-light",
+          "selector": {
+            "prefix": "atlas-kona-light"
+          },
+          "label": "Kona Light rooms",
           "status": "live"
         }
       ]
