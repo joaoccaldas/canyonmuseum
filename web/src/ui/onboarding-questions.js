@@ -42,8 +42,12 @@ const QUESTIONS=[
   },
 ];
 
-const load=()=>{try{return JSON.parse(readStorage('entryIntent')||'null')||{schema:1,answers:{}}}catch(_){return{schema:1,answers:{}}};
+const load=()=>{
+  try{return JSON.parse(readStorage('entryIntent')||'null')||{schema:1,answers:{}}}
+  catch(_){return{schema:1,answers:{}}}
+};
 const save=data=>writeStorage('entryIntent',JSON.stringify(data));
+const markCardsSeen=()=>writeStorage('onboardingCards','seen');
 
 export function renderOnboardingQuestions(host,{onDone,onSkip}={}){
   let index=0;
@@ -57,7 +61,7 @@ export function renderOnboardingQuestions(host,{onDone,onSkip}={}){
       '<div class="onboarding-progress"><span style="width:'+progress+'%"></span></div>'+
       '<div class="onboarding-question-copy"><p class="eyebrow">'+esc(q.kicker)+'</p><h2>'+esc(q.title)+'</h2><p>'+esc(q.note)+'</p></div>'+
       '<div class="onboarding-answer-grid">'+q.answers.map(([id,label])=>'<button type="button" data-onboarding-answer="'+esc(id)+'">'+esc(label)+'</button>').join('')+'</div>'+
-      '<div class="onboarding-reward"><small>YOUR COMPLETELY SERIOUS REWARD METER</small><b>+'+(15)+' XP</b><span>'+(next?'Next: Level '+next.level+' · '+next.name:'You have become suspiciously powerful.')+'</span></div>'+
+      '<div class="onboarding-reward"><small>YOUR COMPLETELY SERIOUS REWARD METER</small><b>+15 XP</b><span>'+(next?'Next: Level '+next.level+' · '+next.name:'You have become suspiciously powerful.')+'</span></div>'+
       '<div class="onboarding-actions"><button type="button" class="btn-text" data-onboarding-skip>Skip the interrogation</button><span>'+(index+1)+' / '+QUESTIONS.length+'</span></div>'+
     '</section>';
     host.querySelectorAll('[data-onboarding-answer]').forEach(btn=>btn.onclick=()=>{
@@ -66,9 +70,11 @@ export function renderOnboardingQuestions(host,{onDone,onSkip}={}){
       save(data);
       applyStoredEvent({type:'ONBOARDING_ANSWER',id:'onboarding:'+q.id,subject:q.id});
       if(index<QUESTIONS.length-1){index+=1;paint();return;}
-      data.completed=true;save(data);onDone?.(data);
+      data.completed=true;save(data);markCardsSeen();onDone?.(data);
     });
-    host.querySelector('[data-onboarding-skip]').onclick=()=>{data.skipped=true;data.updated_at=new Date().toISOString();save(data);onSkip?.(data);};
+    host.querySelector('[data-onboarding-skip]').onclick=()=>{
+      data.skipped=true;data.updated_at=new Date().toISOString();save(data);markCardsSeen();onSkip?.(data);
+    };
   };
   paint();
 }
