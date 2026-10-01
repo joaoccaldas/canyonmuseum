@@ -203,7 +203,9 @@ export function syncIdentityFromSetup(setup, products, storage = globalThis.loca
     }
 
     const projectedSetup = Object.fromEntries(
-      Object.entries(graph.identity.setup || {}).map(([field,id]) => [field, id ? (chosenByProjectedId.get(id) || id) : null])
+      Object.entries(graph.identity.setup || {})
+        .filter(([,id]) => id != null)
+        .map(([field,id]) => [field, chosenByProjectedId.get(id) || id])
     );
     const identity = {
       ...graph.identity,
