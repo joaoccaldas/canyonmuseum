@@ -6,8 +6,8 @@ import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
 import {
-  AVATAR_ARCHETYPES, AVATAR_ITEMS, AVATAR_SLOTS,
-  avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype,
+  AVATAR_ARCHETYPES, AVATAR_PRESENTATIONS, AVATAR_ITEMS, AVATAR_SLOTS,
+  avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype, setAvatarPresentation,
 } from '../engine/avatar.js';
 import { renderRacePicker } from './race-cards.js';
 import { renderPassportSurface } from './me.js';
@@ -131,6 +131,9 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     const focusValue=focusAttr?active.getAttribute(focusAttr):null;
     const scrollTop=drawer.scrollTop;
     avatarStyle=normaliseAvatarStyle(profile?.get?.().avatarStyle);
+    const presentations=AVATAR_PRESENTATIONS.map(a=>
+      '<button type="button" class="avatar-archetype '+(avatarStyle.presentation===a.id?'on':'')+'" data-avatar-presentation="'+a.id+'"><b>'+esc(a.label)+'</b><span>'+(a.id==='prefer-not'?'No explanation required.':'Every style option stays open.')+'</span></button>'
+    ).join('');
     const archetypes=AVATAR_ARCHETYPES.map(a=>
       '<button type="button" class="avatar-archetype '+(avatarStyle.archetype===a.id?'on':'')+'" data-avatar-archetype="'+a.id+'">'+
       '<b>'+esc(a.label)+'</b><span>'+esc(a.note)+'</span></button>'
@@ -156,6 +159,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     drawerKicker.textContent='AVATAR STUDIO';drawerTitle.textContent='Build your character';
     drawerBody.innerHTML=
       '<div class="avatar-builder">'+
+        '<section class="avatar-archetypes"><small>PRESENTATION</small><div class="avatar-archetype-grid">'+presentations+'</div></section>'+
         '<section class="avatar-archetypes"><small>CHARACTER</small><div class="avatar-archetype-grid">'+archetypes+'</div></section>'+
         rows+
         '<section class="avatar-accent"><small>ACCENT</small><div class="hub-swatches">'+AVATARS.map(c=>'<button type="button" data-avatar="'+c+'" style="--swatch:'+c+'" aria-label="Avatar accent '+c+'"'+(c===profile?.get?.().avatar?' class="on"':'')+'></button>').join('')+'</div></section>'+
@@ -168,6 +172,11 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
       drawer.scrollTop=scrollTop;
     }
 
+    drawerBody.querySelectorAll('[data-avatar-presentation]').forEach(btn=>btn.addEventListener('click',()=>{
+      commitStyle(setAvatarPresentation(avatarStyle,btn.dataset.avatarPresentation));
+      profile?.set?.({gender:btn.dataset.avatarPresentation,avatarStyle});
+      showSelf();
+    }));
     drawerBody.querySelectorAll('[data-avatar-archetype]').forEach(btn=>btn.addEventListener('click',()=>{
       commitStyle(setAvatarArchetype(avatarStyle,btn.dataset.avatarArchetype));
       showSelf();
