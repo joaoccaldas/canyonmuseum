@@ -37,7 +37,7 @@ function card(a){
 export async function renderAdminAssets(root){
  const user=await currentUser().catch(()=>null);
  if(!isAdminUser(user)){
-   root.innerHTML='<section class="asset-portfolio"><div class="asset-hero"><small>ADMIN</small><h3>Not for this account.</h3><p>The Asset Portfolio is visible only to KONA administrators.</p></div></section>';
+   root.innerHTML='<section class="asset-portfolio"><div class="asset-hero"><small>ADMIN</small><h3>Not for this account.</h3><p>The Asset Library is visible only to KONA administrators.</p></div></section>';
    return;
  }
  root.innerHTML='<section class="asset-portfolio"><div class="asset-hero"><small>KONA · ADMIN</small><h3>Asset Portfolio.</h3><p>Every catalog product, shoe, bike, artwork, sculpture, decoration and installation currently generated from the museum registries.</p><div class="asset-hand">Nothing hiding in a mystery folder.</div></div><p class="kona-source-note" data-asset-status>Reading the world…</p></section>';
