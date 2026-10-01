@@ -2,7 +2,7 @@
   "name": "speedmax-museum-native",
   "private": true,
   "version": "1.0.0",
-  "description": "Android shell for the Speedmax Museum (Capacitor). Bundles the museum so it runs from the phone, offline, at full frame rate.",
+  "description": "Android shell for KONA (Capacitor). Bundles the app and optional museum experience for offline, full-frame-rate use.",
   "type": "module",
   "scripts": {
     "build:web": "node scripts/build-www.mjs",
