@@ -159,6 +159,7 @@ body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:
   body.race-self-open .kona-panel-head,
   body.race-self-open .kona-user-menu{display:none}
   body.race-self-open .kona-bottom-nav{display:grid}
+  .studio-home{display:none}
   .race-self-experience{
     height:auto;min-height:100dvh;
     grid-template-rows:64px minmax(340px,54dvh) auto auto;
