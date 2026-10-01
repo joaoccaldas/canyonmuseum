@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Visual Evidence Standard V2
 
 Every primary release is reviewed from generated screenshots and measured DOM/network evidence.

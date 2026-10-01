@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](docs/launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Canyon 3D Museum: Codebase Architecture Map, Audit & Reusable Template Blueprint
 
 ## 1. Executive Summary & Live Service Discovery

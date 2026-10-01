@@ -4,15 +4,16 @@ const base=process.argv[2]||'http://127.0.0.1:8754/';
 const out=process.argv[3]||'visual-evidence-v2';fs.mkdirSync(out,{recursive:true});
 const chrome=process.env.CHROME_PATH;if(!chrome)throw new Error('CHROME_PATH required');
 const browser=await puppeteer.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader']});
-const viewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'landscape-phone',width:844,height:390},{id:'desktop',width:1440,height:900}];
-const states=['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','bike-studio'];const report=[];
-// deterministic storage per capture: seed after origin exists, then reload exactly once.
+const allViewports=[{id:'320',width:320,height:720},{id:'360',width:360,height:780},{id:'390',width:390,height:844},{id:'430',width:430,height:932},{id:'landscape-phone',width:844,height:390},{id:'tablet',width:768,height:1024},{id:'desktop',width:1440,height:900}];
+const allStates=['landing','sign-in','avatar-registration','onboarding-tour','home','user-studio','avatar-editor','discover','garage','plan','progress','feed','travel','museum-return-home','bike-studio'];const report=[];
+const selected=(values,key)=>{const filter=process.env[key]?.split(',');return filter?values.filter(value=>filter.includes(value.id||value)):values;};
+const viewports=selected(allViewports,'VISUAL_VIEWPORTS'),states=selected(allStates,'VISUAL_STATES'),themes=selected(['light','dark','random'],'VISUAL_THEMES');
+// Isolated storage per capture, seeded before the app starts.
 async function capture(vp,state,theme){
- const p=await browser.newPage();p.setDefaultNavigationTimeout(180000);const requests=[];const errors=[];
+ const context=await browser.createBrowserContext();const p=await context.newPage();p.setDefaultNavigationTimeout(180000);const requests=[];const errors=[];
  p.on('request',r=>requests.push(r.url()));p.on('pageerror',e=>errors.push(e.message));
  await p.setViewport({width:vp.width,height:vp.height,deviceScaleFactor:vp.id==='desktop'?1:2,isMobile:vp.id!=='desktop',hasTouch:vp.id!=='desktop'});
- await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});
- await p.evaluate(({theme,state})=>{
+ await p.evaluateOnNewDocument(({theme,state})=>{
    localStorage.clear();
    localStorage.setItem('kona.profile.v1',JSON.stringify({v:1,appearance:theme,quality:'low',motion:'reduced',travel:'teleport'}));
    if(!['landing','sign-in','avatar-registration','onboarding-tour'].includes(state)){
@@ -20,7 +21,7 @@ async function capture(vp,state,theme){
      localStorage.setItem('kona.onboarding.v1','seen');
    }
  },{theme,state});
- await p.reload({waitUntil:'domcontentloaded'});await new Promise(r=>setTimeout(r,700));
+ await p.goto(base,{waitUntil:'domcontentloaded',timeout:180000});await new Promise(r=>setTimeout(r,700));
  if(state==='sign-in'){
    await p.click('#entrySignIn');await p.waitForSelector('#saveForm');
  }else if(state==='avatar-registration'){
@@ -63,7 +64,7 @@ async function capture(vp,state,theme){
  await p.evaluate(()=>document.fonts.ready);
  await new Promise(r=>setTimeout(r,250));
  const metrics=await p.evaluate(()=>{
-   const visible=el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&+s.opacity>.02&&r.width>0&&r.height>0};
+   const visible=el=>{if(!el)return false;const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&+s.opacity>.02&&r.width>0&&r.height>0};
    const els=[...document.querySelectorAll('button,a,[role=button]')].filter(visible);
    const primary=els.filter(x=>x.matches('.primary,[data-primary=true]'));
    const small=els.map(x=>{const r=x.getBoundingClientRect();return{tag:x.tagName,text:(x.textContent||'').trim().slice(0,50),w:r.width,h:r.height};}).filter(x=>x.w<48||x.h<48);
@@ -78,24 +79,28 @@ async function capture(vp,state,theme){
    const enter=document.getElementById('buildSelf'),product=document.querySelector('#intro.kona-entry .entry-product');
    const er=enter?.getBoundingClientRect?.(),pr=product?.getBoundingClientRect?.();
    const rr=reg?.getBoundingClientRect?.(),rc=regCopy?.getBoundingClientRect?.(),rp=regPreview?.getBoundingClientRect?.();
-   return{landing:er?{ctaTop:er.top,ctaBottom:er.bottom,ctaW:er.width,productTop:pr?.top??null,viewportH:innerHeight}:null,registration:rr&&rc&&rp?{w:rr.width,copyW:rc.width,previewW:rp.width,overlap:Math.max(0,Math.min(rc.right,rp.right)-Math.max(rc.left,rp.left))}:null,stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText};
+   return{landing:er?{ctaTop:er.top,ctaBottom:er.bottom,ctaW:er.width,productTop:pr?.top??null,productOverlap:pr?Math.max(0,Math.min(er.right,pr.right)-Math.max(er.left,pr.left))*Math.max(0,Math.min(er.bottom,pr.bottom)-Math.max(er.top,pr.top)):0,viewportH:innerHeight}:null,registration:rr&&rc&&rp?{w:rr.width,copyW:rc.width,previewW:rp.width,overlap:Math.max(0,Math.min(rc.right,rp.right)-Math.max(rc.left,rp.left))}:null,stage:sr?{x:sr.x,y:sr.y,w:sr.width,h:sr.height}:null,museumStylesEnabled:museumLinks.filter(x=>!x.disabled).length,companionHeroPosition:companionHero?getComputedStyle(companionHero).position:null,scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,primaryActions:primary.length,visibleActions:els.length,smallTargets:small.slice(0,20),title:document.title,lang:document.documentElement.lang,userShortcutVisible:visible(document.querySelector('.kona-user-menu')),signInVisible:visible(document.querySelector('#entrySignIn')),introVisible:intro?visible(intro):false,navVisible:nav?visible(nav):false,activeNav,visibleText};
  });
  const heavy=requests.filter(u=>/app\/hall\.js|three(?:\.module)?\.js|\.glb(?:\?|$)|\.hdr(?:\?|$)/i.test(u));
  const personal3D=requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
  const name=`${vp.id}-${theme}-${state}`;await p.screenshot({path:path.join(out,name+'.png'),fullPage:false});
  report.push({viewport:vp.id,theme,state,metrics,heavyRequests:heavy,personal3DRequests:personal3D,errors});
- await p.close();
+ await context.close();
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
  console.log('Captured '+name);
 }
-for(const vp of viewports)for(const theme of ['light','dark','random'])for(const state of states)await capture(vp,state,theme);
+const jobs=viewports.flatMap(vp=>themes.flatMap(theme=>states.map(state=>()=>capture(vp,state,theme))));
+// Independent browser contexts prevent storage and service-worker leakage between captures.
+for(let i=0;i<jobs.length;i+=3)await Promise.all(jobs.slice(i,i+3).map(run=>run()));
 await browser.close();
 fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
 const violations=[];
 for(const r of report){
+ if(['landing','sign-in','avatar-registration'].includes(r.state)&&r.metrics.userShortcutVisible)violations.push(`${r.viewport}/${r.theme}/${r.state}: Studio shortcut covers entry`);
+ if(r.state==='landing'&&!r.metrics.signInVisible)violations.push(`${r.viewport}/${r.theme}: Sign in unavailable`);
  if(r.metrics.overflowX)violations.push(`${r.viewport}/${r.theme}/${r.state}: horizontal overflow`);
  if(r.state==='landing'&&r.heavyRequests.length)violations.push(`${r.viewport}/${r.theme}: heavy 3D requested on landing`);
- if(r.state==='landing'&&r.viewport!=='desktop'&&r.metrics.landing){const l=r.metrics.landing;if(l.ctaTop<0||l.ctaBottom>l.viewportH)violations.push(`${r.viewport}/${r.theme}: Enter KONA is not fully visible in first viewport`);if(l.ctaW<160)violations.push(`${r.viewport}/${r.theme}: Enter KONA is too narrow`);if(l.productTop!=null&&l.productTop<l.ctaBottom)violations.push(`${r.viewport}/${r.theme}: product teaser overlaps primary decision`);}
+ if(r.state==='landing'&&r.viewport!=='desktop'&&r.metrics.landing){const l=r.metrics.landing;if(l.ctaTop<0||l.ctaBottom>l.viewportH)violations.push(`${r.viewport}/${r.theme}: Enter KONA is not fully visible in first viewport`);if(l.ctaW<160)violations.push(`${r.viewport}/${r.theme}: Enter KONA is too narrow`);if(l.productOverlap>1)violations.push(`${r.viewport}/${r.theme}: product teaser overlaps primary decision`);}
  if(r.errors.length)violations.push(`${r.viewport}/${r.theme}/${r.state}: JS errors ${r.errors.join('; ')}`);
  if(!['landing','sign-in','avatar-registration'].includes(r.state)&&r.metrics.introVisible)violations.push(`${r.viewport}/${r.theme}/${r.state}: landing intro still visible after state transition`);
  if(r.state==='sign-in'&&!/Sign in or create your account/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: sign-in form missing`);

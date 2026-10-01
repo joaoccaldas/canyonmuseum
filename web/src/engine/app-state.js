@@ -39,7 +39,7 @@ export function exportAppState(storage = globalThis.localStorage) {
   const entries = Object.fromEntries(listAppState(storage).filter(({key})=>key!==storageKey('session')).map(({ key, value }) => [key, value]));
   return JSON.stringify({
     schema_version: APP_STATE_SCHEMA_VERSION,
-    scope: 'canyonmuseum-local-state',
+    scope: 'kona-local-state',
     exported_at: new Date().toISOString(),
     entries,
   }, null, 2);

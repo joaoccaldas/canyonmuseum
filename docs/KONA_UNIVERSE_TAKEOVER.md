@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Kona Universe Takeover Plan
 
 ## Non-negotiable release contract
@@ -25,7 +27,7 @@ Every change follows the same evidence loop:
 - **0.70-0.84**: usable branch, not merge-ready.
 - **<0.70**: exploratory only.
 
-## Part A — Canyon Museum
+## Part A — KONA Museum
 
 ### Preserve
 - Blender-authored bike and art assets.

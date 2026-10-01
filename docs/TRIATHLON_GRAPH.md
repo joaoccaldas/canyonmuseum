@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Triathlon Knowledge Graph V0
 
 This graph is the shared semantic layer beneath Museum, Kona, Race Setup, science stories, MCP, partner embeds and future commerce.

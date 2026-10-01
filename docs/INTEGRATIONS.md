@@ -1,6 +1,8 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Integration Architecture V0
 
-Purpose: make Canyon Museum / Caldas Studio integration-ready from day one without coupling the product to any one transport, vendor, agent framework, or UI.
+Purpose: make KONA Museum / KONA integration-ready from day one without coupling the product to any one transport, vendor, agent framework, or UI.
 
 ## Principle
 
@@ -82,11 +84,11 @@ must go through authenticated adapters with explicit authorization, schema valid
 MCP is an adapter, not the domain model.
 
 Suggested V0 MCP resources:
-- `caldas://products/{id}`
-- `caldas://events/{id}`
-- `caldas://worlds/{id}`
-- `caldas://collections/{id}`
-- `caldas://places/{id}`
+- `kona://products/{id}`
+- `kona://events/{id}`
+- `kona://worlds/{id}`
+- `kona://collections/{id}`
+- `kona://places/{id}`
 
 Suggested V0 read tools:
 - `list_products(type?, brand?, event?)`

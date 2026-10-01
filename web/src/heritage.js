@@ -13,7 +13,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 // ------------------------------------------------------------------ text
-$('#eyebrow').textContent = `Canyon museum · ${B.era} · Exhibit ${B.exhibit}`;
+$('#eyebrow').textContent = `KONA museum · ${B.era} · Exhibit ${B.exhibit}`;
 $('#name').innerHTML = `${esc(B.family)}<br><span>${esc(B.name)}</span>`;
 $('#lede').textContent = B.lede;
 const stats = (B.stats || []).map(s => `<div><b>${esc(s.value)}</b><small>${esc(s.label)}</small></div>`).join('');

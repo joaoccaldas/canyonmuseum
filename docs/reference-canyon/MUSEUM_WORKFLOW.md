@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Canyon triathlon museum asset workflow
 
 This repository contains one reconstructed exhibit: **Speedmax CFR AXS, MY2027, size M, Pro White**. The manufacturer uses MY2027 in image names and published launch material in 2026. There are no finished historical exhibits yet. Do not relabel this geometry to represent a different generation.

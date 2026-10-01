@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Commerce and Referral Roadmap
 
 The Event OS should monetize useful intent, not interrupt users with generic advertising.

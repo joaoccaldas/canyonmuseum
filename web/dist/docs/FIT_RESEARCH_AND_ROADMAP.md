@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Fitting research, gaps and execution plan
 
 Research checked 27 September 2026. This covers the major method families and representative systems, not every commercial fitter or proprietary algorithm. Vendor descriptions establish product capabilities, not independent proof of effectiveness. This is an independent Canyon study, not an official Canyon/Retül/Zipp product.

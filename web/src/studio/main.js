@@ -17,6 +17,7 @@ import { captureView, shareImage } from '../engine/share.js';
 import { initSettings } from '../ui/settings.js';
 import { SCENES, encodeLook, decodeLook, productsFor } from './model.js';
 import { createRaceSetupStore, encodeRaceSetup, decodeRaceSetup, completedSlots, setSetupSlot, RACE_SETUP_EVENT } from './race-setup.js';
+import { readStorage, writeStorage } from '../engine/storage.js';
 import { syncIdentityFromSetup } from '../engine/identity.js';
 import { renderRaceBadges } from '../ui/race-cards.js';
 
@@ -31,7 +32,6 @@ const sharedSetup = decodeRaceSetup(q.get('setup'), CAT.products);
 const raceSetupStore = createRaceSetupStore();
 const event = EVENTS.find(e => e.id === (q.get('event') || sharedSetup?.event_id)) || null;
 let raceSetup = sharedSetup || raceSetupStore.load(CAT.products);
-syncIdentityFromSetup(raceSetup, CAT.products);
 
 // ---------------------------------------------------------------- renderer, camera, stage
 const canvas = $('stage');
@@ -79,7 +79,7 @@ function setScene(id, film) {
 
 // ---------------------------------------------------------------- products, looks, loading
 const cache = new Map();
-let current = null, look = null, loadToken = 0;
+let current = null, look = null, loadToken = 0, loadingProduct = false, loadedSelection = null;
 const loadModel = url => {
   if (!cache.has(url)) cache.set(url, loader.loadAsync(url).then(g => g.scene).catch(error=>{cache.delete(url);throw error;}));
   const pending=cache.get(url);cache.delete(url);cache.set(url,pending);return pending;
@@ -93,11 +93,11 @@ function trimModelCache(){
   }
 }
 async function show(product, lookIn) {
-  const token = ++loadToken; $('loading').hidden = false;
+  const token = ++loadToken; loadingProduct = true; loadedSelection = null; $('loading').hidden = false;
   $('heroEyebrow').textContent = [product.year || product.years || product.era, product.brand].filter(Boolean).join(' · ');
   $('heroTitle').textContent = product.name; $('heroSub').textContent = product.origin === 'studio-design' ? 'Studio design · only in the studio' : product.museum ? 'Also in the museum' : '';
   try {
-    const proto = await loadModel(product.glb); if (token !== loadToken) return;
+    const proto = await loadModel(product.glb); if (token !== loadToken) return false;
     const bike = proto.clone(true);
     bike.traverse(o => { if (o.isMesh) { o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone(); o.castShadow = true; o.receiveShadow = true; if (o.userData?.optional_accessory) o.visible = false; } });
     const b = new THREE.Box3().setFromObject(bike), c = b.getCenter(new THREE.Vector3()), size = b.getSize(new THREE.Vector3());
@@ -110,10 +110,14 @@ async function show(product, lookIn) {
     applyLook(lookIn || defaultLook(product));
     $('favBtn').setAttribute('aria-pressed', profile.get().favourites.includes(product.id)); $('favBtn').textContent = profile.get().favourites.includes(product.id) ? '♥' : '♡';
     drawPanel();resize();trimModelCache();
+    loadedSelection = product.id;
+    return true;
   } catch (e) {
+    if (token !== loadToken) return false;
     console.warn('studio load', product.id, e);
     toast(navigator.onLine === false ? 'You are offline: this bike has not been cached yet' : 'Could not load this bike · check your connection');
-  } finally { if (token === loadToken) $('loading').hidden = true; }
+    return false;
+  } finally { if (token === loadToken) { loadingProduct = false; $('loading').hidden = true; } }
 }
 const defaultLook = p => ({ skin: p.skins?.[0] || null, finish: 'gloss', custom: null });
 function skinFor(l) {
@@ -126,7 +130,7 @@ function applyLook(l) {
   const sk = skinFor(l);
   if (sk.frame || sk.dye) applySkin(current.paint, sk);
   const film = l.theme ? FILMS.find(f => f.id === l.theme) : null;
-  setScene(film ? 'film' : (q.get('scene') || sceneId), film);
+  setScene(film ? 'film' : sceneId, film);
   writeUrl();
 }
 function writeUrl() {
@@ -156,7 +160,7 @@ function drawPanel() {
     P.append(h('p', { class: 'count' }, `${list.length} of ${CAT.products.length} · ${CAT.studio_only} only in the studio`));
     P.append(h('div', { class: 'grid' }, list.map(p => {
       const sw = p.skins?.[0]?.frame || '#8e979d';
-      return h('button', { type: 'button', class: 'prod', 'aria-current': String(current?.product === p), onclick: async () => { await show(p); saveCurrentToSetup({stay:true,announce:true}); if (innerWidth < 900) dock(true); } },
+      return h('button', { type: 'button', class: 'prod', 'aria-current': String(current?.product === p), onclick: async () => { if (await show(p)) saveCurrentToSetup({stay:true,announce:true}); if (innerWidth < 900) dock(true); } },
         h('i', { class: 'sw', style: `background:${sw}` }), h('small', {}, [p.year || p.years || p.era, p.brand].filter(Boolean).join(' · ')), h('b', {}, p.name),
         p.origin === 'studio-design' ? h('span', { class: 'tag' }, 'Studio only') : event?.featured?.includes(p.id) ? h('span', { class: 'tag' }, event.name) : null);
     })));
@@ -213,10 +217,14 @@ function setupShareUrl() {
   return u.href;
 }
 function saveCurrentToSetup({stay=false,announce=false}={}) {
-  if (!current) return;
+  if (!current || loadingProduct) { toast('Wait for your bike to finish loading'); return; }
+  if (loadedSelection !== current.product.id) { toast('Choose a bike that loaded successfully before saving'); return; }
+  const previousSetup = readStorage('raceSetup');
   raceSetup = setSetupSlot(raceSetup, 'bike', current.product, { look:encodeLook(look), scene:sceneId }, CAT.products);
-  raceSetup = raceSetupStore.save(raceSetup, CAT.products);
-  syncIdentityFromSetup(raceSetup, CAT.products);
+  try { raceSetup = raceSetupStore.save(raceSetup, CAT.products); }
+  catch (error) { toast(error.message); return; }
+  const saved = syncIdentityFromSetup(raceSetup, CAT.products);
+  if(saved.persisted === false){writeStorage('raceSetup',previousSetup);toast('Your setup could not be saved. Previous progress was kept.');return;}
   toast(announce ? 'Bike selected for your Race Self' : 'Saved to My Kona Setup');
   if (!stay) { tab = 'setup'; dock(false); drawPanel(); }
 }
@@ -224,7 +232,7 @@ async function shareRaceSetup() {
   if (!raceSetup?.slots?.bike) { toast('Add a bike to your setup first'); return; }
   const product = CAT.products.find(p => p.id === raceSetup.slots.bike.product_id);
   if (!product) return;
-  const blob = await captureView(renderer, scene, camera, { title: 'My Kona 2026 Setup', place: product.name, site: 'Speedmax Museum' });
+  const blob = await captureView(renderer, scene, camera, { title: 'My Kona 2026 Setup', place: product.name, site: 'KONA' });
   const r = await shareImage(blob, {
     title: 'My Kona 2026 Setup',
     text: `My Kona 2026 Setup · ${product.name}`,
@@ -295,8 +303,8 @@ $('shareBtn').onclick = async () => {
   if (!current) return;
   const film = look?.theme ? FILMS.find(f => f.id === look.theme) : null;
   const title = `${current.product.name}${film ? ` · ${film.name}` : look?.custom ? ' · my livery' : ''}`;
-  const blob = await captureView(renderer, scene, camera, { title, place: event ? `${event.name} · Studio` : 'Studio', site: 'Speedmax Museum' });
-  const r = await shareImage(blob, { title, text: event?.share_line ? `${event.share_line}: ${title}` : `${title} · built in the Speedmax Museum studio`, url: location.href, filename: `studio-${current.product.id}.jpg` });
+  const blob = await captureView(renderer, scene, camera, { title, place: event ? `${event.name} · Studio` : 'Studio', site: 'KONA' });
+  const r = await shareImage(blob, { title, text: event?.share_line ? `${event.share_line}: ${title}` : `${title} · built in the KONA studio`, url: location.href, filename: `studio-${current.product.id}.jpg` });
   toast({ shared: 'Shared', link: 'Link shared', saved: 'Image saved', cancelled: 'Not shared' }[r]);
 };
 const settingsUI = initSettings({ profile, QUALITY, AVATARS, activeQuality: () => profile.get().quality,

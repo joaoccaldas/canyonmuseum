@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Product Representation Contract V1
 
 A Product is one canonical object. Rendering representations are replaceable views of it.

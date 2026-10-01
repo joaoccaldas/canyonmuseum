@@ -1,4 +1,4 @@
-name: Speedmax Museum Android App
+name: KONA Android App
 
 # Builds the Android app (Capacitor shell bundling the museum), boots it on an emulator as a
 # smoke test, then publishes the APK to the website at downloads/SpeedmaxMuseum.apk together
@@ -113,9 +113,9 @@ jobs:
           disable-animations: true
           script: |
             adb install -r SpeedmaxMuseum.apk
-            adb shell am start -W -n com.caldasstudio.speedmaxmuseum/.MainActivity
+            adb shell am start -W -n app.kona.mobile/.MainActivity
             sleep 25
-            adb shell pidof com.caldasstudio.speedmaxmuseum
+            adb shell pidof app.kona.mobile
             adb exec-out screencap -p > launch.png
             adb logcat -d | grep -iE "AndroidRuntime|FATAL|Capacitor|chromium" | tail -80 > logcat.txt || true
             ! grep -q "FATAL EXCEPTION" logcat.txt

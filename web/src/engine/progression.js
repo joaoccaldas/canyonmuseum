@@ -147,6 +147,7 @@ export function applyEvent(state, event) {
   if (event.type === 'FIND_DISCOVERED') {
     const item = collectibleById(event.subject);
     if (!item) return { state: base, granted: null, error: 'unknown-collectible' };
+    if (base.discoveries.includes(item.id)) return { state: base, granted: null, duplicate: true };
     const pay = RARITY[item.rarity] || RARITY.common;
     xp = pay.xp;
     credits = pay.credits;

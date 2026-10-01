@@ -1,34 +1,9 @@
-# Vercel go-live gate
+# Static hosting release gate
 
-Release candidate: PR #132 / `refactor/rc8-go-live-final-20261001`.
+The deployment artifact is the repository root for the existing static host, or the validated staging directory for a new static host. Use Framework preset Other, no build command and no output override when serving committed root output.
 
-This file exists to bind the final release checks to the post-generated-output tree.
+Before publishing, require unit/asset/brand/hygiene/security/integration checks, deterministic generated output, app release seal and the visual/browser journeys on the same final commit. Require live sign-in delivery and callback at the actual hostname, plus physical mobile install/return checks. Current evidence and remaining gates are in [readiness](READINESS.md).
 
-## Verified source contracts
+Keep `index.html`, `manifest.webmanifest` and `sw.js` revalidating. Do not shadow static assets with a catch-all rewrite. Add any new hostname to the authentication redirect allow-list before testing account recovery. A local mocked account response cannot certify email delivery or callback.
 
-- User Studio has one persistent escape control and routes through the canonical `enterApp('me')` path.
-- Standalone Bike Studio returns through `index.html?view=me`.
-- Vercel static delivery keeps `index.html`, `manifest.webmanifest`, and `sw.js` revalidating.
-- No catch-all Vercel rewrite shadows static assets.
-
-## Deployment shape
-
-KONA is deployed as a static site from the repository root.
-
-Vercel project settings:
-- Framework preset: Other
-- Root directory: `.`
-- Build command: none
-- Output directory override: none
-
-The first Vercel hostname must be added to the Supabase Auth redirect allow-list before magic-link sign-in is treated as production-verified.
-
-## Release rule
-
-Do not declare production ready unless unit/asset/brand/P0, security, integration, app release seal, deterministic output sync, and Visual Evidence V2 are green on the same final SHA. Physical mobile install remains a device gate.
-
-## Post-sync verification trigger
-
-Deterministic outputs were synchronized at `16646d22e56f75c8e22ce03f2eeb078b1c2c180f`. This documentation-only commit intentionally triggers the final release matrix on the sealed output tree without changing runtime source or generated assets.
-
-Mobile User Studio strip and standalone-page escape routes were sealed into deterministic outputs at `472fad7ffa7fe16e7e4ebb85426647a7c1264b26`. The following docs-only commit is the final same-tree release verification trigger.
+Generated-output commits must trigger checks. Historical commit references are not approval for a newer release. Merge or deployment of this candidate is a separate release action after its gates pass.

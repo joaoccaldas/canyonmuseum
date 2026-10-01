@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # RC1 Game Hub + World Map — 2026-09-30
 
 This branch consolidates the production-readiness hotfixes after the first public physical-phone check.

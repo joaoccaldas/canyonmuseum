@@ -1,6 +1,8 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Asset Intake Contract
 
-Purpose: let Blender/Higgsfield/other asset-production agents feed the app without duplicate work, ad-hoc loaders, or unverifiable "exact replica" claims.
+Purpose: let Blender/media pipeline/other asset-production agents feed the app without duplicate work, ad-hoc loaders, or unverifiable "exact replica" claims.
 
 ## Existing inventory rule
 

@@ -18,7 +18,13 @@ const www = join(here, '..', 'www');
 rmSync(www, { recursive: true, force: true });
 mkdirSync(www, { recursive: true });
 for (const f of readdirSync(root)) if (f.endsWith('.html') || f === 'manifest.webmanifest') cpSync(join(root, f), join(www, f));
-cpSync(join(root, 'app'), join(www, 'app'), { recursive: true, filter: src => !/[\\/]native([\\/]|$)/.test(src.slice(join(root, 'app').length)) });
+mkdirSync(join(www, 'app'), { recursive: true });
+// Copy children individually: copying app/ into app/native/www/app is rejected
+// before a recursive filter can exclude the native build itself.
+for (const entry of readdirSync(join(root, 'app'))) {
+  if (entry === 'native') continue;
+  cpSync(join(root, 'app', entry), join(www, 'app', entry), { recursive: true });
+}
 cpSync(join(root, 'web', 'styles'), join(www, 'web', 'styles'), { recursive: true });
 cpSync(join(root, 'brand'), join(www, 'brand'), { recursive: true });
 cpSync(join(root, 'integrations'), join(www, 'integrations'), { recursive: true });
@@ -27,5 +33,6 @@ cpSync(join(root, 'assets'), join(www, 'assets'), { recursive: true, filter: src
 const versionCode = Number.parseInt(process.env.SPEEDMAX_VERSION_CODE || '0', 10) || 0;
 const versionName = (process.env.SPEEDMAX_VERSION_NAME || 'dev').replace(/[^\w.-]/g, '').slice(0, 20);
 const index = join(www, 'index.html');
-writeFileSync(index, readFileSync(index, 'utf8').replace('<head>', `<head>\n<script>window.__NATIVE=${JSON.stringify({ versionCode, versionName })};</script>`));
+writeFileSync(join(www, 'app', 'native-version.js'), `window.__NATIVE=${JSON.stringify({ versionCode, versionName })};`);
+writeFileSync(index, readFileSync(index, 'utf8').replace('<head>', '<head>\n<script src="app/native-version.js"></script>'));
 console.log(`www ready · version ${versionName} (${versionCode})`);

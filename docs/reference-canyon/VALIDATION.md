@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Museum exhibit validation — 2026-09-27
 
 Agent-run checks on the local Mac; not independent manufacturer certification.

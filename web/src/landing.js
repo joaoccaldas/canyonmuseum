@@ -1,4 +1,4 @@
-// landing.js — the Speedmax Museum, Kona. A sunlit, walkable gallery along "the Queen K":
+// landing.js — the KONA, Kona. A sunlit, walkable gallery along "the Queen K":
 // every Speedmax generation on a lava-stone plinth in timeline order, the two MY2027
 // flagships in an apse facing the ocean. Walk (WASD / tap the floor), look (drag),
 // visit a bike (click / tap / 1–9), then step into its full 3D studio.
@@ -30,6 +30,8 @@ import { initArtWorld } from './artworld.js';
 import { microNoise } from './tex.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { coarse as dc, small as ds } from './detect.js';
+import { readPassportState, savePassportState } from './engine/passport-state.js';
+import { applyStoredEvent } from './engine/progression.js';
 
 const PIECES = window.__PIECES || [];
 const sway = [];                                                     // palm crowns moving in the trade wind
@@ -62,6 +64,7 @@ const ROOM = { x0: -19.3, x1: -7.3, z0: -8.8, z1: -25.6, h: 4.6 };
 // WYLD room, second doorway: a bright loft with a window onto Kailua Pier
 const WDOOR = { z0: -30.8, z1: -27.6, h: 3.4 };
 const WROOM = { x0: -23.3, x1: -7.3, z0: -26.6, z1: -45.4, h: 5.2 };
+const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const STEP = 5.4, FIRST = -1;
 const TILT = .38;                                                   // plinths turn toward the approaching visitor
 const heritage = PIECES.filter(p => !p.flagship), flagships = PIECES.filter(p => p.flagship);
@@ -1030,17 +1033,9 @@ const fwd = new THREE.Vector3(), look = new THREE.Vector3();
 $('nearby')?.addEventListener('click', () => { if (nearbyPiece) { haptic(8); visit(nearbyPiece); } });
 
 // ------------------------------------------------------------------ local-first Museum Passport
-const PASSPORT_KEY = 'speedmax.passport.v1';
-function readPassport() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(PASSPORT_KEY) || 'null');
-    if (raw?.v === 1 && Array.isArray(raw.discoveries)) return raw;
-  } catch (_) { }
-  return { v: 1, discoveries: [], visits: 0, pose: null };
-}
-const passport = readPassport();
+const passport = readPassportState();
 function writePassport() {
-  try { localStorage.setItem(PASSPORT_KEY, JSON.stringify(passport)); } catch (_) { }
+  try { Object.assign(passport, savePassportState(passport)); } catch (_) { toast('Progress could not be saved on this device'); }
 }
 function passportProgress() {
   const total = modelled.length;
@@ -1051,6 +1046,7 @@ function passportProgress() {
 function discover(p) {
   if (!p?.key || !p.glb || passport.discoveries.includes(p.key)) return false;
   passport.discoveries.push(p.key); writePassport();
+  try { applyStoredEvent({ type: 'PRODUCT_VIEWED', subject: p.key, discovery: `bike:${p.key}` }); } catch (_) { }
   const { seen, total } = passportProgress();
   if (started) toast(`Museum Passport · discovered ${p.name} · ${seen}/${total}`);
   return true;
@@ -1070,7 +1066,6 @@ $('passportBtn')?.addEventListener('click', () => {
 });
 passportProgress();
 
-const DZ = (DOOR.z0 + DOOR.z1) / 2, WZ = (WDOOR.z0 + WDOOR.z1) / 2;
 const roomOf = (x, z) => {
   const art = window.__museumArt?.regionOf?.(x, z); if (art) return art;
   if (atlas.inside(x, z)) return 'gallery';                         // the data-built wings are part of the upper floor
@@ -1411,6 +1406,7 @@ function enter() {
   const returning = passport.visits > 0 && passport.pose && ['hall', 'champ', 'wyld', 'pier', 'hween'].includes(passport.pose.region)
     && walkable(passport.pose.x, passport.pose.z);
   passport.visits = (passport.visits || 0) + 1;
+  try { applyStoredEvent({ type: 'FIRST_VISIT', id: 'FIRST_VISIT:museum' }); } catch (_) { }
   if (returning) {
     P.x = passport.pose.x; P.z = passport.pose.z; P.yaw = passport.pose.yaw || 0; P.pitch = passport.pose.pitch ?? -.04;
     path = null;
@@ -1922,7 +1918,7 @@ async function shareView(title) {
   if (!blob) { toast('Could not capture this view'); return; }
   const url = location.origin + location.pathname + (here ? `?room=${encodeURIComponent(here.id)}` : '');
   const slug = String(title || here?.name || 'museum').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const r = await shareImage(blob, { title: title || 'Speedmax Museum', text: `${title ? title + ' · ' : ''}Speedmax Museum, Kona`, url, filename: `speedmax-${slug}.jpg` });
+  const r = await shareImage(blob, { title: title || 'KONA', text: `${title ? title + ' · ' : ''}KONA, Kona`, url, filename: `kona-${slug}.jpg` });
   toast({ shared: 'Shared', link: 'Link shared', saved: 'Image saved to your device', cancelled: 'Not shared' }[r]);
 }
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));

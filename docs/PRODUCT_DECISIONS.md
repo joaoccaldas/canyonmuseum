@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Product Decision Log
 
 This is the guardrail against feature stacking. Every material idea is evaluated before implementation.
@@ -27,7 +29,7 @@ Statuses:
 | Island Stories wing | Explore + race-week utility | NOW | Directly relevant to Kona race window and expands the museum beyond equipment. |
 | Hawaiʻi Island guide data | Explore + trip planning | NOW | Creates a sourced foundation without location tracking or live-service risk. |
 | Nine hidden finds + rarity | Collect | NOW | Fulfils an existing 9-find promise and gives exploration persistent meaning. |
-| OAI-SearchBot + llms-full | Discoverability | NOW | Low runtime risk; improves machine-readable discovery and citations. |
+| OAI-SearchBot + machine-readables-full | Discoverability | NOW | Low runtime risk; improves machine-readable discovery and citations. |
 | EN + PT-BR locale contract | Market expansion | NOW (foundation only) | Stable ids/localization policy can land safely; translated public URLs wait until content exists. |
 | Full PT-BR UI/content | Explore + market launch | NEXT | Needs locale extraction from runtime strings and translation QA first. |
 | Daily/weekly Kona challenges | Collect + Return | NEXT | Depends on one canonical Passport state model. |

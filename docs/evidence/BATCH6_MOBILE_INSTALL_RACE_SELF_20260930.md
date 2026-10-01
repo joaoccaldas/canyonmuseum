@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Batch 6 verification checkpoint — 2026-09-30
 
 Synchronized generated head: `18d873879c22160df86889d4bd4a0b929ec06104`.

@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Affiliate Revenue Priority — Verified Programs
 
 Updated: 2026-09-30
@@ -5,7 +7,7 @@ Updated: 2026-09-30
 This document distinguishes:
 - **published commission mechanics**: official programme publicly states a commission formula/rate;
 - **programme available**: applications are currently accepted;
-- **approved**: Caldas Studio has actually been accepted.
+- **approved**: KONA has actually been accepted.
 
 Only the last state means affiliate tracking may be enabled.
 

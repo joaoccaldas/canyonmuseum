@@ -1,6 +1,7 @@
 // ui/collection.js — cards/items view over the canonical collection projection.
 import { readGameState } from '../engine/game-state.js';
 import { itemCollection, collectionSummary } from '../engine/items.js';
+import { collectibleById } from '../engine/progression.js';
 import { getPublicProduct } from '../engine/catalog.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,7 +18,10 @@ export async function renderCollectionSurface(root) {
       const p=await getPublicProduct(productId(item.entity_id));
       if (p) { title=[p.brand,p.name||p.label||p.model].filter(Boolean).join(' '); meta=[p.product_type||p.type,item.relationship].filter(Boolean).join(' · '); }
     }
-    cards.push('<article class="kona-item-card artifact artifact--label"><small>'+esc(meta)+'</small><b>'+esc(title)+'</b><span>Collected</span></article>');
+    const collectible=collectibleById(item.entity_id);
+    if(collectible){title=collectible.name;meta=collectible.rarity+' · '+collectible.place;}
+    const mark={equipment:'◇',bike:'↗',part:'⚙',find:'✦',story:'◷',race:'⚑',card:'▧'}[item.kind]||'◇';
+    cards.push('<article class="kona-item-card artifact artifact--label"><i class="kona-item-mark" aria-hidden="true">'+mark+'</i><small>'+esc(meta)+'</small><b>'+esc(title)+'</b><span>'+esc(item.kind==='equipment'?(item.relationship==='owned'?'Owned':item.relationship==='dream'?'Dream setup':'Saved to try'):'Discovered')+'</span></article>');
   }
   root.innerHTML=
     '<section class="kona-hero-card artifact artifact--hero"><small>YOUR COLLECTION</small><h3>'+summary.total+' things with a story.</h3><p>Equipment, discoveries and cards are projections of what you actually own, save or find.</p></section>'+

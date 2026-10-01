@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
+import { isSecretBike } from './lib/entry-catalog.mjs';
 import { createRequire } from 'node:module';
 const require=createRequire(new URL('../web/package.json',import.meta.url));
 const {build}=require('esbuild'),puppeteer=require('puppeteer-core'),sharp=require('sharp');
@@ -34,6 +35,18 @@ camera.position.set(size.x*.22,size.y*.31,size.x*1.67);camera.lookAt(0,0,0);
 const wyld=await fetch('/museum/wyld_room.json').then(r=>r.json());const paint=slotsOf(root);
 window.renderBike=async id=>{applySkin(paint,skinFromWyld(wyld.variants.find(v=>v.id===id)));renderer.render(scene,camera);return renderer.domElement.toDataURL('image/png');};
 window.renderAthlete=()=>{scene.remove(wrap);const athlete=buildAvatar(defaultAvatarStyle());scene.add(athlete);renderer.setSize(540,880);camera.aspect=540/880;camera.position.set(.6,1.26,4.7);camera.lookAt(0,1.05,0);camera.updateProjectionMatrix();renderer.render(scene,camera);return renderer.domElement.toDataURL('image/png');};
+window.renderCatalogBike=async p=>{
+ scene.remove(wrap);renderer.setSize(1200,754);camera.aspect=1200/754;camera.updateProjectionMatrix();
+ const bike=(await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('/'+p.glb)).scene;
+ bike.traverse(o=>{if(o.userData.optional_accessory)o.visible=false;});
+ const b=new THREE.Box3().setFromObject(bike),c=b.getCenter(new THREE.Vector3()),s=b.getSize(new THREE.Vector3());bike.position.sub(c);
+ const frame=new THREE.Group();frame.add(bike);if(s.z>s.x)frame.rotation.y=Math.PI/2;scene.add(frame);
+ const size=new THREE.Box3().setFromObject(frame).getSize(new THREE.Vector3());camera.position.set(size.x*.22,size.y*.31,size.x*1.67);camera.lookAt(0,0,0);
+ if(p.skins?.length)applySkin(slotsOf(bike),p.skins[0]);
+ renderer.render(scene,camera);const data=renderer.domElement.toDataURL('image/png');scene.remove(frame);
+ bike.traverse(o=>{o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const v of Object.values(m))if(v?.isTexture)v.dispose();m.dispose();}});
+ return data;
+};
 window.ready=true;
 `;
 const bundled=await build({stdin:{contents:source,resolveDir:path.join(root,'web'),sourcefile:'entry-art.js'},bundle:true,format:'esm',write:false});
@@ -47,10 +60,16 @@ const browser=await puppeteer.launch({executablePath:process.env.CHROME_PATH||'/
 try{
  const page=await browser.newPage();page.on('pageerror',console.error);await page.goto(`http://127.0.0.1:${server.address().port}`);await page.waitForFunction(()=>window.ready,{timeout:60000});
  const dest=path.join(root,'assets/entry');fs.mkdirSync(dest,{recursive:true});
+ if(process.argv.includes('--catalog')){
+  const products=JSON.parse(fs.readFileSync(path.join(root,'museum/catalog/products.json'))).products.filter(p=>p.type==='bike'&&p.public!==false&&!isSecretBike(p));
+  const catalogDest=path.join(dest,'catalog');fs.mkdirSync(catalogDest,{recursive:true});
+  for(const p of products){const src=await page.evaluate(p=>window.renderCatalogBike(p),p);await sharp(Buffer.from(src.split(',')[1],'base64')).webp({quality:84,alphaQuality:90}).toFile(path.join(catalogDest,p.id+'.webp'));console.log('Rendered '+p.id);}
+ }else{
  for(const id of art.liveries){
   const src=await page.evaluate(id=>window.renderBike(id),id);
   await sharp(Buffer.from(src.split(',')[1],'base64')).webp({quality:88,alphaQuality:95}).toFile(path.join(dest,`canyon-${id}.webp`));
  }
  const src=await page.evaluate(()=>window.renderAthlete());await sharp(Buffer.from(src.split(',')[1],'base64')).trim().webp({quality:90}).toFile(path.join(dest,'triathlete.webp'));
  console.log('Rendered Canyon hero editions and block triathlete from canonical model/liveries.');
+ }
 }finally{await browser.close();server.close();}

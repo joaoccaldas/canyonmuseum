@@ -32,9 +32,11 @@ export function itemCollection(snapshot = {}) {
     });
   }
 
-  const discoveries = Array.isArray(snapshot.progression_engine?.discoveries)
-    ? snapshot.progression_engine.discoveries
-    : Object.keys(snapshot.progression?.stamps || {});
+  const discoveries = [...new Set([
+    ...(Array.isArray(snapshot.progression_engine?.discoveries) ? snapshot.progression_engine.discoveries : []),
+    ...Object.keys(snapshot.progression?.stamps || {}),
+    ...(Array.isArray(snapshot.progression?.discoveries) ? snapshot.progression.discoveries.map(id=>'bike:'+id) : []),
+  ])];
   for (const id of discoveries) {
     const raw=String(id);
     const kind=raw.startsWith('bike:')?'bike':raw.startsWith('part:')?'part':raw.startsWith('find:')?'find':raw.startsWith('kona:')?'story':'card';

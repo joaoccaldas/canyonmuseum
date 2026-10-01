@@ -40,10 +40,21 @@ jobs:
           trap 'kill $SERVER_PID || true' EXIT
           for i in {1..20}; do curl -fsS http://127.0.0.1:8744/ >/dev/null && break; sleep 0.5; done
           CHROME_PATH=/usr/bin/google-chrome node web/p0-journey-smoke.mjs http://127.0.0.1:8744/
+          CHROME_PATH=/usr/bin/google-chrome node web/launch-regression-browser.mjs http://127.0.0.1:8744/
+          CHROME_PATH=/usr/bin/google-chrome node web/entry-preview-audit.mjs http://127.0.0.1:8744/
+          CHROME_PATH=/usr/bin/google-chrome node web/standalone-layout-audit.mjs http://127.0.0.1:8744/
           CHROME_PATH=/usr/bin/google-chrome node web/studio-launch-audit.mjs http://127.0.0.1:8744
           CHROME_PATH=/usr/bin/google-chrome node web/install-launch-audit.mjs http://127.0.0.1:8744
       - name: Built pages are up to date
         run: |
           node tools/build_pages.mjs
-          git diff --stat --exit-code -- museum/catalog/products.json docs/ROOMS.md '*.html' 'web/dist/*.html' app/kona-core.js app/admin-assets.json app/admin-asset-preview.js app/race-self-stage.js app/museum-data.js app/hall.js app/studio.js app/studio-catalog.js \
+          git diff --stat --exit-code -- museum/catalog/products.json museum/entry-catalog.json docs/ROOMS.md '*.html' 'web/dist/*.html' app/kona-core.js app/admin-assets.json app/admin-asset-preview.js app/race-self-stage.js app/museum-data.js app/hall.js app/studio.js app/studio-catalog.js \
             || { echo "::error::built pages/bundles are stale: run node tools/build_pages.mjs and commit all generated outputs"; exit 1; }
+
+      - name: Browser verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: launch-browser-evidence
+          path: output/playwright/
+          retention-days: 14

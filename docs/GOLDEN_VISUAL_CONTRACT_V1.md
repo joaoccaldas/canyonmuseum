@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Golden Visual Contract V1
 
 The supplied concept boards are art-direction references, not literal screenshots or Canyon parent-brand specifications.

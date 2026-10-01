@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Trek triathlon museum: handover (2026-09-27)
 
 Repo: `~/Developer/trek-tri-museum-3d`. **No git repo yet** (never `git init`-ed). Reference implementation
@@ -9,7 +11,7 @@ Repo: `~/Developer/trek-tri-museum-3d`. **No git repo yet** (never `git init`-ed
 1. Build a Trek museum like the Canyon one, using Blender.
 2. Serve a page with the current bikes so they can test it (done: see "Local site").
 3. **Current priority:** model the **newest** Trek tri bike (Speed Concept SLR, 3rd gen) and **the Trek raced at
-   Kona 2025** (Taylor Knibb's Speed Concept SLR), and "make it amazing in Blender". The first pass was called
+   Kona 2025** (the athlete's Speed Concept SLR), and "make it amazing in Blender". The first pass was called
    "very basic".
 4. **No wind tunnel / aero lab in this work.** That belongs in its own PR.
 
@@ -30,7 +32,7 @@ Repo: `~/Developer/trek-tri-museum-3d`. **No git repo yet** (never `git init`-ed
 - `assets/reference/speed-concept-slr/`: Trek CDN studio PNGs (native size, `f_png`): SLR 9 AXS side 3000 px (transparent),
   frameset side 4000 px (transparent), top (Alt2) and front (Alt3) 4000 px, geometry diagram. The CDN serves an upscaled image
   if you ask for `w_4000`, so always download native size.
-- `assets/reference/kona-2025-knibb/`: 12 Triathlete.com photos (Brad Kaminski, editorial, copyrighted: **reference only, do not
+- `the private editorial reference collection`: 12 Triathlete.com photos (source photographer, editorial, copyrighted: **reference only, do not
   publish or embed**) and one Trek Race Shop photo. **Not yet added to `sources.json`.** Hash them before use.
 
 ### Lineage (details and sources in `museum/heritage/catalog.json`)
@@ -107,7 +109,7 @@ Repo: `~/Developer/trek-tri-museum-3d`. **No git repo yet** (never `git init`-ed
    storage box x 1300–1680, y 1200–1560; axles (623.9, 1609.7) and (2372.0, 1607.0); spindle (1315, 1752.5).
 5. Materials: matte "Deep Smoke" over carbon (photo albedo plus roughness/coat), then Cycles studio renders
    (`blender/heritage/render_views.py`; it currently over-exposes, so lower the light energies).
-6. **Kona 2025 Knibb bike** (Triathlete, 9 Oct 2025, specs from Trek's Mark Andrews; Trek Race Shop story):
+6. **Kona 2025 athlete bike** (Triathlete, 9 Oct 2025, specs from Trek's the athlete; Trek Race Shop story):
    - Frame: size M Speed Concept SLR, Project One "Gamut" (same paint as Holly Lawrence).
    - Wheels and tyres: Aeolus 62 front, Aeolus 75 rear, Continental GP5000 S TR 28 mm.
    - Drivetrain: SRAM Red AXS 12-speed, 54/41, 170 mm, 10–28; Dura-Ace pedals.

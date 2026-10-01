@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Speedmax reconstruction session log
 
 ## 2026-09-27 — photo-aligned museum exhibit

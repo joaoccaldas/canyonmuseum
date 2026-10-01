@@ -41,7 +41,7 @@ test('Home is lightweight while User Studio owns personal depth and tour replay'
   assert.match(home,/YOUR RACE SELF/);
   assert.doesNotMatch(home,/race-self-stage\.js|hall\.js|museum-data\.js/);
   for(const control of ['Avatar','Bike Studio','Races','Settings','Quick tour']) assert.match(avatarHome,new RegExp(control));
-  assert.doesNotMatch(avatarHome,/Canyon Museum|Discover Kona|Race week/);
+  assert.doesNotMatch(avatarHome,/KONA Museum|Discover Kona|Race week/);
   assert.match(avatarHome,/Collection/);
   assert.match(avatarHome,/Progress/);
   assert.match(avatarHome,/openTour/);

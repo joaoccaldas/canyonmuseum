@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # KONA Brand System V9
 
 This is the canonical brand and interface contract for the KONA product. Other design-system documents are historical pointers only.

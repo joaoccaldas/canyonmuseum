@@ -86,13 +86,13 @@ test('installed apps pick up verified new versions and every public icon exists'
 test('native package includes the current app runtime and style trees', () => {
   const build = fs.readFileSync(path.join(root,'app/native/scripts/build-www.mjs'),'utf8');
   for(const rel of ["'app'","'web', 'styles'","'brand'","'integrations'","'assets'"]) assert.ok(build.includes(rel),rel+' missing from native package assembly');
-  assert.ok(build.includes("!/[\\\\/]native([\\\\/]|$)/.test"),'native source tree must be excluded from packaged app assets');
+  assert.ok(build.includes("if (entry === 'native') continue"),'native source tree must be excluded from packaged app assets');
 });
 
 test('Experiences and app Passport share canonical storage', () => {
   const passport=fs.readFileSync(path.join(root,'web/src/passport.js'),'utf8');
-  assert.match(passport,/readStorage\('passport'\)/);
-  assert.match(passport,/writeStorage\('passport'/);
+  assert.match(passport,/readPassportState\(\)/);
+  assert.match(passport,/savePassportState\(s\)/);
   assert.doesNotMatch(passport,/localStorage\.(?:getItem|setItem)\(['"]speedmax\.passport/);
 });
 

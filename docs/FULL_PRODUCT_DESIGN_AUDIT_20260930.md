@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Full Product / Codebase / Design Audit — 2026-09-30
 
 ## Stable checkpoints
@@ -15,7 +17,7 @@
 
 ## Executive assessment
 
-The app has moved from an unusually strong immersive Canyon museum into the beginnings of a reusable triathlon Event OS + product platform.
+The app has moved from an unusually strong immersive KONA museum into the beginnings of a reusable triathlon Event OS + product platform.
 
 The strongest progress is architectural:
 - versioned RaceSetup;

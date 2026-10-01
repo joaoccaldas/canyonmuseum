@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # RC2 block avatar / install / index verification
 
 Synchronized generated head before this verification trigger:

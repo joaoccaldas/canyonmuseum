@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Kona Beta MVP — 30 Sep to 10 Oct 2026
 
 ## Product promise
@@ -30,7 +32,7 @@ Anonymous/local play remains the default. Account sync is optional.
 
 ## Backend
 
-Prototype backend: Supabase project `canyonmuseum-beta`, EU North.
+Prototype backend: Supabase project the configured backend project, EU North.
 
 Table: `public.user_app_state`
 - one row per `auth.users.id`

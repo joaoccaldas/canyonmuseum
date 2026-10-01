@@ -32,17 +32,17 @@ const PAGES = [
     title: 'Canyon Triathlon Collection · every Speedmax generation, compared',
     description: 'Every Canyon Speedmax generation on record, 1999–2027: interactive 3D exhibits, side-by-side specifications, an aero calculator and a sourced archive of the bikes that were never modelled.' },
   { file: 'Studio.html', type: 'WebApplication', image: 'assets/share/museum.jpg',
-    title: 'Studio · Speedmax Museum — build, paint and share a time-trial bike',
-    description: 'Every bike in the Speedmax Museum and more, in 3D: paint it, give it a film theme, set the scene, dream it in motion and share it. Canyon generations, named machines and studio designs.', keepTitle: true },
+    title: 'Bike Studio · KONA — build, paint and share a time-trial bike',
+    description: 'Every bike in the KONA and more, in 3D: paint it, give it a film theme, set the scene, dream it in motion and share it. Canyon generations, named machines and studio designs.', keepTitle: false },
   { file: 'Experiences.html', type: 'WebPage', image: 'assets/share/museum.jpg',
-    title: 'Speedmax Nights & History Lane · Canyon Speedmax Museum',
-    description: 'Three night experiences around one Canyon Speedmax (Lava Night, Camp 13 and the Ghost Tunnel) and History Lane, the story from Koblenz in 1985 to Kona. An independent study.', keepTitle: true },
+    title: 'Speedmax Nights & History Lane · KONA Museum',
+    description: 'Three night experiences around one Canyon Speedmax (Lava Night, Camp 13 and the Ghost Tunnel) and History Lane, the story from Koblenz in 1985 to Kona. An independent study.', keepTitle: false },
 ];
 for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.test(f))) {
   const html = fs.readFileSync(path.join(root, f), 'utf8');
   const t = html.match(/<title>([^<]*)<\/title>/)?.[1] || f;
   const d = html.match(/<meta name="description" content="([^"]*)"/)?.[1] || '';
-  PAGES.push({ file: f, type: 'WebPage', image: 'assets/share/museum.jpg', title: t, description: d, keepTitle: true });
+  PAGES.push({ file: f, type: 'WebPage', image: 'assets/share/museum.jpg', title: t, description: d, keepTitle: false });
 }
 
 const COMMON_DESIGN_LINKS = [
@@ -65,7 +65,7 @@ function block(p) {
   const url = SITE + (p.file === 'index.html' ? '' : p.file), img = SITE + p.image;
   const ld = {
     '@context': 'https://schema.org', '@type': p.type, name: p.title, description: p.description, url, image: img, inLanguage: 'en',
-    isAccessibleForFree: true, publisher: { '@type': 'Person', name: 'João Caldas', url: 'https://joaoccaldas.github.io/ai/' },
+    isAccessibleForFree: true, publisher: { '@type': 'Organization', name: 'KONA' },
     about: [{ '@type': 'Thing', name: 'Canyon Speedmax' }, { '@type': 'SportsEvent', name: 'IRONMAN World Championship', location: 'Kailua-Kona, Hawaii' }],
     disambiguatingDescription: DISCLAIMER,
   };

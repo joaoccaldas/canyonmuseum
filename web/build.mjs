@@ -11,7 +11,7 @@ const profile=JSON.parse(fs.readFileSync(process.env.BIKE_PROFILE||path.join(her
 // Identity text is populated at runtime from the profile (see identity() in main.js);
 // only the static <title> and meta description differ per build.
 const b = profile.bike || {};
-const docTitle = b.pageTitle || `Canyon Museum — ${b.name || 'Speedmax'} (${b.year || '2027'})`;
+const docTitle = b.pageTitle || `KONA Museum — ${b.name || 'Speedmax'} (${b.year || '2027'})`;
 let template=tpl
   .replace('<title>Canyon Collection — Speedmax CFR AXS</title>', `<title>${docTitle.replace(/</g,'&lt;')}</title>`)
   .replace('Speedmax CFR AXS (MY2027) — an unofficial, fully procedural Blender model you can explode, ride, inspect and repaint in the browser.',

@@ -1,10 +1,12 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # KONA Roadmap V8 — 30 Sep 2026
 
 ## Product
 
 **Race the version of yourself.**
 
-KONA is a mobile-first triathlon race-week, identity, gear, story, discovery and challenge platform. The Canyon Museum is a flagship collection inside the platform, not the parent brand.
+KONA is a mobile-first triathlon race-week, identity, gear, story, discovery and challenge platform. The KONA Museum is a flagship collection inside the platform, not the parent brand.
 
 ## Current production truth
 
@@ -48,7 +50,7 @@ Pass Android + iPhone physical-device evidence. PWA install must be obvious. Nat
 Semantic tokens, typography, spacing, components and light/dark parity. Parent brand remains neutral until name clearance.
 
 ### G3 — English + Brazilian Portuguese
-All primary shell/onboarding/Discover/Garage/Plan/Me copy from locale records. Indexable English and pt-BR entry surfaces with reciprocal hreflang, localized metadata, sitemap and LLM guides.
+All primary shell/onboarding/Discover/Garage/Plan/Me copy from locale records. Indexable English and pt-BR entry surfaces with reciprocal hreflang, localized metadata, sitemap and machine-readable guides.
 
 ### G4 — Discover + Artifact
 Places / Machines / People / Stories. Universal ArtifactDetail for bike, shoe, helmet, watch, component and memorabilia. 3D remains an explicit richer mode.
@@ -80,7 +82,7 @@ Normalize valuable backend entities, migrations/backups/export/delete, observabi
 - WhatsApp/Instagram/Facebook/TikTok distribution should use the OS-native share sheet where possible.
 - No dark patterns, fake scarcity or forced contact access.
 
-## SEO / LLM principles
+## SEO / machine-readable principles
 
 - Useful crawlable text in the HTML.
 - Stable entity IDs and source/provenance records.

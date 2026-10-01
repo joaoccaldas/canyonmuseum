@@ -1,3 +1,5 @@
+> Historical reference. Current release scope and verification: [launch readiness](../launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Batch 4 verification checkpoint — 2026-09-30
 
 Current synchronized head before this evidence-only trigger: `3e766e4bc402c9a737fcce8d8424102390d45dc0`.

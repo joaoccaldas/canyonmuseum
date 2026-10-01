@@ -9,8 +9,8 @@ const src = fs.readFileSync(path.join(here, '../src/landing.js'), 'utf8');
 const tpl = fs.readFileSync(path.join(here, '../world-shell.template.html'), 'utf8');
 
 test('Museum Passport is local-first and contains no identity fields', () => {
-  assert.match(src, /speedmax\.passport\.v1/);
-  assert.match(src, /localStorage\.setItem\(PASSPORT_KEY/);
+  assert.match(src, /readPassportState/);
+  assert.match(src, /savePassportState\(passport\)/);
   for (const forbidden of ['email', 'phone', 'address', 'birthdate']) {
     assert.ok(!new RegExp(`passport\\.${forbidden}\\b`).test(src), forbidden);
   }

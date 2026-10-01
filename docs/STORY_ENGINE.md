@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Story / Experience Contract V1
 
 A Story is a transport-neutral sequence of sourced beats that can be rendered as a museum walk, product page, athlete feature, science explainer, event replay, social sequence, partner embed, or future agent-generated experience.

@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](launch/READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Artifact Experience V1
 
 One presentation contract for bikes, shoes, helmets, watches, wheels, wetsuits, components and memorabilia.

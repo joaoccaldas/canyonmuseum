@@ -1,6 +1,8 @@
 /* KONA entry — product-first, one hero, no heavy 3D before intent. */
 body.entry-landing .kona-bottom-nav,
-body.entry-quest .kona-bottom-nav{display:none!important}
+body.entry-quest .kona-bottom-nav,
+body.entry-landing .kona-user-menu,
+body.entry-quest .kona-user-menu{display:none!important}
 body.entry-landing #intro,
 body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!important}
 #intro.kona-entry{
@@ -38,7 +40,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry .entry-trust>span{display:inline-flex;align-items:center;gap:7px}
 #intro.kona-entry .entry-trust>span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand-discovery)}
 #intro.kona-entry .entry-trust #entryInstall{width:auto;min-height:36px;padding:0;border:0;border-bottom:1px solid rgba(255,255,255,.45);border-radius:0;background:transparent;color:var(--brand-mist)}
-#intro.kona-entry .entry-signin-note{margin:7px 0 0;color:var(--brand-faint);font:500 10px/1.4 var(--brand-font-ui,var(--sans))}
+#intro.kona-entry .entry-signin-note{margin:7px 0 0;color:var(--brand-mist);font:500 11px/1.4 var(--brand-font-ui,var(--sans))}
 #intro.kona-entry .entry-product{grid-area:product;position:relative;align-self:stretch;min-height:520px;display:flex;flex-direction:column;justify-content:center}
 #intro.kona-entry .entry-product-stage{
   --stage-rx:0deg;--stage-ry:0deg;
@@ -72,7 +74,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry .entry-product-nav span:last-child{border-right:0}
 #intro.kona-entry .entry-product-nav b{color:var(--brand-accent-2,#39c8ef);font-size:8px;letter-spacing:.12em}
 #intro.kona-entry .entry-race-clock{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:10px;padding:0 4px}
-#intro.kona-entry .entry-race-clock small{color:var(--brand-muted);font:750 9px/1.2 var(--brand-font-ui,var(--sans));letter-spacing:.14em}
+#intro.kona-entry .entry-race-clock small{color:var(--brand-mist);font:750 9px/1.2 var(--brand-font-ui,var(--sans));letter-spacing:.14em}
 #intro.kona-entry .entry-race-clock strong{color:var(--brand-accent,#ff6427);font:800 11px/1.2 var(--brand-font-ui,var(--sans));letter-spacing:.12em;text-transform:uppercase}
 #intro.kona-entry #loadstate:empty{display:none}
 
@@ -85,8 +87,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry::after{background:linear-gradient(90deg,rgba(5,14,19,.30),transparent 70%)}
   #intro.kona-entry .intro-inner{min-height:0;display:flex;flex-direction:column;gap:0;width:100%;max-width:560px}
   #intro.kona-entry .entry-copy{max-width:none;width:100%;padding-top:2px}
-  #intro.kona-entry .entry-mast{justify-content:space-between;margin-bottom:10px}
-  #intro.kona-entry .entry-event{padding-left:0;border-left:0;font-size:8px}
+  #intro.kona-entry .entry-mast{justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap}
   #intro.kona-entry h1{font-size:clamp(40px,12vw,54px);line-height:.9;margin-bottom:12px;max-width:10.5ch}
   #intro.kona-entry .lede{font-size:14px;line-height:1.38;max-width:24rem}
   #intro.kona-entry .entry-product{order:3;width:100%;min-height:0;margin-top:22px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--brand-mist) 14%,transparent)}
@@ -109,7 +110,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry #buildSelf{font-size:14px;font-weight:800}
   #intro.kona-entry .entry-trust{margin-top:8px;font-size:10px}
   #intro.kona-entry .entry-trust #entryInstall{display:inline-flex;min-height:48px;padding:0 6px;border-bottom:0;text-decoration:underline;text-underline-offset:4px}
-  #intro.kona-entry .entry-signin-note{margin-top:5px;font-size:9px}
+  #intro.kona-entry .entry-signin-note{margin-top:5px;font-size:10px}
 }
 @media(max-width:360px){
   #intro.kona-entry h1{font-size:38px;max-width:10ch}
@@ -219,3 +220,10 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
   #intro.kona-entry .entry-product-stage{min-height:220px;height:calc(var(--vvh,100dvh) - 66px)}
   #intro.kona-entry .entry-product-nav,#intro.kona-entry .entry-race-clock{display:none}
 }
+
+#intro.kona-entry .entry-stage-bike [hidden]{display:none!important}
+#intro.kona-entry .entry-bike-silhouette{height:100%;display:grid;place-items:center}
+#intro.kona-entry .entry-bike-silhouette svg{width:90%;height:90%;fill:none;stroke:var(--brand-mist);stroke-width:5;opacity:.3}
+#intro.kona-entry .entry-stage-caption{grid-template-columns:minmax(0,1fr)}
+#intro.kona-entry .entry-stage-caption b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#intro.kona-entry .entry-stage-caption span{justify-self:start;margin-top:4px;color:var(--brand-mist)}

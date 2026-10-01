@@ -1,3 +1,5 @@
+> Supporting contract. Current release scope and verification: [launch readiness](READINESS.md). Earlier completion claims require current runtime evidence.
+
 # Room decoration authority
 
 `museum/world/decorations.json` indexes reusable prop and installation IDs. Original room names, presentation values and explicit prop placements live in `museum/world/rooms.json`. Brand and wing rooms keep placements in their existing descriptors. Bikes, paintings and sculptures keep their existing product/art catalogues; do not duplicate their records in the decoration index.

@@ -1,8 +1,8 @@
 // ui/visual-primitives.js — tiny shared visual marks for 2D product surfaces.
 // No Three.js. These previews exist to hint at Race Self / equipment without loading 3D.
-import art from '../../../museum/entry-art.json' with { type: 'json' };
-import wyld from '../../../museum/wyld_room.json' with { type: 'json' };
-import { randomFamily, RANDOM_FAMILIES } from '../brand/runtime.js';
+import catalog from '../../../museum/entry-catalog.json' with { type: 'json' };
+import { chooseEntryPreview } from '../engine/entry-preview.js';
+import { readStorage, writeStorage } from '../engine/storage.js';
 import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
 
 export function avatarPreviewMarkup(styleInput,{className='visual-avatar'}={}){
@@ -19,18 +19,26 @@ export function bikeMarkSvg(className='visual-bike-mark'){
 
 export function renderEntryProductStage(host,{profile}={}){
   if(!host) return;
-  const editions=art.liveries.map(id=>wyld.variants.find(v=>v.id===id));
-  let index=RANDOM_FAMILIES.indexOf(randomFamily())%editions.length;
+  let selected=chooseEntryPreview(catalog.bikes,readStorage('entryPreview'));
   host.innerHTML=
     '<div class="entry-stage-orbit" aria-hidden="true"></div>'+
-    '<div class="entry-stage-object entry-stage-bike"><img width="1400" height="880" fetchpriority="high" decoding="async" alt="Canyon Speedmax time trial bike in a custom WYLD finish"></div>'+
+    '<div class="entry-stage-object entry-stage-bike"><img width="1200" height="754" fetchpriority="high" decoding="async" hidden alt=""><div class="entry-bike-silhouette" hidden>'+bikeMarkSvg()+'</div></div>'+
     '<div class="entry-stage-object entry-stage-avatar"><img src="assets/entry/triathlete.webp" width="356" height="837" alt="Block triathlete in a trisuit and running shoes"></div>'+
-    '<button class="entry-livery" type="button" aria-label="Try another bike finish"><span aria-hidden="true">↻</span> Change finish</button>'+
-    '<div class="entry-stage-caption"><small>YOUR NEXT OBSESSION</small><b>Canyon. Unrestrained.</b><span class="entry-edition" aria-live="polite"></span></div>';
-  const bike=host.querySelector('.entry-stage-bike img'),label=host.querySelector('.entry-edition');
-  const show=()=>{const edition=editions[index];bike.src='assets/entry/canyon-'+edition.id+'.webp';label.textContent=edition.name;};
+    '<button class="entry-livery" type="button" aria-label="Discover another bike"><span aria-hidden="true">↻</span> Another bike</button>'+
+    '<div class="entry-stage-caption"><small>YOUR NEXT DISCOVERY</small><b></b><span class="entry-edition" aria-live="polite"></span></div>';
+  const bike=host.querySelector('.entry-stage-bike img'),label=host.querySelector('.entry-edition'),title=host.querySelector('.entry-stage-caption b'),silhouette=host.querySelector('.entry-bike-silhouette');
+  const show=()=>{
+    if(!selected)return;
+    writeStorage('entryPreview',selected.id);
+    host.dataset.previewId=selected.id;host.classList.toggle('entry-secret-preview',!!selected.secret);
+    bike.hidden=!!selected.secret;silhouette.hidden=!selected.secret;
+    if(selected.secret){bike.removeAttribute('src');bike.alt='';title.textContent='Something worth finding.';label.textContent='Secret Collection';}
+    else{bike.alt=[selected.brand,selected.label].filter(Boolean).join(' ');bike.src=selected.image;title.textContent=selected.label;label.textContent=[selected.brand,selected.year].filter(Boolean).join(' · ');}
+    title.title=title.textContent;
+  };
+  bike.addEventListener('error',()=>{bike.hidden=true;silhouette.hidden=false;label.textContent='Preview unavailable · keep exploring';});
   show();
-  host.querySelector('.entry-livery').addEventListener('click',()=>{index=(index+1)%editions.length;show();});
+  host.querySelector('.entry-livery').addEventListener('click',()=>{selected=chooseEntryPreview(catalog.bikes,selected?.id);show();});
   const move=e=>{
     if(e.pointerType!=='mouse'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     const r=host.getBoundingClientRect(),x=(e.clientX-r.left)/Math.max(1,r.width)-.5,y=(e.clientY-r.top)/Math.max(1,r.height)-.5;
