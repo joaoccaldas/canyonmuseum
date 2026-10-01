@@ -18,7 +18,7 @@ function avatarPreview(styleInput){
   '</div>';
 }
 
-export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage,openDiscover,openPlan}={}){
+export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage,openDiscover,openPlan,admin=false}={}){
   const snapshot=readGameState();
   const identity=snapshot.race_identity||{};
   const collection=collectionSummary(snapshot);
@@ -29,7 +29,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
   const goal=identity.goal?.label||identity.goal||'Build the version of you that shows up.';
   const races=Array.isArray(snapshot.race_history)?snapshot.race_history.length:0;
   let progression={level:1,level_name:'Visitor'};try{progression=ensureProgression();}catch(_){ }
-  const horizon=discoveryHorizon(progression,4);
+  const horizon=discoveryHorizon(progression,4,{admin});
   const nudges=['A bike in the archive is judging your tyre pressure.','Imagine an easy spin. Now imagine agreeing on what easy means.','Today’s detour: learn one thing you did not come here for.','An empty display shelf is a perfectly respectable beginning.'];
   const dayKey=new Date().toISOString().slice(0,10),nudge=nudges[Math.abs([...dayKey].reduce((a,c)=>a+c.charCodeAt(0),0))%nudges.length];
   const nudgesEnabled=!!profile?.get?.().notifications?.enabled;
@@ -53,7 +53,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<div class="home-postcard-copy"><small>KAILUA-KONA · HAWAIʻI</small><h3>Not just a race.</h3><p>Roads, lava, people, machines and strange little details worth finding.</p><button type="button" class="kona-link-btn" data-home-discover>Discover something →</button></div>'+
     '</section>'+
     (nudgesEnabled?'<section class="home-nudge artifact artifact--label"><div><small>KONA NUDGE · +5 XP</small><h3>'+esc(nudge)+'</h3><p>No urgency. No streak panic. Just a small reason to look around.</p></div><button type="button" class="kona-link-btn" data-home-nudge>Read it. Apparently this counts.</button></section>':'')+
-    '<section class="home-horizon artifact artifact--label"><div class="home-horizon-head"><div><small>OVER THE HORIZON</small><h3>There is always something else.</h3></div><span class="t-data">LVL '+esc(progression.level)+'</span></div><div class="home-horizon-grid">'+horizonHtml+'</div><p class="t-hand">Curiosity is a training plan too.</p></section>';
+    '<section class="home-horizon artifact artifact--label"><div class="home-horizon-head"><div><small>OVER THE HORIZON</small><h3>There is always something else.</h3></div><span class="t-data">'+(admin?'ADMIN · ALL LEVELS':'LVL '+esc(progression.level))+'</span></div><div class="home-horizon-grid">'+horizonHtml+'</div><p class="t-hand">Curiosity is a training plan too.</p></section>';
 
   root.querySelector('[data-home-self]')?.addEventListener('click',()=>openRaceSelf?.());
   root.querySelector('[data-home-garage]')?.addEventListener('click',()=>openGarage?.());
