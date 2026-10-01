@@ -159,13 +159,20 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 .kona-primary,.btn,.quest-choice,.kona-list button,.kona-list a{min-height:var(--brand-touch)}
 .kona-list article,.kona-timeline article{gap:var(--brand-space-2)}
 @media(max-width:899px),(pointer:coarse){
-  .kona-panel{padding-inline:var(--brand-mobile-gutter);padding-top:max(12px,env(safe-area-inset-top));}
-  .kona-panel-head{margin-bottom:12px}
-  .kona-panel-head h2{font-size:clamp(34px,10vw,48px)}
-  .kona-panel-body{gap:10px}
-  .kona-hero-card{min-height:170px;padding:18px}
+  .kona-panel{padding-inline:var(--brand-mobile-gutter);padding-top:max(10px,env(safe-area-inset-top));}
+  .kona-panel-head{margin-bottom:8px;align-items:center}
+  .kona-panel-head small{letter-spacing:.16em}
+  .kona-panel-head h2{font-size:clamp(30px,8.8vw,42px);margin-top:5px}
+  .kona-panel-body{gap:12px}
+  .kona-hero-card{min-height:164px;padding:18px}
   .kona-hero-card h3{font-size:clamp(32px,9vw,44px)}
   .kona-section{padding:14px}
+  body.kona-panel-open .kona-user-menu{display:none}
+  .kona-bottom-nav{height:calc(78px + env(safe-area-inset-bottom));padding:7px 8px calc(7px + env(safe-area-inset-bottom));gap:4px;background:color-mix(in srgb,var(--kona-surface-strong) 98%,transparent)}
+  .kona-bottom-nav button,.kona-bottom-nav a{min-height:58px;border-radius:14px;font-size:11px;font-weight:700;gap:4px}
+  .kona-bottom-nav svg{width:22px;height:22px}
+  .kona-bottom-nav .on{color:var(--brand-action);background:color-mix(in srgb,var(--brand-action) 11%,var(--kona-surface-strong));font-weight:800}
+  .kona-bottom-nav .on::before{display:none}
 }
 
 /* RC5 cross-app branded surface convergence */
