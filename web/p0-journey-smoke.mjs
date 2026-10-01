@@ -20,18 +20,40 @@ try{
  assert.equal(museumData().length,0,'landing must not request museum catalog data');
  assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
  await page.click('#buildSelf');
+ await page.waitForSelector('.registration-avatar');
+ assert.match(await page.$eval('.registration-avatar',e=>e.textContent),/TRISUIT LAYOUT/i,'first visit begins with Race Self customization');
+ await page.click('[data-reg-archetype="aero"]');
+ await page.click('[data-reg-trisuit="aero-panel"]');
+ await page.click('[data-reg-continue]');
+ await page.waitForSelector('[data-set="intent"]');
+ await page.click('[data-set="intent"]');
+ await page.waitForSelector('[data-race-continue]');
+ await page.click('[data-race-continue]');
+ await page.waitForSelector('[data-set="bikeId"]');
+ await page.click('[data-set="bikeId"]');
+ await page.waitForSelector('[data-set="shoeId"]');
+ await page.click('[data-set="shoeId"]');
+ await page.waitForSelector('[data-set="goal"]');
+ await page.click('[data-set="goal"]');
+ await page.waitForSelector('#enterKona');
+ await page.click('#enterKona');
+ await page.waitForFunction(()=>document.querySelector('.kona-bottom-nav')&&!document.querySelector('#konaPanel').hidden);
+ assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i,'completed first run lands on Home');
+ assert.equal(museumHeavy().length,0,'Home must not request museum/world assets');
+ await page.click('[data-tab="me"]');
  await page.waitForSelector('.race-self-experience');
  await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
- assert.equal(await page.$('#konaQuest'),null,'no onboarding gate');
- assert.equal(museumHeavy().length,0,'User Studio must not request museum/world assets');
- assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'personal stage loads after Enter KONA');
+ assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'personal 3D loads only after entering Me/User Studio');
  await page.click('[data-race-self-action="customize"]');
- await page.click('[data-avatar-archetype="aero"]');
+ await page.click('[data-avatar-archetype="renegade"]');
  await page.keyboard.press('Escape');
  await page.reload({waitUntil:'domcontentloaded'});
- await page.click('#buildSelf');await page.waitForSelector('.race-self-experience');
- assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.archetype),'aero','customization survives reload');
- assert.equal(museumHeavy().length,0,'returning studio must not request museum/world assets');
+ assert.match(await page.$eval('#buildSelf',e=>e.textContent),/Continue your Kona/i,'returning visit is explicit');
+ await page.click('#buildSelf');
+ await page.waitForFunction(()=>!document.querySelector('#konaPanel').hidden);
+ assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i,'returning user lands on Home');
+ assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.archetype),'renegade','customization survives reload');
+ assert.equal(museumHeavy().length,0,'returning Home must not request museum/world assets');
  // Registration path: prove the browser is allowed to issue the Supabase OTP request.
  const auth=await browser.newPage();auth.setDefaultTimeout(30000);
  await auth.setRequestInterception(true);let otpSeen=false;
@@ -73,5 +95,5 @@ try{
  await installPage.close();
 
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → User Studio → avatar customization → reload + magic-link request; 3D stays user-triggered');
+ console.log('P0 browser journey PASS: first-run avatar/trisuit → RaceIdentity → Home → Me/User Studio → returning Home + magic-link request; 3D stays user-triggered');
 } finally {await browser.close();}
