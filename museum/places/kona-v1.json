@@ -1,6 +1,6 @@
 {
   "schema": "place-registry-v1",
-  "updated_at": "2026-09-30",
+  "updated_at": "2026-10-01",
   "ranking_policy": "Utility/relevance is independent of commercial status. Paid or affiliate relationships must be disclosed and must not change safety-critical ordering.",
   "places": [
     {
@@ -134,6 +134,139 @@
       "partner": {
         "status": "prospect",
         "commercial": false
+      },
+      "reward": {
+        "event": "PLACE_DISCOVERED",
+        "collection": "kona-places"
+      }
+    },
+    {
+      "id": "place:kamakahonu-beach",
+      "name": "Kamakahonu Beach",
+      "type": "landmark",
+      "categories": [
+        "race-critical",
+        "swim",
+        "orientation"
+      ],
+      "location": {
+        "city": "Kailua-Kona",
+        "region": "HI",
+        "country": "US"
+      },
+      "race_week_relevance": [
+        "swim start orientation",
+        "pier approach",
+        "race morning context"
+      ],
+      "website": "https://www.ironman.com/sites/default/files/2025-09/2025%20IMWC%20Kona%20Athlete%20Guide%209.29.25.pdf",
+      "source": {
+        "url": "https://www.ironman.com/sites/default/files/2025-09/2025%20IMWC%20Kona%20Athlete%20Guide%209.29.25.pdf",
+        "verified_at": "2026-10-01",
+        "note": "Detailed venue reference is 2025 until the 2026 Athlete Guide is published."
+      },
+      "partner": {
+        "status": "none"
+      },
+      "reward": {
+        "event": "PLACE_DISCOVERED",
+        "collection": "kona-places"
+      }
+    },
+    {
+      "id": "place:kbr",
+      "name": "King Kamehameha's Kona Beach Hotel / KBR",
+      "type": "landmark",
+      "categories": [
+        "race-critical",
+        "athlete-services",
+        "race-week"
+      ],
+      "location": {
+        "city": "Kailua-Kona",
+        "region": "HI",
+        "country": "US",
+        "address": "75-5660 Palani Rd, Kailua-Kona, HI 96740"
+      },
+      "race_week_relevance": [
+        "athlete services",
+        "race-week hub",
+        "2026 banquet venue"
+      ],
+      "website": "https://regwcusa.ironman.com/event/2026-ironman-world-championship-kailua-kona-hawaii-usa---banquets",
+      "source": {
+        "url": "https://regwcusa.ironman.com/event/2026-ironman-world-championship-kailua-kona-hawaii-usa---banquets",
+        "verified_at": "2026-10-01"
+      },
+      "partner": {
+        "status": "none"
+      },
+      "reward": {
+        "event": "PLACE_DISCOVERED",
+        "collection": "kona-places"
+      }
+    },
+    {
+      "id": "place:hot-corner",
+      "name": "Hot Corner",
+      "type": "landmark",
+      "categories": [
+        "race-critical",
+        "bike",
+        "run",
+        "spectator"
+      ],
+      "location": {
+        "city": "Kailua-Kona",
+        "region": "HI",
+        "country": "US",
+        "description": "Aliʻi Drive / Palani Road race-center junction"
+      },
+      "race_week_relevance": [
+        "bike and run orientation",
+        "spectator reference",
+        "race-day flow"
+      ],
+      "website": "https://www.ironman.com/sites/default/files/2025-09/2025%20IMWC%20Kona%20Athlete%20Guide%209.29.25.pdf",
+      "source": {
+        "url": "https://www.ironman.com/sites/default/files/2025-09/2025%20IMWC%20Kona%20Athlete%20Guide%209.29.25.pdf",
+        "verified_at": "2026-10-01",
+        "note": "Detailed venue reference is 2025 until the 2026 Athlete Guide is published."
+      },
+      "partner": {
+        "status": "none"
+      },
+      "reward": {
+        "event": "PLACE_DISCOVERED",
+        "collection": "kona-places"
+      }
+    },
+    {
+      "id": "place:hale-halawai",
+      "name": "Hale Hālāwai Park",
+      "type": "landmark",
+      "categories": [
+        "race-week",
+        "community",
+        "orientation"
+      ],
+      "location": {
+        "city": "Kailua-Kona",
+        "region": "HI",
+        "country": "US",
+        "address": "75-5768 Aliʻi Drive, Kailua-Kona, HI 96740"
+      },
+      "race_week_relevance": [
+        "2026 Kona Town Fun Run",
+        "race-week gathering point"
+      ],
+      "website": "https://regwcusa.ironman.com/event/2026-kona-town-fun-run-supported-by-hoka---saturday-october-3-2026",
+      "source": {
+        "url": "https://regwcusa.ironman.com/event/2026-kona-town-fun-run-supported-by-hoka---saturday-october-3-2026",
+        "verified_at": "2026-10-01"
+      },
+      "partner": {
+        "status": "none"
       },
       "reward": {
         "event": "PLACE_DISCOVERED",
