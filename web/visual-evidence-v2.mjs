@@ -37,12 +37,12 @@ async function capture(vp,state,theme){
    await p.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden,{timeout:60000});
    if(state==='home'){
      // Returning users land here. No personal/world 3D should be required.
-   }else if(['user-studio','avatar-editor','passport','museum-return-home'].includes(state)){
+   }else if(['user-studio','avatar-editor','progress'].includes(state)){
      const switched=await p.evaluate(async()=>{const shell=window.__konaShell;if(!shell?.me)return false;await shell.me();return true;});
      if(!switched)throw new Error('could not enter User Studio');
      await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame,{timeout:60000});
      if(state==='avatar-editor')await p.click('[data-race-self-action="customize"]');
-     if(state==='passport'){await p.click('[data-race-self-action="passport"]');await p.waitForSelector('#konaAccount');}
+     if(state==='progress'){await p.click('[data-race-self-action="progress"]');await p.waitForSelector('#konaAccount');}
    }else if(state==='museum-return-home'){
      const switched=await p.evaluate(async()=>{const shell=window.__konaShell;if(!shell?.explore)return false;await shell.explore();return true;});
      if(!switched)throw new Error('could not enter Discover before world');
@@ -119,7 +119,7 @@ for(const r of report){
  }
  if(r.viewport!=='desktop'&&['user-studio','garage'].includes(r.state)&&r.metrics.smallTargets.length)violations.push(`${r.viewport}/${r.theme}/${r.state}: touch targets below 48px: ${r.metrics.smallTargets.map(x=>x.text||x.tag).join(', ')}`);
  if(r.state==='plan'&&!/Plan|race week|Expo|October/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Plan content detected`);
- if(r.state==='passport'&&!/Passport|XP|Credits|progress/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Passport content detected`);
+ if(r.state==='progress'&&!/Progress|XP|Credits|milestones/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: no Progress content detected`);
  if(r.state==='bike-studio'&&!/Speedmax|Bikes/i.test(r.metrics.visibleText))violations.push(`${r.viewport}/${r.theme}: Bike Studio missing`);
 }
 if(violations.length){console.error(violations.join('\n'));process.exitCode=1}
