@@ -5,6 +5,7 @@ const html=fs.readFileSync(new URL('../landing.template.html',import.meta.url),'
 const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'utf8');
 const system=fs.readFileSync(new URL('../styles/system.css',import.meta.url),'utf8');
 const studio=fs.readFileSync(new URL('../studio.template.html',import.meta.url),'utf8');
+const hardener=fs.readFileSync(new URL('../../tools/harden_pages.mjs',import.meta.url),'utf8');
 
 test('landing always exposes Enter, Sign in and Install',()=>{
   assert.match(html,/id="buildSelf"/);assert.match(html,/id="entrySignIn"/);assert.match(html,/id="entryInstall"/);
