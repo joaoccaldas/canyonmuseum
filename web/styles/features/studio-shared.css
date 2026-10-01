@@ -108,3 +108,5 @@ body.dreaming #dreamTitle.on{opacity:1}
 /* desktop: the sheet becomes a side panel */
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.studio-fallback{color:#fff;padding:40px;font:16px var(--brand-font-ui,system-ui)}.studio-fallback a{color:var(--brand-accent-2)}
