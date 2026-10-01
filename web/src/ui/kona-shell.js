@@ -7,7 +7,7 @@ import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
-import { renderFeed, renderTravel } from './companion.js';
+import { renderFeed, renderTravel, renderKonaNowPreview } from './companion.js';
 import { renderAdminAssets } from './admin-assets.js';
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 import { readStorage, writeStorage } from '../engine/storage.js';
@@ -119,6 +119,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       openCollection:collection,
       admin:accessContext.admin,
     });
+    renderKonaNowPreview(body.querySelector('[data-home-kona-now]'),{open:feed});
     requestAnimationFrame(()=>requestAnimationFrame(()=>{if(request===studioRequest)startTour();}));
     scheduleSurprise('home');
     setTimeout(()=>{
@@ -156,7 +157,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
     dismissTour();leaveRaceSelf();const request=studioRequest;panel.hidden=true;
     await featureStyle('companion','web/styles/companion.css');
     if(request!==studioRequest)return;
-    title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
+    title.textContent=view==='feed'?'Kona Now':'Travel to Kona';eyebrow.textContent=view==='feed'?'KONA · PEOPLE / PLACES / PROGRESS':'KONA · EXPLORE MORE';
     panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
     document.body.classList.add('kona-panel-open');setActive('discover');
     disposeStudio=(view==='feed'?renderFeed:renderTravel)(body,{back:raceSelf});
