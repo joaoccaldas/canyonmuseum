@@ -1,6 +1,6 @@
 /* Companion pages own only .companion-*; all brand values come from brand/. */
 .companion-panel .kona-panel-body{display:block}
-@media(max-width:760px){.kona-panel.companion-panel{padding-inline:max(20px,env(safe-area-inset-left))}}
+@media(max-width:899px){.kona-panel.companion-panel{padding-inline:max(20px,env(safe-area-inset-left))}}
 @media(max-width:359px){.kona-panel.companion-panel{padding-inline:16px}}
 .companion-page{color:var(--brand-ink);font-family:var(--brand-font-ui);min-width:0;padding-bottom:24px}
 .companion-page *{box-sizing:border-box}
