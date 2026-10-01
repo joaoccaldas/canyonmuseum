@@ -32,7 +32,25 @@ for(const file of textFiles){
  if(rel!=='web/src/engine/storage.js' && /['"`]speedmax\.[A-Za-z0-9_.:-]+['"`]/.test(text) && !LEGACY_SPEEDMAX_ALLOWLIST.has(rel))
    errors.push(`${rel}: new direct legacy speedmax.* key; use the KONA storage adapter`);
 }
-for(const banned of ['downloads/SpeedmaxMuseum.apk']) if(fs.existsSync(path.join(ROOT,banned))) errors.push(`${banned}: release binary belongs in Actions/Releases`);
+
+// Styling authority guard: no published page may load the same local stylesheet twice.
+// Consumer-only CSS must never leak back into standalone 3D/editorial pages.
+const PAGE_FILES = [
+  'index.html','Studio.html','Experiences.html','Canyon_Collection.html',
+  'web/landing.template.html','web/studio.template.html','web/experience.template.html'
+].filter(f=>fs.existsSync(path.join(ROOT,f)));
+for (const rel of PAGE_FILES) {
+  const html=fs.readFileSync(path.join(ROOT,rel),'utf8');
+  const hrefs=[...html.matchAll(/<link[^>]+rel=["']stylesheet["'][^>]+href=["']([^"']+)["']/gi)].map(m=>m[1]);
+  const dup=[...new Set(hrefs.filter((h,i)=>hrefs.indexOf(h)!==i))];
+  if(dup.length) errors.push(`${rel}: duplicate stylesheet links: ${dup.join(', ')}`);
+  if(rel!=='index.html' && rel!=='web/landing.template.html' && /web\/styles\/(?:shell-mobile|race-self)\.css/.test(html))
+    errors.push(`${rel}: consumer-only shell/Race Self CSS leaked into standalone page`);
+}
+const shellCss=fs.readFileSync(path.join(ROOT,'web/styles/shell-mobile.css'),'utf8');
+if(/\.race-self-|\.hub-drawer|\.avatar-options/.test(shellCss))
+  errors.push('web/styles/shell-mobile.css: Race Self styles must live only in web/styles/race-self.css');
+\nfor(const banned of ['downloads/SpeedmaxMuseum.apk']) if(fs.existsSync(path.join(ROOT,banned))) errors.push(`${banned}: release binary belongs in Actions/Releases`);
 
 if(errors.length){console.error('repository hygiene guard failed');for(const e of errors)console.error(' - '+e);process.exit(1);}
 console.log(`repository hygiene guard: PASS (${textFiles.length} source files checked; ${LEGACY_SPEEDMAX_ALLOWLIST.size} legacy-key files grandfathered for migration)`);
