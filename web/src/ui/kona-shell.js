@@ -7,7 +7,7 @@ import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
-import { renderFeed, renderTravel } from './companion.js';
+import { renderFeed, renderTravel, renderKonaNowPreview } from './companion.js';
 import { renderAdminAssets } from './admin-assets.js';
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 import { readStorage, writeStorage } from '../engine/storage.js';
@@ -113,6 +113,7 @@ export function initKonaShell({ profile, settings, enter, openUserStudio, featur
       openPlan:plan,
       admin:accessContext.admin,
     });
+    renderKonaNowPreview(body.querySelector('[data-home-kona-now]'),{open:feed});
     requestAnimationFrame(()=>requestAnimationFrame(()=>startTour()));
     scheduleSurprise('home');
     setTimeout(()=>{
