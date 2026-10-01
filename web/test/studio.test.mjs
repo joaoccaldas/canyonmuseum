@@ -58,3 +58,17 @@ test('rooms registry: every named product exists, every area has a name, every b
   for (const p of CAT.products) assert.equal(p.museum, p.where.length > 0, p.id);
   assert.ok(CAT.products.filter(p => p.origin === 'museum-edition' && p.edition === 'film').length === J('museum/themes/films.json').films.length, 'every film bike is in the studio');
 });
+
+
+test('Studio preserves KONA navigation context without accepting arbitrary return URLs',()=>{
+  const template=fs.readFileSync(path.join(root,'web/studio.template.html'),'utf8');
+  const main=fs.readFileSync(path.join(root,'web/src/studio/main.js'),'utf8');
+  const css=fs.readFileSync(path.join(root,'web/styles/studio.css'),'utf8');
+  assert.match(template,/id="studioBack"/);
+  assert.match(template,/id="studioContext"/);
+  assert.match(main,/\['race-self','garage'\]\.includes\(q\.get\('from'\)\)/);
+  assert.match(main,/\?view=race-self/);
+  assert.match(main,/\?view=garage/);
+  assert.match(css,/\.filters button\{[^}]*min-height:48px/);
+  assert.match(css,/\.chips button\{[^}]*min-height:48px/);
+});
