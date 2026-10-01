@@ -77,39 +77,151 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry #loadstate:empty{display:none}
 
 @media(max-width:899px){
+  body.entry-landing #intro{padding-bottom:max(18px,env(safe-area-inset-bottom))!important}
   #intro.kona-entry{
-    min-height:100dvh;padding:calc(14px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));overflow:auto
+    min-height:100svh;
+    padding:calc(12px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));
+    overflow:auto;
   }
-  #intro.kona-entry .entry-media img{object-position:58% center;filter:saturate(.68) contrast(1.04)}
-  #intro.kona-entry::before{background:linear-gradient(180deg,rgba(5,14,19,.38),rgba(5,14,19,.62) 36%,rgba(5,14,19,.96) 78%)}
-  #intro.kona-entry::after{background:linear-gradient(90deg,rgba(5,14,19,.30),transparent 70%)}
-  #intro.kona-entry .intro-inner{min-height:0;display:flex;flex-direction:column;gap:0;width:100%;max-width:560px}
-  #intro.kona-entry .entry-copy{max-width:none;width:100%}
-  #intro.kona-entry .entry-mast{justify-content:space-between;margin-bottom:12px}
-  #intro.kona-entry .entry-event{padding-left:0;border-left:0;font-size:8px}
-  #intro.kona-entry h1{font-size:clamp(43px,13vw,64px);line-height:.86;margin-bottom:13px;max-width:11ch}
-  #intro.kona-entry .lede{font-size:14px;line-height:1.4;max-width:28rem}
-  #intro.kona-entry .entry-product{order:2;width:100%;min-height:0;margin-top:15px}
-  #intro.kona-entry .entry-product-stage{min-height:270px;border-radius:24px}
-  #intro.kona-entry .entry-stage-avatar{left:2%;bottom:27%;width:12%}
-  #intro.kona-entry .entry-avatar{transform:scale(.92)}
-  #intro.kona-entry .entry-stage-bike{left:12%;right:1%;top:34px;bottom:55px;width:auto}
+  #intro.kona-entry .entry-media{position:fixed}
+  #intro.kona-entry .entry-media img{
+    object-position:62% center;
+    filter:saturate(.62) contrast(1.03) brightness(.86)
+  }
+  #intro.kona-entry::before{
+    background:
+      linear-gradient(180deg,rgba(5,14,19,.28) 0%,rgba(5,14,19,.48) 36%,rgba(5,14,19,.92) 72%,rgba(5,14,19,.98) 100%)
+  }
+  #intro.kona-entry::after{
+    background:
+      linear-gradient(90deg,rgba(5,14,19,.34),rgba(5,14,19,.06) 74%),
+      radial-gradient(circle at 78% 18%,rgba(57,200,239,.08),transparent 32%)
+  }
+  #intro.kona-entry .intro-inner{
+    min-height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 30px);
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    width:100%;
+    max-width:560px;
+    margin:0 auto;
+  }
+  #intro.kona-entry .entry-copy{
+    width:100%;
+    max-width:none;
+    padding-top:clamp(10px,4svh,34px)
+  }
+  #intro.kona-entry .entry-mast{
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:clamp(14px,3svh,24px)
+  }
+  #intro.kona-entry .eyebrow{font-size:10px;letter-spacing:.24em}
+  #intro.kona-entry .entry-event{
+    max-width:56%;
+    padding-left:0;
+    border-left:0;
+    font-size:7.5px;
+    line-height:1.35;
+    text-align:right;
+    opacity:.82
+  }
+  #intro.kona-entry h1{
+    max-width:9.7ch;
+    margin:0 0 14px;
+    font-size:clamp(40px,11.7vw,54px);
+    line-height:.91;
+    letter-spacing:-.035em;
+    text-wrap:balance
+  }
+  #intro.kona-entry .lede{
+    max-width:25rem;
+    margin:0;
+    font-size:13.5px;
+    line-height:1.45;
+    color:rgba(248,245,239,.86)
+  }
+
+  /* CTA is the end of the first viewport story. Optional product depth follows it. */
+  #intro.kona-entry .entry-actions-wrap{
+    order:2;
+    width:100%;
+    max-width:none;
+    margin-top:auto;
+    padding-top:clamp(24px,7svh,64px)
+  }
+  #intro.kona-entry .entry-actions{
+    width:100%;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:8px;
+    margin-top:0
+  }
+  #intro.kona-entry .entry-actions .btn{
+    min-height:52px;
+    border-radius:16px;
+    padding-inline:18px
+  }
+  #intro.kona-entry .entry-actions .btn.primary{
+    justify-content:space-between;
+    width:100%;
+    font-size:14px;
+    box-shadow:0 16px 44px rgba(0,0,0,.26)
+  }
+  #intro.kona-entry .entry-actions .btn.text{
+    min-width:84px;
+    padding-inline:14px;
+    border-color:rgba(255,255,255,.18);
+    background:rgba(7,17,22,.22)
+  }
+  #intro.kona-entry .entry-trust{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:center;
+    gap:6px 12px;
+    margin-top:10px;
+    font-size:9.5px;
+    line-height:1.35
+  }
+  #intro.kona-entry .entry-trust>span:nth-child(2){display:none}
+  #intro.kona-entry .entry-trust #entryInstall{
+    justify-self:end;
+    min-height:40px;
+    padding:0;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    color:#eef2f2;
+    text-decoration:underline;
+    text-underline-offset:4px
+  }
+  #intro.kona-entry .entry-signin-note{display:none}
+
+  #intro.kona-entry .entry-product{
+    order:3;
+    width:100%;
+    min-height:0;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,.12)
+  }
+  #intro.kona-entry .entry-product-stage{
+    min-height:clamp(210px,58vw,290px);
+    border-radius:18px;
+    border-color:rgba(255,255,255,.11);
+    box-shadow:0 28px 70px -46px #000
+  }
+  #intro.kona-entry .entry-stage-avatar{left:3%;bottom:28%;width:12%}
+  #intro.kona-entry .entry-avatar{transform:scale(.9)}
+  #intro.kona-entry .entry-stage-bike{left:12%;right:1%;top:30px;bottom:50px}
   #intro.kona-entry .entry-stage-caption{left:14px;right:14px;bottom:12px}
-  #intro.kona-entry .entry-stage-caption b{font-size:22px}
-  #intro.kona-entry .entry-stage-caption span{font-size:9px}
-  #intro.kona-entry .entry-product-nav{margin-top:7px;border-radius:14px}
-  #intro.kona-entry .entry-product-nav span{min-height:42px;font-size:9px;gap:5px}
-  #intro.kona-entry .entry-product-nav b{display:none}
-  #intro.kona-entry .entry-race-clock{margin-top:7px}
-  #intro.kona-entry .entry-race-clock small{font-size:8px}
-  #intro.kona-entry .entry-race-clock strong{font-size:9px}
-  #intro.kona-entry .entry-actions-wrap{order:3;width:100%;max-width:none}
-  #intro.kona-entry .entry-actions{width:100%;display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
-  #intro.kona-entry .entry-actions .btn{min-height:52px}
-  #intro.kona-entry .entry-trust{margin-top:10px;font-size:9px}
-  #intro.kona-entry .entry-trust #entryInstall{display:inline-flex;min-height:48px;padding:0 6px;border-bottom:0;text-decoration:underline;text-underline-offset:4px}
-  #intro.kona-entry .entry-signin-note{margin-top:5px;font-size:9px}
+  #intro.kona-entry .entry-stage-caption b{font-size:21px}
+  #intro.kona-entry .entry-stage-caption span{font-size:8.5px}
+  #intro.kona-entry .entry-product-nav,
+  #intro.kona-entry .entry-race-clock{display:none}
 }
+
 @media(max-width:360px){
   #intro.kona-entry{padding-inline:14px}
   #intro.kona-entry h1{font-size:42px}
@@ -174,12 +286,5 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 .visual-avatar .va-shoe.l{left:11px}.visual-avatar .va-shoe.r{right:11px}
 .visual-bike-mark{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 
-/* Short viewports keep entry available before the optional preview. */
-@media(max-width:899px){
- #intro.kona-entry .entry-actions-wrap{order:2}
- #intro.kona-entry .entry-product{order:3}
- #intro.kona-entry .entry-trust{font-size:12px}
- #intro.kona-entry .entry-signin-note{font-size:12px}
- #intro.kona-entry .entry-product-nav span{font-size:12px}
-}
+/* Mobile entry composition is owned by the primary mobile block above. */
 @media(prefers-reduced-motion:reduce){#intro.kona-entry .entry-product-stage{transition:none}}
