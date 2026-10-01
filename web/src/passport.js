@@ -1,9 +1,9 @@
+import { readStorage, writeStorage } from './engine/storage.js';
 // The Museum Passport: a reason to come back.
 // Stamps for every bike, Kona year, room and night experience you visit; XP and levels; a daily
 // streak with a Kona fact of the day; badges for finishing collections; hidden collectibles in the
 // night experiences. Registration is on-device (a name, an avatar, a home country) — nothing is
 // sent anywhere. A passport code moves it to another device.
-const KEY = 'speedmax.passport.v1';
 const LEVELS = [[0, 'Age-grouper'], [120, 'Kona qualifier'], [320, 'Pro'], [650, 'Podium'], [1000, 'World Champion']];
 export const BADGES = [
   { id: 'first-steps', icon: '👣', name: 'First steps', hint: 'Enter the museum', test: s => has(s, 'room:hall') },
@@ -35,10 +35,10 @@ const today = () => new Date().toISOString().slice(0, 10);
 const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
 
 function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s?.v === 1) return s; } catch (_) { }
+  try { const s = JSON.parse(readStorage('passport') || 'null'); if (s?.v === 1) return s; } catch (_) { }
   return { v: 1, profile: null, stamps: {}, xp: 0, streak: 0, best: 0, last: null, badges: {} };
 }
-function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) { } }
+function save(s) { try { writeStorage('passport', JSON.stringify(s)); } catch (_) { } }
 export const levelOf = xp => { let i = 0; while (i + 1 < LEVELS.length && xp >= LEVELS[i + 1][0]) i++; return { i, name: LEVELS[i][1], from: LEVELS[i][0], to: LEVELS[i + 1]?.[0] ?? null }; };
 
 const CSS = `

@@ -23,7 +23,8 @@ test('consumer landing wires one truthful install experience', () => {
   assert.match(tpl, /rel="manifest" href="\.\/manifest\.webmanifest"/);
   assert.match(tpl, /apple-mobile-web-app-capable/);
   assert.match(tpl, /id="entryInstall"/);
-  assert.match(tpl, /data-pwa-action/);
+  assert.doesNotMatch(tpl, /data-pwa-action/);
+  assert.match(install, /ensureInstallSheet/);
   assert.match(install, /beforeinstallprompt/);
   assert.match(install, /data-pwa-action/);
   assert.match(install, /prompt\.prompt/);
@@ -38,11 +39,19 @@ test('sealed service worker verifies release files and keeps GLBs out of the cor
   assert.ok(app.version && app.files && app.core?.length);
   assert.ok(app.core.every(p => !/\.glb$/i.test(p)));
   assert.ok(app.core.includes('app/kona-core.js') && app.core.includes('app/entry-data.json') && app.core.includes('integrations/public-catalog.json'));
+
+  const builder = fs.readFileSync(path.join(root,'tools/build_app.mjs'),'utf8');
+  assert.match(builder,/['"]app\/viewport\.js['"]/,'manifest builder must seal viewport runtime');
+  for(const css of ['web/styles/home.css','web/styles/garage.css','web/styles/race-self.css','web/styles/companion.css']){
+    assert.ok(builder.includes("'"+css+"'"),css+' should be offline-ready without eager DOM import');
+  }
+
   assert.ok(!app.core.includes('app/museum-data.js') && app.files['app/museum-data.js']);
   assert.ok(!app.core.includes('app/hall.js') && app.files['app/hall.js']);
   assert.ok(!app.core.includes('app/race-self-stage.js') && app.files['app/race-self-stage.js']);
   assert.ok(!app.core.includes('app/world-shell.html') && app.files['app/world-shell.html']);
   assert.ok(app.files['app/studio.js'] && app.files['app/studio-catalog.js']);
+
   const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const coreJs = fs.readFileSync(path.join(root, 'app/kona-core.js'), 'utf8');
   assert.match(index, /src="app\/kona-core\.js"/);
@@ -72,6 +81,19 @@ test('installed apps pick up verified new versions and every public icon exists'
       assert.ok(fs.existsSync(path.join(root, href.replace(/^\.\//, ''))), `${template}: ${href}`);
     }
   }
+});
+
+test('native package includes the current app runtime and style trees', () => {
+  const build = fs.readFileSync(path.join(root,'app/native/scripts/build-www.mjs'),'utf8');
+  for(const rel of ["'app'","'web', 'styles'","'brand'","'integrations'","'assets'"]) assert.ok(build.includes(rel),rel+' missing from native package assembly');
+  assert.ok(build.includes("!/[\\\\/]native([\\\\/]|$)/.test"),'native source tree must be excluded from packaged app assets');
+});
+
+test('Experiences and app Passport share canonical storage', () => {
+  const passport=fs.readFileSync(path.join(root,'web/src/passport.js'),'utf8');
+  assert.match(passport,/readStorage\('passport'\)/);
+  assert.match(passport,/writeStorage\('passport'/);
+  assert.doesNotMatch(passport,/localStorage\.(?:getItem|setItem)\(['"]speedmax\.passport/);
 });
 
 test('Three.js runtime does not use the removed PCFSoftShadowMap constant', () => {

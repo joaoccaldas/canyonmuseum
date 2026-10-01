@@ -3,6 +3,8 @@
 import { readGameState } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
+import { ensureProgression } from '../engine/progression.js';
+import { discoveryHorizon } from '../engine/discovery.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
@@ -10,8 +12,9 @@ const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/8
 
 function avatarPreview(styleInput){
   const s=normaliseAvatarStyle(styleInput);
-  const [skin,hair,top,bottoms,shoes]=['skin','hair','top','bottoms','shoes'].map(slot=>avatarItem(s,slot).color);
-  return '<div class="home-avatar" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
+  const skin=avatarItem(s,'skin').color,hair=avatarItem(s,'hair').color,tri=avatarItem(s,'trisuit'),shoes=avatarItem(s,'shoes').color;
+  const top=tri.layout==='separates'?avatarItem(s,'top').color:tri.color,bottoms=tri.layout==='separates'?avatarItem(s,'bottoms').color:tri.color;
+  return '<div class="home-avatar" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+';--kit-accent:'+tri.accentColor+'">'+
     '<i class="ha-hair"></i><i class="ha-head"></i><i class="ha-body"></i><i class="ha-arm l"></i><i class="ha-arm r"></i><i class="ha-leg l"></i><i class="ha-leg r"></i><i class="ha-shoe l"></i><i class="ha-shoe r"></i>'+
   '</div>';
 }
@@ -26,6 +29,9 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
   const style=profile?.get?.().avatarStyle;
   const goal=identity.goal?.label||identity.goal||'Build the version of you that shows up.';
   const races=Array.isArray(snapshot.race_history)?snapshot.race_history.length:0;
+  let progression={level:1,level_name:'Visitor'};try{progression=ensureProgression();}catch(_){ }
+  const horizon=discoveryHorizon(progression,4);
+  const horizonHtml=horizon.map(item=>'<article class="home-horizon-card '+(item.unlocked?'is-revealed':'is-locked')+'"><div class="home-horizon-silhouette"><span>'+esc(item.silhouette)+'</span></div><small>'+(item.unlocked?'UNLOCKED':'LEVEL '+item.level)+'</small><h4>'+esc(item.unlocked?item.reveal:item.tease)+'</h4><p>'+(item.unlocked?'Now visible in KONA.':'Almost visible. Keep exploring.')+'</p></article>').join('');
 
   root.innerHTML=
     '<section class="kona-hero-card artifact artifact--hero home-today">'+
@@ -37,13 +43,14 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
         '<p>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</p>'+
-        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open Race Self <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Your setup</button></div>'+
+        '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open User Studio <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Open Garage</button></div>'+
       '</div>'+
     '</section>'+
     '<section class="home-postcard artifact artifact--photo">'+
       '<div class="home-postcard-photo" aria-hidden="true"><img src="assets/kona-years/queen-k.jpg" alt="" loading="lazy" decoding="async"></div>'+
       '<div class="home-postcard-copy"><small>KAILUA-KONA · HAWAIʻI</small><h3>Not just a race.</h3><p>Roads, lava, people, machines and strange little details worth finding.</p><button type="button" class="kona-link-btn" data-home-discover>Discover something →</button></div>'+
-    '</section>';
+    '</section>'+ 
+    '<section class="home-horizon artifact artifact--label"><div class="home-horizon-head"><div><small>OVER THE HORIZON</small><h3>There is always something else.</h3></div><span class="t-data">LVL '+esc(progression.level)+'</span></div><div class="home-horizon-grid">'+horizonHtml+'</div><p class="t-hand">Curiosity is a training plan too.</p></section>';
 
   root.querySelector('[data-home-self]')?.addEventListener('click',()=>openRaceSelf?.());
   root.querySelector('[data-home-garage]')?.addEventListener('click',()=>openGarage?.());

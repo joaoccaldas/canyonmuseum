@@ -1926,6 +1926,17 @@ async function shareView(title) {
   toast({ shared: 'Shared', link: 'Link shared', saved: 'Image saved to your device', cancelled: 'Not shared' }[r]);
 }
 $('shareBtn')?.addEventListener('click', () => shareView($('card').classList.contains('on') ? $('cName').textContent : ''));
+const worldMore=$('worldMoreMenu'),worldMoreBtn=$('worldMoreBtn');
+$('backKonaBtn')?.addEventListener('click',()=>window.__konaShell?.now?.());
+worldMoreBtn?.addEventListener('click',()=>{
+  const open=worldMore?.hidden!==false;
+  if(worldMore)worldMore.hidden=!open;
+  worldMoreBtn.setAttribute('aria-expanded',String(open));
+});
+worldMore?.querySelector('[data-world-share]')?.addEventListener('click',()=>{worldMore.hidden=true;worldMoreBtn?.setAttribute('aria-expanded','false');shareView($('card').classList.contains('on') ? $('cName').textContent : '');});
+worldMore?.querySelector('[data-world-tour]')?.addEventListener('click',()=>{worldMore.hidden=true;worldMoreBtn?.setAttribute('aria-expanded','false');tourStart?.();});
+worldMore?.querySelector('[data-world-settings]')?.addEventListener('click',()=>{worldMore.hidden=true;worldMoreBtn?.setAttribute('aria-expanded','false');settingsUI?.open?.();});
+document.addEventListener('click',e=>{if(!worldMore||worldMore.hidden)return;if(e.target.closest('#worldMoreBtn,#worldMoreMenu'))return;worldMore.hidden=true;worldMoreBtn?.setAttribute('aria-expanded','false');});
 $('cardShare')?.addEventListener('click', () => shareView($('cName').textContent));
 const konaShell = window.__konaShell;
 if (!konaShell) throw new Error('KONA consumer Shell authority missing');

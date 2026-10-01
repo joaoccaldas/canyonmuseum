@@ -8,6 +8,7 @@ const brand = read('docs/BRAND_SYSTEM.md');
 const tokens = read('brand/tokens.css');
 const themes = read('brand/themes.css');
 const artifacts = read('brand/artifacts.css');
+const system = read('web/styles/system.css');
 const profile = read('web/src/engine/profile.js');
 const settings = read('web/src/ui/settings.js');
 const shell = read('web/src/ui/kona-shell.js');
@@ -47,11 +48,16 @@ test('landing index stays a thin consumer shell and world styles remain lazy', (
   assert.doesNotMatch(landingTemplate, /__HALL_WEB_CSS__|__HALL_MOBILE_CSS__/);
   assert.doesNotMatch(landingTemplate, /web\/styles\/hall-(?:web|mobile)\.css/);
   assert.match(landingTemplate, /brand\/tokens\.css/);
-  assert.match(entry, /loadStyle\('web\/styles\/hall-web\.css'\)/);
-  assert.match(entry, /loadStyle\('web\/styles\/hall-mobile\.css'\)/);
+  assert.match(landingTemplate, /web\/styles\/components\.css/);
+  assert.match(entry, /loadStyle\('web\/styles\/hall-web\.css','museum'\)/);
+  assert.match(entry, /loadStyle\('web\/styles\/hall-mobile\.css','museum'\)/);
+  assert.match(entry, /link\.disabled=!enabled/);
+  assert.match(entry, /kona-panel-open/);
   assert.doesNotMatch(landingBuild, /packCss/);
   assert.doesNotMatch(harden, /<style id="design-system">/);
   assert.match(harden, /brand\/themes\.css/);
+  assert.match(system, /#appSheet\{[^}]*env\(safe-area-inset-bottom\)/s);
+  assert.doesNotMatch(system, /#appSheet[^\n]*var\(--safe-b\)/);
 });
 
 test('deterministic output sync pushes back to the active branch', () => {

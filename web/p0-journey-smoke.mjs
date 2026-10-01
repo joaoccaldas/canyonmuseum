@@ -11,27 +11,93 @@ try{
  page.on('request',r=>requests.push(r.url()));
  page.on('pageerror',e=>pageErrors.push('page:'+String(e?.stack||e)));
  page.on('console',m=>{if(m.type()==='error')pageErrors.push('console:'+m.text())});
- page.on('requestfailed',r=>pageErrors.push('requestfailed:'+r.url()+':'+(r.failure()?.errorText||'unknown')));
+ page.on('requestfailed',r=>{const reason=r.failure()?.errorText||'unknown';if(reason==='net::ERR_ABORTED')return;pageErrors.push('requestfailed:'+r.url()+':'+reason);});
  await page.goto(base,{waitUntil:'domcontentloaded'});
  const museumHeavy=()=>requests.filter(u=>/app\/hall\.js|app\/museum-data\.js|\.hdr(?:\?|$)/i.test(u));
  const personal3D=()=>requests.filter(u=>/app\/race-self-stage\.js|\.glb(?:\?|$)/i.test(u));
- const museumData=()=>requests.filter(u=>/app\/museum-data\.js/i.test(u));
  assert.equal(museumHeavy().length,0,'landing must request zero museum/world assets');
- assert.equal(museumData().length,0,'landing must not request museum catalog data');
  assert.ok(requests.some(u=>/app\/entry-data\.json/.test(u)),'landing should request only tiny entry event data');
+
+ // First run: customize once, then get into the product immediately.
  await page.click('#buildSelf');
+ await page.waitForSelector('.registration-avatar');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'avatar registration must not overflow horizontally');
+ assert.match(await page.$eval('.registration-avatar',e=>e.textContent),/TRISUIT LAYOUT/i);
+ await page.click('[data-reg-archetype="aero"]');
+ await page.click('[data-reg-trisuit="aero-panel"]');
+ await page.click('[data-reg-continue]');
+ await page.waitForFunction(()=>document.querySelector('.kona-bottom-nav')&&!document.querySelector('#konaPanel').hidden);
+ assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i,'first run lands directly on Home');
+ assert.equal(museumHeavy().length,0,'Home must not request museum/world assets');
+
+ // Contextual tour is automatic once, branded, and dismissible.
+ await page.waitForSelector('.kona-tour');
+ assert.match(await page.$eval('.kona-tour',e=>e.textContent),/MAKE IT YOURS|Start with your athlete/i);
+ for(let i=0;i<4;i++){
+   await page.click('[data-tour-next]');
+   if(i<3)await page.waitForSelector('[data-tour-next]');
+ }
+ await page.waitForFunction(()=>!document.querySelector('.kona-tour'));
+ assert.equal(await page.evaluate(()=>localStorage.getItem('kona.onboarding.v1')),'seen','onboarding must persist after first presentation');
+
+ // User Studio remains user-triggered and persists avatar changes.
+ await page.click('[data-tab="me"]');
  await page.waitForSelector('.race-self-experience');
  await page.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
- assert.equal(await page.$('#konaQuest'),null,'no onboarding gate');
- assert.equal(museumHeavy().length,0,'User Studio must not request museum/world assets');
- assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'personal stage loads after Enter KONA');
+ assert.ok(personal3D().some(u=>/race-self-stage\.js/i.test(u)),'personal 3D loads only after entering Me/User Studio');
  await page.click('[data-race-self-action="customize"]');
- await page.click('[data-avatar-archetype="aero"]');
- await page.keyboard.press('Escape');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'avatar customization drawer must not overflow');
+ await page.click('[data-avatar-archetype="renegade"]');
+ await page.click('[data-hub-close]');
  await page.reload({waitUntil:'domcontentloaded'});
- await page.click('#buildSelf');await page.waitForSelector('.race-self-experience');
- assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.archetype),'aero','customization survives reload');
- assert.equal(museumHeavy().length,0,'returning studio must not request museum/world assets');
+ assert.match(await page.$eval('#buildSelf',e=>e.textContent),/Continue your Kona/i,'returning visit is explicit after onboarding, even without a RaceIdentity questionnaire');
+ await page.click('#buildSelf');
+ await page.waitForFunction(()=>!document.querySelector('#konaPanel').hidden);
+ assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i,'returning user lands on Home');
+ assert.equal(await page.evaluate(()=>window.__konaProfile.get().avatarStyle.archetype),'renegade','customization survives reload');
+ assert.equal(await page.$('.kona-tour'),null,'tour must not repeat automatically');
+
+ // Museum round trip: lazy hall CSS must turn off again before Feed/Home renders.
+ await page.click('[data-tab="me"]');
+ await page.waitForSelector('[data-race-self-action="museum"]');
+ await page.click('[data-race-self-action="museum"]');
+ await page.waitForFunction(()=>document.body.classList.contains('museum-open'));
+ await page.waitForFunction(()=>[...document.querySelectorAll('link[data-style-scope="museum"]')].length===2);
+ await page.evaluate(()=>window.__konaShell.feed());
+ await page.waitForSelector('.companion-page');
+ const restored=await page.evaluate(()=>{
+   const links=[...document.querySelectorAll('link[data-style-scope="museum"]')];
+   const hero=document.querySelector('.companion-hero');
+   return {disabled:links.length===2&&links.every(x=>x.disabled),heroPosition:hero?getComputedStyle(hero).position:null,title:document.querySelector('#konaPanelTitle')?.textContent};
+ });
+ assert.equal(restored.disabled,true,'museum styles must be disabled after returning to an app surface');
+ assert.notEqual(restored.heroPosition,'fixed','museum global header rule must not affect Feed after round trip');
+ assert.match(restored.title||'',/Feed/i);
+ await page.evaluate(()=>window.__konaShell.now());
+ assert.match(await page.$eval('#konaPanelTitle',e=>e.textContent),/Home/i);
+
+ // Direct Plan entry must wait for real entry-data instead of showing placeholders.
+ const planPage=await browser.newPage();planPage.setDefaultTimeout(30000);
+ await planPage.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
+ const planErrors=[];planPage.on('pageerror',e=>planErrors.push(String(e?.stack||e)));planPage.on('console',m=>{if(m.type()==='error')planErrors.push(m.text())});
+ await planPage.goto(new URL('?view=plan',base).href,{waitUntil:'domcontentloaded'});
+ await planPage.waitForFunction(()=>/Plan/i.test(document.querySelector('#konaPanelTitle')?.textContent||''));
+ await planPage.waitForFunction(()=>document.querySelectorAll('.kona-timeline article').length>0);
+ const planText=await planPage.$eval('#konaPanelBody',e=>e.textContent);
+ assert.doesNotMatch(planText,/details are being verified|Place notes are being prepared/i,'direct Plan entry must render loaded schedule data');
+ assert.deepEqual(planErrors,[],'direct Plan entry must have no page errors');
+ await planPage.close();
+
+ // Collection sparse records must not crash Dimensions or Full components.
+ const collectionPage=await browser.newPage();collectionPage.setDefaultTimeout(30000);
+ const collectionErrors=[];collectionPage.on('pageerror',e=>collectionErrors.push(String(e?.stack||e)));collectionPage.on('console',m=>{if(m.type()==='error')collectionErrors.push(m.text())});
+ await collectionPage.goto(new URL('Canyon_Collection.html',base).href,{waitUntil:'domcontentloaded'});
+ await collectionPage.waitForSelector('[data-compare="geometry"]');
+ await collectionPage.click('[data-compare="geometry"]');await collectionPage.waitForSelector('#comparison table');
+ await collectionPage.click('[data-compare="components"]');await collectionPage.waitForSelector('#comparison table');
+ assert.deepEqual(collectionErrors,[],'Collection comparison tabs must not crash on sparse product records');
+ await collectionPage.close();
+
  // Registration path: prove the browser is allowed to issue the Supabase OTP request.
  const auth=await browser.newPage();auth.setDefaultTimeout(30000);
  await auth.setRequestInterception(true);let otpSeen=false;
@@ -52,14 +118,21 @@ try{
  assert.equal(otpSeen,true,'magic-link flow must issue the allowed Supabase OTP request');
  await auth.close();
 
- // Install path: the visible CTA must always do something useful on Android.
+ // Install path: fresh entry must be self-contained before any museum stylesheet exists.
  const installPage=await browser.newPage();installPage.setDefaultTimeout(30000);
  await installPage.setUserAgent('Mozilla/5.0 (Linux; Android 16; SM-S938B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Mobile Safari/537.36');
  await installPage.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
  await installPage.goto(base,{waitUntil:'domcontentloaded'});
  await installPage.click('#entryInstall');
  await installPage.waitForFunction(()=>!document.querySelector('#appSheet')?.hidden);
- assert.match(await installPage.$eval('#appSheet',e=>e.textContent),/Add KONA to your phone|Native Android download|Install KONA/i,'Android install CTA must open an actionable install sheet');
+ const installComputed=await installPage.evaluate(()=>{
+   const sheet=getComputedStyle(document.querySelector('#appSheet')),box=getComputedStyle(document.querySelector('#appSheet>div')),close=getComputedStyle(document.querySelector('#appSheet .close'));
+   return {paddingBottom:sheet.paddingBottom,maxHeight:box.maxHeight,closeBorder:close.borderTopStyle};
+ });
+ assert.notEqual(installComputed.maxHeight,'none','install sheet must have a valid max-height before museum CSS loads');
+ assert.notEqual(installComputed.paddingBottom,'0px','install sheet must retain safe bottom padding');
+ assert.notEqual(installComputed.closeBorder,'none','install close control must be explicitly styled');
+ assert.match(await installPage.$eval('#appSheet',e=>e.textContent),/Add KONA to your phone|Native Android download|Install KONA/i);
  await installPage.$eval('#appSheet .close',e=>e.click());
  await installPage.evaluate(()=>{
    const e=new Event('beforeinstallprompt',{cancelable:true});
@@ -69,9 +142,9 @@ try{
  });
  await installPage.click('#entryInstall');
  await installPage.waitForFunction(()=>!document.querySelector('[data-pwa-action]')?.hidden);
- assert.match(await installPage.$eval('[data-pwa-action]',e=>e.textContent),/Install KONA now/i,'native PWA prompt action must become visible when browser exposes it');
+ assert.match(await installPage.$eval('[data-pwa-action]',e=>e.textContent),/Install KONA now/i);
  await installPage.close();
 
  assert.deepEqual(pageErrors,[],'P0 journey must produce zero uncaught page errors');
- console.log('P0 browser journey PASS: entry-only data → User Studio → avatar customization → reload + magic-link request; 3D stays user-triggered');
+ console.log('P0 browser journey PASS: avatar/trisuit → Home → one-time tour → User Studio persistence → museum round trip → returning Home + auth/install checks');
 } finally {await browser.close();}

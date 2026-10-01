@@ -1,41 +1,117 @@
-# KONA launch candidate — 1 October 2026
+# KONA RC8 launch candidate — 1 October 2026
 
-The entry point is User Studio. Enter KONA opens it immediately; account creation is optional. Avatar, Bike Studio, museum, Discover, race week and Passport are visible destinations. Gear is explicitly marked Soon.
+RC8 is the convergence release for one responsive KONA application: one brand authority, one navigation model, one first-run flow, and isolated immersive runtimes.
 
-## Release blockers addressed
+## Current product contract
 
-- Pages now stages `race-self.css` and the other personal-surface styles from one allowlist. A release gate verifies every service-worker core asset and its hash against the actual staged artifact.
-- A single User Studio combines the compatible work from PRs 121 and 124. Entry, shared shell and personal features have separate stylesheet owners. Do not merge those older overlapping branches on top of this one.
-- Portrait/landscape camera fitting uses object bounds. Bike Studio excludes its dock and heading from the render viewport. Switching models has bounded caching and disposes cloned materials.
-- Landing bike art is rendered from the canonical Canyon model and WYLD liveries. Three.js and museum assets are not requested on landing. One session-stable color family gives new visitors variation; explicit appearance preferences remain available.
-- Avatar geometry and stage lifecycle are separate modules. The block athlete wears a pixel-textured trisuit and detailed running shoes.
-- Room presentation and prop placements are in the world registry. Four existing themed installations and shared props have reusable builders. Hidden themed-room decorations and lights are culled; architecture remains visible.
-- The install controller handles late browser prompts, single-use prompts, dismissal, exceptions, installed state and keyboard focus. Entry and User Studio use the same controller. Native APK distribution is separate from browser installation.
-- Authentication passes the redirect URL through the supported query parameter, suppresses duplicate requests, handles rate limits and preserves the session on transient network failures. Data exports omit authentication tokens.
+### First visit
+Landing → **Meet your Race Self** → choose presentation, avatar and trisuit → Home → one-time contextual tour.
 
-## Verified locally
+The first visit intentionally avoids a long questionnaire. Race history, bike, shoes, goals and deeper identity remain available from User Studio / Garage / Plan after entry. Account creation is optional.
 
-- 276 unit checks, including auth redirect, throttle, refresh concurrency, offline-session preservation and safe exports.
-- 29 GLB asset contracts; no failing models.
-- All 10 published HTML pages at phone and desktop widths: no page errors, local missing resources or horizontal overflow.
-- User Studio at 360×640, 390×844, 430×932, 768×1024, 1280×800, 1440×900 and 844×390: usable controls, framed avatar, persistence, destinations and Escape/focus behavior.
-- Previous stress pass: 20 Studio visits, 40 avatar changes, 24 bike switches; GPU geometry/texture counts stable across bike cycles. Re-run after visual changes.
-- Staged-site worker install and offline reload; customization/navigation fallback with WebGL disabled. Re-run after final sealing.
-- Supabase production project healthy; registration and email enabled. App-state ownership policies verified, including UPDATE ownership check. One authorized live email request returned HTTP 200. Inbox delivery confirmed by the user; callback exposed a production Site URL of localhost. Site URL and exact production callback allowlist were corrected in Supabase. Custom SMTP is disabled; a second live email hit HTTP 429. Public registration remains blocked on production email delivery configuration.
+### Returning visit
+Landing → **Continue your Kona** → Home.
 
-## Required before broad launch
+The first-run tour does not repeat automatically, but can be replayed from User Studio.
 
-1. GitHub checks must pass at the exact PR head; review the PR diff and merge only the intended release branch.
-2. Deploy, compare `release.json.sha` with the intended commit, and check production CSS, service worker, entry and museum.
-3. Confirm the real email arrives and its one-time callback opens the account. Verify production SMTP capacity for public traffic; a successful single request does not establish capacity.
-4. Confirm a physical iPhone Add to Home Screen launch and Android native install prompt. Desktop viewport/device emulation does not establish actual installation behavior.
+### Navigation
+- Home = contextual return surface
+- Discover = places, stories, machines and entry to immersive worlds
+- Garage = equipment
+- Plan = race-week utility
+- Me = User Studio / Race Self / Passport
 
-## Next after the launch gate
+Feed and Travel are exploration destinations inside User Studio and support direct `?view=feed` / `?view=travel` routes. They are not a sixth public tab.
 
-| Work | Why it follows launch-critical wiring |
-|---|---|
-| More reusable room props and room presets | Extend the indexed builders after measuring visibility and draw-call cost; do not add more per-room lighting by default. |
-| Gear customization | Needs an equipment contract, saved ownership and accessible editing before the Soon label becomes an action. |
-| Additional brands/rooms (PR 125) | Product catalog and generated output overlap; integrate separately after this release passes, with asset provenance and mobile budgets. |
-| Stronger return loop | Passport, saved customizations and race badges already persist. Add source-backed race-week updates and new exhibits without promising unsupported live race data. |
-| Wider device/performance lab | Physical low-end Android, iOS Safari and prolonged thermal tests go beyond Chromium emulation. |
+## Brand / responsive convergence
+
+- `brand/tokens.css` owns the named KONA palette, spacing, radii and typography families.
+- `brand/typography.css` owns editorial / UI / data / handwritten roles.
+- `web/styles/components.css` owns canonical controls and layout primitives.
+- Feature CSS may own feature geometry, not a second design system.
+- Mobile uses 20px canonical gutters (16px only on very narrow screens).
+- Race cards, avatar registration and customization drawers have explicit width/overflow containment.
+- User Studio mobile exploration destinations scroll horizontally so adding Feed / Travel / future destinations does not collapse the Race Self stage.
+- Museum styles are lazy **and lifecycle-isolated**: hall styles are enabled only while the museum is the active surface, preventing path-dependent CSS leakage back into Home/User Studio/Feed.
+
+## Race Self / customization
+
+- Four avatar archetypes share one schema and renderer.
+- Presentation choice: Male / Female / Prefer not to answer. This does not limit hair, tattoos, colors, clothing, trisuit or archetype.
+- Trisuit is a first-class slot with multiple layouts, custom base/accent colors and PNG/JPEG/WebP overlay upload.
+- Avatar choices remain local-first and can be edited later in User Studio.
+
+## Discovery / return loop
+
+Home includes an **Over the Horizon** projection: partially obscured future bikes, gear, trisuits, rooms and rewards. Locked content is teased rather than fully revealed. This is a projection over progression, not a second inventory.
+
+## Feed + Travel
+
+- Live bounded Supabase companion service.
+- Customizable RSS/Atom and YouTube subscriptions.
+- Personalized RSS URL.
+- Last successful feed can be retained for offline/delayed sources.
+- Travel uses the canonical Kona place registry plus clearly labeled external live flight/traffic providers.
+- Neither Feed nor Travel loads the 3D world.
+- PR #128 is superseded by RC8 and must not be merged separately.
+
+## Admin
+
+The authenticated admin role is read from Supabase app metadata.
+
+Admin-only **Asset Portfolio** is available from User Studio and is generated from canonical registries for:
+- products / bikes / shoes / gear
+- room and floor placement
+- brand rooms
+- paintings and sculptures
+- decorations and installations
+
+GLB-backed assets can render lazy admin previews from the canonical model. Asset Portfolio does not create a second asset database.
+
+## Verification required before merge
+
+1. Museum checks green at the exact PR head.
+2. Integration contract green.
+3. Release security gate green.
+4. App release seal green.
+5. Visual Evidence V2 green.
+6. Deterministic generated outputs synchronized.
+7. P0 browser journey:
+   - fresh Landing
+   - avatar/trisuit registration
+   - Home
+   - one-time tour
+   - User Studio persistence
+   - museum → Feed/Home CSS isolation
+   - auth request
+   - install sheet
+8. Visual review of phone and desktop captures against the approved KONA brand boards, especially:
+   - Landing
+   - avatar registration
+   - Home / discovery horizon
+   - User Studio
+   - avatar editor
+   - race cards
+   - Feed
+   - Travel
+   - Discover
+   - Garage
+   - Plan
+   - Passport
+   - Asset Portfolio
+9. Physical iPhone Add to Home Screen.
+10. Physical Android installation / standalone launch.
+11. Production email callback and public SMTP capacity confirmed.
+
+## Known launch boundaries
+
+- Flights and traffic open named live providers; KONA does not claim an embedded live flight/traffic feed.
+- Athlete channel inclusion does not assert Kona race participation or physical presence.
+- Physical installation and low-end thermal performance cannot be certified by desktop emulation.
+- Additional multibrand content from older branches must be re-integrated through current canonical schemas, not merged wholesale.
+
+## Go-live rule
+
+READY = implementation + automated gates + visual evidence + physical-device proof + exact deployed SHA.
+
+A green unit suite alone is not sufficient.

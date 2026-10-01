@@ -11,7 +11,8 @@ const hall=read('web/styles/hall-web.css');
 const hallMobile=read('web/styles/hall-mobile.css');
 const studioTpl=read('web/studio.template.html');
 const studioCss=read('web/styles/studio.css');
-const artifact=read('web/styles/artifact.css');
+const artifact=read('brand/artifacts.css');
+const typography=read('brand/typography.css');
 
 test('canonical component geometry lives in brand tokens',()=>{
   for(const token of ['--brand-card-radius','--brand-sheet-radius','--brand-touch','--brand-mobile-gutter','--brand-surface-glass-strong']) assert.match(tokens,new RegExp(token));
@@ -35,8 +36,9 @@ test('map and generic artifacts consume brand semantics',()=>{
   assert.match(hall,/RC5 map brand convergence/);
   assert.match(hall,/--brand-surface/);
   assert.match(hall,/--brand-accent-2/);
+  assert.match(artifact,/artifact--hero/);
   assert.match(artifact,/--brand-surface/);
-  assert.match(artifact,/--brand-font-editorial/);
+  assert.match(typography,/--brand-font-editorial/);
 });
 test('consumer and personal surfaces share touch and card rules',()=>{
   assert.match(system,/--brand-touch/);

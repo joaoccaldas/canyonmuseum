@@ -9,9 +9,10 @@ test('returning Home reads canonical RaceIdentity through storage adapter',()=>{
   assert.match(source,/Continue your Kona/);
 });
 
-test('first visit still enters the person-first quest',()=>{
-  assert.match(source,/paintQuest\('intent'\)/);
-  assert.match(source,/Build my Kona self|buildSelf/);
+test('first visit enters avatar setup and then Home without the old questionnaire gate',()=>{
+  assert.match(source,/paintQuest\('avatar'\)/);
+  assert.match(source,/onContinue:\(\)=>enterApp\('home'\)/);
+  assert.doesNotMatch(source,/paintQuest\('intent'\)/);
 });
 
 test('returning identity remains private by default in copy',()=>{

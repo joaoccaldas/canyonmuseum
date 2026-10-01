@@ -6,7 +6,8 @@
 // a phone regardless of what the page claims.
 
 // True when the physical screen is phone-sized even if the layout says desktop.
-export const desktopViewPhone = Math.min(screen.width || 1e5, screen.height || 1e5) <= 500 && innerWidth > 820;
+const runtime = globalThis.__konaViewport;
+export const desktopViewPhone = runtime?.desktopViewPhone ?? (Math.min(screen.width || 1e5, screen.height || 1e5) <= 500 && innerWidth > 820);
 
 // Coarse pointer or a narrow viewport or a phone faking desktop width.
 export const coarse = matchMedia('(pointer: coarse)').matches || innerWidth < 760 || desktopViewPhone;

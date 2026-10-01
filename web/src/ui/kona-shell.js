@@ -7,6 +7,10 @@ import { renderAvatarHome } from './avatar-home.js';
 import { renderCollectionSurface } from './collection.js';
 import { renderDiscoverSurface } from './discover.js';
 import { renderPlanSurface } from './plan.js';
+import { renderFeed, renderTravel } from './companion.js';
+import { renderAdminAssets } from './admin-assets.js';
+import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
+import { readStorage, writeStorage } from '../engine/storage.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon = name => {
@@ -20,13 +24,13 @@ const icon = name => {
   return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+d+'"/></svg>';
 };
 
-export function initKonaShell({ profile, settings, enter }) {
+export function initKonaShell({ profile, settings, enter, openUserStudio, featureStyle=async()=>{}, entryDataReady=null }) {
   const facts = () => ({
     event: window.__ENTRY_EVENT || window.__ENTRY_DATA?.event || {},
   });
   const shell=document.createElement('div'); shell.id='konaShell';
   shell.innerHTML=
-    '<button type="button" class="kona-user-menu" data-user-studio aria-label="Open User Studio"><i></i><span>Me</span></button>'+
+    '<button type="button" class="kona-user-menu" data-user-studio aria-label="Open User Studio" title="User Studio"><i></i><span>Studio</span></button>'+
     '<div id="konaPanel" class="kona-panel" hidden>'+
       '<div class="kona-panel-head"><div><small id="konaPanelEyebrow">KONA · BETA</small><h2 id="konaPanelTitle">Now</h2></div><button id="konaPanelClose" type="button" aria-label="Close">×</button></div>'+
       '<div id="konaPanelBody" class="kona-panel-body"></div>'+
@@ -42,13 +46,43 @@ export function initKonaShell({ profile, settings, enter }) {
 
   const panel=shell.querySelector('#konaPanel'), body=shell.querySelector('#konaPanelBody'), title=shell.querySelector('#konaPanelTitle'), eyebrow=shell.querySelector('#konaPanelEyebrow');
   const setActive=id=>shell.querySelectorAll('[data-tab]').forEach(x=>(x.classList.toggle('on',x.dataset.tab===id),x.setAttribute('aria-current',x.dataset.tab===id?'page':'false')));
+  let tourNode=null,tourTarget=null;
+  const dismissTour=()=>{
+    tourTarget?.classList.remove('tour-target');tourTarget=null;
+    tourNode?.remove();tourNode=null;
+  };
+  const tourSteps=[
+    {target:'[data-home-self]',kicker:'01 · MAKE IT YOURS',title:'Start with your athlete',copy:'Your Race Self is the anchor. Change the character, trisuit and attitude whenever you want.'},
+    {target:'[data-home-discover]',kicker:'02 · GET CURIOUS',title:'Kona rewards wandering',copy:'Discover surfaces places, stories and small race-week details without making you enter the 3D world first.'},
+    {target:'[data-home-garage]',kicker:'03 · BUILD THE MACHINE',title:'Your setup lives here',copy:'The Garage remembers what is yours. Bike Studio is where you inspect, paint and choose in 3D.'},
+    {target:'[data-user-studio]',kicker:'04 · YOUR UNIVERSE',title:'Me opens User Studio',copy:'Avatar, bike, races, collection, progress and settings live here. The wider world stays in the main navigation.'}
+  ];
+  function startTour({force=false}={}){
+    if(tourNode)return;
+    if(!force){try{if(readStorage('onboarding')==='seen')return;}catch(_){}}
+    try{writeStorage('onboarding','seen')}catch(_){}
+    const card=document.createElement('aside');card.className='kona-tour';card.setAttribute('role','dialog');card.setAttribute('aria-label','KONA quick tour');
+    document.body.append(card);tourNode=card;let index=0;
+    const paint=()=>{
+      tourTarget?.classList.remove('tour-target');
+      const step=tourSteps[index];tourTarget=document.querySelector(step.target);
+      if(!tourTarget&&index<tourSteps.length-1){index+=1;paint();return;}
+      tourTarget?.classList.add('tour-target');tourTarget?.scrollIntoView?.({block:'center',behavior:'smooth'});
+      card.innerHTML='<small>'+step.kicker+'</small><h3>'+step.title+'</h3><p>'+step.copy+'</p><div class="kona-tour-actions"><button type="button" class="btn-text" data-tour-skip>Skip</button><button type="button" class="btn-primary" data-tour-next>'+(index===tourSteps.length-1?'Go explore':'Next')+' <span>→</span></button></div>';
+      card.querySelector('[data-tour-skip]').onclick=dismissTour;
+      card.querySelector('[data-tour-next]').onclick=()=>{if(index===tourSteps.length-1)dismissTour();else{index+=1;paint();}};
+    };
+    paint();
+  }
+  const replayTour=async()=>{await now();requestAnimationFrame(()=>requestAnimationFrame(()=>startTour({force:true})));};
   let disposeStudio=null, studioRequest=0;
-  const leaveRaceSelf=()=>{studioRequest++;disposeStudio?.();disposeStudio=null;document.body.classList.remove('race-self-open');};
+  const leaveRaceSelf=()=>{panel.classList.remove('companion-panel');studioRequest++;disposeStudio?.();disposeStudio=null;document.body.classList.remove('race-self-open');};
   const close=()=>{leaveRaceSelf();panel.hidden=true;document.body.classList.remove('kona-panel-open');setActive(document.body.classList.contains('walking')?'explore':'');};
-  shell.querySelector('#konaPanelClose').onclick=close;
+  shell.querySelector('#konaPanelClose').onclick=()=>panel.classList.contains('companion-panel')?raceSelf():close();
 
-  function now(){
-    leaveRaceSelf();
+  async function now(){
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('home','web/styles/home.css');
     title.textContent='Home'; eyebrow.textContent='KONA · TODAY';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('home');
     renderHomeSurface(body,{
@@ -60,51 +94,78 @@ export function initKonaShell({ profile, settings, enter }) {
       openPlan:plan,
 
     });
+    requestAnimationFrame(()=>requestAnimationFrame(()=>startTour()));
   }
 
   async function raceSelf(){
-    leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('race-self','web/styles/race-self.css');
     const request=studioRequest;
     title.textContent='User Studio'; eyebrow.textContent='KONA · YOUR ATHLETE';
     panel.hidden=false;document.body.classList.add('kona-panel-open','race-self-open');setActive('me');
+    const admin=isAdminUser(await currentUser().catch(()=>null));
     const cleanup=await renderAvatarHome(body,{
       profile,
       settings,
       onBack:now,
       openGarage:garage,
-      openDiscover:explore,
-      openPlan:plan,
+      openCollection:collection,
+      openTour:replayTour,
       isCurrent:()=>request===studioRequest,
       openMuseum:()=>{ close(); enter?.(); },
       openCollection:collection,
+      isAdmin:admin,
+      openAssets:adminAssets,
     });
     if(request===studioRequest) disposeStudio=cleanup; else cleanup?.();
   }
 
+  async function companion(view){
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('companion','web/styles/companion.css');
+    title.textContent=view==='feed'?'The Feed':'Travel to Kona';eyebrow.textContent='KONA · EXPLORE MORE';
+    panel.hidden=false;panel.classList.add('companion-panel');panel.scrollTop=0;
+    document.body.classList.add('kona-panel-open');setActive('discover');
+    disposeStudio=(view==='feed'?renderFeed:renderTravel)(body,{back:raceSelf});
+  }
+  const feed=()=>companion('feed'),travel=()=>companion('travel');
+
   async function collection(){
-    leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('',null);
     title.textContent='Collection'; eyebrow.textContent='KONA · CARDS & ITEMS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('');
     await renderCollectionSurface(body);
   }
 
   async function garage(){
-    leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('garage','web/styles/garage.css');
     title.textContent='Garage'; eyebrow.textContent='KONA · YOUR EQUIPMENT';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('garage');
     await renderGarageSurface(body);
   }
 
-  function plan(){
-    leaveRaceSelf();
+  async function plan(){
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('',null);
     title.textContent='Plan'; eyebrow.textContent='KONA · SOURCE-GROUNDED';
-    renderPlanSurface(body,{data:window.__ENTRY_DATA || { event:facts().event }});
+    const readyData = entryDataReady ? await entryDataReady.catch(()=>null) : null;
+    renderPlanSurface(body,{data:readyData || window.__ENTRY_DATA || { event:facts().event }});
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('plan');
   }
 
   async function me(){
     await raceSelf();
     setActive('me');
+  }
+
+  async function adminAssets(){
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('admin','web/styles/admin-assets.css');
+    title.textContent='Asset Portfolio';eyebrow.textContent='KONA · ADMIN';
+    panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('me');
+    await renderAdminAssets(body);
   }
 
   function walkTo(id){
@@ -114,18 +175,20 @@ export function initKonaShell({ profile, settings, enter }) {
     enter?.(id);
   }
   async function explore(){
-    leaveRaceSelf();
+    dismissTour();leaveRaceSelf();panel.hidden=true;
+    await featureStyle('',null);
     title.textContent='Discover'; eyebrow.textContent='KONA · INTERESTING THINGS';
     panel.hidden=false;document.body.classList.add('kona-panel-open');setActive('discover');
     await renderDiscoverSurface(body,{enter:()=>{close();enter?.();}});
   }
 
-  shell.querySelector('[data-tab=home]').onclick=raceSelf;
+  shell.querySelector('[data-tab=home]').onclick=now;
   shell.querySelector('[data-tab=discover]').onclick=explore;
   shell.querySelector('[data-tab=garage]').onclick=garage;
   shell.querySelector('[data-tab=plan]').onclick=plan;
   shell.querySelector('[data-tab=me]').onclick=me;
-  shell.querySelector('[data-user-studio]').onclick=me;
+  const routeToUserStudio=()=>typeof openUserStudio==='function'?openUserStudio():me();
+  shell.querySelector('[data-user-studio]').onclick=routeToUserStudio;
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!e.defaultPrevented&&!panel.hidden&&document.body.classList.contains('museum-open'))close();});
 
   const userMenu=shell.querySelector('[data-user-studio]');
@@ -133,9 +196,9 @@ export function initKonaShell({ profile, settings, enter }) {
     applyBrandMode(p?.appearance||'auto');
     if(userMenu){
       userMenu.style.setProperty('--user-accent',p?.avatar||'#e8471c');
-      userMenu.querySelector('span').textContent=(p?.name||'Me').trim().split(/\s+/)[0].slice(0,12)||'Me';
+      userMenu.querySelector('span').textContent='Studio';
     }
   };
   syncUserMenu(profile?.get?.()); profile?.subscribe?.(syncUserMenu);
-  return { now, raceSelf, garage, plan, me, explore, collection, close };
+  return { now, raceSelf, garage, plan, me, explore, collection, feed, travel, adminAssets, tour:replayTour, close };
 }

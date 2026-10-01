@@ -16,7 +16,7 @@ export const QUALITY = {
 export const AVATARS = ['#e8471c', '#138a8f', '#1d4fd6', '#c9a13b', '#ff3d8e', '#12181d', '#5fd8d3', '#8a3316'];
 
 export const defaults = () => ({
-  v: 1, name: '', avatar: AVATARS[0], avatarStyle: defaultAvatarStyle(), quality: 'auto', sound: false, motion: 'auto', appearance: 'random', travel: 'teleport', units: 'metric',
+  v: 1, name: '', gender: 'prefer-not', avatar: AVATARS[0], avatarStyle: defaultAvatarStyle(), quality: 'auto', sound: false, motion: 'auto', appearance: 'random', travel: 'teleport', units: 'metric',
   favourites: [], liveries: [], notifications: {enabled:false,whatsNew:true,raceWeek:true,newRooms:true}, analytics: false, createdAt: new Date().toISOString(), sync: null,
 });
 
@@ -26,6 +26,7 @@ export function normalise(p) {
   return {
     v: 1,
     name: typeof o.name === 'string' ? o.name.trim().slice(0, 40) : d.name,
+    gender: ['male','female','prefer-not'].includes(o.gender) ? o.gender : d.gender,
     avatar: AVATARS.includes(o.avatar) ? o.avatar : d.avatar,
     avatarStyle: normaliseAvatarStyle(o.avatarStyle),
     quality: o.quality in QUALITY ? o.quality : d.quality,

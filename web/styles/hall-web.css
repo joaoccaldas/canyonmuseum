@@ -361,3 +361,8 @@ body.map-open #joy{opacity:0;pointer-events:none}
 .map-list button,.map-list li.future>div{border-color:var(--brand-line)!important;background:var(--brand-surface)!important;color:var(--brand-ink)!important}
 .map-me circle{fill:color-mix(in srgb,var(--brand-accent-2,#1db7d8) 24%,transparent)!important}
 .map-me path{fill:var(--brand-accent-2,#1db7d8)!important;stroke:var(--brand-surface,#fbf9f5)!important}
+
+.world-more-menu{position:fixed;z-index:44;top:72px;right:18px;display:grid;gap:6px;min-width:180px;padding:8px;border:1px solid rgba(18,24,29,.16);border-radius:14px;background:rgba(244,239,231,.96);box-shadow:0 20px 50px rgba(0,0,0,.22);backdrop-filter:blur(16px)}
+.world-more-menu[hidden]{display:none}
+.world-more-menu button{min-height:44px;padding:0 12px;border:0;border-radius:10px;background:transparent;color:#12181d;text-align:left;font:600 13px var(--brand-font-ui,system-ui);cursor:pointer}
+.world-more-menu button:is(:hover,:focus-visible){background:rgba(18,24,29,.08)}

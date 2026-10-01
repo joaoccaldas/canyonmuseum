@@ -5,8 +5,10 @@
 import {readStorage,writeStorage,removeStorage} from '../engine/storage.js';
 import { readGameState, writeGameState, GAME_STATE_SCHEMA_VERSION } from '../engine/game-state.js';
 
-const URL = 'https://mtvpnoqwjpoqaiocrklq.supabase.co';
-const KEY = 'sb_publishable_lVueu3GqNcPe4Z9KsChvJw_VfmnVi5u';
+export const PUBLIC_SUPABASE_URL = 'https://mtvpnoqwjpoqaiocrklq.supabase.co';
+export const PUBLIC_SUPABASE_KEY = 'sb_publishable_lVueu3GqNcPe4Z9KsChvJw_VfmnVi5u';
+const URL = PUBLIC_SUPABASE_URL;
+const KEY = PUBLIC_SUPABASE_KEY;
 
 const json = async res => {
   const body = await res.text();
@@ -83,6 +85,8 @@ export async function sendMagicLink(email) {
     const data=await json(res);writeStorage('otpCooldown',Date.now()+60000);return data;
   }finally{otpPending=false;}
 }
+
+export const isAdminUser = user => user?.app_metadata?.role === 'admin';
 
 export async function currentUser() {
   const s = await validSession();

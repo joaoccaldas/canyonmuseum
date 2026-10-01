@@ -4,13 +4,15 @@
    Colours stay with each page (the engineering studios are dark by design).
    Canvas lettering uses the same families (web/src/engine/type.js). */
 :root{
-  --sans:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
-  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  /* compatibility aliases only; brand/tokens.css owns the values */
+  --sans:var(--brand-font-ui);
+  --serif:var(--brand-font-editorial);
+  --mono:var(--brand-font-data);
   --fs-eyebrow:11px; --ls-eyebrow:.22em;
   --fs-caption:11px; --fs-small:12.5px; --fs-body:clamp(13.5px,.35vw + 12px,15.5px);
   --fs-title:clamp(28px,1.6vw + 18px,46px); --fs-display:clamp(40px,4.5vw + 16px,108px);
-  --lh-body:1.62; --radius-s:10px; --radius-m:14px; --radius-l:22px;
+  --lh-body:1.62;
+  --radius-s:var(--brand-control-radius);--radius-m:var(--brand-control-radius);--radius-l:var(--brand-card-radius);
 }
 [hidden]{display:none!important}
 *{box-sizing:border-box}
@@ -42,13 +44,13 @@ body:has(#konaShell):not(.museum-open) > #card,
 body:has(#konaShell):not(.museum-open) > #nearby,
 body:has(#konaShell):not(.museum-open) > #tourPill,
 body:has(#konaShell):not(.museum-open) > #fallback{display:none}
-.kona-count{margin:0 0 12px;font:700 13px/1.3 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--kona-accent,#e85a22)}
+.kona-count{margin:0 0 12px;font:700 13px/1.3 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--brand-action)}
 .kona-intents{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.kona-intents button{min-height:48px;padding:0 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--kona-text,#12181d) 18%,transparent);background:transparent;color:inherit;font:700 13px/1 var(--sans)}
-.kona-intents button.on{background:var(--kona-text,#12181d);color:var(--kona-bg,#f4efe7)}
+.kona-intents button{min-height:48px;padding:0 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--brand-ink) 18%,transparent);background:transparent;color:inherit;font:700 13px/1 var(--sans)}
+.kona-intents button.on{background:var(--kona-text,#12181d);color:var(--brand-bg)}
 .kona-today{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:8px;max-width:420px}
-.kona-today button,.kona-today a{display:flex;align-items:center;min-height:48px;padding:0 16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--kona-text,#12181d) 12%,transparent);background:var(--kona-surface-strong,#fbf9f5);color:inherit;text-decoration:none;font:600 15px/1.2 var(--sans);text-align:left}
-.kona-note{max-width:36rem;color:var(--kona-muted,#5f6a72)}
+.kona-today button,.kona-today a{display:flex;align-items:center;min-height:48px;padding:0 16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--kona-text,#12181d) 12%,transparent);background:var(--brand-surface);color:inherit;text-decoration:none;font:600 15px/1.2 var(--sans);text-align:left}
+.kona-note{max-width:36rem;color:var(--brand-muted)}
 #konaQuest h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,56px);line-height:1;margin:8px 0}
 #konaQuest input{width:100%;max-width:360px;min-height:48px;margin:8px 0;padding:12px 14px;border-radius:12px;border:1px solid var(--kona-line,rgba(18,24,29,.12));background:transparent;color:inherit}
 #konaQuest .btn{margin-right:8px;margin-top:8px}
@@ -73,7 +75,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
   position:fixed;z-index:36;inset:0;background:
     radial-gradient(circle at 78% 0,color-mix(in srgb,var(--kona-cyan) 11%,transparent),transparent 34%),
     var(--kona-bg);
-  overflow:auto;overscroll-behavior:contain;padding:max(18px,env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom))
+  overflow:auto;overscroll-behavior:contain;padding:max(18px,env(safe-area-inset-top)) max(var(--brand-mobile-gutter),env(safe-area-inset-left),env(safe-area-inset-right)) calc(96px + env(safe-area-inset-bottom))
 }
 .kona-panel[hidden]{display:none!important}
 .kona-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;max-width:var(--brand-panel-max,760px);margin:0 auto 20px}
@@ -91,7 +93,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 .kona-hero-card small,.kona-section-head small{color:var(--kona-faint);font:700 9.5px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase}
 .kona-hero-card h3{max-width:520px;font:400 clamp(38px,10vw,58px)/.96 var(--serif);letter-spacing:-.025em;margin:8px 0}
 .kona-hero-card p{color:var(--kona-muted);font-size:14px}
-.kona-primary{align-self:flex-start;margin-top:20px;min-height:50px;padding:0 20px;border-radius:999px;background:var(--kona-accent);color:#fff;font-weight:750;display:inline-flex;gap:18px;align-items:center}
+.kona-primary{align-self:flex-start;margin-top:20px;min-height:var(--brand-touch);padding:0 20px;border-radius:var(--brand-pill-radius);background:var(--brand-action);color:var(--brand-on-action);font:750 13px/1 var(--brand-font-ui);display:inline-flex;gap:18px;align-items:center;border:0}
 .kona-section{padding:18px}
 .kona-section.first{margin-top:2px}
 .kona-section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:13px}
@@ -127,22 +129,22 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 .kona-discover-feed b{font-size:14px}.kona-discover-feed span{font-size:11.5px;color:var(--kona-muted)}
 
 /* app: install button, install sheet, update pill */
-#installBtn{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-#installBtn:hover{background:var(--reef);border-color:var(--reef)}
-#appSheet{position:fixed;inset:0;z-index:1100;background:rgba(18,24,29,.58);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(16px + var(--safe-b))}
-#appSheet>div{position:relative;width:min(420px,100%);max-height:calc(100dvh - 32px - var(--safe-b));overflow:auto;background:var(--brand-surface);color:var(--brand-ink);border-radius:26px;padding:24px 22px 20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:cin .35s cubic-bezier(.2,.8,.2,1)}
+#installBtn{background:var(--brand-ink);color:var(--brand-surface);border-color:var(--brand-ink)}
+#installBtn:hover{background:var(--brand-action);color:var(--brand-on-action);border-color:var(--brand-action)}
+#appSheet{position:fixed;inset:0;z-index:1100;background:rgba(18,24,29,.58);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+#appSheet>div{position:relative;width:min(420px,100%);max-height:calc(100dvh - 32px - env(safe-area-inset-bottom));overflow:auto;background:var(--brand-surface);color:var(--brand-ink);border-radius:26px;padding:24px 22px 20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:cin .35s cubic-bezier(.2,.8,.2,1)}
 #appSheet img{width:64px;height:64px;border-radius:16px;display:block;margin-bottom:12px}
-#appSheet h3{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.05}
-#appSheet p{font-size:13.5px;line-height:1.6;color:var(--muted);margin:8px 0 14px}
-#appSheet .opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--line);margin-top:8px;font-weight:700;font-size:14px}
-#appSheet .opt:hover{border-color:var(--ink)}
-#appSheet .opt small{font-weight:500;font-size:11.5px;color:var(--faint)}
-#appSheet .close{position:absolute;top:14px;right:14px;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);font-size:18px}
+#appSheet h3{font-family:var(--brand-font-editorial);font-weight:400;font-size:30px;line-height:1.05}
+#appSheet p{font-size:13.5px;line-height:1.6;color:var(--brand-muted);margin:8px 0 14px}
+#appSheet .opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--brand-line);margin-top:8px;background:var(--brand-surface);color:var(--brand-ink);font-weight:700;font-size:14px;appearance:none}
+#appSheet .opt:hover{border-color:var(--brand-ink)}
+#appSheet .opt small{font-weight:500;font-size:11.5px;color:var(--brand-faint)}
+#appSheet .close{position:absolute;top:14px;right:14px;width:48px;height:48px;border-radius:50%;border:1px solid var(--brand-line);background:var(--brand-surface);color:var(--brand-ink);font-size:18px}
 #updateBar{position:fixed;left:50%;top:calc(76px + env(safe-area-inset-top));transform:translateX(-50%);z-index:45;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 16px;border-radius:999px;
-  background:rgba(18,24,29,.92);color:#fbf9f5;font-size:12.5px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 14px 30px -12px rgba(0,0,0,.5);max-width:calc(100vw - 24px);animation:cin .4s cubic-bezier(.2,.8,.2,1)}
+  background:color-mix(in srgb,var(--brand-lava) 92%,transparent);color:var(--brand-mist);font-size:12.5px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 14px 30px -12px rgba(0,0,0,.5);max-width:calc(var(--vvw,100dvw) - 24px);animation:cin .4s cubic-bezier(.2,.8,.2,1)}
 #updateBar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#updateBar button,#updateBar a.go{background:linear-gradient(100deg,#ff3d8e,#5fd8d3);color:#12181d;font-weight:700;border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center}
-#updateBar .later{background:rgba(255,255,255,.12);color:#fbf9f5;width:36px;padding:0;justify-content:center}
+#updateBar button,#updateBar a.go{background:linear-gradient(100deg,var(--brand-hibiscus),var(--brand-ocean));color:var(--brand-lava);font-weight:700;border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center}
+#updateBar .later{background:color-mix(in srgb,var(--brand-mist) 12%,transparent);color:var(--brand-mist);width:36px;padding:0;justify-content:center}
 
 /* RC5 canonical consumer component grammar */
 .kona-panel{padding-inline:max(var(--brand-mobile-gutter),env(safe-area-inset-left));}
@@ -155,7 +157,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 .kona-section{border-radius:var(--brand-card-radius);}
 .kona-primary,.btn,.quest-choice,.kona-list button,.kona-list a{min-height:var(--brand-touch)}
 .kona-list article,.kona-timeline article{gap:var(--brand-space-2)}
-@media(max-width:760px),(pointer:coarse){
+@media(max-width:899px),(pointer:coarse){
   .kona-panel{padding-inline:var(--brand-mobile-gutter);padding-top:max(12px,env(safe-area-inset-top));}
   .kona-panel-head{margin-bottom:12px}
   .kona-panel-head h2{font-size:clamp(34px,10vw,48px)}
@@ -197,7 +199,7 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 .kona-discover-categories article,.kona-discover-feed article{border-color:var(--brand-line)}
 .kona-timeline time,.kona-list a,.kona-editorial-link b{color:var(--brand-accent-2)}
 .kona-source-note{color:var(--brand-faint)}
-@media(max-width:760px),(pointer:coarse){
+@media(max-width:899px),(pointer:coarse){
   .race-card{min-height:112px;padding:12px}
   .race-card h4{font-size:22px}
   .race-card-actions{display:grid;grid-template-columns:1fr;gap:6px}
@@ -210,3 +212,53 @@ body:has(#konaShell):not(.museum-open) > #fallback{display:none}
 
 body.install-open{overflow:hidden}
 #appSheet .install-status:empty{display:none}
+
+/* RC8 containment: cards must never escape their parent at phone widths. */
+.race-picker,.race-picker-results,.race-picker-selected,[data-race-badges]{min-width:0;max-width:100%;overflow-x:hidden}
+.race-picker label{display:grid;gap:7px;min-width:0;max-width:100%}
+.race-picker input{width:100%;max-width:100%;min-width:0}
+.race-card{width:100%;max-width:100%;min-width:0;overflow:hidden;padding:14px}
+.race-card>*{min-width:0;max-width:100%}
+.race-card-top{display:flex;justify-content:space-between;gap:10px;min-width:0}
+.race-card-top small,.race-card-top b,.race-card h4,.race-card p{overflow-wrap:anywhere;word-break:normal}
+.race-card h4{margin:8px 0 6px;font:400 clamp(23px,6vw,32px)/1.02 var(--brand-font-editorial)}
+.race-card p{margin:0;color:var(--brand-muted);font-size:12px;line-height:1.45}
+.race-card-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px;min-width:0}
+.race-card-actions button{width:100%;min-width:0;padding:8px 6px;white-space:normal;overflow-wrap:anywhere;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius)}
+.race-card-badge{display:inline-flex;max-width:100%;width:max-content;margin-top:12px;padding:6px 9px;border-radius:var(--brand-pill-radius);font:700 10px/1 var(--brand-font-ui);white-space:normal}
+@media(max-width:520px){
+  .race-card-actions{grid-template-columns:1fr}
+  .race-card-actions button{padding-inline:12px}
+}
+
+
+/* Replayable first-visit KONA coach tour. */
+.kona-tour{position:fixed;z-index:1200;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(360px,calc(var(--vvw,100dvw) - 32px));padding:18px;border:1px solid var(--brand-line);border-radius:var(--brand-card-radius);background:color-mix(in srgb,var(--brand-surface) 97%,transparent);color:var(--brand-ink);box-shadow:0 28px 90px -30px rgba(0,0,0,.58);backdrop-filter:blur(20px)}
+.kona-tour>small{display:block;color:var(--brand-discovery);font:800 10px/1.2 var(--brand-font-ui);letter-spacing:.16em}
+.kona-tour h3{margin:7px 0 8px;font:400 30px/1 var(--brand-font-editorial);letter-spacing:-.02em}
+.kona-tour p{margin:0;color:var(--brand-muted);font:500 13px/1.55 var(--brand-font-ui)}
+.kona-tour-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.kona-tour-actions .btn-text,.kona-tour-actions .btn-primary{min-width:var(--brand-touch);min-height:var(--brand-touch)}.kona-tour-actions .btn-text{justify-content:center}
+.tour-target{outline:3px solid var(--brand-discovery)!important;outline-offset:4px;box-shadow:0 0 0 8px color-mix(in srgb,var(--brand-discovery) 18%,transparent)!important}
+@media(min-width:900px){.kona-tour{left:32px;bottom:32px;transform:none}}
+@media(prefers-reduced-motion:reduce){.tour-target{scroll-behavior:auto}}
+
+/* RC8 go-live evidence trigger: no behavioral effect. */
+
+
+/* Persistent player control belongs to the app shell, not User Studio route CSS. */
+.kona-user-menu{position:fixed;z-index:42;top:max(14px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px;min-height:var(--brand-touch);padding:8px 16px;border:1px solid var(--brand-line);border-radius:12px;background:var(--brand-surface);color:var(--brand-ink);font:700 13px/1 var(--brand-font-ui);cursor:pointer}
+.kona-user-menu i{width:22px;height:26px;background:var(--user-accent);clip-path:polygon(25% 0,75% 0,75% 35%,100% 35%,100% 80%,75% 80%,75% 100%,25% 100%,25% 80%,0 80%,0 35%,25% 35%)}
+/* Global escape invariant: User Studio remains reachable from landing, onboarding, app panels and the loaded world. */
+body.entry-landing .kona-user-menu,body.entry-quest .kona-user-menu{display:flex}
+
+/* Standalone published pages share the same escape back into the canonical personal surface. */
+.global-user-studio{
+  position:fixed;z-index:120;top:max(14px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));
+  min-height:var(--brand-touch);display:inline-flex;align-items:center;justify-content:center;
+  padding:0 16px;border:1px solid var(--brand-line);border-radius:var(--brand-control-radius);
+  background:color-mix(in srgb,var(--brand-surface) 96%,transparent);color:var(--brand-ink);
+  box-shadow:var(--artifact-shadow);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  font:800 11px/1 var(--brand-font-ui);letter-spacing:.08em;text-decoration:none;
+}
+.global-user-studio:is(:hover,:focus-visible){border-color:var(--brand-action);outline:none}

@@ -11,7 +11,7 @@ const NAME = 'KONA';
 const DISCLAIMER = 'An independent, unofficial fan and research project. Not affiliated with, endorsed by or sponsored by Canyon Bicycles GmbH. Canyon and Speedmax are trademarks of their owners.';
 
 // The only third parties the pages load (measured with a request log): Google Fonts and Wikimedia images.
-const CSP = [
+const CSP_BASE = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",       // hall and studio load app/*.js; meshopt decoder is WebAssembly
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -21,7 +21,8 @@ const CSP = [
   "media-src 'self' data: blob:",
   "worker-src 'self' blob:",
   "object-src 'none'", "base-uri 'self'", "form-action 'none'",
-].join('; ');
+];
+const cspFor=file=>CSP_BASE.map(x=>x.startsWith("script-src ")?(file==='index.html'?"script-src 'self' 'wasm-unsafe-eval'":x):x).join('; ');
 
 const PAGES = [
   { file: 'index.html', type: 'SoftwareApplication', image: 'assets/share/museum.jpg',
@@ -48,14 +49,17 @@ const COMMON_DESIGN_LINKS = [
   'brand/tokens.css',
   'brand/themes.css',
   'brand/artifacts.css',
+  'brand/typography.css',
   'web/styles/system.css',
+  'web/styles/components.css',
 ];
 const pageDesignLinks = file => file === 'index.html'
-  ? [...COMMON_DESIGN_LINKS, 'web/styles/shell-mobile.css', 'web/styles/home.css', 'web/styles/garage.css', 'web/styles/race-self.css', 'web/styles/entry-visual-v2.css']
+  ? [...COMMON_DESIGN_LINKS, 'web/styles/shell-mobile.css', 'web/styles/entry.css']
   : COMMON_DESIGN_LINKS;
-const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap';
+const FONTS = 'https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300..800&display=swap';
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const jsonld = o => JSON.stringify(o).replace(/</g, '\\u003c');
+const GLOBAL_USER_STUDIO = '<!--global-user-studio:start--><a class="global-user-studio" href="index.html?view=me" aria-label="Open User Studio">USER STUDIO</a><!--global-user-studio:end-->';
 
 function block(p) {
   const url = SITE + (p.file === 'index.html' ? '' : p.file), img = SITE + p.image;
@@ -66,7 +70,7 @@ function block(p) {
     disambiguatingDescription: DISCLAIMER,
   };
   return `<!--harden:start-->
-<meta http-equiv="Content-Security-Policy" content="${CSP}">
+<meta http-equiv="Content-Security-Policy" content="${cspFor(p.file)}">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="${url}">
@@ -90,10 +94,15 @@ for (const p of PAGES) {
   // The hardener may add missing shared links, but never duplicates page-owned CSS.
   // shell-mobile and race-self belong only to the consumer app, not standalone Studio/Collection/Experiences.
   html = html.replace(/<!--design-system:start-->[\s\S]*?<!--design-system:end-->\n?/, '');
-  const fonts = /fonts\.googleapis\.com\/css2\?family=Instrument\+Serif[^"]*Manrope/.test(html) ? '' : `<link rel="stylesheet" href="${FONTS}">`;
+  html = html.replace(/<link[^>]+href="https:\/\/fonts\.googleapis\.com\/css2\?[^"]+"[^>]*>\n?/g,'');
+  const fonts = `<link rel="stylesheet" href="${FONTS}">`;
   const missing = pageDesignLinks(p.file).filter(href => !html.includes(`href="${href}"`))
     .map(href => `<link rel="stylesheet" href="${href}">`).join('');
   html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}${missing}<!--design-system:end-->\n</head>`);
+  html = html.replace(/<!--global-user-studio:start-->[\s\S]*?<!--global-user-studio:end-->\n?/g, '');
+  if (p.file !== 'index.html' && !html.includes('href="index.html?view=me"')) {
+    html = html.replace(/<body([^>]*)>/i, match => match + GLOBAL_USER_STUDIO);
+  }
   fs.writeFileSync(f, html);
 }
 

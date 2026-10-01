@@ -178,10 +178,55 @@ export function saveQuestIdentity(draft, storage = globalThis.localStorage) {
 export function syncIdentityFromSetup(setup, products, storage = globalThis.localStorage, options = {}) {
   const graph = projectSetup(setup, products, options);
   try {
-    writeStorage('userEquipment', JSON.stringify(graph.equipment), storage);
-    writeStorage('raceIdentity', JSON.stringify(graph.identity), storage);
-  } catch { /* private mode: the race setup key still holds the editable copy */ }
-  return graph;
+    const previousEquipment = JSON.parse(readStorage('userEquipment', storage) || '[]');
+    const previousIdentity = JSON.parse(readStorage('raceIdentity', storage) || 'null');
+    const existingRows = Array.isArray(previousEquipment) ? previousEquipment : [];
+    const chosenByProjectedId = new Map();
+    const mergedEquipment = [...existingRows];
+
+    for (const projected of graph.equipment) {
+      const existing = existingRows.find(row => row?.product_id === projected.product_id && row?.relationship !== 'try')
+        || existingRows.find(row => row?.product_id === projected.product_id);
+      if (existing) {
+        const merged = {
+          ...projected,
+          ...existing,
+          customization: { ...(existing.customization || {}), ...(projected.customization || {}) },
+        };
+        const i = mergedEquipment.findIndex(row => row?.id === existing.id);
+        if (i >= 0) mergedEquipment[i] = merged;
+        chosenByProjectedId.set(projected.id, existing.id);
+      } else {
+        mergedEquipment.push(projected);
+        chosenByProjectedId.set(projected.id, projected.id);
+      }
+    }
+
+    const projectedSetup = Object.fromEntries(
+      Object.entries(graph.identity.setup || {})
+        .filter(([,id]) => id != null)
+        .map(([field,id]) => [field, chosenByProjectedId.get(id) || id])
+    );
+    const identity = {
+      ...graph.identity,
+      ...(previousIdentity && typeof previousIdentity === 'object' ? {
+        goal: previousIdentity.goal ?? graph.identity.goal,
+        intent: previousIdentity.intent ?? graph.identity.intent,
+        mode: previousIdentity.mode ?? graph.identity.mode,
+        style: previousIdentity.style ?? graph.identity.style,
+        avatar: previousIdentity.avatar ?? graph.identity.avatar,
+        visibility: previousIdentity.visibility ?? graph.identity.visibility,
+        share_slug: previousIdentity.share_slug ?? graph.identity.share_slug,
+      } : {}),
+      setup: { ...(previousIdentity?.setup || {}), ...projectedSetup },
+    };
+
+    writeStorage('userEquipment', JSON.stringify(mergedEquipment), storage);
+    writeStorage('raceIdentity', JSON.stringify(identity), storage);
+    return { equipment: mergedEquipment, identity };
+  } catch {
+    return graph;
+  }
 }
 
 /** Aggregate only. Refuses user ids and groups smaller than 10. */

@@ -64,6 +64,28 @@ test('sync writes the graph and leaves the Race Setup key alone', () => {
   assert.equal(rows[0].product_id, 'product:canyon-cfr-2027');
 });
 
+test('Studio sync preserves owned relationships, unrelated gear and the existing goal', () => {
+  const mem = new Map();
+  const storage = { getItem:k=>mem.get(k)??null, setItem:(k,v)=>mem.set(k,v), removeItem:k=>mem.delete(k) };
+  const ownedBike = equipmentRecord({ userId:'user:local', product:bike, relationship:'owned', now:'2026-01-01T00:00:00.000Z' });
+  const ownedHelmet = equipmentRecord({ userId:'user:local', product:{id:'helmet-1',type:'helmet'}, relationship:'owned', now:'2026-01-01T00:00:00.000Z' });
+  storage.setItem(USER_EQUIPMENT_KEY, JSON.stringify([ownedBike,ownedHelmet]));
+  storage.setItem(RACE_IDENTITY_KEY, JSON.stringify({
+    schema_version:1,id:'race-identity:local:kona-2026',entity_type:'race-identity',user_id:'user:local',
+    mode:'real',event_id:'event:kona-2026',goal:{type:'time',label:'Sub 10 hours'},intent:'racing',
+    style:'custom',avatar:{avatar_id:'avatar:local',appearance:{}},setup:{bike:ownedBike.id,helmet:ownedHelmet.id},visibility:'private'
+  }));
+  const setup={schema_version:1,event_id:'kona-2026',slots:{bike:{product_id:bike.id,configuration:{look:'fresh',scene:'kona'}},wheel:{source:'bike',product_id:bike.id},helmet:null,shoe:null}};
+  const graph=syncIdentityFromSetup(setup,[bike],storage);
+  const savedBike=graph.equipment.find(x=>x.product_id==='product:canyon-cfr-2027');
+  assert.equal(savedBike.relationship,'owned');
+  assert.ok(graph.equipment.some(x=>x.id===ownedHelmet.id),'unrelated owned helmet must survive');
+  assert.equal(graph.identity.goal.label,'Sub 10 hours');
+  assert.equal(graph.identity.intent,'racing');
+  assert.equal(graph.identity.setup.bike,ownedBike.id);
+  assert.equal(graph.identity.setup.helmet,ownedHelmet.id);
+});
+
 test('vendor insight stays aggregate, opted in, and above the group floor', () => {
   assert.equal(sealVendorInsight({ product_id: 'canyon-cfr-2027', counts: { dream: 3 }, contains_user_ids: false, consent_basis: 'explicit-opt-in' }), null);
   assert.equal(sealVendorInsight({ product_id: 'canyon-cfr-2027', counts: { dream: 12 }, contains_user_ids: true, consent_basis: 'explicit-opt-in' }), null);

@@ -7,13 +7,16 @@ const shell=fs.readFileSync(new URL('../styles/shell-mobile.css',import.meta.url
 const raceSelf=fs.readFileSync(new URL('../styles/race-self.css',import.meta.url),'utf8');
 const hall=fs.readFileSync(new URL('../styles/hall-web.css',import.meta.url),'utf8');
 const hallMobile=fs.readFileSync(new URL('../styles/hall-mobile.css',import.meta.url),'utf8');
-const entry=fs.readFileSync(new URL('../styles/entry-visual-v2.css',import.meta.url),'utf8');
+const entry=fs.readFileSync(new URL('../styles/entry.css',import.meta.url),'utf8');
 
 test('Race Self immersive surface has one stylesheet owner',()=>{
   assert.match(raceSelf,/\.race-self-experience/);
   assert.match(raceSelf,/\.race-self-controls/);
   assert.doesNotMatch(shell,/\.race-self-experience|\.race-self-controls|\.hub-drawer|\.avatar-options/);
   assert.doesNotMatch(system,/\.race-self-experience|\.race-self-controls/);
+  assert.match(system,/\.kona-user-menu/);
+  assert.match(raceSelf,/body\.race-self-open[^\n]*\.kona-user-menu\{display:none\}/);
+  assert.doesNotMatch(raceSelf,/(?:^|\n)\.kona-user-menu\{/);
   assert.doesNotMatch(hall,/\.race-self-experience|\.race-self-controls/);
   assert.doesNotMatch(hallMobile,/\.race-self-experience|\.race-self-controls/);
   assert.doesNotMatch(entry,/\.race-self-experience|\.race-self-controls/);
@@ -27,3 +30,5 @@ test('world interaction chrome remains world-owned',()=>{
   for(const selector of ['#joy','#rail','#tourPill']) assert.match(hall+hallMobile,new RegExp(selector.replace('#','\\#')));
   assert.doesNotMatch(shell,/#joy\{|#tourPill\{/);
 });
+
+// RC8 final rerun marker: validates frozen go-live candidate after source reconciliation.

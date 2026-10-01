@@ -1,4 +1,4 @@
-// ui/me.js — RaceIdentity + Passport projection.
+// ui/me.js — RaceIdentity + Progress projection.
 // Personal truth comes from canonical game state; this surface owns no persistence.
 import { readGameState, gameProgress } from '../engine/game-state.js';
 import { ensureProgression } from '../engine/progression.js';
@@ -19,7 +19,7 @@ async function equipmentProduct(snapshot, equipmentId) {
 async function raceIdentityMarkup(snapshot) {
   const identity = snapshot?.race_identity;
   if (!identity?.event_id) {
-    return '<section class="kona-hero-card artifact artifact--hero"><small>YOUR KONA</small><h3>Your next chapter starts here.</h3><p>Explore the museum to collect discoveries, earn badges and build your Passport. Your progress stays with you on this device.</p></section>';
+    return '<section class="kona-hero-card artifact artifact--hero"><small>YOUR KONA</small><h3>Your next chapter starts here.</h3><p>Explore the museum to collect discoveries, earn badges and build your Progress. Your progress stays with you on this device.</p></section>';
   }
   const [bike, shoe] = await Promise.all([equipmentProduct(snapshot, identity.setup?.bike), equipmentProduct(snapshot, identity.setup?.shoe)]);
   const gear = [
@@ -36,12 +36,12 @@ async function raceIdentityMarkup(snapshot) {
   '</section>';
 }
 
-export async function renderPassportSurface(root,{settings}={}) {
-  try { ensureProgression(); } catch (_) { /* Passport remains readable without repair */ }
+export async function renderProgressSurface(root,{settings}={}) {
+  try { ensureProgression(); } catch (_) { /* Progress remains readable without repair */ }
   const snapshot = readGameState();
   const p = gameProgress(snapshot);
   root.innerHTML = await raceIdentityMarkup(snapshot)+
-    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Passport</h3><small>'+esc(p.levelName||'Visitor')+'</small></div>'+
+    '<section class="kona-section artifact artifact--label"><div class="kona-section-head"><h3>Progress</h3><small>'+esc(p.levelName||'Visitor')+'</small></div>'+
       '<div class="kona-list"><article><i>XP</i><div><b>'+p.xp+' XP</b><span>'+p.stamps+' discoveries · '+p.badges+' badges · '+p.hidden+' finds</span></div></article>'+
       '<article><i>↗</i><div><b>'+p.streak+' day streak</b><span>Progress follows what you actually explore.</span></div></article>'+
       (p.credits!=null?'<article><i>KC</i><div><b>'+p.credits+' Kona Credits</b><span>Earned as you explore KONA.</span></div></article>':'')+
@@ -59,21 +59,22 @@ export async function renderPassportSurface(root,{settings}={}) {
   await renderRaceBadges(root.querySelector('[data-profile-races]'),{limit:20,empty:true});
   root.querySelector('[data-settings]')?.addEventListener('click',()=>settings?.open?.());
   const account=root.querySelector('#konaAccount'), status=account?.querySelector('[data-status]');
-  if(!account||!cloudAvailable()){ if(status) status.textContent='Cloud sync unavailable. Local Passport still works normally.'; return; }
+  if(!account||!cloudAvailable()){ if(status) status.textContent='Cloud sync unavailable. Local progress still works normally.'; return; }
 
   const user=await currentUser().catch(()=>null);
   if(!user){
-    account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note" for="passportEmail">Email for a one-time sign-in link</label><input id="passportEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" style="width:100%;min-height:48px;padding:12px 14px;margin:8px 0;border:1px solid currentColor;border-radius:12px;background:transparent;color:inherit;font:inherit"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
+    account.insertAdjacentHTML('beforeend','<form data-login><label class="kona-source-note" for="passportEmail">Email for a one-time sign-in link</label><input id="passportEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" class="ui-input passport-email"><button class="kona-primary" type="submit">Send sign-in link</button></form>');
     status.textContent='Play without an account, or sign in only for cross-device backup.';
     account.querySelector('[data-login]')?.addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('button');btn.disabled=true;try{await sendMagicLink(new FormData(e.currentTarget).get('email'));status.textContent='Check your email and open the sign-in link on this device.';e.currentTarget.hidden=true;}catch(err){status.textContent=err.message||'Could not send sign-in link.';btn.disabled=false;}});
     return;
   }
 
   status.textContent='Signed in as '+(user.email||'beta user')+'. Backup and restore are explicit.';
-  account.insertAdjacentHTML('beforeend','<div class="kona-list"><article><i>↑</i><div><b>Back up this device</b><span>Save Passport, collection, setup and Garage.</span></div><button type="button" data-backup>Back up</button></article><article><i>↓</i><div><b>Restore from cloud</b><span>Replace this device with your latest backup.</span></div><button type="button" data-restore>Restore</button></article><article><i>↪</i><div><b>Sign out</b><span>Local progress stays on this device.</span></div><button type="button" data-signout>Sign out</button></article></div>');
+  account.insertAdjacentHTML('beforeend','<div class="kona-list"><article><i>↑</i><div><b>Back up this device</b><span>Save progress, collection, setup and Garage.</span></div><button type="button" data-backup>Back up</button></article><article><i>↓</i><div><b>Restore from cloud</b><span>Replace this device with your latest backup.</span></div><button type="button" data-restore>Restore</button></article><article><i>↪</i><div><b>Sign out</b><span>Local progress stays on this device.</span></div><button type="button" data-signout>Sign out</button></article></div>');
   account.querySelector('[data-backup]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await backupGameState();status.textContent='Cloud backup saved.';}catch(err){status.textContent=err.message;}finally{e.currentTarget.disabled=false;}});
   account.querySelector('[data-restore]')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{await restoreGameState();status.textContent='Cloud state restored. Reloading…';location.reload();}catch(err){status.textContent=err.message;e.currentTarget.disabled=false;}});
   account.querySelector('[data-signout]')?.addEventListener('click',async()=>{await signOut();await renderMeSurface(root,{settings});});
 }
 
-export async function renderMeSurface(root,{settings}={}) { return renderPassportSurface(root,{settings}); }
+export async function renderPassportSurface(root,{settings}={}) { return renderProgressSurface(root,{settings}); }
+export async function renderMeSurface(root,{settings}={}) { return renderProgressSurface(root,{settings}); }

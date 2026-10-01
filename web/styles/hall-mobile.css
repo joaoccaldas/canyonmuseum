@@ -246,3 +246,8 @@ html.phone-fit #card{left:8px;right:auto;width:calc((100vw - 16px)/var(--fit))!i
   #card h2{font-size:29px!important}
   .c-note{font-size:12px!important}
 }
+
+@media(max-width:899px),(pointer:coarse){
+  .world-more-menu{top:max(60px,calc(48px + env(safe-area-inset-top)));right:max(10px,env(safe-area-inset-right));left:auto;width:min(220px,calc(100dvw - 20px))}
+  .world-more-menu button{min-height:48px}
+}
