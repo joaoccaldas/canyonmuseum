@@ -72,7 +72,7 @@ const bike = new THREE.Group(); scene.add(bike);
 const parts = {}, meshesOf = {}, explodables = [];
 const b64 = s => { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-$('#loader i').style.width = '30%';
+$('#loader i')?.style.setProperty('--load-p','.3');
 let centre = new THREE.Vector3(0, .55, 0);
 loader.parse(b64(window.__SPEEDMAX_GLB).buffer, '', gltf => {
   const root = gltf.scene; bike.add(root);
@@ -91,8 +91,8 @@ loader.parse(b64(window.__SPEEDMAX_GLB).buffer, '', gltf => {
   plinth.position.x = floor.position.x = centre.x;
   buildPartList();
   view('hero', true);
-  $('#loader i').style.width = '100%';
-  setTimeout(() => { $('#loader').style.opacity = 0; setTimeout(() => $('#loader').remove(), 500); document.body.classList.add('ready'); window.__heritage = { parts: Object.keys(parts) }; }, 150);
+  $('#loader i')?.style.setProperty('--load-p','1');
+  setTimeout(() => { $('#loader').classList.add('leaving'); setTimeout(() => $('#loader').remove(), 500); document.body.classList.add('ready'); window.__heritage = { parts: Object.keys(parts) }; }, 150);
 }, err => { $('#loader div').textContent = 'Model failed to load'; console.error(err); });
 
 // ------------------------------------------------------------------ parts, picking, isolate
@@ -135,8 +135,8 @@ canvas.addEventListener('pointerup', e => { if (down && Math.hypot(e.clientX - d
 canvas.addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse') return;
   const id = pick(e), tip = $('#tip');
-  tip.style.opacity = id ? 1 : 0; if (id) { tip.textContent = label(id); tip.style.left = e.clientX + 'px'; tip.style.top = e.clientY + 'px'; }
-  canvas.style.cursor = id ? 'pointer' : 'grab';
+  tip.classList.toggle('on',!!id); if (id) { tip.textContent = label(id); tip.style.setProperty('--tip-x',e.clientX+'px'); tip.style.setProperty('--tip-y',e.clientY+'px'); }
+  canvas.classList.toggle('hot',!!id);
 });
 
 // ------------------------------------------------------------------ views, explode, turntable
