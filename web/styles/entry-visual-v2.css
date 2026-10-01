@@ -23,7 +23,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry .entry-event{padding-left:16px;border-left:1px solid rgba(255,255,255,.26);color:#d0d9dc;font:700 9px/1.2 var(--brand-font-ui,var(--sans));letter-spacing:.14em}
 #intro.kona-entry h1{
   max-width:680px;margin:0 0 22px;color:#f8f5ef;
-  font:400 clamp(50px,5.1vw,76px)/.88 var(--brand-font-editorial,var(--serif));
+  font:400 clamp(48px,4.1vw,64px)/.9 var(--brand-font-editorial,var(--serif));
   letter-spacing:-.035em;text-shadow:0 4px 30px rgba(0,0,0,.24);text-wrap:balance
 }
 #intro.kona-entry h1 em{display:inline;font-style:italic;color:var(--brand-accent,#ff6427);-webkit-text-fill-color:var(--brand-accent,#ff6427)}
@@ -39,10 +39,10 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry .entry-trust>span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand-accent-2,#39c8ef)}
 #intro.kona-entry .entry-trust #entryInstall{width:auto;min-height:36px;padding:0;border:0;border-bottom:1px solid rgba(255,255,255,.45);border-radius:0;background:transparent;color:#e5ecee}
 #intro.kona-entry .entry-signin-note{margin:7px 0 0;color:#8fa1a8;font:500 10px/1.4 var(--brand-font-ui,var(--sans))}
-#intro.kona-entry .entry-product{grid-area:product;position:relative;align-self:stretch;min-height:590px;display:flex;flex-direction:column;justify-content:center}
+#intro.kona-entry .entry-product{grid-area:product;position:relative;align-self:stretch;min-height:520px;display:flex;flex-direction:column;justify-content:center}
 #intro.kona-entry .entry-product-stage{
   --stage-rx:0deg;--stage-ry:0deg;
-  position:relative;min-height:430px;border:1px solid rgba(255,255,255,.15);
+  position:relative;min-height:390px;border:1px solid rgba(255,255,255,.15);
   border-radius:clamp(24px,3vw,38px);overflow:hidden;
   background:
     radial-gradient(circle at 68% 18%,color-mix(in srgb,var(--brand-accent-2,#39c8ef) 26%,transparent),transparent 29%),
