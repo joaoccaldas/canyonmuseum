@@ -1,7 +1,7 @@
 // ui/avatar-home.js — canonical User Studio surface.
 // Both the persistent user menu and the Me tab enter this same game-style studio.
 // Avatar building is a projection over engine/avatar.js; mobile and desktop share this exact UI.
-import { readGameState } from '../engine/game-state.js';
+import { readGameState, gameProgress } from '../engine/game-state.js';
 import { collectionSummary } from '../engine/items.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { AVATARS } from '../engine/profile.js';
@@ -12,6 +12,7 @@ import {
 import { renderRacePicker } from './race-cards.js';
 import { renderProgressSurface } from './me.js';
 import { avatarItemAccess } from '../engine/access.js';
+import { shareProgress, whatsappProgressUrl, safeAppUrl, progressShareText } from '../growth/social-share.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
@@ -60,6 +61,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('races','◉','Races',raceCount+' race badges')+
         menuItem('collection','◇','Collection',summary.total+' things found')+
         menuItem('progress','☆','Progress','Badges, milestones & history')+
+        menuItem('share','↗','Share KONA','Progress card, WhatsApp & more')+
         menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
         menuItem('feed','≋','The Feed','News, YouTube & your RSS sources')+
         menuItem('travel','⌁','Travel to Kona','Island guide, arrivals & local stops')+
@@ -227,11 +229,37 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
     if(drawer.hidden)openDrawer();
   };
 
+  const showShare=()=>{
+    const progress=gameProgress(readGameState());
+    const wa=whatsappProgressUrl(progress);
+    drawerKicker.textContent='USER STUDIO · SHARE';drawerTitle.textContent='Share your KONA';
+    drawerBody.innerHTML='<section class="kona-section artifact artifact--label share-studio">'+
+      '<div class="kona-section-head"><h3>Give someone the rabbit hole.</h3><small>PRIVATE BY DEFAULT</small></div>'+
+      '<p class="kona-source-note">'+esc(progressShareText(progress))+'</p>'+
+      '<div class="share-studio-actions"><button type="button" class="kona-primary" data-share-progress>Share to apps…</button>'+
+      (wa?'<a class="btn-secondary" data-share-whatsapp href="'+esc(wa)+'" target="_blank" rel="noopener noreferrer">WhatsApp</a>':'')+
+      '<button type="button" class="btn-secondary" data-share-copy>Copy clean link</button></div>'+
+      '<p class="kona-source-note" data-share-status>On phones, the system share sheet can offer Instagram, WhatsApp, Messages and any compatible app. No email, account ID or private local state is included.</p>'+
+    '</section>';
+    if(drawer.hidden)openDrawer();
+    const status=drawerBody.querySelector('[data-share-status]');
+    drawerBody.querySelector('[data-share-progress]')?.addEventListener('click',async e=>{
+      e.currentTarget.disabled=true;const result=await shareProgress(progress);
+      status.textContent=result.ok?(result.method==='clipboard'?'Share sheet unavailable. KONA link copied.':'Share sheet opened safely.'):(result.reason==='cancelled'?'Not shared. Nothing left KONA.':'Sharing is unavailable here. Use WhatsApp or copy the link.');
+      e.currentTarget.disabled=false;
+    });
+    drawerBody.querySelector('[data-share-copy]')?.addEventListener('click',async e=>{
+      const url=safeAppUrl();if(!url)return;
+      try{await navigator.clipboard.writeText(url);status.textContent='Clean KONA link copied.';e.currentTarget.textContent='Copied';}catch{status.textContent='Could not copy automatically. Use Share to apps… instead.';}
+    });
+  };
+
   root.querySelector('[data-race-self-action="customize"]')?.addEventListener('click',showSelf);
   root.querySelector('[data-race-self-action="tour"]')?.addEventListener('click',()=>openTour?.());
   root.querySelector('[data-race-self-action="races"]')?.addEventListener('click',showRaces);
   root.querySelector('[data-race-self-action="collection"]')?.addEventListener('click',()=>openCollection?.());
   root.querySelector('[data-race-self-action="progress"]')?.addEventListener('click',showProgress);
+  root.querySelector('[data-race-self-action="share"]')?.addEventListener('click',showShare);
   root.querySelector('[data-race-self-action="feed"]')?.addEventListener('click',()=>openFeed?.());
   root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
