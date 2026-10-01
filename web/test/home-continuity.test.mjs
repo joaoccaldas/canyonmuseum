@@ -6,15 +6,15 @@ const shell=fs.readFileSync(new URL('../src/ui/kona-shell.js',import.meta.url),'
 const home=fs.readFileSync(new URL('../src/ui/home.js',import.meta.url),'utf8');
 const raceSelf=fs.readFileSync(new URL('../src/ui/avatar-home.js',import.meta.url),'utf8');
 
-test('Home is the shell surface and Race Self is entered explicitly',()=>{
+test('Home is the shell surface and User Studio is entered explicitly',()=>{
   assert.match(shell,/function now\(\)[\s\S]*renderHomeSurface/);
   assert.match(shell,/async function raceSelf\(\)[\s\S]*renderAvatarHome/);
   assert.match(home,/data-home-self/);
   assert.doesNotMatch(home,/race-self-stage\.js|\.glb|THREE/);
 });
-test('Race Self exposes contextual personal controls, not a second app map',()=>{
-  for(const duplicate of ['3D World','Collection','Games','Garage','Discover','Plan']) assert.doesNotMatch(raceSelf,new RegExp(duplicate));
-  for(const control of ['Avatar','Bike','Races','Settings']) assert.match(raceSelf,new RegExp(control));
+test('User Studio exposes contextual player controls, not a second app map',()=>{
+  for(const duplicate of ['3D World','Collection','Games','Discover','Plan']) assert.doesNotMatch(raceSelf,new RegExp(duplicate));
+  for(const control of ['Avatar','Bike','Gear','Races','Passport','Settings']) assert.match(raceSelf,new RegExp(control));
   assert.doesNotMatch(raceSelf,/hub-launcher/);
   assert.match(raceSelf,/race-self-controls/);
 });
