@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Why KONA exists</title>
+<meta name="description" content="The short version, the scenic route, and the unfiltered version of how a training spreadsheet became KONA.">
+<meta name="theme-color" content="#f4efe7">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KONA">
+<meta property="og:title" content="Why KONA exists">
+<meta property="og:description" content="Some stories just take the scenic route.">
+<meta property="og:image" content="assets/share/museum.jpg">
+<link rel="icon" href="assets/pwa/icon-v3.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300..800&display=swap">
+<link rel="stylesheet" href="brand/tokens.css">
+<link rel="stylesheet" href="brand/themes.css">
+<link rel="stylesheet" href="brand/artifacts.css">
+<link rel="stylesheet" href="brand/typography.css">
+<link rel="stylesheet" href="web/styles/components.css">
+<link rel="stylesheet" href="web/styles/why.css">
+</head>
+<body class="why-page">
+<a class="why-skip" href="#whyApp">Skip to story</a>
+<header class="why-header">
+  <a class="why-wordmark" href="./" aria-label="KONA home">
+    <span>KONA</span><small>SWIM&nbsp;&nbsp;BIKE&nbsp;&nbsp;RUN</small>
+  </a>
+  <nav class="why-nav" aria-label="Primary">
+    <a href="./">Explore</a>
+    <a href="Studio.html">Bikes</a>
+    <a href="Experiences.html">Places</a>
+    <a class="why-nav-active" href="why.html" aria-current="page">Why?</a>
+  </nav>
+  <a class="btn-primary why-enter" href="./">Enter KONA <span aria-hidden="true">→</span></a>
+</header>
+
+<main id="whyApp" class="why-app" aria-live="polite"></main>
+
+<footer class="why-footer">
+  <a class="why-wordmark why-wordmark-footer" href="./"><span>KONA</span><small>SWIM&nbsp;&nbsp;BIKE&nbsp;&nbsp;RUN</small></a>
+  <p>People · Places · Progress · Belonging</p>
+  <a href="./">Explore KONA →</a>
+</footer>
+
+<script type="module" src="web/src/why-story.js"></script>
+</body>
+</html>
