@@ -69,5 +69,5 @@ test('post-onboarding entry opens canonical Home',()=>{
 
 test('visual evidence captures first pages across Random mode',()=>{
   assert.match(visual,/\['light','dark','random'\]/);
-  for(const view of ['landing','onboarding','reveal','home','discover','garage','plan','me']) assert.match(visual,new RegExp(view));
+  for(const view of ['landing','onboarding','reveal','home','race-self','discover','garage','plan','me']) assert.match(visual,new RegExp(view));
 });
