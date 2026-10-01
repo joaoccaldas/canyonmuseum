@@ -4,6 +4,7 @@ const tpl=fs.readFileSync(new URL('../landing.template.html',import.meta.url),'u
 const shell=fs.readFileSync(new URL('../src/app-shell.js',import.meta.url),'utf8');
 const mobile=fs.readFileSync(new URL('../styles/shell-mobile.css',import.meta.url),'utf8');
 const viewport=fs.readFileSync(new URL('../src/runtime/viewport.js',import.meta.url),'utf8');
+const system=fs.readFileSync(new URL('../styles/system.css',import.meta.url),'utf8');
 
 test('manifest is linked and viewport uses device width',()=>{
  assert.match(tpl,/name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/);
@@ -24,7 +25,7 @@ test('Android always has an install route even before browser prompt event',()=>
 });
 test('installed standalone hides install affordance',()=>assert.equal(installState({standalone:true}).show,false));
 test('mobile entry uses responsive width plus guarded desktop-view phone scaling',()=>{
- assert.match(mobile,/html,body\{width:100%;max-width:100%;overflow-x:hidden\}/);
+ assert.match(system,/html,body\{width:100%;max-width:100%;margin:0;padding:0;overflow-x:hidden\}/);
  assert.match(mobile,/html\.phone-fit/);
  assert.match(mobile,/zoom:var\(--fit\)/);
 });
