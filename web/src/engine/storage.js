@@ -17,6 +17,8 @@ const MAP = Object.freeze({
   raceHistory: { current: 'kona.raceHistory.v1', legacy: ['speedmax.raceHistory.v1'] },
   otpCooldown: { current: 'kona.supabase.otp.cooldown.v1', legacy: [] },
   session: { current: 'kona.supabase.session.v1', legacy: ['kona.supabase.session.v1'] },
+  companionSources: { current: 'kona.companion.sources.v1', legacy: [] },
+  companionTravel: { current: 'kona.companion.travel.v1', legacy: [] },
 });
 
 export function storageKey(name) {
