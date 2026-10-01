@@ -54,6 +54,8 @@ Random families:
 
 Unexpected copy is event-driven, never sprayed across every screen.
 
+The narrative authority is [KONA_NARRATIVE.md](KONA_NARRATIVE.md). Its core rule is: **KONA always knows WHAT it needs to say; it may experiment with HOW it says it.** The anonymous intern is background authorship, never navigation or an excuse for unclear product behavior.
+
 ## Artifact grammar
 
 Prefer semantic artifacts over universal cards:
