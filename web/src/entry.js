@@ -48,14 +48,25 @@ const settingsUI = initSettings({
 window.__konaSettingsUI = settingsUI;
 
 const loads = new Map();
-function loadStyle(href) {
+const managedStyles = new Map();
+function syncManagedStyles(){
+  const museumActive=document.body.classList.contains('museum-open')&&!document.body.classList.contains('kona-panel-open');
+  for(const [group,links] of managedStyles){
+    const enabled=group!=='museum'||museumActive;
+    for(const link of links)link.disabled=!enabled;
+  }
+}
+new MutationObserver(syncManagedStyles).observe(document.body,{attributes:true,attributeFilter:['class']});
+function loadStyle(href,group='app') {
   const key='css:'+href;
   if (loads.has(key)) return loads.get(key);
   const pending = new Promise((resolve,reject)=>{
     const link=document.createElement('link');
-    link.rel='stylesheet'; link.href=href;
-    link.onload=()=>resolve(); link.onerror=()=>reject(new Error(href));
-    document.head.append(link);
+    link.rel='stylesheet'; link.href=href; link.dataset.styleScope=group;
+    if(!managedStyles.has(group))managedStyles.set(group,new Set());
+    managedStyles.get(group).add(link);
+    link.onload=()=>{syncManagedStyles();resolve(link);}; link.onerror=()=>reject(new Error(href));
+    document.head.append(link);syncManagedStyles();
   });
   loads.set(key,pending);
   return pending;
@@ -81,8 +92,8 @@ const ensureWorldShell = () => {
   if (document.getElementById('hall')) return Promise.resolve();
   if (worldShellReady) return worldShellReady;
   worldShellReady = Promise.all([
-    loadStyle('web/styles/hall-web.css'),
-    loadStyle('web/styles/hall-mobile.css'),
+    loadStyle('web/styles/hall-web.css','museum'),
+    loadStyle('web/styles/hall-mobile.css','museum'),
   ]).then(()=>fetch('app/world-shell.html',{cache:'no-store',credentials:'same-origin'}))
     .then(r=>r.ok?r.text():Promise.reject(new Error('world shell unavailable')))
     .then(html=>{
