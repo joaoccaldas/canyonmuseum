@@ -1213,8 +1213,9 @@ function openWyld(v) {
   $('cName').textContent = v.name; $('cMat').textContent = v.sub; $('cNote').textContent = v.text;
   $('cStats').hidden = false; $('cStats').innerHTML = B.stats.map(([b, s2]) => `<div><b>${esc(b)}</b><small>${esc(s2)}</small></div>`).join('');
   const V = WROOMDATA.view;
-  $('cMedia').innerHTML = `<div class="c-dyes">${Object.entries(P2).map(([k, c]) => `<span style="--dye:${c}" title="${k} ${c}"></span>`).join('')}</div>`
+  $('cMedia').innerHTML = `<div class="c-dyes">${Object.entries(P2).map(([k,c],i)=>`<span data-dye="${i}" title="${k} ${c}"></span>`).join('')}</div>`
     + `<p class="c-view">Through the window: ${esc(V.caption)}. <a href="${esc(V.page)}" target="_blank" rel="noopener">© ${esc(V.author)} · ${esc(V.license)} ↗</a> (${esc(V.changes)})</p>`;
+  $('cMedia').querySelectorAll('[data-dye]').forEach(el=>el.style.setProperty('--dye',Object.values(P2)[Number(el.dataset.dye)]||'#777'));
   const next = wyldBikes[(v.index + 1) % wyldBikes.length];
   $('cActions').innerHTML = `<a class="btn primary" href="${esc(studioLink(v))}"><span class="long">Open in&nbsp;</span>3D studio <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextDye">Next<span class="long">:&nbsp;${esc(next.name.replace('WYLD ', ''))}</span> <span aria-hidden="true">→</span></button>`;
   $('cNextDye').onclick = () => visitWyld(next);
@@ -1314,8 +1315,9 @@ function openSanctuary(film) {
   $('cMat').textContent = film.sub;
   $('cNote').textContent = `${film.tagline} ${film.persona}.`;
   $('cStats').hidden = true;
-  const dyes = film.stops.map(c => `<span style="--dye:${c}" title="${c}"></span>`).join('');
+  const dyes = film.stops.map((c,i) => `<span data-dye="${i}" title="${c}"></span>`).join('');
   $('cMedia').innerHTML = `<div class="c-dyes">${dyes}</div><p class="c-view">${esc(film.tagline)}</p>`;
+  $('cMedia').querySelectorAll('[data-dye]').forEach(el=>el.style.setProperty('--dye',film.stops[Number(el.dataset.dye)]||'#777'));
   const next = sanctuary.films[(film.index + 1) % sanctuary.films.length];
   $('cActions').innerHTML = `<a class="btn primary" href="https://joaoccaldas.github.io/ai/studio/wyld-store/bike-porn/#${esc(film.id)}">Watch the film <span aria-hidden="true">→</span></a><button class="btn ghost" id="cNextFilm">Next<span class="long">: ${esc(next.name)}</span></button>`;
   $('cNextFilm').onclick = () => visitSanctuary(next);
@@ -1469,7 +1471,10 @@ if (KONA.titles.length) $('railInner').insertAdjacentHTML('afterbegin', `<button
 if (WROOMDATA) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip wyld" data-room="wyld" aria-label="WYLD Room"><span class="n">W</span><span><small>4 DYES · MY2027</small><b>WYLD Room</b></span></button>`);
 if (pier) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip pier" data-room="pier" aria-label="The Kona Pier: Kona by Year"><span class="n"><img src="assets/kona-years/y2019.jpg" alt="" loading="lazy"></span><span><small>2014 — 2025</small><b>Kona by Year</b></span></button>`);
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip hween" data-room="hween" aria-label="Lava Night, the Halloween room"><span class="n" aria-hidden="true">🎃</span><span><small>HALLOWEEN</small><b>Lava Night</b></span></button>`);
-for (const r of [...brandRooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip brand" data-room="${esc(r.desc.id)}" aria-label="${esc(r.desc.name)}"><span class="n" style="--chip-accent:${esc(r.desc.theme?.accent || '#c9a13b')}">${esc(r.desc.name.slice(0, 1))}</span><span><small>${r.products.length} PRODUCT${r.products.length > 1 ? 'S' : ''}</small><b>${esc(r.desc.name)}</b></span></button>`);
+for (const r of [...brandRooms].reverse()) {
+  $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip brand" data-room="${esc(r.desc.id)}" aria-label="${esc(r.desc.name)}"><span class="n" data-chip-accent>${esc(r.desc.name.slice(0, 1))}</span><span><small>${r.products.length} PRODUCT${r.products.length > 1 ? 'S' : ''}</small><b>${esc(r.desc.name)}</b></span></button>`);
+  document.querySelector(`.chip.brand[data-room="${CSS.escape(r.desc.id)}"] [data-chip-accent]`)?.style.setProperty('--chip-accent',r.desc.theme?.accent || '#c9a13b');
+}
 $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip sanctuary" data-room="sanctuary" aria-label="Sanctuary chapel, eight films"><span class="n">S</span><span><small>8 FILMS</small><b>Sanctuary</b></span></button>`);
 for (const w of [...atlas.wings].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip atlas" data-room="wing-${esc(w.id)}" aria-label="${esc(w.name)}: ${esc(w.sub)}"><span class="n" aria-hidden="true">${w.features?.clock ? '⏱' : '✦'}</span><span><small>UPPER FLOOR · ${atlas.rooms.filter(r => r.wing === w.id).reduce((n, r) => n + r.bikes.length + r.art.length, 0)} WORKS</small><b>${esc(w.name)}</b></span></button>`);
 for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTML('afterbegin', `<button class="chip ${r.id}" data-room="${r.id}" aria-label="${r.name}"><span class="n">${r.name.slice(0, 1)}</span><span><small>UPPER FLOOR</small><b>${r.name}</b></span></button>`);
@@ -1533,7 +1538,7 @@ for (const r of [...galleries.rooms].reverse()) $('railInner').insertAdjacentHTM
     const a = window.__map.here();
     const id = a?.id || null; if (id === lastWhere) return; lastWhere = id;
     where.hidden = !a;
-    if (a) { where.querySelector('b').textContent = a.name; where.querySelector('small').textContent = a.floor === 'upper' ? 'Upper floor' : 'Ground floor'; where.querySelector('i').style.background = a.color; where.classList.remove('pop'); void where.offsetWidth; where.classList.add('pop'); }
+    if (a) { where.querySelector('b').textContent = a.name; where.querySelector('small').textContent = a.floor === 'upper' ? 'Upper floor' : 'Ground floor'; where.querySelector('i').style.setProperty('--where-color',a.color); where.classList.remove('pop'); void where.offsetWidth; where.classList.add('pop'); }
     if ((id?.startsWith('atlas') || id?.startsWith('wing')) && !wingHinted) { wingHinted = true; try { localStorage.setItem('speedmax.atlas.hint', '1'); } catch (_) { } toast('Tap any bike or artwork for its story · M opens the world map'); }
   }, 350);
 }
@@ -1646,7 +1651,7 @@ function pick(x, y) {
 canvas.addEventListener('pointerdown', e => {
   if (!started) return;
   drag = { x: e.clientX, y: e.clientY, yaw: P.yaw, pitch: P.pitch, id: e.pointerId, moved: 0 };
-  canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing';
+  canvas.setPointerCapture(e.pointerId); canvas.classList.add('dragging');
 });
 canvas.addEventListener('pointermove', e => {
   if (drag && e.pointerId === drag.id) {
@@ -1657,7 +1662,7 @@ canvas.addEventListener('pointermove', e => {
   } else if (started && !coarse) hover = { x: e.clientX, y: e.clientY };
 });
 canvas.addEventListener('pointerup', e => {
-  canvas.style.cursor = '';
+  canvas.classList.remove('dragging');
   if (!drag || !started) return;
   const moved = drag.moved; drag = null;
   if (moved > 6) return;
@@ -1716,10 +1721,10 @@ const joy = { on: false, x: 0, y: 0, id: null };
   const R = 46;
   const move = e => { const r = pad.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     let dx = e.clientX - cx, dy = e.clientY - cy; const d = Math.hypot(dx, dy); if (d > R) { dx *= R / d; dy *= R / d; }
-    joy.x = dx / R; joy.y = dy / R; knob.style.transform = `translate(${dx}px,${dy}px)`; };
+    joy.x = dx / R; joy.y = dy / R; knob.style.setProperty('--joy-x',dx+'px'); knob.style.setProperty('--joy-y',dy+'px'); };
   pad?.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); tourEnd(false); setTimeout(() => coachDid('joy'), 700); joy.on = true; joy.id = e.pointerId; pad.setPointerCapture(e.pointerId); pad.classList.add('on'); path = null; move(e); });
   pad?.addEventListener('pointermove', e => { if (joy.on && e.pointerId === joy.id) move(e); });
-  const end = e => { if (e.pointerId !== joy.id) return; joy.on = false; joy.x = joy.y = 0; knob.style.transform = ''; pad.classList.remove('on'); };
+  const end = e => { if (e.pointerId !== joy.id) return; joy.on = false; joy.x = joy.y = 0; knob.style.removeProperty('--joy-x'); knob.style.removeProperty('--joy-y'); pad.classList.remove('on'); };
   pad?.addEventListener('pointerup', end); pad?.addEventListener('pointercancel', end);
 }
 
@@ -1826,8 +1831,8 @@ function frame(now) {
   let hot = null;
   if (hover && !drag) { const h = pick(hover.x, hover.y); hot = h?.piece || null; const hc = (h?.art ? { year: h.art.kind === 'sculpture' ? 'Sculpture' : 'Painting', athlete: h.art.data.title, time: h.art.room?.name } : h?.atlas ? { year: h.atlas.data?.year || h.atlas.data?.era || 'Type', athlete: h.atlas.data?.name, time: h.atlas.room?.wingName || 'Paint shop' } : h?.swatch ? { year: 'Paint', athlete: h.swatch.s.name, time: h.swatch.b.name } : h?.ref ? { year: 'Photograph', athlete: h.ref.artist, time: h.ref.license } : null) || h?.champ || (h?.hween ? { year: 'Lava Night', athlete: 'Speedmax CFR, after dark', time: 'Halloween' } : null) || (h?.year ? { year: h.year.year, athlete: h.year.athlete || h.year.headline, time: h.year.status === 'raced' ? `${ordinal(h.year.place)} · ${h.year.bike}` : 'no race' } : h?.finale ? { year: 'Finish', athlete: 'Speedmax CFR', time: 'MY2027' } : h?.era ? { year: 'Machine', athlete: h.era.era.name, time: '' } : null) || (h?.wyld ? { year: 'WYLD', athlete: h.wyld.name, time: h.wyld.sub } : h?.sanctuary ? { year: h.sanctuary.film, athlete: h.sanctuary.name, time: h.sanctuary.persona } : h?.gallery ? { year: 'Upper floor', athlete: h.gallery.title || h.gallery.name, time: h.gallery.sub } : h?.info ? { year: h.info.eyebrow, athlete: h.info.title, time: h.info.sub } : null); const tag = $('tag');
     tag.classList.toggle('on', !!(hot || hc)); canvas.classList.toggle('hot', !!(hot || hc));
-    if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; }
-    if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.left = hover.x + 'px'; tag.style.top = hover.y + 'px'; } }
+    if (hc) { tag.textContent = `${hc.year} · ${hc.athlete} · ${hc.time}`; tag.style.setProperty('--tag-x',hover.x+'px'); tag.style.setProperty('--tag-y',hover.y+'px'); }
+    if (hot) { tag.textContent = `${hot.years} · ${hot.name}`; tag.style.setProperty('--tag-x',hover.x+'px'); tag.style.setProperty('--tag-y',hover.y+'px'); } }
   let nearest = null, nearestD = Infinity;
   if (started && roomOf(P.x, P.z) === 'hall' && !current) {
     for (const p of PIECES) {
@@ -1858,21 +1863,21 @@ function frame(now) {
   }
   if (exploded && Math.hypot(P.x - exploded.pos.x, P.z - exploded.pos.z) > 7.5) setExploded(exploded, false);   // walked away
   const lab = exploded?.anchors ? exploded : null;
-  $('labels').style.visibility = lab && lab.ex > .05 ? 'visible' : 'hidden';
+  $('labels').classList.toggle('visible',!!(lab && lab.ex > .05));
   if (lab && lab.ex > .05) {
     const v = new THREE.Vector3(), els = $('labels').children;
     lab.anchors.forEach((a, i) => {
       a.node.localToWorld(v.copy(a.local)); v.project(camera);
       const el = els[i]; if (!el) return;
       const vis = v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
-      el.style.opacity = vis ? Math.min(1, (lab.ex - .05) * 2) : 0; el.style.pointerEvents = vis ? '' : 'none';
+      el.style.setProperty('--label-opacity',String(vis ? Math.min(1, (lab.ex - .05) * 2) : 0)); el.classList.toggle('interactive',vis);
       const margin = 10, top = 70, bottom = 100;
       let x = (v.x * .5 + .5) * innerWidth, y = (-v.y * .5 + .5) * innerHeight;
-      el.style.transform = `translate(${x}px,${y}px)`;
+      el.style.setProperty('--label-x',x+'px'); el.style.setProperty('--label-y',y+'px');
       const maxX = Math.max(margin, innerWidth - el.offsetWidth - margin);
       const maxY = Math.max(top, innerHeight - el.offsetHeight - bottom);
       x = Math.min(Math.max(x, margin), maxX); y = Math.min(Math.max(y, top), maxY);
-      el.style.transform = `translate(${x}px,${y}px)`;
+      el.style.setProperty('--label-x',x+'px'); el.style.setProperty('--label-y',y+'px');
     });
   }
   { // draw only what can be seen: rooms hide each other's bikes (walls between them)
@@ -1946,7 +1951,7 @@ window.__konaWorldSettings = {
   onMotion:()=>true,
 };
 { const p = profile.get(), ip = $('introProfile');
-  if (ip) { ip.querySelector('i').style.background = p.avatar; ip.querySelector('span').textContent = p.name ? `Welcome back, ${p.name} · settings` : 'Create a profile · choose your quality'; } }
+  if (ip) { ip.querySelector('i').style.setProperty('--profile-avatar',p.avatar); ip.querySelector('span').textContent = p.name ? `Welcome back, ${p.name} · settings` : 'Create a profile · choose your quality'; } }
 async function shareView(title) {
   const here = window.__map?.here();
   const blob = await captureView(renderer, scene, camera, { title, place: here?.name });
