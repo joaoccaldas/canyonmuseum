@@ -7,7 +7,7 @@ const shell=fs.readFileSync(new URL('../styles/shell-mobile.css',import.meta.url
 const raceSelf=fs.readFileSync(new URL('../styles/race-self.css',import.meta.url),'utf8');
 const hall=fs.readFileSync(new URL('../styles/hall-web.css',import.meta.url),'utf8');
 const hallMobile=fs.readFileSync(new URL('../styles/hall-mobile.css',import.meta.url),'utf8');
-const entry=fs.readFileSync(new URL('../styles/entry-visual-v2.css',import.meta.url),'utf8');
+const entry=fs.readFileSync(new URL('../styles/entry.css',import.meta.url),'utf8');
 
 test('Race Self immersive surface has one stylesheet owner',()=>{
   assert.match(raceSelf,/\.race-self-experience/);
