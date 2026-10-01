@@ -113,7 +113,23 @@ export function buildKonaRaceCenter(ctx){
   ];
   for(const [id,x,y,z,label] of labels){
     const sign=lettering(Math.max(2.8,label.length*.12),.45,g=>{g.fillStyle='rgba(248,245,239,.94)';g.fillRect(0,0,g.canvas.width,g.canvas.height);g.fillStyle='#12181d';g.font=`700 .09px ${FONT}`;g.letterSpacing='.015px';g.fillText(label,.08,.28);},512);
-    sign.position.set(x,y,z);sign.userData.konaCenter=byId[id]||{id,name:label};pickables.push(sign);group.add(sign);
+    sign.position.set(x,y,z);
+    const item=byId[id]||{id,name:label,kind:'landmark'};
+    sign.userData.info={
+      eyebrow:'KONA 2026 · ATHLETE ORIENTATION',
+      title:item.name||label,
+      sub:item.kind==='race-critical'?'Race-critical landmark':String(item.kind||'landmark').replace(/-/g,' '),
+      text:item.id==='transition'
+        ? 'Kailua Pier is the athlete transition anchor. This reconstruction shows the expected rack, bag and athlete-flow relationships using the latest detailed official Kona venue map available.'
+        : item.id==='hot-corner'
+          ? 'The Hot Corner is the highly visible junction where Aliʻi Drive and Palani Road concentrate race traffic and spectators.'
+          : item.id==='finish-line'
+            ? 'The finish is on Aliʻi Drive near Kailua Pier. Follow the modeled run-finish line to understand the final approach and surrounding athlete-only zones.'
+            : item.id==='kailua-pier'
+              ? 'The 2026 IRONMAN World Championship venue is Kailua Pier. Swim, transition and finish activity radiate from this compact waterfront center.'
+              : 'A landmark inside the Kona race-center orientation model.',
+    };
+    pickables.push(sign);group.add(sign);
   }
 
   // Orientation board.
