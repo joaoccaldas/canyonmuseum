@@ -10,7 +10,7 @@ const pageCss=[
   fs.readFileSync(path.join(root,'brand/tokens.css'),'utf8'),
   fs.readFileSync(path.join(root,'brand/themes.css'),'utf8'),
   fs.readFileSync(path.join(root,'web/styles/viewer.css'),'utf8')
-].join('\n').replace(/<\\/style/gi,'<\\\\/style');
+].join('\n').replaceAll('</style','<\\/style');
 const glb = fs.readFileSync(glbPath).toString('base64');
 const tpl = fs.readFileSync(path.join(here, 'index.template.html'), 'utf8');
 const profile=JSON.parse(fs.readFileSync(process.env.BIKE_PROFILE||path.join(here,'../museum/viewer-cfr.json'),'utf8'));
