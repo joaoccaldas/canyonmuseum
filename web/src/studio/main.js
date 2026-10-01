@@ -26,6 +26,8 @@ const touch = matchMedia('(pointer: coarse)').matches || innerWidth < 760;
 const RS = renderSettings(profile.get().quality, { lite: touch, dpr: devicePixelRatio });
 const reduce = profile.get().motion === 'reduced' || (profile.get().motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const q = new URLSearchParams(location.search);
+const sourceContext = ['race-self','garage'].includes(q.get('from')) ? q.get('from') : null;
+const returnTarget = sourceContext === 'race-self' ? './?view=race-self' : sourceContext === 'garage' ? './?view=garage' : './';
 const sharedSetup = decodeRaceSetup(q.get('setup'), CAT.products);
 const raceSetupStore = createRaceSetupStore();
 const event = EVENTS.find(e => e.id === (q.get('event') || sharedSetup?.event_id)) || null;
@@ -286,6 +288,13 @@ $('shareBtn').onclick = async () => {
 const settingsUI = initSettings({ profile, QUALITY, AVATARS, activeQuality: () => profile.get().quality,
   onQuality: id => { const n = renderSettings(id, { lite: touch, dpr: devicePixelRatio }); renderer.setPixelRatio(n.dpr); resize(); renderer.shadowMap.enabled = n.shadows; return n.lite !== RS.lite; },
   onSound: () => false, onMotion: () => true, sync: { available: false } });
+const studioBack=$('studioBack'), studioContext=$('studioContext');
+if(studioBack){
+  studioBack.href=returnTarget;
+  studioBack.setAttribute('aria-label',sourceContext==='race-self'?'Back to Race Self':sourceContext==='garage'?'Back to Garage':'Back to KONA');
+  studioBack.querySelector('.brand').textContent=sourceContext==='race-self'?'RACE SELF':sourceContext==='garage'?'GARAGE':'KONA';
+}
+if(studioContext) studioContext.textContent=sourceContext==='race-self'?'RACE SELF · BIKE':sourceContext==='garage'?'GARAGE · BIKE':'BIKE STUDIO';
 if (event) { $('eventPill').hidden = false; $('eventPill').textContent = `${event.name} · ${event.place.split(',')[0]}`; $('eventPill').style.borderColor = event.accent; }
 
 // ---------------------------------------------------------------- loop
