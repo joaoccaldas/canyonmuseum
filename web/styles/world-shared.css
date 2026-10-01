@@ -51,3 +51,14 @@ nav{display:flex;gap:6px;align-items:center}nav a,nav button{font-size:12px;font
 .map-area.interactive{cursor:pointer}
 .map-list i{background:var(--map-color)}
 .map-me.off{display:none}
+
+
+.where i{background:var(--where-color,var(--reef))}
+canvas.dragging{cursor:grabbing}
+.joy-knob{transform:translate(var(--joy-x,0),var(--joy-y,0))}
+#tag{left:var(--tag-x,0);top:var(--tag-y,0)}
+#labels{visibility:hidden}
+#labels.visible{visibility:visible}
+.plabel{opacity:var(--label-opacity,0);pointer-events:none;transform:translate(var(--label-x,0),var(--label-y,0))}
+.plabel.interactive{pointer-events:auto}
+.intro-profile i{background:var(--profile-avatar,var(--reef))}
