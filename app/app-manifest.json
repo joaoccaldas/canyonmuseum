@@ -1,5 +1,5 @@
 {
- "version": "a6bd7d3257d1",
+ "version": "58cd85af38f8",
  "core": [
   "index.html",
   "app/kona-core.js",
@@ -20,13 +20,13 @@
  ],
  "files": {
   "index.html": "PVP845v4Qqq5D4HUOHW2BOHGp0NkARsrC+Eid9mcOhg=",
-  "app/kona-core.js": "MN884pnVRTgRK4kadFiK0CthyGSZfEkLDk4tuowV9pc=",
+  "app/kona-core.js": "p6IdWnrXPR44/17kpIpR0H0AmYTg5HETY+EYTt7lTo0=",
   "app/entry-data.json": "u70GqhCPsNX6TZI4LhPBmxQkdjHsA1534QN/mMdyufU=",
   "integrations/public-catalog.json": "ykAPWxk404DDnTMfbgIngA3roNW2QEHjZlq1ybaipdo=",
   "manifest.webmanifest": "5NSqHCnfaAEqDtA1TBbpGQEQQLS6Hg9NRez2VfH7ZI0=",
   "web/styles/entry-visual-v2.css": "psli1G5AtVc+VVkop+LkjFnLmIeEsm551aEE62VdK5g=",
   "web/styles/system.css": "qD6Zg4MgETJaltrWS1EKfj8qdtVQSk9Ae33X6xIHBWQ=",
-  "web/styles/shell-mobile.css": "pV9nR5o4RVR8W2EM7ck89Z4ewmfCHpQPIYBPMVkjJss=",
+  "web/styles/shell-mobile.css": "XLarf2EpQMzG9eE93QXkjBluQlqQEUpc4rn6BPRi+WI=",
   "brand/tokens.css": "IHZqSUIlqEIyr0kMjDBoOQV+N1S9tsUaWMLcryuufkI=",
   "brand/themes.css": "Hhov5kE9vhLxeEzXh8a0Ybe0bdQ3LPnC1sxOpOZvrHo=",
   "brand/artifacts.css": "eFVVXE91n+Pf8sBFwoFhdF13k9k1Adq8NN/gdKfWyUg=",
