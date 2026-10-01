@@ -40,3 +40,9 @@ html.phone-fit #konaWorld{zoom:var(--fit);width:calc(100vw / var(--fit));height:
   #rail{max-width:52vw}
   #map .map-card{grid-template-columns:minmax(0,1fr) minmax(240px,.42fr);grid-template-rows:auto 1fr}.map-head{grid-column:1/-1}.map-plan{grid-column:1;grid-row:2}.map-list{grid-column:2;grid-row:2;display:grid;overflow-y:auto;overflow-x:hidden}.map-list li{flex:auto}
 }
+
+
+/* Mobile flow mode: scene first while moving, controls return at rest. */
+body.flowing:not(.card-open) #konaWorld>header{opacity:.14;transform:translateY(-6px);transition:opacity .25s,transform .25s}
+body.flowing:not(.card-open) #rail{transform:translateY(calc(100% - 14px));opacity:.7}
+body.flowing.touch:not(.card-open) #joy{opacity:.78;transform:scale(.94)}
