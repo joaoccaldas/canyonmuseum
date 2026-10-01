@@ -110,7 +110,7 @@ function wordmarkHero(){
       <p>Training, technology, adventures, random ideas and a lot of curiosity. Some stories just take the scenic route.</p>
     </div>
     <div class="why-hero-media artifact artifact--photo">
-      <img src="assets/kona-years/queen-k.jpg" alt="The Queen Ka'ahumanu Highway in Kona">
+      <img src="assets/kona-years/queen-k.jpg" alt="A highway landscape in Kona">
       <span class="why-photo-note why-hand">Same ocean.<br>New route.</span>
       <span class="why-photo-list">People<br>Places<br>Progress<br>Belonging</span>
     </div>
