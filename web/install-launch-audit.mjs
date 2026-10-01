@@ -11,8 +11,9 @@ try{
   if(platform==='standalone')await p.evaluateOnNewDocument(()=>{const mm=window.matchMedia.bind(window);window.matchMedia=q=>q.includes('display-mode')?{matches:true,addEventListener(){},removeEventListener(){}}:mm(q);});
   await p.goto(base,{waitUntil:'networkidle0'});
   if(platform==='standalone'){
+   await p.evaluate(()=>localStorage.setItem('kona.raceIdentity.v1',JSON.stringify({entity_type:'race-identity',event_id:'kona-2026'})));await p.reload({waitUntil:'networkidle0'});
    assert.equal(await p.$eval('#entryInstall',e=>e.hidden),true);assert.equal(await p.evaluate(()=>innerWidth),390);
-   await p.click('#buildSelf');await p.waitForSelector('[data-install-app]');assert.equal(await p.$eval('[data-install-app]',e=>e.hidden),true);
+   await p.click('#buildSelf');await p.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden);await p.click('[data-tab="me"]');await p.waitForSelector('[data-install-app]');assert.equal(await p.$eval('[data-install-app]',e=>e.hidden),true);
    report.push({platform,status:'PASS',checks:'installed controls hidden; device-width viewport'});await context.close();continue;
   }
   await p.click('#entryInstall');await p.waitForFunction(()=>!document.querySelector('#appSheet').hidden);
