@@ -13,7 +13,9 @@ test('consumer index template contains no museum runtime DOM',()=>{
     assert.match(world,new RegExp('id=["\\\']'+id+'["\\\']'));
   }
   assert.match(template,/id="intro"/);
-  assert.match(template,/id="appSheet"/);
+  assert.match(template,/id="appOverlayRoot"/);
+  assert.doesNotMatch(template,/id="appSheet"|id="updateBar"/);
+  assert.match(template,/app\/viewport\.js/);
   assert.match(template,/app\/kona-core\.js/);
   assert.doesNotMatch(template,/hall-web\.css|hall-mobile\.css/);
 });
