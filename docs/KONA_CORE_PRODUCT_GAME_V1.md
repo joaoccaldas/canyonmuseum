@@ -580,3 +580,11 @@ Principles:
 ## Not part of launch PR
 
 This proposal must not block the current KONA launch candidate.
+
+## Release boundary and contract enforcement
+
+This PR remains post-launch product/specification and contract work. Dates in examples are fixtures, not release promises. PR #135 owns launch navigation, persistence, collection inspection and the manually authored traveller brief. Its Intern voice does not ship this automated editorial system.
+
+The door schema is a private authoring contract: `answer` must never reach a guessing client before closing. A future public projection must exclude it. Runtime acceptance must enforce `opens_at < closes_at` and scoring weights summing to one; JSON Schema cannot compare arbitrary dates or sum fields. Server-side eligibility, ownership and anti-farming require implementation and tests before activation.
+
+Contracts enforce a 10% maximum early-access band, nonnegative known scoring dimensions, populations of at least 25, required speed caps, all four excluded commercial events, straight mode for serious stories and sponsorship disclosure. They do not prove a deployed ranking or trading service exists.

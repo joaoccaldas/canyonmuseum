@@ -102,7 +102,8 @@
           ]
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "minProperties": 1
     },
     "scoring": {
       "type": "object",
@@ -116,9 +117,35 @@
         },
         "weights": {
           "type": "object",
-          "additionalProperties": {
-            "type": "number"
-          }
+          "minProperties": 1,
+          "properties": {
+            "theme": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "era": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "discipline": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "category": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "family": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -136,7 +163,7 @@
         "early_access_band": {
           "type": "number",
           "minimum": 0,
-          "maximum": 1
+          "maximum": 0.1
         },
         "exact_badge_id": {
           "type": [

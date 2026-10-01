@@ -129,5 +129,32 @@
       "mode": "spreadsheet",
       "text": "Three useful numbers, one unnecessary opinion, zero reasons to panic. The source has the full details."
     }
+  ],
+  "intern_contract_examples": [
+    {
+      "schema_version": 1,
+      "source_id": "example:airport-guide",
+      "source_title": "Example official airport guide",
+      "source_url": "https://airports.hawaii.gov/koa/",
+      "published_at": "2026-10-01T08:00:00Z",
+      "intern_summary": "Confirm your arrival terminal and transport with the airport and your airline.",
+      "intern_mode": "straight",
+      "summary_generated_at": "2026-10-01T09:00:00Z",
+      "serious_mode": true,
+      "sponsored": false
+    },
+    {
+      "schema_version": 1,
+      "source_id": "example:engineering",
+      "source_title": "Example brand engineering story",
+      "source_url": "https://example.com/engineering",
+      "published_at": "2026-10-01T08:00:00Z",
+      "intern_summary": "Someone has measured the air again. Here is what the engineering story says.",
+      "intern_mode": "normal",
+      "summary_generated_at": "2026-10-01T09:00:00Z",
+      "serious_mode": false,
+      "sponsored": true,
+      "sponsor_label": "Example paid brand partnership"
+    }
   ]
 }

@@ -8,7 +8,9 @@
     "season_id",
     "minimum_population",
     "score_version",
-    "weights"
+    "weights",
+    "caps",
+    "excluded_events"
   ],
   "properties": {
     "schema_version": {
@@ -19,7 +21,7 @@
     },
     "minimum_population": {
       "type": "integer",
-      "minimum": 2
+      "minimum": 25
     },
     "score_version": {
       "type": "string"
@@ -74,7 +76,11 @@
           "minimum": 0
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "early_access",
+        "first_discovery"
+      ]
     },
     "excluded_events": {
       "type": "array",
@@ -85,8 +91,11 @@
           "share-attempt",
           "ad-view"
         ]
-      }
+      },
+      "uniqueItems": true,
+      "minItems": 4,
+      "maxItems": 4
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

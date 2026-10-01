@@ -80,5 +80,50 @@
       "type": "string"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "serious_mode": {
+            "const": true
+          }
+        },
+        "required": [
+          "serious_mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "intern_mode": {
+            "const": "straight"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "sponsored": {
+            "const": true
+          }
+        },
+        "required": [
+          "sponsored"
+        ]
+      },
+      "then": {
+        "required": [
+          "sponsor_label"
+        ],
+        "properties": {
+          "sponsor_label": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      }
+    }
+  ]
 }
