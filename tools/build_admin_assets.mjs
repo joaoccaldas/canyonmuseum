@@ -39,6 +39,7 @@ const addPlacement=(id,room)=>{
 for(const r of rooms.areas||[]){
   const room=roomMap.get(r.id);
   for(const id of r.exhibits?.products||[])addPlacement(id,room);
+  if(r.presentation?.decoration)addPlacement('installation:'+r.presentation.decoration,room);
 }
 for(const p of catalog.products||[])for(const w of p.where||[])addPlacement(p.id,roomMap.get(w.id)||addRoom({id:w.id,name:w.name||w.id}));
 for(const r of brandRooms.rooms||[])for(const p of r.products||[])addPlacement(p.id,roomMap.get(r.id));
@@ -85,7 +86,7 @@ for(const p of decorations.props||[])rows.push({
   id:'decor:'+p.id,kind:'decoration',type:'decoration',brand:'KONA World',name:p.name||p.id,year:'',category:'Room decoration',material:'',glb:p.glb||'',image:p.image||'',facts:[],stats:[[p.builder,'builder'],[String((decorPlacements.get(p.id)?.size)||0),'placements']].filter(x=>x[0]),locations:[...(decorPlacements.get(p.id)?.values()||[])]
 });
 for(const p of decorations.installations||[])rows.push({
-  id:'installation:'+p.id,kind:'installation',type:'installation',brand:'KONA World',name:p.name||p.id,year:'',category:'Room installation',material:'',glb:'',image:p.image||'',facts:[],stats:[[p.builder,'builder'],[p.min_width?String(p.min_width)+' m':'','min width'],[p.min_depth?String(p.min_depth)+' m':'','min depth']].filter(x=>x[0]),locations:[]
+  id:'installation:'+p.id,kind:'installation',type:'installation',brand:'KONA World',name:p.name||p.id,year:'',category:'Room installation',material:'',glb:'',image:p.image||'',facts:[],stats:[[p.builder,'builder'],[p.min_width?String(p.min_width)+' m':'','min width'],[p.min_depth?String(p.min_depth)+' m':'','min depth']].filter(x=>x[0]),locations:[...(placements.get('installation:'+p.id)?.values()||[])]
 });
 const out={schema_version:1,generated_by:'tools/build_admin_assets.mjs',count:rows.length,rooms:[...roomMap.values()],assets:rows};
 fs.mkdirSync(path.join(root,'app'),{recursive:true});
