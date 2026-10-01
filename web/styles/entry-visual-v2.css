@@ -59,7 +59,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.kona-entry .entry-stage-bike{left:12%;right:1%;top:36px;bottom:76px;width:auto}
 #intro.kona-entry .entry-stage-object img{width:100%;height:auto;display:block;filter:drop-shadow(0 18px 18px #0006)}
 #intro.kona-entry .entry-stage-bike img{width:100%;height:100%;object-fit:contain}
-#intro.kona-entry .entry-livery{position:absolute;right:12px;top:12px;z-index:4;min-height:44px;display:flex;gap:8px;align-items:center;padding:0 14px;border:1px solid #ffffff26;border-radius:99px;background:#0d1c25b3;color:#eaf1f4;font:650 11px var(--brand-font-ui);cursor:pointer}
+#intro.kona-entry .entry-livery{position:absolute;right:12px;top:12px;z-index:4;min-height:var(--brand-touch);display:flex;gap:8px;align-items:center;padding:0 14px;border:1px solid #ffffff26;border-radius:99px;background:#0d1c25b3;color:#eaf1f4;font:650 11px var(--brand-font-ui);cursor:pointer}
 #intro.kona-entry .entry-livery span{font-size:20px}
 #intro.kona-entry .entry-livery:focus-visible{outline:2px solid var(--brand-accent-2);outline-offset:3px}
 #intro.kona-entry .entry-bike-mark{width:100%;color:rgba(246,247,244,.92);stroke-width:3.1;filter:drop-shadow(0 16px 18px rgba(0,0,0,.38))}
@@ -139,7 +139,7 @@ body.entry-quest #intro{padding-bottom:max(20px,env(safe-area-inset-bottom))!imp
 #intro.quest-active .kona-intents{display:grid;gap:10px;margin:22px 0 12px}
 #intro.quest-active .quest-choice{width:100%;min-height:58px;text-align:left;padding:0 18px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.055);color:#f8f5ef;font:650 15px/1.2 var(--sans,system-ui)}
 #intro.quest-active .quest-choice:is(:hover,:focus-visible,.on){border-color:#ff6427;background:rgba(255,100,39,.13)}
-#intro.quest-active .quest-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
+#intro.quest-active .quest-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}#intro.quest-active .quest-nav .btn-text{min-width:var(--brand-touch)}
 #intro.quest-active .btn.text{min-height:48px;color:#dbe2e5;border-color:transparent;background:transparent}
 #intro.quest-active #konaQuest .reveal-hero{aspect-ratio:16/9;border-radius:22px;margin:18px 0;background:linear-gradient(180deg,transparent,rgba(7,17,22,.55)),url('../../assets/share/collection.jpg') center/cover no-repeat;box-shadow:0 24px 70px rgba(0,0,0,.28)}
 #intro.quest-active #konaQuest .reveal-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin:16px 0 22px}
