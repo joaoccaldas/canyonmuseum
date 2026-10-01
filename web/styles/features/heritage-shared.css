@@ -61,3 +61,8 @@ html.phone-fit #loader div{zoom:var(--fit)}
 .heritage-eyebrow-offset{margin-top:18px}
 
 .heritage-copy{color:var(--muted)}.heritage-copy-tight{margin:0 0 6px}.heritage-copy-wide{margin:0 0 12px}
+
+
+#loader i{width:calc(var(--load-p,0) * 100%)}#loader.leaving{opacity:0}
+#tip{opacity:0;left:var(--tip-x,0);top:var(--tip-y,0)}#tip.on{opacity:1}
+canvas.hot{cursor:pointer}
