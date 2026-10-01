@@ -26,3 +26,7 @@ The first Vercel hostname must be added to the Supabase Auth redirect allow-list
 ## Release rule
 
 Do not declare production ready unless unit/asset/brand/P0, security, integration, app release seal, deterministic output sync, and Visual Evidence V2 are green on the same final SHA. Physical mobile install remains a device gate.
+
+## Post-sync verification trigger
+
+Deterministic outputs were synchronized at `16646d22e56f75c8e22ce03f2eeb078b1c2c180f`. This documentation-only commit intentionally triggers the final release matrix on the sealed output tree without changing runtime source or generated assets.
