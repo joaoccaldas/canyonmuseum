@@ -1,6 +1,6 @@
 // ui/avatar-registration.js — fast first-run Race Self setup.
 // Account creation remains optional; avatar/trisuit setup is part of becoming a Race Self.
-import { AVATAR_ARCHETYPES, AVATAR_ITEMS, avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype, setAvatarPresentation, setAvatarPresentation } from '../engine/avatar.js';
+import { AVATAR_ARCHETYPES, AVATAR_ITEMS, avatarItem, normaliseAvatarStyle, patchAvatarItem, setAvatarArchetype, setAvatarPresentation } from '../engine/avatar.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function readImage(file){
