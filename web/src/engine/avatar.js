@@ -2,7 +2,7 @@
 // One data model powers phone and desktop. UI and renderer are projections only.
 // New archetypes/items should be added here, not hard-coded into screen code.
 
-export const AVATAR_SCHEMA_VERSION=3;
+export const AVATAR_SCHEMA_VERSION=4;
 
 export const AVATAR_ARCHETYPES=Object.freeze([
   Object.freeze({id:'minecraft',label:'Minecraft',note:'Block-built, playful and instantly readable.',shape:'voxel',animation:'bounce'}),
@@ -12,7 +12,7 @@ export const AVATAR_ARCHETYPES=Object.freeze([
 ]);
 export const AVATAR_ARCHETYPE_IDS=Object.freeze(AVATAR_ARCHETYPES.map(x=>x.id));
 
-export const AVATAR_SLOTS=Object.freeze(['skin','hair','top','bottoms','shoes','accessory','tattoo']);
+export const AVATAR_SLOTS=Object.freeze(['skin','hair','trisuit','top','bottoms','shoes','accessory','tattoo']);
 
 export const AVATAR_ITEMS=Object.freeze({
   skin:Object.freeze([
@@ -26,6 +26,14 @@ export const AVATAR_ITEMS=Object.freeze({
     {id:'short',label:'Short',color:'#211c1a'},
     {id:'crop',label:'Crop',color:'#342922'},
     {id:'cap',label:'Cap',color:'#0f1519'},
+  ]),
+  trisuit:Object.freeze([
+    {id:'kona-classic',label:'KONA Classic',color:'#11181c',accent:'#ff6a00',kind:'trisuit',layout:'classic'},
+    {id:'aero-panel',label:'Aero Panel',color:'#101820',accent:'#00a7c7',kind:'trisuit',layout:'panel'},
+    {id:'split-wave',label:'Split Wave',color:'#f4efe7',accent:'#ff2d6d',kind:'trisuit',layout:'split'},
+    {id:'lava-line',label:'Lava Line',color:'#080b0e',accent:'#ff833d',kind:'trisuit',layout:'stripe'},
+    {id:'blank-canvas',label:'Blank Canvas',color:'#fbf9f5',accent:'#12181d',kind:'trisuit',layout:'blank'},
+    {id:'separates',label:'Top + bottoms',color:'#11181c',accent:'#ff6a00',kind:'trisuit',layout:'separates'},
   ]),
   top:Object.freeze([
     {id:'kona-black',label:'Kona black top',color:'#11181c',kind:'clothing'},
@@ -81,6 +89,7 @@ export const defaultAvatarStyle=()=>({
   items:{
     skin:{id:'bronze',color:null,overlay:null},
     hair:{id:'short',color:null,overlay:null},
+    trisuit:{id:'kona-classic',color:null,accentColor:null,overlay:null},
     top:{id:'kona-black',color:null,overlay:null},
     bottoms:{id:'black',color:null,overlay:null},
     shoes:{id:'white',color:null,overlay:null},
@@ -93,13 +102,13 @@ export function normaliseAvatarItem(slot,value,fallbackId){
   const raw=value&&typeof value==='object'?value:{id:value};
   const requested=String(raw.id||fallbackId||AVATAR_ITEMS[slot]?.[0]?.id||'');
   const item=itemFor(slot,requested);
-  return {id:item.id,color:hex(raw.color),overlay:safeOverlay(raw.overlay)};
+  return {id:item.id,color:hex(raw.color),accentColor:hex(raw.accentColor),overlay:safeOverlay(raw.overlay)};
 }
 
 export function normaliseAvatarStyle(value){
   const d=defaultAvatarStyle(),o=value&&typeof value==='object'?value:{};
   const legacy={
-    skin:o.skin,hair:o.hair,top:o.top,bottoms:o.bottoms,shoes:o.shoes,accessory:o.accessory,tattoo:o.tattoo,
+    skin:o.skin,hair:o.hair,trisuit:o.trisuit,top:o.top,bottoms:o.bottoms,shoes:o.shoes,accessory:o.accessory,tattoo:o.tattoo,
   };
   const items={};
   for(const slot of AVATAR_SLOTS){
@@ -118,7 +127,7 @@ export function avatarItem(styleInput,slot){
   const style=normaliseAvatarStyle(styleInput);
   const state=style.items[slot];
   const item=itemFor(slot,state?.id);
-  return Object.freeze({...item,...state,color:state?.color||item?.color||'#777777'});
+  return Object.freeze({...item,...state,color:state?.color||item?.color||'#777777',accentColor:state?.accentColor||item?.accent||'#ffffff'});
 }
 
 export function patchAvatarItem(styleInput,slot,patch={}){
