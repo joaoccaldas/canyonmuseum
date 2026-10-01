@@ -45,12 +45,19 @@ window.__konaSettingsUI = settingsUI;
 
 const loads = new Map();
 const managedStyles = new Map();
+let activeFeatureStyle = '';
 function syncManagedStyles(){
   const museumActive=document.body.classList.contains('museum-open')&&!document.body.classList.contains('kona-panel-open');
   for(const [group,links] of managedStyles){
-    const enabled=group!=='museum'||museumActive;
+    const enabled=group==='museum' ? museumActive : group.startsWith('feature:') ? group===activeFeatureStyle : true;
     for(const link of links)link.disabled=!enabled;
   }
+}
+async function featureStyle(name,href){
+  activeFeatureStyle=name?'feature:'+name:'';
+  syncManagedStyles();
+  if(href)await loadStyle(href,activeFeatureStyle);
+  syncManagedStyles();
 }
 new MutationObserver(syncManagedStyles).observe(document.body,{attributes:true,attributeFilter:['class']});
 function loadStyle(href,group='app') {
@@ -134,7 +141,7 @@ function openMuseum(room) {
 }
 
 initAppShell();
-const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum });
+const shell = initKonaShell({ profile, settings: settingsUI, enter: openMuseum, featureStyle });
 window.__konaShell = shell;
 
 function enterApp(first = 'home') {
