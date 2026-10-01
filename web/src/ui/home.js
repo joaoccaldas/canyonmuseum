@@ -8,10 +8,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmtDate=iso=>{try{return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(iso+'T12:00:00'))}catch(_){return iso}};
 const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/86400000);return Number.isFinite(n)?Math.max(0,n):null};
 
-function avatarPreview(styleInput){
-  const s=normaliseAvatarStyle(styleInput);
-  const skin=AVATAR_COLORS.skin[s.skin], hair=AVATAR_COLORS.hair[s.hair], top=AVATAR_COLORS.top[s.top], bottoms=AVATAR_COLORS.bottoms[s.bottoms], shoes=AVATAR_COLORS.shoes[s.shoes];
-  return '<div class="home-avatar" style="--skin:'+skin+';--hair:'+hair+';--top:'+top+';--bottoms:'+bottoms+';--shoes:'+shoes+'">'+
+function avatarPreview(){
+  return '<div class="home-avatar" data-home-avatar>'+
     '<i class="ha-hair"></i><i class="ha-head"></i><i class="ha-body"></i><i class="ha-arm l"></i><i class="ha-arm r"></i><i class="ha-leg l"></i><i class="ha-leg r"></i><i class="ha-shoe l"></i><i class="ha-shoe r"></i>'+
   '</div>';
 }
@@ -34,7 +32,7 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<button class="kona-primary" type="button" data-home-plan>What matters next <span>→</span></button>'+
     '</section>'+
     '<section class="home-race-self artifact artifact--label">'+
-      '<div class="home-race-self-visual">'+avatarPreview(style)+'</div>'+
+      '<div class="home-race-self-visual">'+avatarPreview()+'</div>'+
       '<div class="home-race-self-copy"><small>YOUR RACE SELF</small><h3>'+esc(goal)+'</h3>'+
         '<p>'+collection.total+' collected · '+races+' race'+(races===1?'':'s')+'</p>'+
         '<div class="home-race-self-actions"><button type="button" class="kona-primary" data-home-self>Open Race Self <span>→</span></button><button type="button" class="kona-link-btn" data-home-garage>Your setup</button></div>'+
@@ -45,6 +43,15 @@ export function renderHomeSurface(root,{event={},profile,openRaceSelf,openGarage
       '<div class="home-postcard-copy"><small>KAILUA-KONA · HAWAIʻI</small><h3>Not just a race.</h3><p>Roads, lava, people, machines and strange little details worth finding.</p><button type="button" class="kona-link-btn" data-home-discover>Discover something →</button></div>'+
     '</section>';
 
+  const avatar=root.querySelector('[data-home-avatar]');
+  if(avatar){
+    const s=normaliseAvatarStyle(style);
+    avatar.style.setProperty('--skin',AVATAR_COLORS.skin[s.skin]);
+    avatar.style.setProperty('--hair',AVATAR_COLORS.hair[s.hair]);
+    avatar.style.setProperty('--top',AVATAR_COLORS.top[s.top]);
+    avatar.style.setProperty('--bottoms',AVATAR_COLORS.bottoms[s.bottoms]);
+    avatar.style.setProperty('--shoes',AVATAR_COLORS.shoes[s.shoes]);
+  }
   root.querySelector('[data-home-self]')?.addEventListener('click',()=>openRaceSelf?.());
   root.querySelector('[data-home-garage]')?.addEventListener('click',()=>openGarage?.());
   root.querySelector('[data-home-discover]')?.addEventListener('click',()=>openDiscover?.());
