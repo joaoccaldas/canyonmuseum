@@ -15,6 +15,7 @@ const entry=fs.readFileSync(new URL('../src/entry.js',import.meta.url),'utf8');
 const visual=fs.readFileSync(new URL('../visual-evidence-v2.mjs',import.meta.url),'utf8');
 const registration=fs.readFileSync(new URL('../src/ui/avatar-registration.js',import.meta.url),'utf8');
 const admin=fs.readFileSync(new URL('../src/ui/admin-assets.js',import.meta.url),'utf8');
+const adminBuild=fs.readFileSync(new URL('../../tools/build_admin_assets.mjs',import.meta.url),'utf8');
 
 test('shell orchestrates calm Home, deep Race Self, Discover, Plan and Me surfaces',()=>{
   assert.match(shell,/renderHomeSurface/);
@@ -70,6 +71,9 @@ test('entry has explicit first-run avatar setup and returning Home',()=>{
   assert.match(entry,/function enterApp\(first = 'home'\)/);
   assert.match(entry,/paintQuest\('avatar'\)/);
   assert.match(entry,/renderAvatarRegistration/);
+  assert.match(entry,/onContinue:\(\)=>enterApp\('home'\)/);
+  assert.match(shell,/tour:replayTour/);
+  assert.match(avatarHome,/Quick tour/);
   assert.match(registration,/TRISUIT LAYOUT/);
   assert.match(registration,/data-reg-overlay/);
   assert.match(entry,/Enter KONA/);
@@ -77,8 +81,9 @@ test('entry has explicit first-run avatar setup and returning Home',()=>{
 test('Home button means Home and admin assets stay a Me-only capability',()=>{
   assert.match(shell,/\[data-tab=home\]'\)\.onclick=now/);
   assert.match(shell,/renderAdminAssets/);
-  assert.match(admin,/museum\/catalog\/products\.json/);
-  assert.match(admin,/museum\/world\/decorations\.json/);
+  assert.match(admin,/app\/admin-assets\.json/);
+  for(const source of ['museum/catalog/products.json','museum/world/rooms.json','museum/world/brand_rooms.json','museum/world/decorations.json']) assert.match(adminBuild,new RegExp(source.replace(/[./]/g,'\\  assert.match(admin,/museum\/catalog\/products\.json/);
+  assert.match(admin,/museum\/world\/decorations\.json/);')));
 });
 
 test('visual evidence captures first pages across Random mode',()=>{
