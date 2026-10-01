@@ -8,52 +8,57 @@
     "repeatable challenges reward mastery, not farming"
   ],
   "events": {
-    "CARD_DISCOVERED": {
-      "xp": 3,
+    "FIRST_VISIT": {
+      "xp": 25,
       "credits": 0,
-      "repeat": "once-per-subject"
-    },
-    "PLACE_DISCOVERED": {
-      "xp": 10,
-      "credits": 10,
-      "repeat": "once-per-place"
-    },
-    "STORY_COMPLETED": {
-      "xp": 15,
-      "credits": 10,
-      "repeat": "once-per-story"
-    },
-    "ARTIFACT_INSPECTED": {
-      "xp": 15,
-      "credits": 10,
-      "repeat": "once-per-artifact"
-    },
-    "ARTIFACT_3D_INSPECTED": {
-      "xp": 20,
-      "credits": 20,
-      "repeat": "once-per-artifact"
-    },
-    "RACE_RESULT_CONFIRMED": {
-      "xp": 75,
-      "credits": 100,
-      "repeat": "once-per-result"
-    },
-    "PROFILE_COMPLETED": {
-      "xp": 50,
-      "credits": 50,
       "repeat": "once"
     },
-    "COLLECTION_COMPLETED": {
-      "xp": 100,
-      "credits": 150,
-      "repeat": "once-per-collection"
+    "ONBOARDING_ANSWER": {
+      "xp": 15,
+      "credits": 0,
+      "repeat": "once-per-question"
     },
-    "AFFILIATE_CLICK": {
+    "NUDGE_OPENED": {
+      "xp": 5,
+      "credits": 0,
+      "repeat": "once-per-day"
+    },
+    "PRODUCT_VIEWED": {
+      "xp": 5,
+      "credits": 0,
+      "repeat": "once-per-product"
+    },
+    "PRODUCT_EXPLODED": {
+      "xp": 10,
+      "credits": 0,
+      "repeat": "once-per-product"
+    },
+    "ROOM_ENTERED": {
       "xp": 0,
       "credits": 0,
       "repeat": "never-reward"
     },
-    "SHARE_ATTEMPTED": {
+    "ROOM_COMPLETED": {
+      "xp": 25,
+      "credits": 40,
+      "repeat": "once-per-room"
+    },
+    "EQUIPMENT_ADDED": {
+      "xp": 15,
+      "credits": 0,
+      "repeat": "once-per-product-relationship"
+    },
+    "DREAM_EQUIPMENT_ADDED": {
+      "xp": 10,
+      "credits": 0,
+      "repeat": "once-per-product"
+    },
+    "RACE_IDENTITY_CREATED": {
+      "xp": 100,
+      "credits": 200,
+      "repeat": "once"
+    },
+    "SETUP_SHARED": {
       "xp": 0,
       "credits": 0,
       "repeat": "never-reward"
@@ -62,32 +67,57 @@
       "xp": 150,
       "credits": 250,
       "repeat": "server-verified-once-per-referral"
+    },
+    "CHALLENGE_COMPLETED": {
+      "xp": 50,
+      "credits": 80,
+      "repeat": "once-per-challenge"
+    },
+    "STRAVA_CONNECTED": {
+      "xp": 20,
+      "credits": 0,
+      "repeat": "once"
+    },
+    "PASSPORT_CREATED": {
+      "xp": 250,
+      "credits": 500,
+      "repeat": "once"
+    },
+    "FIND_DISCOVERED": {
+      "xp": 0,
+      "credits": 0,
+      "repeat": "once-per-relic"
+    },
+    "CURRENCY_SPENT": {
+      "xp": 0,
+      "credits": 0,
+      "repeat": "ledger"
     }
   },
   "rarity_rewards": {
     "common": {
-      "xp": 25,
-      "credits": 40
-    },
-    "uncommon": {
       "xp": 50,
       "credits": 80
     },
+    "uncommon": {
+      "xp": 80,
+      "credits": 150
+    },
     "rare": {
-      "xp": 120,
-      "credits": 200
+      "xp": 200,
+      "credits": 400
     },
     "epic": {
-      "xp": 300,
-      "credits": 500
-    },
-    "legendary": {
       "xp": 750,
       "credits": 1200
     },
-    "mythic": {
+    "legendary": {
       "xp": 1500,
       "credits": 2500
+    },
+    "mythic": {
+      "xp": 2000,
+      "credits": 4000
     }
   },
   "collections": [
@@ -140,5 +170,436 @@
     "alternate_display_skins": "may_unlock",
     "challenge_variants": "may_unlock",
     "dream_equipment_equip_slot": "may_unlock"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "name": "Visitor",
+      "xp": 0,
+      "summary": "Race Self + the Queen K Hall",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "feature",
+          "id": "feature:race-self",
+          "label": "Race Self",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "hall",
+          "label": "Queen K Hall",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "pier",
+          "label": "Kona by Year",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "name": "Explorer",
+      "xp": 40,
+      "summary": "Ocean kit + Kona Champions + first Garage bay",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "avatar-item",
+          "slot": "top",
+          "id": "ocean",
+          "label": "Ocean top",
+          "status": "live"
+        },
+        {
+          "type": "avatar-item",
+          "slot": "shoes",
+          "id": "ocean",
+          "label": "Ocean shoes",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "kona",
+          "label": "Kona Champions",
+          "status": "live"
+        },
+        {
+          "type": "garage-bay",
+          "id": "garage:bay-1",
+          "label": "First Garage bay",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "name": "Collector",
+      "xp": 100,
+      "summary": "Split Wave kit + Sanctuary + WYLD",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "avatar-item",
+          "slot": "trisuit",
+          "id": "split-wave",
+          "label": "Split Wave trisuit",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "sanctuary",
+          "label": "The Sanctuary",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "wyld",
+          "label": "The WYLD Room",
+          "status": "live"
+        },
+        {
+          "type": "equipment-slot",
+          "relationship": "dream",
+          "id": "dream-slot-2",
+          "label": "Second dream-bike slot",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "name": "Racer",
+      "xp": 200,
+      "summary": "Advanced customization + Lava Line",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "feature",
+          "id": "feature:avatar-overlay",
+          "label": "Image overlays for avatar kit",
+          "status": "live"
+        },
+        {
+          "type": "avatar-item",
+          "slot": "trisuit",
+          "id": "lava-line",
+          "label": "Lava Line trisuit",
+          "status": "live"
+        },
+        {
+          "type": "avatar-item",
+          "slot": "tattoo",
+          "id": "lava-mark",
+          "label": "Lava mark",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "name": "Kona Rookie",
+      "xp": 350,
+      "summary": "Kona Credits + visor + upper gallery",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "feature",
+          "id": "feature:credits-wallet",
+          "label": "Kona Credits wallet",
+          "status": "live"
+        },
+        {
+          "type": "avatar-item",
+          "slot": "accessory",
+          "id": "visor",
+          "label": "Visor",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "bay-kona",
+          "label": "Kona gallery bay",
+          "status": "live"
+        },
+        {
+          "type": "equipment-slot",
+          "relationship": "dream",
+          "id": "dream-slot-3",
+          "label": "Third dream-bike slot",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "name": "Lava Runner",
+      "xp": 550,
+      "summary": "Lava Night + rare surprise eligibility",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "room",
+          "id": "hween",
+          "label": "Lava Night",
+          "status": "live"
+        },
+        {
+          "type": "surprise-tier",
+          "id": "surprise:rare",
+          "label": "Rare relic surprises",
+          "status": "live"
+        },
+        {
+          "type": "avatar-item",
+          "slot": "top",
+          "id": "lava",
+          "label": "Lava top",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "name": "Queen K Veteran",
+      "xp": 800,
+      "summary": "Bio gallery + engineering relics",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "room",
+          "id": "room-bio",
+          "label": "Bio gallery",
+          "status": "live"
+        },
+        {
+          "type": "surprise-tier",
+          "id": "surprise:epic",
+          "label": "Epic relic surprises",
+          "status": "live"
+        },
+        {
+          "type": "avatar-item",
+          "slot": "tattoo",
+          "id": "geo",
+          "label": "Geometric ink",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "name": "Archivist",
+      "xp": 1100,
+      "summary": "Secret Collection + archive rewards",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "room",
+          "id": "secret",
+          "label": "The Secret Collection",
+          "status": "live"
+        },
+        {
+          "type": "cosmetic",
+          "id": "frame:volcanic",
+          "label": "Volcanic profile frame",
+          "status": "live"
+        },
+        {
+          "type": "avatar-item",
+          "slot": "accessory",
+          "id": "headband",
+          "label": "Headband",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "name": "Legend",
+      "xp": 1500,
+      "summary": "Horror + Alien galleries + legendary relics",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "room",
+          "id": "room-horror",
+          "label": "Horror gallery",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "room-alien",
+          "label": "Alien gallery",
+          "status": "live"
+        },
+        {
+          "type": "surprise-tier",
+          "id": "surprise:legendary",
+          "label": "Legendary relic surprises",
+          "status": "live"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "name": "Kahuna",
+      "xp": 2000,
+      "summary": "Zombie gallery + mythic relics + full current world",
+      "status": "live",
+      "rewards": [
+        {
+          "type": "room",
+          "id": "room-zombie",
+          "label": "Zombie gallery",
+          "status": "live"
+        },
+        {
+          "type": "surprise-tier",
+          "id": "surprise:mythic",
+          "label": "Mythic relic surprises",
+          "status": "live"
+        },
+        {
+          "type": "feature",
+          "id": "feature:all-current-world",
+          "label": "All current KONA world rewards",
+          "status": "live"
+        }
+      ]
+    }
+  ],
+  "legacy_collectibles": [
+    {
+      "id": "find:lava:raven",
+      "name": "The raven",
+      "rarity": "uncommon",
+      "place": "lava"
+    },
+    {
+      "id": "find:lava:gel",
+      "name": "Pumpkin-spice gel",
+      "rarity": "common",
+      "place": "lava"
+    },
+    {
+      "id": "find:lava:spoke",
+      "name": "The golden spoke",
+      "rarity": "epic",
+      "place": "lava"
+    },
+    {
+      "id": "find:camp13:whistle",
+      "name": "The counselor’s whistle",
+      "rarity": "uncommon",
+      "place": "camp13"
+    },
+    {
+      "id": "find:camp13:flashlight",
+      "name": "A flashlight",
+      "rarity": "common",
+      "place": "camp13"
+    },
+    {
+      "id": "find:camp13:mini-mask",
+      "name": "Mini goalie mask keyring",
+      "rarity": "rare",
+      "place": "camp13"
+    },
+    {
+      "id": "find:tunnel:tuft",
+      "name": "A wool tuft",
+      "rarity": "uncommon",
+      "place": "tunnel"
+    },
+    {
+      "id": "find:tunnel:wand",
+      "name": "The smoke wand",
+      "rarity": "rare",
+      "place": "tunnel"
+    },
+    {
+      "id": "find:tunnel:stopwatch",
+      "name": "A stopwatch, still running",
+      "rarity": "legendary",
+      "place": "tunnel"
+    },
+    {
+      "id": "find:shore:plumeria",
+      "name": "A plumeria",
+      "rarity": "common",
+      "place": "shore"
+    },
+    {
+      "id": "find:shore:cowrie",
+      "name": "A cowrie",
+      "rarity": "uncommon",
+      "place": "shore"
+    },
+    {
+      "id": "find:shore:lava",
+      "name": "A lava stone",
+      "rarity": "common",
+      "place": "shore"
+    },
+    {
+      "id": "find:shore:coral",
+      "name": "Black coral",
+      "rarity": "rare",
+      "place": "shore"
+    },
+    {
+      "id": "find:shore:bib",
+      "name": "A race bib",
+      "rarity": "epic",
+      "place": "shore"
+    }
+  ],
+  "admin_policy": {
+    "full_visibility": true,
+    "bypass_progression_visibility": true,
+    "mutations_still_use_normal_safety_rules": true
+  },
+  "ranking_policy": {
+    "source": "server-verified-population",
+    "minimum_population": 25,
+    "anonymous_label": "Unranked",
+    "metrics": [
+      "xp",
+      "level",
+      "discoveries",
+      "collections",
+      "race_badges"
+    ],
+    "note": "Never fabricate percentile or rank from local-only data."
+  },
+  "surprise_policy": {
+    "min_level": 2,
+    "max_per_session": 1,
+    "min_visits_between": 2,
+    "eligible_surfaces": [
+      "home",
+      "discover",
+      "garage",
+      "studio",
+      "progress"
+    ],
+    "positions": [
+      "top-right",
+      "lower-left",
+      "edge-center"
+    ],
+    "rarity_by_min_level": {
+      "common": 2,
+      "uncommon": 2,
+      "rare": 6,
+      "epic": 7,
+      "legendary": 9,
+      "mythic": 10
+    },
+    "note": "Deterministic per session/date for testability; never paid; one-time reward per relic."
   }
 }
