@@ -231,6 +231,12 @@
           "id": "garage:bay-1",
           "label": "First Garage bay",
           "status": "live"
+        },
+        {
+          "type": "bike",
+          "id": "canyon-cfr-2027",
+          "label": "Speedmax CFR AXS · 2027",
+          "status": "live"
         }
       ]
     },
@@ -266,6 +272,12 @@
           "id": "dream-slot-2",
           "label": "Second dream-bike slot",
           "status": "live"
+        },
+        {
+          "type": "bike",
+          "id": "canyon-slx-2027",
+          "label": "Speedmax CF SLX 8 Di2 · 2027",
+          "status": "live"
         }
       ]
     },
@@ -294,6 +306,15 @@
           "slot": "tattoo",
           "id": "lava-mark",
           "label": "Lava mark",
+          "status": "live"
+        },
+        {
+          "type": "bike-group",
+          "id": "origin:canyon-archive",
+          "selector": {
+            "origin": "canyon-archive"
+          },
+          "label": "Canyon archive bikes",
           "status": "live"
         }
       ]
@@ -330,6 +351,45 @@
           "id": "dream-slot-3",
           "label": "Third dream-bike slot",
           "status": "live"
+        },
+        {
+          "type": "bike-group",
+          "id": "origin:geometry-study",
+          "selector": {
+            "origin": "geometry-study"
+          },
+          "label": "Kona champion bikes",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "stair",
+          "label": "The Glass Stair",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "nave",
+          "label": "The Gallery Nave",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "bay-st-george",
+          "label": "St. George gallery",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "bay-las-vegas",
+          "label": "Las Vegas gallery",
+          "status": "live"
+        },
+        {
+          "type": "room",
+          "id": "bay-nice",
+          "label": "Nice gallery",
+          "status": "live"
         }
       ]
     },
@@ -357,6 +417,15 @@
           "slot": "top",
           "id": "lava",
           "label": "Lava top",
+          "status": "live"
+        },
+        {
+          "type": "bike-group",
+          "id": "origin:photo-rebuild",
+          "selector": {
+            "origin": "photo-rebuild"
+          },
+          "label": "Historic bike rebuilds",
           "status": "live"
         }
       ]
@@ -386,6 +455,15 @@
           "id": "geo",
           "label": "Geometric ink",
           "status": "live"
+        },
+        {
+          "type": "bike-group",
+          "id": "origin:type-study",
+          "selector": {
+            "origin": "type-study"
+          },
+          "label": "Experimental bike type studies",
+          "status": "live"
         }
       ]
     },
@@ -414,6 +492,15 @@
           "id": "headband",
           "label": "Headband",
           "status": "live"
+        },
+        {
+          "type": "bike-group",
+          "id": "origin:studio-design",
+          "selector": {
+            "origin": "studio-design"
+          },
+          "label": "Studio concept bikes",
+          "status": "live"
         }
       ]
     },
@@ -440,6 +527,15 @@
           "type": "surprise-tier",
           "id": "surprise:legendary",
           "label": "Legendary relic surprises",
+          "status": "live"
+        },
+        {
+          "type": "bike-group",
+          "id": "origin:museum-edition",
+          "selector": {
+            "origin": "museum-edition"
+          },
+          "label": "Museum edition bikes",
           "status": "live"
         }
       ]
@@ -601,5 +697,15 @@
       "mythic": 10
     },
     "note": "Deterministic per session/date for testability; never paid; one-time reward per relic."
+  },
+  "visibility_policy": {
+    "public_product_information": "always",
+    "locked_product_preview": "tease",
+    "locked_room_preview": "map-silhouette",
+    "immersive_room_entry": "progression",
+    "bike_3d_studio": "progression",
+    "bike_save_and_equip": "progression",
+    "avatar_items": "progression",
+    "admin": "all-current-content"
   }
 }
