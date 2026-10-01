@@ -8,6 +8,9 @@ const raceSelf=fs.readFileSync(new URL('../styles/race-self.css',import.meta.url
 const hall=fs.readFileSync(new URL('../styles/hall-web.css',import.meta.url),'utf8');
 const hallMobile=fs.readFileSync(new URL('../styles/hall-mobile.css',import.meta.url),'utf8');
 const entry=fs.readFileSync(new URL('../styles/entry.css',import.meta.url),'utf8');
+const install=fs.readFileSync(new URL('../src/ui/install.js',import.meta.url),'utf8');
+const appShell=fs.readFileSync(new URL('../src/app-shell.js',import.meta.url),'utf8');
+const template=fs.readFileSync(new URL('../landing.template.html',import.meta.url),'utf8');
 
 test('Race Self immersive surface has one stylesheet owner',()=>{
   assert.match(raceSelf,/\.race-self-experience/);
@@ -18,8 +21,10 @@ test('Race Self immersive surface has one stylesheet owner',()=>{
   assert.doesNotMatch(hallMobile,/\.race-self-experience|\.race-self-controls/);
   assert.doesNotMatch(entry,/\.race-self-experience|\.race-self-controls/);
 });
-test('install and update UI belong to consumer system CSS, not world CSS',()=>{
+test('install and update UI belong to their modules and consumer system CSS',()=>{
   assert.match(system,/#appSheet/);assert.match(system,/#updateBar/);
+  assert.match(install,/ensureInstallSheet/);assert.match(appShell,/ensureUpdateBar/);
+  assert.doesNotMatch(template,/id="appSheet"|id="updateBar"/);
   assert.doesNotMatch(hall,/#appSheet|#updateBar/);
   assert.doesNotMatch(hallMobile,/#appSheet|#updateBar/);
 });
