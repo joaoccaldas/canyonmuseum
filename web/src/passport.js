@@ -124,23 +124,23 @@ export function createPassport() {
     const reg = !s.profile;
     sheet.innerHTML = `<div class="pp"><button class="x" aria-label="Close">×</button>
       <h3>Museum Passport</h3>
-      ${reg ? `<p class="note" style="font-size:13.5px;color:#5f6a72;margin:6px 0 14px">Collect stamps for every bike, Kona year and room you visit. Keep a daily streak, earn badges, find the hidden objects in the night experiences.</p>
+      ${reg ? `<p class="note passport-note">Collect stamps for every bike, Kona year and room you visit. Keep a daily streak, earn badges, find the hidden objects in the night experiences.</p>
         <form id="ppForm"><input name="name" maxlength="40" required placeholder="Your name or nickname" autocomplete="nickname">
         <div class="emo" role="group" aria-label="Avatar">${['🚴', '🏊', '🏃', '🌺', '🌋', '🐢', '🦈', '⚡'].map(e => `<button type="button" data-e="${e}" aria-pressed="${e === pick}">${e}</button>`).join('')}</div>
         <input name="country" maxlength="40" placeholder="Home country (optional)" autocomplete="country-name">
         <button class="go" type="submit">Issue my passport · +25 XP</button></form>
         <p class="note">Your passport lives on this device only — no account, no email, nothing uploaded. Move it with a passport code.</p>`
       : `<div class="who"><span class="av">${esc(s.profile.emoji)}</span><span><small>${esc(lv.name)}${s.profile.country ? ' · ' + esc(s.profile.country) : ''}</small><b>${esc(s.profile.name)}</b></span></div>`}
-      <div class="bar"><i style="width:${pct.toFixed(1)}%"></i></div>
+      <div class="bar"><i data-passport-progress></i></div>
       <div class="row"><span>${s.xp} XP · ${esc(lv.name)}</span><span>${lv.to ? `${lv.to - s.xp} XP to ${esc(LEVELS[lv.i + 1][1])}` : 'Top level'}</span></div>
       <div class="tiles"><div><b>🔥 ${s.streak}</b><small>day streak</small></div><div><b>${Object.keys(s.stamps).length}</b><small>stamps</small></div><div><b>${Object.keys(s.badges).length}/${BADGES.length}</b><small>badges</small></div></div>
       <div class="fact"><small>Kona fact of the day</small>${esc(api.fact())}</div>
       <h4>Badges</h4><div class="badges">${BADGES.map(b => `<div class="badge${s.badges[b.id] ? '' : ' off'}"><i>${b.icon}</i>${esc(b.name)}<small>${esc(b.hint)}</small></div>`).join('')}</div>
-      <h4>Collections</h4><div class="row" style="flex-wrap:wrap;gap:8px 16px;justify-content:flex-start">
+      <h4>Collections</h4><div class="row passport-collections">
         <span>Bikes ${count(s, 'bike:')}/9</span><span>Kona years ${count(s, 'kona:')}/12</span><span>Night experiences ${count(s, 'night:')}/3</span><span>Hidden objects ${count(s, 'find:')}/9</span><span>History ${count(s, 'history:')}/15</span><span>Parts ${count(s, 'part:')}</span></div>
       ${Object.keys(s.stamps).length ? `<h4>Latest stamps</h4><div class="stamps">${Object.entries(s.stamps).sort((a, b) => b[1].at - a[1].at).slice(0, 14).map(([, v]) => `<span>${esc(v.label)}</span>`).join('')}</div>` : ''}
       <details><summary>Passport code — move to another device</summary><p class="note">Copy this code on one device and paste it on another. It contains only what you see here.</p>
-        <textarea id="ppCode" readonly>${api.exportCode()}</textarea><textarea id="ppIn" placeholder="Paste a passport code"></textarea><button class="go ghost" id="ppImport" style="width:100%;margin-top:6px">Load this passport</button></details>
+        <textarea id="ppCode" readonly>${api.exportCode()}</textarea><textarea id="ppIn" placeholder="Paste a passport code"></textarea><button class="go ghost passport-import" id="ppImport">Load this passport</button></details>
     </div>`;
     sheet.querySelector('.x').onclick = () => { sheet.hidden = true; };
     sheet.querySelectorAll('.emo button').forEach(b => b.onclick = () => { pick = b.dataset.e; sheet.querySelectorAll('.emo button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
