@@ -14,7 +14,7 @@ test('Home is the shell surface and Race Self is entered explicitly',()=>{
 });
 test('Race Self exposes contextual personal controls, not a second app map',()=>{
   for(const duplicate of ['3D World','Collection','Games','Garage','Discover','Plan']) assert.doesNotMatch(raceSelf,new RegExp(duplicate));
-  for(const control of ['Customize','Bike','Races','Settings']) assert.match(raceSelf,new RegExp(control));
+  for(const control of ['Avatar','Bike','Races','Settings']) assert.match(raceSelf,new RegExp(control));
   assert.doesNotMatch(raceSelf,/hub-launcher/);
   assert.match(raceSelf,/race-self-controls/);
 });
