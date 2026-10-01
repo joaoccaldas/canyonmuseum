@@ -152,3 +152,40 @@ body.race-self-open .kona-panel-body{padding:0;max-width:none;width:100%;height:
 
 .studio-home{color:var(--stage-ink);min-width:48px;white-space:nowrap}
 @media(max-width:340px){.studio-wordmark span{display:none}.studio-heading{gap:8px}}
+
+
+/* Mobile game-flow convergence: global navigation never disappears inside User Studio. */
+@media(max-width:899px){
+  body.race-self-open .kona-panel-head,
+  body.race-self-open .kona-user-menu{display:none}
+  body.race-self-open .kona-bottom-nav{display:grid}
+  .race-self-experience{
+    height:auto;min-height:100dvh;
+    grid-template-rows:64px minmax(340px,54dvh) auto auto;
+    padding-bottom:calc(92px + env(safe-area-inset-bottom))
+  }
+  .race-self-stage-wrap{grid-row:2}
+  .race-self-controls{grid-row:3;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px 0;border-top:1px solid var(--stage-line)}
+  .race-self-controls>.studio-menu-label{display:block}
+  .race-self-controls>button,.race-self-controls>a{min-height:64px;flex-direction:row;justify-content:flex-start;text-align:left;padding:10px 12px;gap:10px}
+  .race-self-controls i{flex-basis:24px;font-size:20px}
+  .race-self-controls b{font-size:12.5px}
+  .race-self-controls em{display:none}
+  .studio-destinations{
+    grid-row:4;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+    overflow:visible;padding:12px 0;border-top:1px solid var(--stage-line);
+    mask-image:none;-webkit-mask-image:none
+  }
+  .studio-destinations>.studio-menu-label{display:block}
+  .studio-destinations>button{
+    min-width:0;max-width:none;min-height:64px;flex-basis:auto;scroll-snap-align:none;
+    align-items:center;padding:10px 11px
+  }
+  .studio-destinations>button i{flex-basis:22px}
+  .studio-destinations>button b{font-size:12px}
+  .studio-destinations>.studio-menu-note{display:none}
+}
+@media(max-width:359px){
+  .race-self-controls,.studio-destinations{grid-template-columns:1fr}
+  .race-self-experience{grid-template-rows:58px minmax(310px,50dvh) auto auto}
+}
