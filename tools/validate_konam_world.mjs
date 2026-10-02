@@ -6,6 +6,8 @@ const roomsDoc = read('world/konam/rooms-v1.json');
 const collectionDoc = read('collections/kona-141-v1.json');
 const questsDoc = read('quests/founding-v1.json');
 const progressionDoc = read('world/konam/progression-v1.json');
+const reconciliationDoc = read('collections/kona-141-reconciliation-v1.json');
+const roomReconciliationDoc = read('world/konam/room-reconciliation-v1.json');
 
 const fail = m => { console.error('Kona.m world validation failed:', m); process.exitCode = 1; };
 const unique = xs => new Set(xs).size === xs.length;
@@ -13,6 +15,8 @@ const unique = xs => new Set(xs).size === xs.length;
 const rooms = roomsDoc.rooms || [];
 const items = collectionDoc.items || [];
 const quests = questsDoc.quests || [];
+const reconciliation = reconciliationDoc.items || [];
+const roomReconciliation = roomReconciliationDoc.rooms || [];
 
 if (rooms.length !== 28) fail(`expected 28 rooms, got ${rooms.length}`);
 const founding = rooms.filter(r => r.group === 'foundation');
@@ -48,6 +52,18 @@ if (!unique(quests.map(q => q.id))) fail('quest ids must be unique');
 const foundingQuestRooms = new Set(quests.filter(q => q.room_id).map(q => q.room_id));
 for (const r of founding) if (!foundingQuestRooms.has(r.id)) fail(`founding room ${r.id} lacks a founding quest`);
 
+const reconcileStates=new Set(['READY_EXISTING','EXISTING_NEEDS_QA','EXISTING_NEEDS_RESTYLE','EXISTING_2D_STORY','NEXT100_CANDIDATE','NEEDS_SOURCE','ACTUALLY_MISSING']);
+if(reconciliation.length!==141) fail(`expected 141 reconciliation rows, got ${reconciliation.length}`);
+if(!unique(reconciliation.map(r=>r.item_id))) fail('reconciliation item ids must be unique');
+for(const i of items) if(!reconciliation.some(r=>r.item_id===i.id)) fail(`missing reconciliation row for ${i.id}`);
+for(const r of reconciliation) if(!reconcileStates.has(r.state)) fail(`unknown reconciliation state ${r.state} on ${r.item_id}`);
+
+const roomStates=new Set(['READY_EXISTING','EXISTS_RENAME','EXISTS_RECOMPOSE','EXISTS_NEEDS_QA','VIRTUAL_CONFIG_ONLY','ACTUALLY_NEEDS_BUILDING']);
+if(roomReconciliation.length!==28) fail(`expected 28 room reconciliation rows, got ${roomReconciliation.length}`);
+if(!unique(roomReconciliation.map(r=>r.room_id))) fail('room reconciliation ids must be unique');
+for(const r of rooms) if(!roomReconciliation.some(x=>x.room_id===r.id)) fail(`missing room reconciliation row for ${r.id}`);
+for(const r of roomReconciliation) if(!roomStates.has(r.state)) fail(`unknown room reconciliation state ${r.state} on ${r.room_id}`);
+
 const anchors = collectionDoc.collection?.anchor_item_ids || [];
 if (anchors.length !== 14 || !unique(anchors)) fail('expected 14 unique anchor items');
 for (const id of anchors) if (!itemIds.has(id)) fail(`anchor item ${id} does not exist`);
@@ -66,6 +82,8 @@ if (!process.exitCode) {
     room_collectibles:items.filter(i=>i.room_id).length,
     global_collectibles:global.length,
     quests:quests.length,
-    anchors:anchors.length
+    anchors:anchors.length,
+    reconciliation_rows:reconciliation.length,
+    room_reconciliation_rows:roomReconciliation.length
   }, null, 2));
 }
