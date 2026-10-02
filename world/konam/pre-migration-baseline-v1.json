@@ -17,7 +17,9 @@
     "repository_visibility": "public",
     "deployment_model": "guarded GitHub Pages on main; Vercel config also present but not canonical",
     "local_first": true,
-    "account_optional": true
+    "account_optional": true,
+    "native_app_id": "com.caldasstudio.speedmaxmuseum",
+    "native_app_name": "KONA"
   },
   "code_metrics": {
     "web/src/landing.js": {
@@ -137,6 +139,7 @@
     "Dependency changes must be explicit and must not be bundled into content-only PRs.",
     "State/storage key changes require a compatibility/migration path.",
     "Generated artifacts may change only through their owner builders.",
-    "No migration PR may silently change canonical routes, persistence, auth, deployment or security controls."
+    "No migration PR may silently change canonical routes, persistence, auth, deployment or security controls.",
+    "Android appId changes require a dedicated native identity decision before first stable public distribution."
   ]
 }
