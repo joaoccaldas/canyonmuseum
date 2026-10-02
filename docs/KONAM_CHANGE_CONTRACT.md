@@ -1,86 +1,60 @@
 # Kona.m Change Contract
 
-This document is the explicit before/after contract for any pre-migration PR that changes runtime source, dependencies, persistence, auth, release controls or user-facing flow.
-
-Update this file in the same PR when one of those surfaces changes.
-
 ## Change
 
-- Date:
-- PR:
-- Owner:
-- Purpose:
+- Date: 2026-10-02
+- Scope: audit-only pre-migration quality branch
+- Purpose: measure code structure, CSS ownership/cascade risk, rendering lifecycle, CI consistency and bundle-size budgets before repository migration.
 
 ## Before
 
-Describe the exact pre-change behavior and evidence.
-
-- Runtime behavior:
-- User flow:
-- State/persistence:
-- Dependencies:
-- Security/privacy:
-- Performance:
-- Release/deployment:
+- Runtime behavior: PR #159 exact head is the behavior baseline.
+- User flow: unchanged.
+- State/persistence: unchanged.
+- Dependencies: unchanged.
+- Security/privacy: unchanged.
+- Performance: known release evidence exists, but architecture/performance risks are distributed across several files and not summarized by one repeatable audit.
+- Release/deployment: unchanged.
 
 ## After
 
-Describe the intended post-change behavior and evidence.
-
-- Runtime behavior:
-- User flow:
-- State/persistence:
-- Dependencies:
-- Security/privacy:
-- Performance:
-- Release/deployment:
+- Runtime behavior: unchanged.
+- User flow: unchanged.
+- State/persistence: unchanged.
+- Dependencies: unchanged.
+- Security/privacy: unchanged.
+- Performance: new read-only audit tools generate machine-readable evidence for code size, CSS cascade ownership, WebGL lifecycle, CI consistency and deploy-bundle budgets.
+- Release/deployment: unchanged. A new audit workflow runs these tools but publishes nothing.
 
 ## Invariants that must not regress
 
-- Guest path remains usable unless explicitly approved otherwise.
-- Existing saved state remains readable or has a tested migration.
-- Canonical internal routes remain available: `home`, `discover`, `garage`, `plan`, `me`.
-- No new direct `speedmax.*` storage keys.
-- No new secret/private data exposure.
-- No new `eval()` or `document.write` use.
-- Existing security/release workflows are not silently removed.
-- Generated outputs are changed only through their owning builder.
-- Dependency additions/removals/upgrades are explicit and justified.
-- Rollback path exists for runtime-affecting changes.
+- No consumer/runtime source file is modified by this audit branch.
+- No package or lock file changes.
+- No generated app/HTML/service-worker output changes.
+- No route, state key, auth, Supabase or native identity changes.
+- Existing release/security gates remain intact.
+- Audit tooling must not weaken existing failures or modify production artifacts.
 
 ## Risks
 
-- User-visible:
-- Data:
-- Security/privacy:
-- Rendering/mobile:
-- Deployment:
-- Third-party/dependency:
+- User-visible: none intended.
+- Data: none.
+- Security/privacy: low; tools read repository source only.
+- Rendering/mobile: none at runtime.
+- Deployment: none.
+- Third-party/dependency: none.
 
 ## Rollback
 
-State the exact rollback mechanism.
+Revert or close this audit PR. Production/runtime behavior is unaffected.
 
 ## Verification
 
-Record actual results, not intentions.
-
-- Unit:
-- Repository hygiene:
-- Secret/private-data scan:
-- Dependency audit:
-- Integration:
-- P0 journey:
-- UI interaction:
-- Visual:
-- World contract:
-- Physical Android:
-- Physical iPhone:
-- Post-deploy exact-SHA smoke:
+- Existing PR #159 baseline gates: green at its exact head before this branch.
+- New quality workflow: must complete and upload evidence.
+- Existing standard workflows: must remain green where triggered.
+- Before/after comparator: must show audit/docs/workflow-only changes and no dependency/runtime behavior delta.
 
 ## Result
 
-- Before/after comparison:
-- Known differences:
-- Known unchanged areas:
-- Remaining blocker(s):
+Pending exact-head CI. Audit findings are advisory unless an explicit budget/contract is violated.
