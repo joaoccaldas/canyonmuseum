@@ -72,6 +72,23 @@ The shell is comparatively bounded. Its static HTML construction should remain i
 
 Current release security already audits production dependency graphs at high severity for both web and Android. Pre-migration rule: **do not combine dependency upgrades with the repository/name migration unless the dependency is itself a blocker.**
 
+## Native identity decision
+
+Current Capacitor configuration still uses:
+- app name: `KONA`
+- Android app ID: `com.caldasstudio.speedmaxmuseum`
+
+This is migration-critical because Android package identity is not cosmetic. Changing `appId` creates a different application identity rather than a normal in-place rename/update path.
+
+Current stable Android signing is not yet configured/published, so Kona.m has a valuable decision window **before first stable native distribution**. Do not casually preserve the legacy package ID forever, but also do not change it inside the behavior-equivalent M0 repository migration.
+
+Recommended gate before native public distribution:
+1. decide canonical Kona.m Android package ID;
+2. change it in a dedicated native-identity PR;
+3. configure stable signing against that identity;
+4. perform physical install/update proof;
+5. never rotate identity/signing casually afterward.
+
 ## Safety controls already present
 
 Current CI/release controls include:
