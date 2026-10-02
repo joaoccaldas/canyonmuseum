@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "contract_name": "css-ownership-v1",
+  "authorities": [
+    {
+      "path": "brand/tokens.css",
+      "owns": [
+        "semantic color",
+        "spacing",
+        "radii",
+        "touch target",
+        "font-family variables",
+        "content widths"
+      ],
+      "must_not_own": [
+        "component selectors",
+        "feature geometry"
+      ]
+    },
+    {
+      "path": "brand/typography.css",
+      "owns": [
+        "semantic typography utility roles"
+      ],
+      "must_not_own": [
+        "feature positioning",
+        "component skins"
+      ]
+    },
+    {
+      "path": "brand/themes.css",
+      "owns": [
+        "theme-specific semantic variable overrides"
+      ],
+      "must_not_own": [
+        "feature selectors"
+      ]
+    },
+    {
+      "path": "web/styles/components.css",
+      "owns": [
+        "shared buttons",
+        "inputs",
+        "layout primitives",
+        "shared sheets/cards where generic"
+      ],
+      "must_not_own": [
+        "room/stage geometry",
+        "one-off feature positioning"
+      ]
+    },
+    {
+      "path": "web/styles/system.css",
+      "owns": [
+        "legacy/shared shell compatibility and global type/chrome"
+      ],
+      "future_direction": "shrink after M0 as ownership moves into explicit primitives"
+    },
+    {
+      "path": "web/styles/shell-mobile.css",
+      "owns": [
+        "consumer shell mobile geometry/safe-area behavior"
+      ],
+      "must_not_own": [
+        "Race Self internals",
+        "museum room presentation"
+      ]
+    },
+    {
+      "path": "web/styles/race-self.css",
+      "owns": [
+        "User Studio feature geometry only"
+      ],
+      "future_direction": "split only when component/controller split occurs"
+    },
+    {
+      "path": "web/styles/hall-mobile.css",
+      "owns": [
+        "legacy hall mobile compatibility"
+      ],
+      "status": "legacy-high-cascade-debt",
+      "future_direction": "do not copy its !important-heavy pattern into new Kona.m features"
+    }
+  ],
+  "rules": [
+    "One shared selector should have one clear owner unless a documented responsive/theme override requires another.",
+    "Feature CSS may position shared components but should not redefine their base visual contract.",
+    "No new raw brand palette values in feature CSS when a semantic token exists.",
+    "No new !important without a comment explaining the compatibility boundary.",
+    "Mobile safe-area handling belongs to shell/layout authorities, not scattered feature patches.",
+    "CSS cleanup must prove identical phone portrait, short-landscape, desktop and desktop-view-phone behavior."
+  ],
+  "m0": "Preserve current CSS files and load order exactly.",
+  "post_m0_sequence": [
+    "run selector/conflict audit",
+    "choose owner for each shared selector",
+    "move repeated primitives into components.css",
+    "remove redundant overrides one cluster at a time",
+    "compare screenshots/interactions at every step"
+  ]
+}
