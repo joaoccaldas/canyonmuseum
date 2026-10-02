@@ -1,0 +1,53 @@
+name: Kona.m pre-migration quality audit
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Code architecture audit
+        run: node tools/audit_konam_code.mjs
+
+      - name: CSS ownership audit
+        run: node tools/audit_konam_css.mjs
+
+      - name: WebGL lifecycle audit
+        run: node tools/audit_konam_rendering.mjs
+
+      - name: CI architecture audit
+        run: node tools/audit_konam_ci.mjs
+
+      - name: Bundle budgets
+        run: node tools/audit_konam_budgets.mjs
+
+      - name: World model contract
+        run: node tools/validate_konam_world.mjs
+
+      - name: Before / after comparison
+        env:
+          KONAM_BASE_SHA: ${{ github.event.pull_request.base.sha || 'b16391dbffee5a351ec82a06dac42d52b4c31286' }}
+        run: node tools/compare_konam_state.mjs
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: konam-quality-${{ github.event.pull_request.head.sha || github.sha }}
+          path: konam-quality-evidence/
+          if-no-files-found: error
+          retention-days: 30
