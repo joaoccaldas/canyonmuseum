@@ -5,7 +5,7 @@
     "main_inventory": "app/admin-assets.json",
     "next100": "museum/assets/next100-v1.json@asset/next-100-3d-v1"
   },
-  "warning": "Heuristic reconciliation. Candidate matches are not promotion decisions. Human provenance and visual QA remain mandatory.",
+  "warning": "Heuristic reconciliation. Candidate matches are not promotion decisions, and NO_CANDIDATE_FOUND does not mean a new 3D model is required. Human provenance, representation choice and visual QA remain mandatory.",
   "states": [
     "READY_EXISTING",
     "EXISTING_NEEDS_QA",
@@ -13,10 +13,10 @@
     "EXISTING_2D_STORY",
     "NEXT100_CANDIDATE",
     "NEEDS_SOURCE",
-    "ACTUALLY_MISSING"
+    "NO_CANDIDATE_FOUND"
   ],
   "summary": {
-    "ACTUALLY_MISSING": 55,
+    "NO_CANDIDATE_FOUND": 55,
     "NEEDS_SOURCE": 19,
     "EXISTING_2D_STORY": 32,
     "NEXT100_CANDIDATE": 14,
@@ -29,7 +29,7 @@
       "name": "Queen Kaʻahumanu Highway",
       "room_id": "room-001",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "painting:queen-k-first-light",
@@ -64,7 +64,7 @@
       "name": "Black Lava",
       "room_id": "room-001",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "edition-lava-night-lava-night",
@@ -99,7 +99,7 @@
       "name": "The Crosswind",
       "room_id": "room-001",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "painting:crosswind",
@@ -126,7 +126,7 @@
       "name": "The Mirage",
       "room_id": "room-001",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "painting:mirage",
@@ -153,7 +153,7 @@
       "name": "Kawaihae Turn",
       "room_id": "room-001",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "painting:kohala-turn",
@@ -188,7 +188,7 @@
       "name": "Hawi Turnaround",
       "room_id": "room-001",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "cervelo-p3c-2006-study",
@@ -315,7 +315,7 @@
       "name": "Start Buoy",
       "room_id": "room-002",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "artifact-swim-buoy-miniature",
@@ -439,7 +439,7 @@
       "name": "Body Marking Pen",
       "room_id": "room-002",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "edition-artworld-ritual-forest",
@@ -486,7 +486,7 @@
       "name": "Salt",
       "room_id": "room-002",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -506,7 +506,7 @@
       "name": "Kailua Pier",
       "room_id": "room-003",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "artifact-swim-buoy-miniature",
@@ -613,7 +613,7 @@
       "name": "Transition Bag",
       "room_id": "room-003",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "edition-artworld-ritual-forest",
@@ -648,7 +648,7 @@
       "name": "Pump Queue",
       "room_id": "room-003",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "painting:race-morning-bay",
@@ -712,7 +712,7 @@
       "name": "Old Course Map",
       "room_id": "room-003",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "room:tri",
@@ -757,7 +757,7 @@
       "name": "Aliʻi Drive",
       "room_id": "room-004",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -802,7 +802,7 @@
       "name": "Aid Station Cup",
       "room_id": "room-004",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -812,7 +812,7 @@
       "name": "Sponge",
       "room_id": "room-004",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -832,7 +832,7 @@
       "name": "Finish Carpet",
       "room_id": "room-004",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -842,7 +842,7 @@
       "name": "Finish Arch",
       "room_id": "room-004",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -852,7 +852,7 @@
       "name": "The Last Mile",
       "room_id": "room-004",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "specialized-shiv-2011-study",
@@ -907,7 +907,7 @@
       "name": "Champion's Wreath",
       "room_id": "room-005",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -1067,7 +1067,7 @@
       "name": "Course Record Card",
       "room_id": "room-005",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "room:tri",
@@ -1102,7 +1102,7 @@
       "name": "First-Time Champion",
       "room_id": "room-005",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "painting:queen-k-first-light",
@@ -1137,7 +1137,7 @@
       "name": "Comeback",
       "room_id": "room-005",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "kona-medal-1980s-study",
@@ -1172,7 +1172,7 @@
       "name": "The Empty Podium",
       "room_id": "room-005",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -1509,7 +1509,7 @@
       "name": "Aerobar",
       "room_id": "room-008",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -1519,7 +1519,7 @@
       "name": "Base Bar",
       "room_id": "room-008",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "gear-aerobar-extension-study",
@@ -1943,7 +1943,7 @@
       "name": "Race Belt",
       "room_id": "room-009",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -1953,7 +1953,7 @@
       "name": "Sunglasses",
       "room_id": "room-009",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "gear-deep-front-wheel-study",
@@ -2033,7 +2033,7 @@
       "name": "The Spare Sock",
       "room_id": "room-009",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2043,7 +2043,7 @@
       "name": "T1 Bag",
       "room_id": "room-010",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "artifact-transition-rack-tag",
@@ -2070,7 +2070,7 @@
       "name": "T2 Bag",
       "room_id": "room-010",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2080,7 +2080,7 @@
       "name": "Elastic Laces",
       "room_id": "room-010",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2160,7 +2160,7 @@
       "name": "Towel",
       "room_id": "room-010",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2180,7 +2180,7 @@
       "name": "Number Belt",
       "room_id": "room-010",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "artifact-kona-vintage-bib",
@@ -2215,7 +2215,7 @@
       "name": "Lost Bottle",
       "room_id": "room-010",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "artifact-vintage-aero-bottle",
@@ -2250,7 +2250,7 @@
       "name": "Four Minutes",
       "room_id": "room-010",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "champions-gold-medal-original",
@@ -2295,7 +2295,7 @@
       "name": "Check-In Envelope",
       "room_id": "room-011",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "edition-artworld-ritual-forest",
@@ -2324,7 +2324,7 @@
       "name": "Sticker Sheet",
       "room_id": "room-011",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2364,7 +2364,7 @@
       "name": "Bike Check-In Tag",
       "room_id": "room-011",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "artifact-transition-rack-tag",
@@ -2419,7 +2419,7 @@
       "name": "Basalt",
       "room_id": "room-012",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "sculpture:basalt-airfoil",
@@ -2454,7 +2454,7 @@
       "name": "Pacific Horizon",
       "room_id": "room-012",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "artifact-course-marker-pin",
@@ -2473,7 +2473,7 @@
       "name": "Palm Shadow",
       "room_id": "room-012",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "decor:kona-palm",
@@ -2492,7 +2492,7 @@
       "name": "Coffee",
       "room_id": "room-012",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2512,7 +2512,7 @@
       "name": "Kohala",
       "room_id": "room-012",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "painting:kohala-turn",
@@ -2531,7 +2531,7 @@
       "name": "Ocean Wind",
       "room_id": "room-012",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2551,7 +2551,7 @@
       "name": "Island Map",
       "room_id": "room-012",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2581,7 +2581,7 @@
       "name": "Old Race Map",
       "room_id": "room-013",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "room:tri",
@@ -2616,7 +2616,7 @@
       "name": "Paper Results Sheet",
       "room_id": "room-013",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2731,7 +2731,7 @@
       "name": "Magazine Cover",
       "room_id": "room-013",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "softride-powerwing-1999-study",
@@ -2793,7 +2793,7 @@
       "name": "Race Photo Contact Sheet",
       "room_id": "room-013",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "kona-medal-1980s-study",
@@ -2902,7 +2902,7 @@
       "name": "The Intern's Badge",
       "room_id": "room-014",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2912,7 +2912,7 @@
       "name": "A Completely Normal Rock",
       "room_id": "room-014",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2957,7 +2957,7 @@
       "name": "Key With No Door",
       "room_id": "room-014",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2967,7 +2967,7 @@
       "name": "Door With No Key",
       "room_id": "room-014",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [],
       "review_required": true
     },
@@ -2977,7 +2977,7 @@
       "name": "???",
       "room_id": "room-014",
       "representation": "asset-or-card",
-      "state": "ACTUALLY_MISSING",
+      "state": "NO_CANDIDATE_FOUND",
       "candidates": [
         {
           "id": "castelli-free-sanremo3-study",
