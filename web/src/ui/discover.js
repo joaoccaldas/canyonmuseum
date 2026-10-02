@@ -3,7 +3,6 @@ import { loadPublicCatalog } from '../engine/catalog.js';
 import { esc } from '../engine/dom.js';
 // ui/discover.js — lightweight editorial discovery. Loads public JSON only on intent.
 // 3D remains an explicit deeper action.
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const category=(name,sub)=>'<article class="discover-category artifact artifact--label"><small>'+esc(name)+'</small><b>'+esc(sub)+'</b></article>';
 
 export async function renderDiscoverSurface(root,{enter}={}){
