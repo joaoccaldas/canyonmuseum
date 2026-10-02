@@ -36,6 +36,9 @@ jobs:
       - name: State migration audit
         run: node tools/audit_konam_state_migration.mjs
 
+      - name: Asset size and deduplication audit
+        run: node tools/audit_konam_assets.mjs
+
       - name: Bundle budgets
         run: node tools/audit_konam_budgets.mjs
 
