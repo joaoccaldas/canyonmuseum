@@ -45,6 +45,9 @@ jobs:
       - name: World model contract
         run: node tools/validate_konam_world.mjs
 
+      - name: Migration readiness contract
+        run: node tools/validate_konam_migration_readiness.mjs
+
       - name: Before / after comparison
         env:
           KONAM_BASE_SHA: ${{ github.event.pull_request.base.sha || 'b16391dbffee5a351ec82a06dac42d52b4c31286' }}
