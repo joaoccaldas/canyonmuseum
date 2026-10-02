@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "purpose": "Pre-migration performance contract. Prevent silent cost growth while keeping M0 behavior-equivalent.",
+  "principle": "A migration/refactor may spend more performance budget only with explicit measured justification and device evidence.",
+  "bundle_budgets_bytes": {
+    "app/kona-core.js": 280000,
+    "app/race-self-stage.js": 820000,
+    "app/collectible-stage.js": 800000,
+    "app/admin-asset-preview.js": 780000,
+    "app/museum-data.js": 220000,
+    "app/hall.js": 1150000,
+    "app/studio.js": 980000
+  },
+  "asset_budgets": {
+    "bike_glb_max_bytes": 3500000,
+    "next100_study_target_bytes": 350000,
+    "next100_study_target_triangles": 12000,
+    "image_rule": "Prefer responsive/compressed derivatives; do not add a full-resolution image to first-load path without measured reason."
+  },
+  "renderer_budgets": {
+    "simultaneous_embedded_webgl_contexts_target": 1,
+    "embedded_dpr_cap_default": 1.6,
+    "phone_world_dpr_target_max": 1.5,
+    "high_quality_dpr_max": 2,
+    "background_expensive_work": "zero or no-op while document hidden; embedded renderer should also pause/no-op while occluded",
+    "lazy_3d": "No personal/world 3D before explicit user intent unless a measured lightweight stage is part of the chosen surface.",
+    "context_rule": "Repeatedly mounted embedded renderers must dispose renderer/controls/resources and release context where safe."
+  },
+  "frame_budgets": {
+    "target_interactive_fps_phone": 50,
+    "minimum_sustained_fps_phone": 30,
+    "target_frame_ms": 20,
+    "maximum_sustained_frame_ms": 33.3,
+    "note": "These are product budgets, not certification claims. Physical-device measurement is required."
+  },
+  "world_complexity": {
+    "draw_calls_target_phone_visible_scene": 350,
+    "triangles_target_phone_visible_scene": 1500000,
+    "caution": "Legacy hall currently has documented scenes far above these targets. M0 preserves behavior; post-M0 culling/shared geometry/LOD work should close the gap rather than redefining the budget upward."
+  },
+  "device_matrix": [
+    {
+      "class": "Android flagship",
+      "required": true,
+      "checks": [
+        "portrait",
+        "landscape",
+        "PWA/standalone",
+        "background-return",
+        "3D entry",
+        "User Studio",
+        "collection preview"
+      ]
+    },
+    {
+      "class": "iPhone Safari/PWA",
+      "required": true,
+      "checks": [
+        "safe areas",
+        "Add to Home Screen",
+        "background-return",
+        "keyboard/input",
+        "3D entry"
+      ]
+    },
+    {
+      "class": "desktop",
+      "required": true,
+      "checks": [
+        "1440x900 baseline",
+        "keyboard/mouse",
+        "high-quality renderer"
+      ]
+    },
+    {
+      "class": "narrow phone 320px",
+      "required": true,
+      "checks": [
+        "touch targets",
+        "no overflow",
+        "first viewport",
+        "nav"
+      ]
+    },
+    {
+      "class": "short landscape phone",
+      "required": true,
+      "checks": [
+        "touch targets",
+        "no trapped drawer",
+        "world controls"
+      ]
+    }
+  ],
+  "acceptance": [
+    "No critical bundle exceeds budget.",
+    "No new first-load 3D dependency appears unintentionally.",
+    "No new always-running animation loop is introduced without hidden/occlusion lifecycle.",
+    "No renderer raises DPR or shadow cost without before/after evidence.",
+    "Any world complexity increase has measured phone evidence and a rollback path.",
+    "Physical-device acceptance remains separate from headless/browser evidence."
+  ]
+}
