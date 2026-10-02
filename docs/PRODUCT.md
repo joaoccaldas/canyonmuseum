@@ -1,10 +1,11 @@
-# Product
+# Kona.m Product
 
 ## Positioning
 
-KONA is the race-week, gear, identity, story and challenge companion for triathlon.
+Kona.m is a race-week, gear, identity, story and challenge companion for triathlon.
 
 It should not attempt to replace:
+
 - Strava's activity/social graph
 - TrainingPeaks' training-analysis/planning depth
 - IRONMAN's authoritative timing/event infrastructure
@@ -12,13 +13,14 @@ It should not attempt to replace:
 
 Its differentiating layer is:
 
-> **race identity + real/dream equipment + confirmed race history + race-week context + immersive 3D + collections + progression + shareable personal story**
+> **race identity + real/dream equipment + confirmed race history + race-week context + optional immersive 3D + collections + progression + shareable personal story**
 
 ## Consumer object
 
 The primary consumer object is `RaceIdentity`.
 
 A RaceIdentity combines:
+
 - event
 - real/dream/surprise mode
 - equipment references
@@ -28,47 +30,74 @@ A RaceIdentity combines:
 
 ## Core loop
 
-`FAST ENTRY → IDENTITY → REWARD → STORY → EXPLORE → CHALLENGE → SHARE → RETURN`
+`FAST ENTRY → IDENTITY → REWARD → HOME → DISCOVER → COLLECT / MASTER → SHARE → RETURN`
 
 ## First-session rule
 
 Value precedes registration.
 
-1. Why are you here?
-2. Real / Dream / Surprise
-3. Choose equipment
-4. Choose goal
-5. Reveal RaceIdentity
-6. Reward
-7. Optional save/sign-in
-8. Optional Identity Assist
-9. Confirm race history
-10. Passport reveal
-11. Share
+1. Understand what Kona.m is.
+2. Continue as guest or choose the account path.
+3. Build enough identity/setup to make the experience personal.
+4. Reach Home quickly.
+5. Discover or collect something real.
+6. Optionally save/backup.
+7. Optionally share.
+
+Do not turn the first session into a questionnaire, account wall, 3D loading screen or product tutorial.
 
 ## Second-session rule
 
-Returning users should see a personalized command surface, not onboarding again.
+Returning users should see continuity, not onboarding again.
 
 Prioritize:
+
 - next useful action
-- RaceIdentity completion
+- RaceIdentity/setup continuity
 - race-week context
 - progression
 - new relevant content
-- challenge progress
-- saved equipment/collections
+- collection/challenge progress
 
-## Monetization
+## Product proposition
 
-Near term:
-- affiliate commerce
-- immersive brand prototypes
-- athlete/event activations
-- sponsor rooms
-- content/hosting retainers
+**Race the version of yourself.**
 
-Later:
-- white-label platform
-- premium consumer features after retention is proven
-- opt-in aggregate demand insight after scale and privacy thresholds are satisfied
+The promise is personal rather than transactional: build the athlete, understand the machine, know the place, discover the stories, and keep moving.
+
+Kona.m should feel useful before it feels impressive.
+
+## Launch language
+
+English is the required initial language.
+
+Additional locales belong behind complete runtime extraction, translated metadata and human QA rather than partial UI translation.
+
+## 3D rule
+
+3D is optional depth.
+
+A user must be able to understand, personalize and navigate the core app without loading the immersive world. High-fidelity 3D is used where it creates meaning, product understanding or memorable discovery, not as a default rendering tax.
+
+## About/company story
+
+The public About surface may explain the origin through three depths:
+
+- Short
+- Scenic Route
+- Unfiltered / ADHD
+
+The story stays anonymous on the frontend. It can be personal in voice without identifying the builder by name.
+
+## Launch decision rule
+
+A pre-launch change must strengthen one of these:
+
+- reliability, security or privacy
+- state continuity
+- first-use understanding
+- mobile accessibility or performance
+- factual/provenance accuracy
+- architectural clarity without destabilizing runtime
+
+Everything else is outside the launch surface.
