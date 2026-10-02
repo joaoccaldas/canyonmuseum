@@ -8,21 +8,22 @@
 // over HTTPS for a newer APK.
 //
 // Environment (set by CI):  SPEEDMAX_VERSION_CODE, SPEEDMAX_VERSION_NAME
-import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..', '..');
 const www = join(here, '..', 'www');
+// Use the same public allowlist and integrity checks as Pages. Stage outside app/native:
+// Node refuses to copy an ancestor app/ into app/native/www/app even with a filter.
+const staged = join(root, '_site');
+rmSync(staged, { recursive: true, force: true });
+execFileSync('bash', [join(root, 'tools', 'stage_site.sh')], { cwd: root, stdio: 'inherit' });
 rmSync(www, { recursive: true, force: true });
-mkdirSync(www, { recursive: true });
-for (const f of readdirSync(root)) if (f.endsWith('.html') || f === 'manifest.webmanifest') cpSync(join(root, f), join(www, f));
-cpSync(join(root, 'app'), join(www, 'app'), { recursive: true, filter: src => !/[\\/]native([\\/]|$)/.test(src.slice(join(root, 'app').length)) });
-cpSync(join(root, 'web', 'styles'), join(www, 'web', 'styles'), { recursive: true });
-cpSync(join(root, 'brand'), join(www, 'brand'), { recursive: true });
-cpSync(join(root, 'integrations'), join(www, 'integrations'), { recursive: true });
-cpSync(join(root, 'assets'), join(www, 'assets'), { recursive: true, filter: src => !/[\\/]src([\\/]|$)/.test(src.slice(join(root, 'assets').length)) && !src.endsWith('.html') });
+cpSync(staged, www, { recursive: true });
+rmSync(join(www, 'sw.js'), { force: true });
 
 const versionCode = Number.parseInt(process.env.SPEEDMAX_VERSION_CODE || '0', 10) || 0;
 const versionName = (process.env.SPEEDMAX_VERSION_NAME || 'dev').replace(/[^\w.-]/g, '').slice(0, 20);
