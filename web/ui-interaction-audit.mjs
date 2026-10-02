@@ -39,6 +39,11 @@ for(const id of selected){
   };
   const text=selector=>p.$eval(selector,e=>e.textContent||'');
   const waitHome=()=>p.waitForFunction(()=>!document.querySelector('#konaPanel')?.hidden&&document.querySelector('#konaPanelTitle')?.textContent==='Home');
+  const studioToHome=async()=>{
+    const useGlobal=await p.evaluate(()=>{const e=document.querySelector('[data-tab="home"]');if(!e)return false;const r=e.getBoundingClientRect(),s=getComputedStyle(e);return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0;});
+    await click(useGlobal?'[data-tab="home"]':'[data-studio-home]');
+    await waitHome();
+  };
   const enter=async()=>{await p.goto(base,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__konaShell);};
   const inventory=async surface=>{
     const controls=await p.evaluate(()=>[...document.querySelectorAll('button,a[href],input,select,summary')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden'&&!e.closest('[hidden]')).map(e=>{const r=e.getBoundingClientRect();return{tag:e.tagName,label:e.getAttribute('aria-label')||e.textContent?.trim().slice(0,100)||e.getAttribute('placeholder'),disabled:!!e.disabled,width:Math.round(r.width),height:Math.round(r.height),href:e.getAttribute('href')};}));
@@ -141,7 +146,7 @@ for(const id of selected){
       await click('[data-tab="me"]');
     });
     await step('first Find earns once, all 100 slots and filters work, and Item Studio loads the actual model',async()=>{
-      await click('[data-studio-home]');await waitHome();
+      await studioToHome();
       await click('[data-first-find]');const earned=await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')));
       assert.ok(earned.discoveries.includes('find:shore:lava'));await click('[data-home-finds]');
       await p.waitForSelector('[data-find]');assert.equal((await p.$$('[data-find]')).length,100);
@@ -154,13 +159,13 @@ for(const id of selected){
       await click('[data-find-return]');assert.equal(await canvas.evaluate(c=>c.__collectibleStage),false,'return must dispose 3D');
       const hidden=await p.$eval('[data-find]:not(.is-collected)',e=>e.dataset.find);await click('[data-find="'+hidden+'"]');
       assert.match(await text('.find-studio'),/A story still waiting/);assert.equal(await p.$('[data-view-find]'),null,'uncollected details must remain hidden');await click('[data-find-return]');
-      await click('[data-finds-back]');await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);await click('[data-studio-home]');await waitHome();
+      await click('[data-finds-back]');await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);await studioToHome();
       assert.equal(await p.$eval('[data-first-find]',e=>e.disabled),true);
       assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('kona.progression.v1')).xp),earned.xp);
       await click('[data-tab="me"]');await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame);
     });
     await step('countdown defaults to seconds, normal/timezone persist, and traveller brief has useful sourced links',async()=>{
-      await click('[data-studio-home]');await waitHome();assert.equal(await p.$eval('[data-countdown-value]',e=>e.dataset.countdownMode),'seconds');
+      await studioToHome();assert.equal(await p.$eval('[data-countdown-value]',e=>e.dataset.countdownMode),'seconds');
       await click('.home-today .kona-countdown-options summary');await click('.home-today [data-clock-mode="normal"]');
       await p.select('.home-today [aria-label="Countdown timezone"]','Europe/Stockholm');
       assert.match(await text('.home-today [data-clock-target]'),/Europe\/Stockholm/);
