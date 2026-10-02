@@ -1,34 +1,54 @@
-# Vercel go-live gate
+# Production go-live gate
 
-Release candidate: PR #132 / `refactor/rc8-go-live-final-20261001`.
+> Legacy filename retained for links. KONA's verified production path is GitHub Pages, not Vercel.
 
-This file exists to bind the final release checks to the post-generated-output tree.
+## Verified web production baseline
+
+The first guarded KONA production release was deployed from main commit `91e3b6a99427726e638d28623d8f5b7f9cd183da`.
+
+- Production URL: https://joaoccaldas.github.io/canyonmuseum/
+- Guarded deployment run: https://github.com/joaoccaldas/canyonmuseum/actions/runs/36910359282
+- Pages artifact digest: `sha256:bd613b3c860b4760498bd41dff62dc5102e9381e2a4380e68ef6960391275def`
+- The deployment gate required successful certification of the exact source SHA before publication.
+- The live release receipt and sealed-file verification were checked against that deployed SHA.
+
+Main has since advanced to `8b229b4980ef7c7848b5f6a69df2152eab5539a6` via #149, which repairs Android/native packaging. Do not infer that the live web deployment moved merely because main moved. A later Pages deployment needs its own exact-SHA receipt.
 
 ## Verified source contracts
 
 - User Studio has one persistent escape control and routes through the canonical `enterApp('me')` path.
 - Standalone Bike Studio returns through `index.html?view=me`.
-- Vercel static delivery keeps `index.html`, `manifest.webmanifest`, and `sw.js` revalidating.
-- No catch-all Vercel rewrite shadows static assets.
-
-## Deployment shape
-
-KONA is deployed as a static site from the repository root.
-
-Vercel project settings:
-- Framework preset: Other
-- Root directory: `.`
-- Build command: none
-- Output directory override: none
-
-The first Vercel hostname must be added to the Supabase Auth redirect allow-list before magic-link sign-in is treated as production-verified.
+- Static delivery keeps `index.html`, `manifest.webmanifest`, and `sw.js` revalidating.
+- No catch-all rewrite shadows public static assets.
+- Generated app/pages are rebuilt in CI and committed deterministic outputs must remain unchanged.
+- WYLD remains hidden by the disabled special-event policy until separately authorised.
 
 ## Release rule
 
-Do not declare production ready unless unit/asset/brand/P0, security, integration, app release seal, deterministic output sync, and Visual Evidence V2 are green on the same final SHA. Physical mobile install remains a device gate.
+Do not call a web release production-ready unless all required checks are green on the same final source SHA:
 
-## Post-sync verification trigger
+- Museum / P0 / unit / asset / brand checks
+- release security gate
+- integration contract
+- app release seal
+- deterministic generated-output verification
+- Visual Evidence V2 across the required viewport matrix
+- UI interaction evidence across phone, landscape and desktop
 
-Deterministic outputs were synchronized at `16646d22e56f75c8e22ce03f2eeb078b1c2c180f`. This documentation-only commit intentionally triggers the final release matrix on the sealed output tree without changing runtime source or generated assets.
+After CI, verify the deployed production receipt and sealed file hashes against that exact SHA.
 
-Mobile User Studio strip and standalone-page escape routes were sealed into deterministic outputs at `472fad7ffa7fe16e7e4ebb85426647a7c1264b26`. The following docs-only commit is the final same-tree release verification trigger.
+## Native Android boundary
+
+Android packaging and emulator smoke are repaired by #149. Stable APK publication remains blocked until the repository has a persistent release signing identity configured through GitHub Actions secrets. See issue #150.
+
+A debug-signed smoke APK is test evidence only. It must not be presented as the public Android release.
+
+Physical Android/iPhone install, keyboard, safe-area, reopen/persistence and real-device 3D performance remain device gates and must not be inferred from browser/emulator evidence.
+
+## Product truth boundary
+
+Vision documents, screenshots, generated mockups, schemas and roadmap prose are not runtime proof. Claims become current-product claims only through:
+
+`source → deterministic build → automated evidence → exact-SHA deployment receipt → observed device acceptance when applicable`.
+
+Canonical runtime schemas outrank older concept names. For example, avatar character types are currently defined in `web/src/engine/avatar.js` as Minecraft, Badass, Aero and Islander.
