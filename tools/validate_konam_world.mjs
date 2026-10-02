@@ -8,6 +8,7 @@ const questsDoc = read('quests/founding-v1.json');
 const progressionDoc = read('world/konam/progression-v1.json');
 const reconciliationDoc = read('collections/kona-141-reconciliation-v1.json');
 const roomReconciliationDoc = read('world/konam/room-reconciliation-v1.json');
+const dependencyGraphDoc = read('world/konam/dependency-graph-v1.json');
 
 const fail = m => { console.error('Kona.m world validation failed:', m); process.exitCode = 1; };
 const unique = xs => new Set(xs).size === xs.length;
@@ -17,6 +18,7 @@ const items = collectionDoc.items || [];
 const quests = questsDoc.quests || [];
 const reconciliation = reconciliationDoc.items || [];
 const roomReconciliation = roomReconciliationDoc.rooms || [];
+const dependencyNodes = dependencyGraphDoc.nodes || [];
 
 if (rooms.length !== 28) fail(`expected 28 rooms, got ${rooms.length}`);
 const founding = rooms.filter(r => r.group === 'foundation');
@@ -64,6 +66,20 @@ if(!unique(roomReconciliation.map(r=>r.room_id))) fail('room reconciliation ids 
 for(const r of rooms) if(!roomReconciliation.some(x=>x.room_id===r.id)) fail(`missing room reconciliation row for ${r.id}`);
 for(const r of roomReconciliation) if(!roomStates.has(r.state)) fail(`unknown room reconciliation state ${r.state} on ${r.room_id}`);
 
+if(!unique(dependencyNodes.map(n=>n.id))) fail('dependency graph node ids must be unique');
+const depIds=new Set(dependencyNodes.map(n=>n.id));
+for(const n of dependencyNodes) for(const d of n.depends_on||[]) if(!depIds.has(d)) fail(`dependency node ${n.id} references unknown dependency ${d}`);
+const visiting=new Set(), visited=new Set();
+function visitDep(id){
+  if(visited.has(id)) return;
+  if(visiting.has(id)) return fail(`dependency cycle detected at ${id}`);
+  visiting.add(id);
+  const n=dependencyNodes.find(x=>x.id===id);
+  for(const d of n?.depends_on||[]) visitDep(d);
+  visiting.delete(id); visited.add(id);
+}
+for(const n of dependencyNodes) visitDep(n.id);
+
 const anchors = collectionDoc.collection?.anchor_item_ids || [];
 if (anchors.length !== 14 || !unique(anchors)) fail('expected 14 unique anchor items');
 for (const id of anchors) if (!itemIds.has(id)) fail(`anchor item ${id} does not exist`);
@@ -84,6 +100,7 @@ if (!process.exitCode) {
     quests:quests.length,
     anchors:anchors.length,
     reconciliation_rows:reconciliation.length,
-    room_reconciliation_rows:roomReconciliation.length
+    room_reconciliation_rows:roomReconciliation.length,
+    dependency_nodes:dependencyNodes.length
   }, null, 2));
 }
