@@ -1,0 +1,31 @@
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,sans-serif;background:#dfe7e8;color:#162126}
+#proof{position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+.chrome{position:fixed;z-index:3;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
+button{pointer-events:auto;border:1px solid #ffffff99;background:#ffffffdd;backdrop-filter:blur(10px);height:44px;padding:0 14px;border-radius:999px;font-weight:700}
+#loadCandidates{background:#162126;color:#fff}
+#info{position:fixed;z-index:4;left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));max-height:45vh;overflow:auto;background:#fffffff0;border-radius:18px;padding:14px 16px;box-shadow:0 12px 36px #0003}
+#info h2{margin:0 0 4px;font-size:20px}#info p{margin:6px 0;font-size:12px;line-height:1.4;overflow-wrap:anywhere}#info [data-claim]{font-weight:700}
+@media (min-width:800px){#info{left:auto;width:390px}}
+
+/* Shared interaction floor; semantic brand tokens are prepended by the builder. */
+button,a[role="button"]{min-height:var(--brand-touch,48px)}
+
+/* RC6 KONA semantic bridge */
+html,body{
+  font-family:var(--brand-font-ui,system-ui,sans-serif);
+  background:var(--brand-bg,#f4efe7);
+  color:var(--brand-ink,#12181d);
+}
+button{
+  min-height:var(--brand-touch,48px);
+  border-color:var(--brand-line,rgba(18,24,29,.12));
+  background:var(--brand-surface-glass-strong,#fbf9f5);
+  border-radius:var(--brand-pill-radius,999px);
+}
+#loadCandidates{background:var(--brand-ink,#12181d);color:var(--brand-bg,#f4efe7)}
+#info{
+  background:var(--brand-surface-glass-strong,#fbf9f5);
+  color:var(--brand-ink,#12181d);
+  border:1px solid var(--brand-line,rgba(18,24,29,.12));
+  border-radius:var(--brand-sheet-radius,24px);
+}
