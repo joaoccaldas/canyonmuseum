@@ -72,7 +72,7 @@ async function capture(vp,state,theme){
      if(!switched)throw new Error('could not enter User Studio');
      await p.waitForFunction(()=>document.querySelector('[data-race-self-stage]')?.__studioFrame,{timeout:60000});
      if(state==='avatar-editor')await p.click('[data-race-self-action="customize"]');
-     if(state==='progress'){await p.click('[data-race-self-action="progress"]');await p.waitForSelector('#konaAccount');}
+     if(state==='progress'){await p.$eval('[data-race-self-action="progress"]',e=>e.click());await p.waitForSelector('#konaAccount');}
    }else if(state==='museum-return-home'){
      const switched=await p.evaluate(async()=>{const shell=window.__konaShell;if(!shell?.explore)return false;await shell.explore();return true;});
      if(!switched)throw new Error('could not enter Discover before world');
