@@ -8,7 +8,6 @@ import { ensureProgression, applyStoredEvent, readProgression } from '../engine/
 import { discoveryHorizon } from '../engine/discovery.js';
 import { esc } from '../engine/dom.js';
 
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/86400000);return Number.isFinite(n)?Math.max(0,n):null};
 
 function avatarPreview(styleInput){
