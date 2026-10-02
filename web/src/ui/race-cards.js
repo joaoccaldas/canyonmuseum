@@ -1,6 +1,7 @@
 // One Race Card renderer and one delegated controller for add, edit and remove.
 import { searchRaces, getRace } from '../engine/race-catalog.js';
 import { readRaceHistory, setRaceRelationship, removeRace, RACE_RELATIONSHIPS } from '../engine/race-history.js';
+import { esc } from '../engine/dom.js';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const LABELS = Object.freeze({completed:'Completed', registered:'Registered', interested:'Interested'});
 const relationLabel = value => LABELS[value] || 'Not saved';
