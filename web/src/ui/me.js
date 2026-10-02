@@ -6,6 +6,7 @@ import { levelContent, rankingMetric } from '../engine/access.js';
 import { getPublicProduct } from '../engine/catalog.js';
 import { sendMagicLink, currentUser, signOut, backupGameState, restoreGameState, cloudAvailable } from '../cloud/supabase-lite.js';
 import { renderRaceBadges } from './race-cards.js';
+import { esc } from '../engine/dom.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const legacyId = id => String(id || '').replace(/^product:/,'');
