@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "captured_from": "canyonmuseum pre-migration baseline",
+  "rule": "A risk entry is not permission for a migration-day rewrite. M0 preserves behavior; fixes are sequenced behind evidence and rollback.",
+  "risks": [
+    {
+      "id": "Q001",
+      "severity": "high",
+      "domain": "state",
+      "surface": [
+        "web/src/passport.js",
+        "web/src/engine/progression.js",
+        "web/src/engine/game-state.js"
+      ],
+      "finding": "Passport and canonical Progression coexist as overlapping authorities.",
+      "impact": "XP/badges/discoveries/unlocks can diverge or be reinterpreted.",
+      "pre_m0_action": "design lossless adapter only",
+      "post_m0_action": "make canonical Progression sole writer; retain compatibility reader until proven safe"
+    },
+    {
+      "id": "Q002",
+      "severity": "high",
+      "domain": "state",
+      "surface": [
+        "web/src/engine/progression.js"
+      ],
+      "finding": "Legacy Passport XP is copied numerically into a different 10-level economy.",
+      "impact": "Same XP can imply a different level/title/unlock set.",
+      "pre_m0_action": "preserve both stores and document semantics",
+      "post_m0_action": "migrate earned unlocks/status explicitly, not XP alone"
+    },
+    {
+      "id": "Q003",
+      "severity": "high",
+      "domain": "deployment",
+      "surface": [
+        "web/src/app-shell.js",
+        "tools/harden_pages.mjs",
+        "supabase/functions/companion/providers.ts",
+        "schemas/v1",
+        "robots.txt",
+        "sitemap.xml"
+      ],
+      "finding": "Canonical Canyon origin is duplicated across runtime/source/generated surfaces.",
+      "impact": "Partial rename can break updater, SEO, RSS or schema identity while UI still appears healthy.",
+      "pre_m0_action": "inventory occurrences",
+      "post_m0_action": "one source-owned site metadata authority + regenerate"
+    },
+    {
+      "id": "Q004",
+      "severity": "high",
+      "domain": "native",
+      "surface": [
+        "app/native/capacitor.config.json"
+      ],
+      "finding": "Android appId remains com.caldasstudio.speedmaxmuseum.",
+      "impact": "Package identity becomes durable once stable signing/public distribution begins.",
+      "pre_m0_action": "do not change in M0",
+      "post_m0_action": "dedicated Kona.m appId/signing decision before stable native release"
+    },
+    {
+      "id": "Q005",
+      "severity": "high",
+      "domain": "runtime",
+      "surface": [
+        "web/src/landing.js"
+      ],
+      "finding": "World orchestration remains ~147.6 kB / ~1,950 lines.",
+      "impact": "Large blast radius and poor regression attribution.",
+      "pre_m0_action": "freeze behavior",
+      "post_m0_action": "extract room construction, movement, interaction and lifecycle one seam at a time"
+    },
+    {
+      "id": "Q006",
+      "severity": "medium-high",
+      "domain": "runtime",
+      "surface": [
+        "web/src/main.js"
+      ],
+      "finding": "Older engineering viewer is ~52 kB / ~835 lines and owns rendering plus multiple product-experience subsystems.",
+      "impact": "Second monolith; tempting but risky to merge with Kona world runtime.",
+      "pre_m0_action": "preserve as historical/engineering runtime",
+      "post_m0_action": "decide reusable product-viewer engine vs Canyon-specific exhibit"
+    },
+    {
+      "id": "Q007",
+      "severity": "medium-high",
+      "domain": "ui",
+      "surface": [
+        "web/src/ui/avatar-home.js",
+        "web/styles/race-self.css"
+      ],
+      "finding": "User Studio combines stage lifecycle, avatar editor, drawers, sharing, races, feed/travel and settings.",
+      "impact": "Growing toward another orchestration monolith.",
+      "pre_m0_action": "no split",
+      "post_m0_action": "split controller/view seams while retaining one route/state authority"
+    },
+    {
+      "id": "Q008",
+      "severity": "medium-high",
+      "domain": "css",
+      "surface": [
+        "web/styles/hall-mobile.css"
+      ],
+      "finding": "~108 !important declarations in a 16.4 kB mobile compatibility layer.",
+      "impact": "High cascade complexity and expensive visual reasoning.",
+      "pre_m0_action": "preserve exact behavior",
+      "post_m0_action": "reduce by ownership zones with physical-phone visual evidence"
+    },
+    {
+      "id": "Q009",
+      "severity": "medium",
+      "domain": "css",
+      "surface": [
+        "web/styles/system.css",
+        "web/styles/entry.css",
+        "web/styles/studio.css",
+        "web/styles/race-self.css",
+        "web/styles/shell-mobile.css",
+        "web/styles/components.css"
+      ],
+      "finding": "Shared and feature selectors can overlap across a large cascade.",
+      "impact": "Path-dependent styling leaks or subtle device-specific overrides.",
+      "pre_m0_action": "measure selector ownership/conflicts",
+      "post_m0_action": "one owner per shared selector; feature CSS only owns feature geometry"
+    },
+    {
+      "id": "Q010",
+      "severity": "medium",
+      "domain": "rendering",
+      "surface": [
+        "web/src/ui/collectible-stage.js"
+      ],
+      "finding": "Embedded collectible renderer has DPR cap and disposal but no explicit hidden-tab guard.",
+      "impact": "Unnecessary background work while mounted.",
+      "pre_m0_action": "measure only",
+      "post_m0_action": "align with embedded-renderer lifecycle standard"
+    },
+    {
+      "id": "Q011",
+      "severity": "medium",
+      "domain": "rendering",
+      "surface": [
+        "web/src/hall.js",
+        "web/src/heritage.js",
+        "web/src/exp/engine.js"
+      ],
+      "finding": "Several page-lifetime render loops lack explicit hidden-tab pause; experience engine requests high-performance.",
+      "impact": "Inconsistent battery/thermal behavior across devices.",
+      "pre_m0_action": "do not alter before migration",
+      "post_m0_action": "add shared lifecycle policy and verify no visual/timing regressions"
+    },
+    {
+      "id": "Q012",
+      "severity": "medium",
+      "domain": "rendering",
+      "surface": [
+        "web/src/landing.js",
+        "docs/ARCHITECTURE.md"
+      ],
+      "finding": "Known hall entrance can draw millions of triangles / high draw-call counts because repeated full bike clones remain in legacy architecture.",
+      "impact": "Thermal/performance pressure on phones.",
+      "pre_m0_action": "preserve current validated behavior",
+      "post_m0_action": "room-graph culling/shared geometry/LOD with physical-device budgets"
+    },
+    {
+      "id": "Q013",
+      "severity": "medium",
+      "domain": "security",
+      "surface": [
+        "tools/harden_pages.mjs"
+      ],
+      "finding": "Current CSP still requires script-src unsafe-inline and wasm-unsafe-eval.",
+      "impact": "Broader script execution surface than ideal.",
+      "pre_m0_action": "preserve exact hardened policy",
+      "post_m0_action": "inventory inline execution; move/hash/nonce what can be removed without breaking WebAssembly/legacy pages"
+    },
+    {
+      "id": "Q014",
+      "severity": "medium",
+      "domain": "build",
+      "surface": [
+        "web/build_landing.mjs",
+        "web/build_studio.mjs",
+        "tools/build_pages.mjs",
+        "app/*"
+      ],
+      "finding": "Source changes deterministically regenerate multiple committed bundles.",
+      "impact": "A source-only patch can appear correct but is invalid until generated outputs match.",
+      "pre_m0_action": "treat generated drift as hard failure",
+      "post_m0_action": "keep owner/build metadata and consider release artifacts only where architecture permits"
+    },
+    {
+      "id": "Q015",
+      "severity": "medium",
+      "domain": "ci",
+      "surface": [
+        ".github/workflows/*"
+      ],
+      "finding": "Workflows currently use mixed explicit Node majors (notably 20 and 22).",
+      "impact": "Different parsing/runtime behavior and future support drift.",
+      "pre_m0_action": "do not combine CI runtime change with M0",
+      "post_m0_action": "converge on one supported Node major or document exceptions"
+    },
+    {
+      "id": "Q016",
+      "severity": "medium",
+      "domain": "assets",
+      "surface": [
+        "assets/**",
+        "renders/**"
+      ],
+      "finding": "Binary estate has not yet had one exact-hash deduplication and large-file inventory gate.",
+      "impact": "Migration can carry duplicate bytes and unnecessary repository weight.",
+      "pre_m0_action": "generate exact-hash/size evidence only",
+      "post_m0_action": "dedupe only exact duplicates after path/cache/build impact review"
+    },
+    {
+      "id": "Q017",
+      "severity": "low-medium",
+      "domain": "ui-security",
+      "surface": [
+        "web/src/ui/*.js",
+        "web/src/engine/dom.js"
+      ],
+      "finding": "Several UI modules duplicate the same HTML escaping helper while a canonical helper already exists.",
+      "impact": "Future sanitization fixes can drift.",
+      "pre_m0_action": "document; do not source-refactor without regenerated bundles",
+      "post_m0_action": "centralize with exact generated-output and visual evidence"
+    },
+    {
+      "id": "Q018",
+      "severity": "low-medium",
+      "domain": "state",
+      "surface": [
+        "web/src/engine/progression.js",
+        "web/src/engine/game-state.js"
+      ],
+      "finding": "Canonical progression has current streak but not historical best; GameState reports best as current streak when engine state exists.",
+      "impact": "Historical best streak semantics can be lost.",
+      "pre_m0_action": "capture migration requirement",
+      "post_m0_action": "add best_streak to canonical schema before Passport retirement"
+    }
+  ]
+}
