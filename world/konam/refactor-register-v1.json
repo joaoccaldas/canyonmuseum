@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "principle": "Do not use the repository migration as a broad rewrite. Reduce accidental duplication only when behavior equivalence can be proved; schedule architectural consolidation behind stable adapters.",
+  "candidates": [
+    {
+      "id": "R01",
+      "priority": "P0",
+      "surface": "state",
+      "files": [
+        "web/src/passport.js",
+        "web/src/engine/progression.js",
+        "web/src/engine/passport-state.js",
+        "web/src/engine/game-state.js"
+      ],
+      "finding": "Two progression models coexist: legacy Passport owns its own LEVELS/BADGES/streak logic while canonical progression owns generated levels, collections, rewards and discoveries. GameState carries both passport-derived progression and progression_engine.",
+      "risk": "High: divergent rewards/levels, confusing migration semantics, duplicate source of truth.",
+      "action": "FREEZE legacy passport semantics for M0; introduce explicit adapter/mapping; after behavior-equivalent migration, make canonical progression the only write authority and keep passport as projection/import compatibility.",
+      "stage": "post-M0/pre-Founding141-runtime"
+    },
+    {
+      "id": "R02",
+      "priority": "P0",
+      "surface": "collectibles",
+      "files": [
+        "web/src/finds.js",
+        "web/src/engine/items.js",
+        "web/src/engine/progression.js",
+        "museum/game/finds-v1.json"
+      ],
+      "finding": "Legacy shoreline FINDS and generated collection registry coexist. The old module also owned direct legacy persistence before this refactor.",
+      "risk": "High once Founding 141 arrives: duplicate discovery identity and reward paths.",
+      "action": "This PR routes old finds storage through canonical adapter. Next: map the five shoreline finds to stable collectible IDs and make Progression/collection registry the only ownership ledger.",
+      "stage": "pre-M1"
+    },
+    {
+      "id": "R03",
+      "priority": "P0",
+      "surface": "origin/URLs",
+      "files": [
+        "web/src/app-shell.js",
+        "tools/harden_pages.mjs",
+        "supabase/functions/companion/providers.ts",
+        "schemas/v1/*.schema.json",
+        "robots.txt",
+        "sitemap.xml",
+        "llms*.txt"
+      ],
+      "finding": "Public origin/path is repeated as joaoccaldas.github.io/canyonmuseum across runtime, builders, schemas and generated/public files.",
+      "risk": "High during repo/domain rename: partial rename can break updates, canonical URLs, RSS, schema IDs and SEO while appearing visually healthy.",
+      "action": "Do not hand-replace generated output. Add one build-time SITE_ORIGIN/site metadata authority in a dedicated migration PR and regenerate all derived files.",
+      "stage": "M1-name/origin"
+    },
+    {
+      "id": "R04",
+      "priority": "P0",
+      "surface": "native identity",
+      "files": [
+        "app/native/capacitor.config.json",
+        "app/native/package.json"
+      ],
+      "finding": "Native app name is KONA while Android appId remains com.caldasstudio.speedmaxmuseum.",
+      "risk": "High before stable signing/public distribution because package identity is durable.",
+      "action": "Dedicated native identity decision and migration before stable release signing; never bundle casually into repository M0.",
+      "stage": "post-M0/pre-native-release"
+    },
+    {
+      "id": "R05",
+      "priority": "P1",
+      "surface": "runtime monolith",
+      "files": [
+        "web/src/landing.js"
+      ],
+      "finding": "~147.6k chars / ~1,950 lines. It coordinates scene construction, routing, interaction, persistence hooks and legacy hand-built rooms.",
+      "risk": "High change blast radius and hard-to-attribute regressions.",
+      "action": "No wholesale pre-migration rewrite. After M0, extract by seam: room construction -> navigation/walk -> interaction/cards -> lifecycle. Require identical browser evidence after each extraction.",
+      "stage": "post-M0"
+    },
+    {
+      "id": "R06",
+      "priority": "P1",
+      "surface": "room architecture",
+      "files": [
+        "web/src/landing.js",
+        "web/src/galleries.js",
+        "web/src/pier.js",
+        "web/src/sanctuary.js",
+        "web/src/engine/wing.js",
+        "museum/world/**"
+      ],
+      "finding": "Data-driven wings coexist with hand-built hall/Sanctuary/pier/theme-room geometry.",
+      "risk": "Medium-high: room metadata can disagree with rendered geometry and progression targets.",
+      "action": "Keep stable room IDs/data registry now; port one room family at a time after migration. World registry should become authority, renderer becomes projection.",
+      "stage": "post-M0"
+    },
+    {
+      "id": "R07",
+      "priority": "P1",
+      "surface": "UI safety helper",
+      "files": [
+        "web/src/ui/*.js",
+        "web/src/engine/dom.js"
+      ],
+      "finding": "Many consumer UI modules duplicated the same HTML escaping function despite a canonical esc helper already existing.",
+      "risk": "Medium: security fixes can diverge across copies.",
+      "action": "This stacked PR centralizes escape handling for core consumer UI modules and adds a source contract test. Keep companion-data escapeHTML as a semantic boundary for feed sanitization unless intentionally unified later.",
+      "stage": "now"
+    },
+    {
+      "id": "R08",
+      "priority": "P1",
+      "surface": "User Studio",
+      "files": [
+        "web/src/ui/avatar-home.js",
+        "web/styles/race-self.css"
+      ],
+      "finding": "Avatar/User Studio surface is large and combines navigation, 3D stage lifecycle, drawer accessibility, avatar editing, sharing, races, feed/travel entry and settings.",
+      "risk": "Medium-high: feature growth can turn it into the next landing.js.",
+      "action": "Post-M0 split controller from views: studio-shell, avatar-editor, destinations, share drawer, stage loader. Preserve one User Studio route.",
+      "stage": "post-M0"
+    },
+    {
+      "id": "R09",
+      "priority": "P1",
+      "surface": "generated outputs",
+      "files": [
+        "tools/build_pages.mjs",
+        "app/**",
+        "web/dist/**",
+        "*.html",
+        "sw.js"
+      ],
+      "finding": "Generated deploy bundles mirror source into several output surfaces. Deterministic checks exist, but duplicate files can be mistaken for source authority.",
+      "risk": "Medium during migration and manual fixes.",
+      "action": "Preserve current deterministic builders in M0. Add generated-file manifest/owner metadata and forbid manual generated edits. Do not reorganize outputs during repo copy.",
+      "stage": "M0/M1"
+    },
+    {
+      "id": "R10",
+      "priority": "P2",
+      "surface": "CSS",
+      "files": [
+        "web/styles/race-self.css",
+        "web/styles/shell-mobile.css",
+        "web/styles/system.css",
+        "web/styles/components.css",
+        "brand/tokens.css"
+      ],
+      "finding": "Token and component authorities are clear, but feature CSS remains large, especially race-self.css (~15.8k chars / 155 lines) and system-level rules can still overlap feature selectors.",
+      "risk": "Medium visual drift; lower migration risk than state/runtime.",
+      "action": "Do not compress CSS during M0. After migration run selector/property audit, move repeated controls/layout to components.css, leave feature geometry local.",
+      "stage": "post-M0"
+    },
+    {
+      "id": "R11",
+      "priority": "P2",
+      "surface": "legacy editorial/runtime",
+      "files": [
+        "web/src/passport.js",
+        "web/src/hall.js",
+        "web/src/heritage.js",
+        "web/src/exp/main.js"
+      ],
+      "finding": "Older surfaces still carry local helper logic and Canyon-era language/state assumptions.",
+      "risk": "Medium if mechanically renamed or merged into Kona.m shell.",
+      "action": "Classify each as keep-as-exhibit, adapter, or retire. Do not automatically modernize every historical surface.",
+      "stage": "post-M0"
+    },
+    {
+      "id": "R12",
+      "priority": "P2",
+      "surface": "docs/archive",
+      "files": [
+        "docs/**",
+        "docs/reference-canyon/**",
+        "HANDOVER.md"
+      ],
+      "finding": "Current operational docs, historical handovers and copied Canyon reference docs coexist.",
+      "risk": "Medium human-error risk: stale docs can be treated as current truth.",
+      "action": "At migration, move historical material under docs/archive or docs/reference-canyon and maintain one STATUS/PRODUCT/ROADMAP authority.",
+      "stage": "M1-docs"
+    }
+  ],
+  "do_not_refactor_pre_m0": [
+    "web/src/landing.js wholesale",
+    "Three.js room geometry wholesale",
+    "dependency versions",
+    "Supabase schema/project identity",
+    "generated HTML/app bundles by hand",
+    "Android appId inside general rename"
+  ],
+  "safe_pre_migration_normalizations": [
+    "remove direct legacy persistence writes behind existing adapters",
+    "centralize pure deterministic helper duplicates",
+    "add contract tests",
+    "add provenance/inventory mappings",
+    "add before/after comparison gates"
+  ]
+}
