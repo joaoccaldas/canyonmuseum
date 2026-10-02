@@ -1,8 +1,8 @@
 // ui/plan.js — lightweight 2D race-week planning surface.
 // Uses app/entry-data.json only. It must not require museum globals or Three.js.
 import { loadCompanion, safeURL } from './companion-data.js';
+import { esc } from '../engine/dom.js';
 
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const fmtDate = iso => {
   const d = new Date(String(iso || '') + 'T12:00:00');
