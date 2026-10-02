@@ -6,8 +6,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
-const SITE = 'https://joaoccaldas.github.io/canyonmuseum/';
-const NAME = 'KONA';
+const productMeta = JSON.parse(fs.readFileSync(path.join(root,'config/product-meta.json'),'utf8'));
+const normalizeSite = value => {
+  const v = String(value || '').trim();
+  if (!/^https:\/\//.test(v)) throw new Error('PUBLIC_SITE_URL must be an absolute https URL');
+  return v.endsWith('/') ? v : v + '/';
+};
+const SITE = normalizeSite(process.env.PUBLIC_SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'https://konam.vercel.app/'));
+const NAME = productMeta.product_name || 'Kona.m';
 const DISCLAIMER = 'An independent, unofficial fan and research project. Not affiliated with, endorsed by or sponsored by Canyon Bicycles GmbH. Canyon and Speedmax are trademarks of their owners.';
 
 // The only third parties the pages load (measured with a request log): Google Fonts and Wikimedia images.
@@ -26,7 +32,7 @@ const cspFor=file=>CSP_BASE.map(x=>x.startsWith("script-src ")?(file==='index.ht
 
 const PAGES = [
   { file: 'index.html', type: 'SoftwareApplication', image: 'assets/share/museum.jpg',
-    title: 'KONA · Race the version of yourself',
+    title: 'Kona.m · Race the version of yourself',
     description: 'Build your race identity, prepare for race week, explore triathlon machines, people, places and stories, and enter the immersive 3D world when you choose.' },
   { file: 'Canyon_Collection.html', type: 'CollectionPage', image: 'assets/share/collection.jpg',
     title: 'Canyon Triathlon Collection · every Speedmax generation, compared',
@@ -37,6 +43,9 @@ const PAGES = [
   { file: 'Experiences.html', type: 'WebPage', image: 'assets/share/museum.jpg',
     title: 'Speedmax Nights & History Lane · Canyon Speedmax Museum',
     description: 'Three night experiences around one Canyon Speedmax (Lava Night, Camp 13 and the Ghost Tunnel) and History Lane, the story from Koblenz in 1985 to Kona. An independent study.', keepTitle: true },
+  { file: 'about.html', type: 'AboutPage', image: 'assets/share/museum.jpg',
+    title: 'About this company · Kona.m',
+    description: 'Why Kona.m exists, told three ways: short, scenic and unfiltered.', keepTitle: true },
 ];
 for (const f of fs.readdirSync(root).filter(f => /^Speedmax_.*_?Museum\.html$/.test(f))) {
   const html = fs.readFileSync(path.join(root, f), 'utf8');
@@ -65,7 +74,7 @@ function block(p) {
   const url = SITE + (p.file === 'index.html' ? '' : p.file), img = SITE + p.image;
   const ld = {
     '@context': 'https://schema.org', '@type': p.type, name: p.title, description: p.description, url, image: img, inLanguage: 'en',
-    isAccessibleForFree: true, publisher: { '@type': 'Person', name: 'João Caldas', url: 'https://joaoccaldas.github.io/ai/' },
+    isAccessibleForFree: true, publisher: { '@type': 'Organization', name: NAME },
     about: [{ '@type': 'Thing', name: 'Canyon Speedmax' }, { '@type': 'SportsEvent', name: 'IRONMAN World Championship', location: 'Kailua-Kona, Hawaii' }],
     disambiguatingDescription: DISCLAIMER,
   };
@@ -100,7 +109,7 @@ for (const p of PAGES) {
     .map(href => `<link rel="stylesheet" href="${href}">`).join('');
   html = html.replace(/<\/head>/i, `<!--design-system:start-->${fonts}${missing}<!--design-system:end-->\n</head>`);
   html = html.replace(/<!--global-user-studio:start-->[\s\S]*?<!--global-user-studio:end-->\n?/g, '');
-  if (p.file !== 'index.html' && !html.includes('href="index.html?view=me"')) {
+  if (!['index.html','about.html'].includes(p.file) && !html.includes('href="index.html?view=me"')) {
     html = html.replace(/<body([^>]*)>/i, match => match + GLOBAL_USER_STUDIO);
   }
   fs.writeFileSync(f, html);
