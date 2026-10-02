@@ -52,7 +52,7 @@ if (!unique(quests.map(q => q.id))) fail('quest ids must be unique');
 const foundingQuestRooms = new Set(quests.filter(q => q.room_id).map(q => q.room_id));
 for (const r of founding) if (!foundingQuestRooms.has(r.id)) fail(`founding room ${r.id} lacks a founding quest`);
 
-const reconcileStates=new Set(['READY_EXISTING','EXISTING_NEEDS_QA','EXISTING_NEEDS_RESTYLE','EXISTING_2D_STORY','NEXT100_CANDIDATE','NEEDS_SOURCE','ACTUALLY_MISSING']);
+const reconcileStates=new Set(['READY_EXISTING','EXISTING_NEEDS_QA','EXISTING_NEEDS_RESTYLE','EXISTING_2D_STORY','NEXT100_CANDIDATE','NEEDS_SOURCE','NO_CANDIDATE_FOUND']);
 if(reconciliation.length!==141) fail(`expected 141 reconciliation rows, got ${reconciliation.length}`);
 if(!unique(reconciliation.map(r=>r.item_id))) fail('reconciliation item ids must be unique');
 for(const i of items) if(!reconciliation.some(r=>r.item_id===i.id)) fail(`missing reconciliation row for ${i.id}`);
