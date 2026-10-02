@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "principle": "Generated files are deploy artifacts, never independent source authorities. M0 migration must preserve generator/source/output relationships byte-for-byte where possible.",
+  "artifacts": [
+    {
+      "output": "app/kona-core.js",
+      "generator": "web/build_landing.mjs",
+      "entry": "web/src/entry.js",
+      "shared_dependencies": "transitive imports from web/src",
+      "commit_required": true
+    },
+    {
+      "output": "app/hall.js",
+      "generator": "web/build_landing.mjs",
+      "entry": "web/src/landing.js",
+      "shared_dependencies": "transitive imports from web/src",
+      "commit_required": true
+    },
+    {
+      "output": "app/race-self-stage.js",
+      "generator": "web/build_landing.mjs",
+      "entry": "web/src/race-self-stage-entry.js",
+      "source_owner": "web/src/ui/race-self-stage.js",
+      "commit_required": true
+    },
+    {
+      "output": "app/collectible-stage.js",
+      "generator": "web/build_landing.mjs",
+      "entry": "web/src/collectible-stage-entry.js",
+      "source_owner": "web/src/ui/collectible-stage.js",
+      "commit_required": true
+    },
+    {
+      "output": "app/admin-asset-preview.js",
+      "generator": "web/build_landing.mjs",
+      "entry": "web/src/ui/admin-asset-preview.js",
+      "commit_required": true
+    },
+    {
+      "output": "app/world-shell.html",
+      "generator": "web/build_landing.mjs",
+      "source_owner": "web/world-shell.template.html",
+      "commit_required": true
+    },
+    {
+      "output": "app/viewport.js",
+      "generator": "web/build_landing.mjs",
+      "source_owner": "web/src/runtime/viewport.js",
+      "commit_required": true
+    },
+    {
+      "output": "index.html",
+      "generator": "web/build_landing.mjs then tools/harden_pages.mjs",
+      "source_owner": "web/landing.template.html",
+      "commit_required": true
+    },
+    {
+      "output": "app/studio.js",
+      "generator": "web/build_studio.mjs",
+      "entry": "web/src/studio/main.js",
+      "shared_dependencies": "transitive imports from web/src",
+      "commit_required": true
+    },
+    {
+      "output": "Studio.html",
+      "generator": "web/build_studio.mjs then tools/harden_pages.mjs",
+      "source_owner": "web/studio.template.html",
+      "commit_required": true
+    },
+    {
+      "output": "app/museum-data.js",
+      "generator": "web/museum_data.mjs via landing/studio builders",
+      "source_owner": "museum registries",
+      "commit_required": true
+    },
+    {
+      "output": "app/studio-catalog.js",
+      "generator": "web/museum_data.mjs via web/build_studio.mjs",
+      "source_owner": "museum catalog/registries",
+      "commit_required": true
+    },
+    {
+      "output": "app/admin-assets.json",
+      "generator": "tools/build_admin_assets.mjs",
+      "source_owner": "museum catalog/world/art registries",
+      "commit_required": true
+    },
+    {
+      "output": "docs/ROOMS.md",
+      "generator": "tools/build_registry.mjs",
+      "source_owner": "museum/world + catalog registries",
+      "commit_required": true
+    },
+    {
+      "output": "integrations/public-catalog.json",
+      "generator": "tools/build_public_catalog.mjs",
+      "source_owner": "canonical product/place/event registries",
+      "commit_required": true
+    },
+    {
+      "output": "integrations/triathlon-graph.json",
+      "generator": "tools/build_triathlon_graph.mjs",
+      "source_owner": "canonical integration registries",
+      "commit_required": true
+    },
+    {
+      "output": "web/dist/*.html",
+      "generator": "tools/build_pages.mjs mirror step",
+      "source_owner": "hardened root HTML pages",
+      "commit_required": true
+    },
+    {
+      "output": "sw.js",
+      "generator": "build/release tooling",
+      "source_owner": "release manifest + staged public assets",
+      "commit_required": true
+    }
+  ],
+  "lessons_from_pr160": [
+    "Changing a shared helper in web/src can legitimately regenerate more than the directly edited screen bundle.",
+    "A source diff is incomplete evidence until deterministic generated outputs are rebuilt and committed.",
+    "Do not silence stale-output failures; they are an integrity boundary.",
+    "In the new repo, every generated family should retain a documented owner and one canonical build command."
+  ],
+  "m0_acceptance": [
+    "Run canonical build from clean checkout.",
+    "Generated outputs are byte-stable or every intentional delta is explained.",
+    "No generated output is manually edited to mimic a build.",
+    "Release seal points to the exact migration candidate SHA.",
+    "Any shared-source refactor waits until a full build environment is available."
+  ]
+}
