@@ -1,5 +1,6 @@
 // ui/admin-assets.js — admin-only read-only portfolio over canonical generated asset projection.
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
+import { esc } from '../engine/dom.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const titleOf=o=>o?.name||o?.model||o?.label||o?.id||'Untitled asset';
