@@ -13,6 +13,7 @@ import { renderRacePicker } from './race-cards.js';
 import { renderProgressSurface } from './me.js';
 import { avatarItemAccess } from '../engine/access.js';
 import { shareProgress, whatsappProgressUrl, safeAppUrl, progressShareText } from '../growth/social-share.js';
+import { esc } from '../engine/dom.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const productId=id=>String(id||'').replace(/^product:/,'');
