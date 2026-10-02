@@ -1,6 +1,7 @@
 // ui/onboarding-questions.js
 import { readStorage, writeStorage } from '../engine/storage.js';
 import { applyStoredEvent, ensureProgression, LEVELS } from '../engine/progression.js';
+import { esc } from '../engine/dom.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const QUESTIONS=[
