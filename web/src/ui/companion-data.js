@@ -10,7 +10,7 @@ export function filterFeed(data,{kind='all',source='all',query=''}={}){
  const sources=new Map((data.sources||[]).map(s=>[s.id,s]));
  const q=query.trim().toLocaleLowerCase();
  return (data.items||[]).filter(i=>safeURL(i.url)&&sources.has(i.source_id)&&Number.isFinite(Date.parse(i.published_at)))
-  .filter(i=>(kind==='all'||i.kind===kind)&&(source==='all'||i.source_id===source)&&(!q||(i.title+' '+sources.get(i.source_id).name).toLocaleLowerCase().includes(q)))
+  .filter(i=>(kind==='all'||i.kind===kind)&&(source==='all'||i.source_id===source)&&(!q||(i.title+' '+(i.summary||'')+' '+sources.get(i.source_id).name).toLocaleLowerCase().includes(q)))
   .sort((a,b)=>Date.parse(b.published_at)-Date.parse(a.published_at));
 }
 export function formatDate(value){const d=new Date(/^\d{4}-\d{2}-\d{2}$/.test(value)?value+'T12:00:00Z':value);return Number.isFinite(+d)?new Intl.DateTimeFormat('en',{month:'short',day:'numeric',year:'numeric',timeZone:'Pacific/Honolulu'}).format(d):'Not updated yet';}
