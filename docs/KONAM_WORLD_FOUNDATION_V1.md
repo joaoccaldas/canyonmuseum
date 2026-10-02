@@ -136,7 +136,7 @@ Before migration, join every current and candidate asset against the Founding 14
 3. EXISTING / NEEDS RESTYLE
 4. 2D STORY ONLY
 5. NEXT100 CANDIDATE
-6. ACTUALLY MISSING
+6. NO CANDIDATE FOUND (human review decides whether a new asset is actually needed)
 
 This should produce the real build list for launch. The objective is not 141 new models. The objective is 141 coherent collectible records with the best truthful representation we already possess.
 
