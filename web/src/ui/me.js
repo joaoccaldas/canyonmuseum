@@ -8,7 +8,6 @@ import { sendMagicLink, currentUser, signOut, backupGameState, restoreGameState,
 import { renderRaceBadges } from './race-cards.js';
 import { esc } from '../engine/dom.js';
 
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const legacyId = id => String(id || '').replace(/^product:/,'');
 const titleCase = s => String(s || '').replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 
