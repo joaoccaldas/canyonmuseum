@@ -6,6 +6,7 @@ import { collectionSummary } from '../engine/items.js';
 import { avatarItem, normaliseAvatarStyle } from '../engine/avatar.js';
 import { ensureProgression, applyStoredEvent, readProgression } from '../engine/progression.js';
 import { discoveryHorizon } from '../engine/discovery.js';
+import { esc } from '../engine/dom.js';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const daysUntil=iso=>{const n=Math.ceil((new Date(iso+'T12:00:00')-Date.now())/86400000);return Number.isFinite(n)?Math.max(0,n):null};
