@@ -32,7 +32,7 @@ const generatedPatterns=[/^app\//,/^sw\.js$/,/^web\/dist\//,/\.html$/];
 for(const f of changed){
   if(/^\.github\/workflows\//.test(f)) buckets.workflows.push(f);
   else if(/package(?:-lock)?\.json$/.test(f)) buckets.dependencies.push(f);
-  else if(/^web\/test\//.test(f)||/\.test\.[mc]?js$/.test(f)) buckets.tests.push(f);
+  else if(/^web\/test\//.test(f)||/\.test\.[mc]?js$/.test(f)||/^tools\/(?:compare_konam_state|validate_konam_world)\.mjs$/.test(f)) buckets.tests.push(f);
   else if(/^world\/konam\//.test(f)||/^collections\//.test(f)||/^quests\//.test(f)) buckets.product_data.push(f);
   else if(/^docs\//.test(f)) buckets.docs.push(f);
   else if(generatedPatterns.some(re=>re.test(f))) buckets.generated.push(f);
