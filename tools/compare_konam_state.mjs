@@ -89,13 +89,17 @@ for(const p of ['web/src/engine/profile.js','web/src/engine/app-state.js','web/s
   const t=current(p); if(t) speedmaxNow.push([p,count(t,/['"`]speedmax\.[A-Za-z0-9_.:-]+['"`]/g)||0]);
 }
 const legacySpeedmaxReferences=speedmaxNow.reduce((a,[,n])=>a+n,0);
+let legacySpeedmaxBefore=0;
+for(const p of ['web/src/engine/profile.js','web/src/engine/app-state.js','web/src/engine/game-state.js','web/src/finds.js','web/src/engine/identity.js','web/src/engine/progression.js','web/src/exp/main.js','web/src/main.js','web/src/passport.js','web/src/landing.js','web/src/studio/race-setup.js','tools/harden_pages.mjs','web/src/engine/storage.js']){
+  const t=show(base,p); if(t) legacySpeedmaxBefore += count(t,/['"`]speedmax\.[A-Za-z0-9_.:-]+['"`]/g)||0;
+}
 
 const report={
   schema_version:1,base_sha:base,head_sha:git(['rev-parse','HEAD']),
   changed_files:changed.length,buckets,protected_files_changed:protectedDiff,
   dependency_delta:dependencyDelta,metrics,
   flow_contract:{required_route_ids:requiredRoutes,missing_route_ids:missingRoutes},
-  safety_contract:{missing_release_controls:missingControls,legacy_speedmax_direct_key_references:legacySpeedmaxReferences},
+  safety_contract:{missing_release_controls:missingControls,legacy_speedmax_direct_key_references_before:legacySpeedmaxBefore,legacy_speedmax_direct_key_references_after:legacySpeedmaxReferences},
   policy:{
     runtime_change_allowed:process.env.KONAM_RUNTIME_CHANGE_ALLOWED==='1',
     runtime_changes:buckets.runtime,
@@ -111,6 +115,12 @@ if(buckets.runtime.length && process.env.KONAM_RUNTIME_CHANGE_ALLOWED!=='1')
 const depChanged=Object.values(dependencyDelta).some(x=>(x.added?.length||0)||(x.removed?.length||0)||(x.changed?.length||0));
 if(depChanged && process.env.KONAM_DEPENDENCY_CHANGE_ALLOWED!=='1')
   problems.push('dependency graph changed without KONAM_DEPENDENCY_CHANGE_ALLOWED=1');
+if(legacySpeedmaxReferences>legacySpeedmaxBefore)
+  problems.push('new direct legacy speedmax.* references were added ('+legacySpeedmaxBefore+' → '+legacySpeedmaxReferences+')');
+for(const [p,m] of Object.entries(metrics)){
+  if((m.after.eval||0)>(m.before.eval||0)) problems.push(p+': eval() usage increased');
+  if((m.after.documentWrite||0)>(m.before.documentWrite||0)) problems.push(p+': document.write usage increased');
+}
 report.problems=problems;
 
 fs.writeFileSync(path.join(outDir,'comparison.json'),JSON.stringify(report,null,2)+'\n');
@@ -126,7 +136,7 @@ const md=[
  '## Flow and safety','',
  `- Missing canonical route IDs: ${missingRoutes.length?missingRoutes.join(', '):'none'}`,
  `- Missing release/security controls: ${missingControls.length?missingControls.join(', '):'none'}`,
- `- Direct legacy speedmax.* references in grandfathered migration files: ${legacySpeedmaxReferences}`,'',
+ `- Direct legacy speedmax.* references: ${legacySpeedmaxBefore} → ${legacySpeedmaxReferences}`,'',
  '## Result','',
  problems.length?problems.map(x=>'- FAIL: '+x).join('\n'):'PASS: compared state preserves declared pre-migration runtime/dependency/flow boundaries.'
 ].join('\n');
