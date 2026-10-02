@@ -181,7 +181,7 @@ html.phone-fit #card{left:8px;right:auto;width:calc((100vw - 16px)/var(--fit))!i
 
 /* World chrome offsets relative to the consumer navigation shell. */
 @media(max-width:760px){
-  body.touch.walking #rail{bottom:76px}
+  body.touch.walking #rail{bottom:0}
   body.touch #joy{bottom:calc(150px + var(--safe-b))}
   body.touch #card{bottom:calc(86px + var(--safe-b));max-height:62dvh}
   body.touch #konaWorld>header{padding-bottom:0}
