@@ -2,7 +2,15 @@
 
 Launch is a focused free beta: discover Kona, build a race self, keep progress, explore equipment, and share a clean invitation. Paid athlete/brand pilots belong to the commercial roadmap. The business model's $31,000 revenue, $32,000 cash costs and $1,500 incremental budget are estimates, not measured results or release evidence.
 
-## Now: PR #135 — launch and continuity
+## Current release status — 2 October 2026
+
+- **Web launch:** deployed and verified from main `91e3b6a99427726e638d28623d8f5b7f9cd183da` via guarded GitHub Pages workflow.
+- **Current main:** `8b229b4980ef7c7848b5f6a69df2152eab5539a6`, adding the merged Android packaging repair from #149 without intentionally changing the web product runtime.
+- **Android packaging:** build + emulator smoke proven; stable public APK signing still blocked by issue #150.
+- **Physical devices:** real Android/iPhone acceptance remains pending.
+- **Post-launch architecture:** #139 remains spec/contracts only and must not leak Totems, Doors, rankings, automated Intern or related future systems into launch claims.
+
+## Launch baseline: PR #135 — launch and continuity
 
 | Priority | Deliverable | Acceptance and evidence |
 |---|---|---|
@@ -33,6 +41,18 @@ Every day ends with one observed acceptance result. A daily release is optional:
 | Oct 9 | Stable arrival guide and support | Saved state survives reopen; official links checked; support owns clear issue triage. |
 | Oct 10 | Race-day editorial/support | Official tracking handoff; no invented results, automatic imports or late noncritical code. |
 | Oct 11–14 | Reflection and retention | Separate observed usage/revenue from estimates; retire race banners; use learning to choose the next release. |
+
+## Vision-to-release truth boundary
+
+The visual storytelling catalogue is a brand/product north star, not release evidence.
+
+**Current only when runtime-proved:** local-first Race Self, Garage/race setup, the eligible bike catalogue, KONA Finds, sourced Feed/Travel surfaces, countdown, private sharing, responsive navigation, and museum/runtime surfaces covered by release evidence.
+
+**Future or separately authorised until proved:** WYLD event exposure, Totem/door entitlements, seasonal/global rankings, NFC passports or member keys, verified athlete tiers, Strava-driven access, live wind telemetry, automated Intern operations, trading, affiliate/buy flows, and partner-specific commercial experiences.
+
+Canonical implementation names beat older concept copy. Avatar character types currently come from `web/src/engine/avatar.js`: Minecraft, Badass, Aero and Islander. Do not reintroduce Koa/Pele/Lono/Hina from older visual concepts without an explicit schema/product migration.
+
+Do not use a vision document, mockup, schema, generated image or product narrative as proof that a runtime capability exists. The authoritative chain is source → deterministic build → evidence → exact-SHA deployment receipt.
 
 ## Later: PR #139 — product/spec/contracts
 
