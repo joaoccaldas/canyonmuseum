@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "purpose": "M0 repository migration manifest. Defines what is copied as source truth, what is generated, what remains historical, and what is renamed only after behavior equivalence.",
+  "source": {
+    "repository": "joaoccaldas/canyonmuseum",
+    "baseline_branch": "product/konam-world-foundation-v1-20261002",
+    "baseline_sha": "856b98f0d9392c48ef7a6ff0fedaa39d459ef14c"
+  },
+  "target": {
+    "repository": "joaoccaldas/konam",
+    "consumer_name": "Kona.m",
+    "repo_slug": "konam"
+  },
+  "classes": [
+    {
+      "class": "COPY_SOURCE",
+      "meaning": "Canonical source/data/tooling copied in M0 without semantic rename."
+    },
+    {
+      "class": "COPY_GENERATED",
+      "meaning": "Committed generated artifacts copied in M0 because release contracts currently depend on exact checked-in outputs."
+    },
+    {
+      "class": "COPY_COMPATIBILITY",
+      "meaning": "Legacy identifiers/readers copied so existing user state and URLs remain recoverable."
+    },
+    {
+      "class": "PRESERVE_BRAND_CONTENT",
+      "meaning": "Canyon/Speedmax references that are legitimate museum/product history and must not be globally renamed."
+    },
+    {
+      "class": "ARCHIVE_HISTORY",
+      "meaning": "Historical docs/evidence copied but clearly marked non-current."
+    },
+    {
+      "class": "RENAME_M1",
+      "meaning": "Product/repository/deployment identity changed only after M0 equivalence."
+    },
+    {
+      "class": "DECIDE_POST_M0",
+      "meaning": "Architectural decision deliberately deferred."
+    }
+  ],
+  "paths": [
+    {
+      "path": "web/src/",
+      "class": "COPY_SOURCE",
+      "owner": "consumer + 3D runtime source",
+      "m0_rule": "copy unchanged; no opportunistic refactor"
+    },
+    {
+      "path": "web/styles/",
+      "class": "COPY_SOURCE",
+      "owner": "runtime styles",
+      "m0_rule": "copy unchanged; preserve CSS load order"
+    },
+    {
+      "path": "brand/",
+      "class": "COPY_SOURCE",
+      "owner": "brand tokens/themes/typography",
+      "m0_rule": "copy unchanged; consumer rename occurs M1"
+    },
+    {
+      "path": "museum/",
+      "class": "COPY_SOURCE",
+      "owner": "canonical museum/product/world/game data",
+      "m0_rule": "copy unchanged; Canyon facts remain Canyon"
+    },
+    {
+      "path": "schemas/",
+      "class": "COPY_SOURCE",
+      "owner": "versioned contracts",
+      "m0_rule": "copy unchanged in M0; schema $id origin reviewed in M1"
+    },
+    {
+      "path": "integrations/",
+      "class": "COPY_SOURCE",
+      "owner": "public/integration contracts + generated projections",
+      "m0_rule": "copy current source and committed generated data"
+    },
+    {
+      "path": "supabase/",
+      "class": "COPY_SOURCE",
+      "owner": "backend schema/functions",
+      "m0_rule": "copy unchanged; no backend rename"
+    },
+    {
+      "path": "blender/",
+      "class": "COPY_SOURCE",
+      "owner": "3D source/generation pipelines",
+      "m0_rule": "copy unchanged"
+    },
+    {
+      "path": "tools/",
+      "class": "COPY_SOURCE",
+      "owner": "build/validation/release tools",
+      "m0_rule": "copy unchanged"
+    },
+    {
+      "path": ".github/workflows/",
+      "class": "COPY_SOURCE",
+      "owner": "release/security/validation",
+      "m0_rule": "copy unchanged except target-repo settings required to run; changes must be separately explained"
+    },
+    {
+      "path": "assets/",
+      "class": "COPY_SOURCE",
+      "owner": "public binary asset estate",
+      "m0_rule": "copy byte-for-byte; dedupe after M0 only"
+    },
+    {
+      "path": "app/",
+      "class": "COPY_GENERATED",
+      "owner": "deterministic deploy/runtime bundles",
+      "m0_rule": "copy and rebuild; compare hashes/intentional diffs"
+    },
+    {
+      "path": "web/dist/",
+      "class": "COPY_GENERATED",
+      "owner": "mirrored hardened deploy pages",
+      "m0_rule": "copy and rebuild; never hand-edit"
+    },
+    {
+      "path": "*.html",
+      "class": "COPY_GENERATED",
+      "owner": "root published pages",
+      "m0_rule": "copy exact M0 then regenerate with same source/build"
+    },
+    {
+      "path": "sw.js",
+      "class": "COPY_GENERATED",
+      "owner": "PWA/release cache manifest",
+      "m0_rule": "copy exact M0; regenerate only through canonical build"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "class": "COPY_SOURCE",
+      "owner": "PWA identity",
+      "m0_rule": "copy unchanged; rename M1"
+    },
+    {
+      "path": "app/native/",
+      "class": "COPY_COMPATIBILITY",
+      "owner": "Capacitor/Android",
+      "m0_rule": "copy package identity unchanged; dedicated native identity PR later"
+    },
+    {
+      "path": "docs/reference-canyon/",
+      "class": "PRESERVE_BRAND_CONTENT",
+      "owner": "Canyon reference/provenance",
+      "m0_rule": "copy unchanged"
+    },
+    {
+      "path": "museum/bikes/;museum/catalog/canyon-assets.json;Canyon_Collection.html",
+      "class": "PRESERVE_BRAND_CONTENT",
+      "owner": "Canyon Museum inside Kona.m",
+      "m0_rule": "do not globally rename Canyon/Speedmax facts"
+    },
+    {
+      "path": "docs/HANDOVER*.md;HANDOVER.md;docs/*202609*.md",
+      "class": "ARCHIVE_HISTORY",
+      "owner": "historical evidence",
+      "m0_rule": "copy; archive/index in M1 docs cleanup"
+    },
+    {
+      "path": "README.md;STATUS.md;docs/PRODUCT.md;docs/ROADMAP.md",
+      "class": "RENAME_M1",
+      "owner": "current product truth",
+      "m0_rule": "copy exact first; rewrite only after equivalence"
+    },
+    {
+      "path": "deployment origin / GitHub Pages path",
+      "class": "RENAME_M1",
+      "owner": "site identity",
+      "m0_rule": "preserve in M0 compatibility baseline; centralize source authority in M1"
+    },
+    {
+      "path": "storage namespace kona.* + speedmax.* compatibility",
+      "class": "COPY_COMPATIBILITY",
+      "owner": "storage adapter",
+      "m0_rule": "preserve all reads; no deletion"
+    },
+    {
+      "path": "landing.js decomposition; Passport consolidation; CSS cleanup; renderer convergence",
+      "class": "DECIDE_POST_M0",
+      "owner": "architecture",
+      "m0_rule": "explicitly forbidden in M0"
+    }
+  ],
+  "m0_forbidden": [
+    "global Canyon→Kona.m replacement",
+    "speedmax.* key deletion",
+    "Android appId change",
+    "dependency upgrade",
+    "Supabase project/schema redesign",
+    "hosting switch",
+    "CSS cascade cleanup",
+    "renderer rewrite",
+    "directory reorganization that changes builder paths",
+    "manual edits to generated outputs"
+  ]
+}
