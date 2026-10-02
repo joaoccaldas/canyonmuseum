@@ -2,7 +2,6 @@
 import { currentUser, isAdminUser } from '../cloud/supabase-lite.js';
 import { esc } from '../engine/dom.js';
 
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const titleOf=o=>o?.name||o?.model||o?.label||o?.id||'Untitled asset';
 const firstImage=o=>o?.image||o?.thumbnail||o?.poster||o?.preview||'';
 const specLine=(k,v)=>v?'<span><i>'+esc(k)+'</i><b>'+esc(v)+'</b></span>':'';
