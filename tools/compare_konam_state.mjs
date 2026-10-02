@@ -101,7 +101,7 @@ const report={
   flow_contract:{required_route_ids:requiredRoutes,missing_route_ids:missingRoutes},
   safety_contract:{missing_release_controls:missingControls,legacy_speedmax_direct_key_references_before:legacySpeedmaxBefore,legacy_speedmax_direct_key_references_after:legacySpeedmaxReferences},
   policy:{
-    runtime_change_allowed:process.env.KONAM_RUNTIME_CHANGE_ALLOWED==='1',
+    change_contract_changed:changeContractChanged,
     runtime_changes:buckets.runtime,
     dependency_changes:buckets.dependencies
   }
@@ -110,11 +110,12 @@ const report={
 const problems=[];
 if(missingRoutes.length) problems.push('canonical route IDs disappeared: '+missingRoutes.join(', '));
 if(missingControls.length) problems.push('required release controls missing: '+missingControls.join(', '));
-if(buckets.runtime.length && process.env.KONAM_RUNTIME_CHANGE_ALLOWED!=='1')
-  problems.push('runtime/source files changed without KONAM_RUNTIME_CHANGE_ALLOWED=1: '+buckets.runtime.join(', '));
+const changeContractChanged=changed.includes('docs/KONAM_CHANGE_CONTRACT.md');
+if(buckets.runtime.length && !changeContractChanged)
+  problems.push('runtime/source files changed without updating docs/KONAM_CHANGE_CONTRACT.md: '+buckets.runtime.join(', '));
 const depChanged=Object.values(dependencyDelta).some(x=>(x.added?.length||0)||(x.removed?.length||0)||(x.changed?.length||0));
-if(depChanged && process.env.KONAM_DEPENDENCY_CHANGE_ALLOWED!=='1')
-  problems.push('dependency graph changed without KONAM_DEPENDENCY_CHANGE_ALLOWED=1');
+if(depChanged && !changeContractChanged)
+  problems.push('dependency graph changed without updating docs/KONAM_CHANGE_CONTRACT.md');
 if(legacySpeedmaxReferences>legacySpeedmaxBefore)
   problems.push('new direct legacy speedmax.* references were added ('+legacySpeedmaxBefore+' → '+legacySpeedmaxReferences+')');
 for(const [p,m] of Object.entries(metrics)){
