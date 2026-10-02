@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "status": "design-only; do not execute during M0",
+  "principle": "M0 preserves every readable legacy store. Canonicalization happens only after equivalence, with an idempotent adapter and fixtures proving no loss of earned state.",
+  "legacy_find_map": {
+    "lava": "find:shore:lava",
+    "plumeria": "find:shore:plumeria",
+    "cowrie": "find:shore:cowrie",
+    "coral": "find:shore:coral",
+    "bib": "find:shore:bib"
+  },
+  "source_stores": [
+    {
+      "store": "passport",
+      "key": "kona.passport.v1",
+      "legacy": [
+        "speedmax.passport.v1"
+      ],
+      "fields": [
+        "discoveries",
+        "visits",
+        "pose",
+        "stamps",
+        "badges",
+        "xp",
+        "streak",
+        "best",
+        "last",
+        "profile"
+      ]
+    },
+    {
+      "store": "progression",
+      "key": "kona.progression.v1",
+      "legacy": [
+        "speedmax.progression.v1"
+      ],
+      "fields": [
+        "xp",
+        "level",
+        "level_name",
+        "streak",
+        "discoveries",
+        "badges",
+        "unlocks",
+        "seen",
+        "ledger",
+        "credits",
+        "history",
+        "acquisitions"
+      ]
+    },
+    {
+      "store": "finds",
+      "key": "kona.finds.v1",
+      "legacy": [
+        "speedmax.finds.v1"
+      ],
+      "fields": [
+        "legacy array/object of five physical shoreline finds"
+      ]
+    },
+    {
+      "store": "game_state",
+      "kind": "serialization facade",
+      "fields": [
+        "progression(passport projection)",
+        "progression_engine(canonical progression)",
+        "finds",
+        "race_setup",
+        "garage",
+        "race_identity",
+        "user_equipment",
+        "kona_self",
+        "entry_intent",
+        "race_history"
+      ]
+    }
+  ],
+  "identified_semantic_risks": [
+    {
+      "id": "state-001",
+      "severity": "high",
+      "issue": "Legacy Passport and canonical Progression can both remain writable/readable, so they may diverge after canonical Progression has been created.",
+      "consequence": "Screens can disagree about XP, badges, discoveries or unlocks.",
+      "decision": "After M0, Progression becomes sole write authority; Passport becomes compatibility import/projection only."
+    },
+    {
+      "id": "state-002",
+      "severity": "high",
+      "issue": "Legacy Passport XP and canonical Progression XP use different level economies.",
+      "evidence": "Legacy Passport has five thresholds around 0/120/320/650/1000 while progression-v2 defines ten levels beginning 0/40/100/200/.../2000.",
+      "consequence": "Copying numeric XP preserves points but can change the user's interpreted level/title and unlocked content.",
+      "decision": "Do not silently reinterpret earned status. Migration must preserve earned unlocks separately and record legacy XP provenance."
+    },
+    {
+      "id": "state-003",
+      "severity": "medium",
+      "issue": "Canonical Progression stores current streak but no historical best field; GameState currently reports best = engine.streak when canonical progression exists.",
+      "consequence": "A user's historical best streak can be lost from the canonical projection.",
+      "decision": "Future canonical schema should explicitly preserve best_streak before Passport retirement."
+    },
+    {
+      "id": "state-004",
+      "severity": "medium",
+      "issue": "migratePassport prefixes every passport.discoveries entry with bike: without inspecting whether the source is already namespaced.",
+      "consequence": "Already-prefixed or non-bike legacy discoveries could be transformed incorrectly.",
+      "decision": "Before canonicalization, classify real legacy discovery shapes with fixtures and map by prefix/type rather than unconditional bike:."
+    },
+    {
+      "id": "state-005",
+      "severity": "medium",
+      "issue": "Legacy badge IDs are copied directly into canonical badges.",
+      "consequence": "Old badge names can collide with or imply different semantics than new achievements.",
+      "decision": "Maintain a legacy badge alias map and preserve unknown badges as legacy achievements rather than dropping them."
+    },
+    {
+      "id": "state-006",
+      "severity": "low",
+      "issue": "Passport pose/visits/profile fields are not Progression concerns.",
+      "consequence": "A monolithic migration could incorrectly force unrelated data into progression.",
+      "decision": "Route pose to world/session state, profile to Profile authority, visits to return/analytics metadata if retained."
+    }
+  ],
+  "canonicalization_sequence": [
+    "read every compatible legacy/current store without deleting any",
+    "snapshot raw values for rollback/export",
+    "normalize known legacy shapes",
+    "map old five shoreline find IDs to stable collectible IDs",
+    "preserve old XP and old unlock/status semantics as provenance",
+    "derive canonical discoveries/acquisitions idempotently",
+    "preserve best streak and legacy badges explicitly",
+    "write canonical state",
+    "read back and compare semantic counts/unlocks",
+    "only after multiple releases stop writing Passport",
+    "remove compatibility reads only after migration telemetry/fixtures prove no remaining need"
+  ],
+  "acceptance_invariants": [
+    "No old storage key is deleted as part of first read/migration.",
+    "Migration can run twice with identical canonical result.",
+    "All five legacy physical finds remain owned if previously found.",
+    "Badge count never decreases solely because of migration.",
+    "Historical best streak never decreases.",
+    "Previously accessible content does not become locked solely because XP thresholds changed.",
+    "Cloud backup/restore round-trips both pre- and post-migration fixtures.",
+    "Unknown legacy fields are retained in rollback evidence rather than silently discarded."
+  ]
+}

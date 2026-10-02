@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "purpose": "Pre-migration classification of open Canyon Museum PRs. PR metadata does not migrate; only selected commits/specs/assets should be replayed into konam.",
+  "statuses": [
+    "MERGE_BEFORE_FREEZE",
+    "REPLAY_IN_KONAM",
+    "ASSET_ONLY_TRANSFER",
+    "SPEC_ONLY_TRANSFER",
+    "SUPERSEDED",
+    "ARCHIVE"
+  ],
+  "prs": [
+    {
+      "number": 157,
+      "title": "KONA Now + mobile flow: clean post-launch replay",
+      "status": "REPLAY_IN_KONAM",
+      "why": "Current clean replay of useful Home/KONA Now/mobile navigation work. Do not merge into migration baseline just to carry it; replay after M0 against Kona.m shell with exact generated outputs.",
+      "dependencies": [
+        "M0 equivalent shell",
+        "canonical internal routes preserved"
+      ],
+      "notes": "Preserve route IDs; reconsider consumer labels under Kona.m."
+    },
+    {
+      "number": 148,
+      "title": "KONA Now + mobile flow final convergence",
+      "status": "SUPERSEDED",
+      "why": "Explicitly superseded by cleaner #157 replay.",
+      "dependencies": []
+    },
+    {
+      "number": 141,
+      "title": "KONA Now + mobile flow clearer navigation and Studio continuity",
+      "status": "SUPERSEDED",
+      "why": "Older divergent implementation history replaced by later replay."
+    },
+    {
+      "number": 139,
+      "title": "KONA Totems, Doors, 100-Find season and The Intern",
+      "status": "SPEC_ONLY_TRANSFER",
+      "why": "Useful product/contracts, but Founding 141/28-room model now changes the collectible/world architecture. Transfer concepts and schemas selectively, not runtime assumptions.",
+      "dependencies": [
+        "Kona.m room/quest/entitlement contracts"
+      ]
+    },
+    {
+      "number": 147,
+      "title": "Google Play readiness",
+      "status": "SPEC_ONLY_TRANSFER",
+      "why": "Readiness analysis remains valuable. Native package identity/signing decisions should occur after M0 in dedicated Kona.m native stream.",
+      "dependencies": [
+        "native identity decision",
+        "privacy/account deletion",
+        "AAB/signing"
+      ]
+    },
+    {
+      "number": 146,
+      "title": "KONA narrative spine",
+      "status": "SPEC_ONLY_TRANSFER",
+      "why": "Narrative principles remain useful, but wording/brand should be reconciled with Kona.m. No need to merge old branch for migration."
+    },
+    {
+      "number": 136,
+      "title": "WHY branded promotional story experience",
+      "status": "REPLAY_IN_KONAM",
+      "why": "Potentially valuable product route. Replay modular source after M0 if it still fits launch story; avoid importing generated outputs."
+    },
+    {
+      "number": 133,
+      "title": "Next 100 mobile-first 3D museum objects",
+      "status": "ASSET_ONLY_TRANSFER",
+      "why": "Strong candidate inventory and deterministic generators. Assets remain generated-unwired studies and should move as candidate lane, not public canon.",
+      "dependencies": [
+        "provenance QA",
+        "visual QA",
+        "Founding141 mapping"
+      ]
+    },
+    {
+      "number": 125,
+      "title": "Multibrand bikes + data-driven rooms rebased",
+      "status": "ASSET_ONLY_TRANSFER",
+      "why": "Multibrand models/data are valuable, but six branded room assumptions predate Kona.m 28-room taxonomy. Transfer validated products/assets and re-place through canonical Kona.m room model.",
+      "dependencies": [
+        "product provenance",
+        "room registry"
+      ]
+    },
+    {
+      "number": 124,
+      "title": "Four customizable avatar archetypes",
+      "status": "REPLAY_IN_KONAM",
+      "why": "Avatar architecture is strategically useful but should be replayed after M0 against current User Studio/state contracts, not merged wholesale if branch diverged."
+    },
+    {
+      "number": 123,
+      "title": "Older multibrand bikes + rooms",
+      "status": "SUPERSEDED",
+      "why": "Superseded by rebased #125."
+    },
+    {
+      "number": 138,
+      "title": "Stabilize KONA launch journeys and rotate catalog previews",
+      "status": "ARCHIVE",
+      "why": "Important historical fixes/evidence but current main already contains later convergence; do not import branch history unless a specific missing fix is proven."
+    },
+    {
+      "number": 134,
+      "title": "Release repair post-merge certification and landscape gates",
+      "status": "ARCHIVE",
+      "why": "Release lessons are already reflected in exact-SHA process. Preserve as historical evidence."
+    },
+    {
+      "number": 130,
+      "title": "Fix mobile browser landing hierarchy",
+      "status": "ARCHIVE",
+      "why": "Older visual fix lineage; current main is newer baseline."
+    },
+    {
+      "number": 122,
+      "title": "Go-live bike catalog and room wiring gate",
+      "status": "REPLAY_IN_KONAM",
+      "why": "Validation concept remains valuable and should survive migration, but adapt to Kona.m product/room registries."
+    }
+  ],
+  "rules": [
+    "Do not merge a PR solely to make migration easier.",
+    "Never replay committed generated outputs from a divergent branch without rebuilding on target.",
+    "Assets/specs may transfer independently of their original room/navigation implementation.",
+    "Every replayed PR becomes a new Kona.m PR with fresh before/after evidence.",
+    "Any PR not listed is reviewed individually before branch deletion/archive; absence is not permission to discard."
+  ]
+}

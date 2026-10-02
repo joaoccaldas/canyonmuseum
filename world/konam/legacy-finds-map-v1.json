@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "status": "design-only pre-M0 compatibility map",
+  "principle": "Physical scene objects are triggers. Canonical collectible ownership lives in Progression/collection state.",
+  "mappings": [
+    {
+      "legacy_id": "lava",
+      "mesh": "lava_stone",
+      "canonical_collectible_id": "find:shore:lava",
+      "future_founding141_candidate": "k141-002",
+      "relationship": "legacy collectible remains owned independently; Founding141 may reference/reward via alias or story, not duplicate ownership blindly"
+    },
+    {
+      "legacy_id": "plumeria",
+      "mesh": "plumeria",
+      "canonical_collectible_id": "find:shore:plumeria",
+      "future_founding141_candidate": null,
+      "relationship": "legacy collectible preserved; may remain side collection"
+    },
+    {
+      "legacy_id": "cowrie",
+      "mesh": "cowrie",
+      "canonical_collectible_id": "find:shore:cowrie",
+      "future_founding141_candidate": null,
+      "relationship": "legacy collectible preserved; no forced Founding141 inclusion"
+    },
+    {
+      "legacy_id": "coral",
+      "mesh": "black_coral",
+      "canonical_collectible_id": "find:shore:coral",
+      "future_founding141_candidate": null,
+      "relationship": "legacy collectible preserved with environmental/cultural caution"
+    },
+    {
+      "legacy_id": "bib",
+      "mesh": "race_bib",
+      "canonical_collectible_id": "find:shore:bib",
+      "future_founding141_candidate": "k141-046",
+      "relationship": "candidate semantic link only; Founding141 item should not duplicate-acquire without explicit alias rule"
+    }
+  ],
+  "future_trigger_contract": {
+    "scene_click": "emit normalized acquisition intent with canonical_collectible_id",
+    "progression": "validate collectible exists and idempotency before awarding",
+    "collection_ui": "reads canonical discoveries/acquisitions only",
+    "legacy_storage": "read-only compatibility import until retirement gate",
+    "duplicate_rule": "A legacy collectible and a Founding141 item may share subject matter but must either be explicit aliases or remain separate IDs with separate stories."
+  },
+  "acceptance": [
+    "previously found legacy object remains found after migration",
+    "re-clicking does not duplicate XP/credits",
+    "scene renderer never directly owns collection truth",
+    "canonical IDs survive room/display-name changes",
+    "Founding141 alias decisions are explicit and testable"
+  ]
+}

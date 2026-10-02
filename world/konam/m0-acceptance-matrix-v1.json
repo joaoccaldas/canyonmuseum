@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "name": "M0 behavior-equivalent migration acceptance matrix",
+  "source_baseline": {
+    "repository": "joaoccaldas/canyonmuseum",
+    "sha": "TO_BE_FROZEN_AFTER_159_161_DECISION"
+  },
+  "target_repository": "joaoccaldas/konam",
+  "gates": [
+    {
+      "id": "M0-01",
+      "area": "git/history",
+      "requirement": "main history and required tags/selected branches are preserved or mapping is documented",
+      "blocking": true,
+      "evidence": "git ancestry + migration manifest"
+    },
+    {
+      "id": "M0-02",
+      "area": "dependencies",
+      "requirement": "web/native package manifests and lockfiles are byte-identical unless explicitly documented",
+      "blocking": true,
+      "evidence": "hash/diff"
+    },
+    {
+      "id": "M0-03",
+      "area": "build",
+      "requirement": "canonical build completes from clean checkout",
+      "blocking": true,
+      "evidence": "CI log"
+    },
+    {
+      "id": "M0-04",
+      "area": "generated",
+      "requirement": "generated outputs are identical or every path delta is attributable only to unavoidable repository-origin metadata",
+      "blocking": true,
+      "evidence": "generated diff + hashes"
+    },
+    {
+      "id": "M0-05",
+      "area": "unit/contracts",
+      "requirement": "all source/unit/schema/world/integration tests pass",
+      "blocking": true,
+      "evidence": "exact-SHA CI"
+    },
+    {
+      "id": "M0-06",
+      "area": "security",
+      "requirement": "secret/private-data scan and production dependency audits pass; no permission broadening",
+      "blocking": true,
+      "evidence": "release security workflow"
+    },
+    {
+      "id": "M0-07",
+      "area": "routes",
+      "requirement": "internal home/discover/garage/plan/me routes remain functional and deep links still resolve",
+      "blocking": true,
+      "evidence": "browser journey"
+    },
+    {
+      "id": "M0-08",
+      "area": "guest",
+      "requirement": "guest-first use remains possible; registration is not accidentally required",
+      "blocking": true,
+      "evidence": "P0 browser journey"
+    },
+    {
+      "id": "M0-09",
+      "area": "state",
+      "requirement": "current kona.* and legacy speedmax.* compatible fixtures read identically; no key is deleted",
+      "blocking": true,
+      "evidence": "state fixture tests"
+    },
+    {
+      "id": "M0-10",
+      "area": "cloud",
+      "requirement": "GameState backup/restore schema remains compatible",
+      "blocking": true,
+      "evidence": "mock/cloud contract tests"
+    },
+    {
+      "id": "M0-11",
+      "area": "auth",
+      "requirement": "magic-link/auth callback flow remains equivalent",
+      "blocking": true,
+      "evidence": "mock account journey"
+    },
+    {
+      "id": "M0-12",
+      "area": "PWA",
+      "requirement": "service worker/install behavior and manifest scope remain equivalent for M0",
+      "blocking": true,
+      "evidence": "install/PWA audit"
+    },
+    {
+      "id": "M0-13",
+      "area": "3D world",
+      "requirement": "museum/world loads and primary movement/selection/return flows behave equivalently",
+      "blocking": true,
+      "evidence": "browser journey + interaction evidence"
+    },
+    {
+      "id": "M0-14",
+      "area": "Studio",
+      "requirement": "Studio startup, product loading, configuration and failure fallback remain equivalent",
+      "blocking": true,
+      "evidence": "studio audits"
+    },
+    {
+      "id": "M0-15",
+      "area": "visual",
+      "requirement": "no unintended visual delta across phone320/360/390/430, short landscape and desktop",
+      "blocking": true,
+      "evidence": "Visual Evidence V2"
+    },
+    {
+      "id": "M0-16",
+      "area": "interaction",
+      "requirement": "all primary visible controls remain reachable and persist intended outcomes",
+      "blocking": true,
+      "evidence": "UI interaction evidence"
+    },
+    {
+      "id": "M0-17",
+      "area": "performance",
+      "requirement": "bundle budgets do not regress; no new first-load 3D or renderer cost",
+      "blocking": true,
+      "evidence": "quality audit + bundle budget report"
+    },
+    {
+      "id": "M0-18",
+      "area": "assets",
+      "requirement": "required public assets exist and hashes/paths remain valid",
+      "blocking": true,
+      "evidence": "asset contract + service-worker seal"
+    },
+    {
+      "id": "M0-19",
+      "area": "deployment",
+      "requirement": "one canonical publisher deploys exact certified target SHA; no competing deploy source",
+      "blocking": true,
+      "evidence": "deployment settings + exact-SHA smoke"
+    },
+    {
+      "id": "M0-20",
+      "area": "rollback",
+      "requirement": "old canyonmuseum production remains available until Kona.m M0 is proven; rollback instructions tested conceptually",
+      "blocking": true,
+      "evidence": "documented rollback"
+    },
+    {
+      "id": "M0-21",
+      "area": "physical Android",
+      "requirement": "record status honestly; if native/mobile release is claimed, physical install/rotate/background/return proof required",
+      "blocking": false,
+      "evidence": "physical-device checklist"
+    },
+    {
+      "id": "M0-22",
+      "area": "physical iPhone",
+      "requirement": "record status honestly; if iOS/PWA release is claimed, Safari/Add-to-Home-Screen/safe-area/background proof required",
+      "blocking": false,
+      "evidence": "physical-device checklist"
+    }
+  ],
+  "pass_rule": "All blocking gates PASS on one exact target SHA. Non-blocking physical gates may remain OPEN only if no claim of full physical-device certification is made.",
+  "prohibited_shortcuts": [
+    "carry green checks from another SHA",
+    "skip generated-output sync",
+    "treat emulator as physical-device proof",
+    "change dependencies to fix migration",
+    "change product architecture inside M0"
+  ]
+}

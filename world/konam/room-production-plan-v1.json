@@ -1,0 +1,831 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "summary": {
+    "EXISTS_RECOMPOSE": 9,
+    "EXISTS_RENAME": 2,
+    "READY_EXISTING": 2,
+    "EXISTS_NEEDS_QA": 3,
+    "VIRTUAL_CONFIG_ONLY": 5,
+    "ACTUALLY_NEEDS_BUILDING": 7
+  },
+  "rooms": [
+    {
+      "room_id": "room-001",
+      "slug": "queen-k",
+      "name": "The Queen K",
+      "group": "foundation",
+      "theme": "kona-course",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "hall",
+        "atlas-kona-light-queen-k"
+      ],
+      "launch_depth": "HERO_OR_STANDARD",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-002",
+      "slug": "the-bay",
+      "name": "The Bay",
+      "group": "foundation",
+      "theme": "swim-place",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "atlas-kona-light-bay",
+        "bay-kona"
+      ],
+      "launch_depth": "HERO_OR_STANDARD",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-003",
+      "slug": "the-pier",
+      "name": "The Pier",
+      "group": "foundation",
+      "theme": "transition-history",
+      "current_state": "EXISTS_RENAME",
+      "legacy_sources": [
+        "pier"
+      ],
+      "launch_depth": "FULL",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "preserve geometry; rename/display-purpose only after M0",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-004",
+      "slug": "alii",
+      "name": "Aliʻi",
+      "group": "foundation",
+      "theme": "run-finish",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "atlas-kona-light-after-dark"
+      ],
+      "launch_depth": "STANDARD",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-005",
+      "slug": "champions",
+      "name": "Champions",
+      "group": "foundation",
+      "theme": "athletes-machines",
+      "current_state": "EXISTS_RENAME",
+      "legacy_sources": [
+        "kona"
+      ],
+      "launch_depth": "FULL",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "preserve geometry; rename/display-purpose only after M0",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-006",
+      "slug": "against-the-clock",
+      "name": "Against the Clock",
+      "group": "foundation",
+      "theme": "speed-history",
+      "current_state": "READY_EXISTING",
+      "legacy_sources": [
+        "wing-against-the-clock"
+      ],
+      "launch_depth": "FULL",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "preserve renderer/content; only adapt registry and labels",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-007",
+      "slug": "canyon-museum",
+      "name": "Canyon Museum",
+      "group": "foundation",
+      "theme": "brand-history",
+      "current_state": "READY_EXISTING",
+      "legacy_sources": [
+        "hall",
+        "Canyon_Collection.html"
+      ],
+      "launch_depth": "FULL",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "preserve renderer/content; only adapt registry and labels",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-008",
+      "slug": "aero-lab",
+      "name": "The Aero Lab",
+      "group": "foundation",
+      "theme": "engineering",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "atlas-kona-light-tunnel",
+        "atlas-kona-light-clipon"
+      ],
+      "launch_depth": "STANDARD",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-009",
+      "slug": "kit-room",
+      "name": "The Kit Room",
+      "group": "foundation",
+      "theme": "equipment",
+      "current_state": "EXISTS_NEEDS_QA",
+      "legacy_sources": [
+        "nike-running",
+        "asset/next-100-3d-v1"
+      ],
+      "launch_depth": "STANDARD_WITH_QA",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "use existing candidate lane only after provenance/visual/performance QA",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-010",
+      "slug": "transition",
+      "name": "Transition",
+      "group": "foundation",
+      "theme": "race-craft",
+      "current_state": "VIRTUAL_CONFIG_ONLY",
+      "legacy_sources": [],
+      "launch_depth": "LIGHTWEIGHT",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "ship as data/event/portal state first; bespoke geometry optional later",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-011",
+      "slug": "race-week",
+      "name": "Race Week",
+      "group": "foundation",
+      "theme": "event",
+      "current_state": "VIRTUAL_CONFIG_ONLY",
+      "legacy_sources": [
+        "museum/events/kona-2026.json",
+        "companion"
+      ],
+      "launch_depth": "LIGHTWEIGHT",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "ship as data/event/portal state first; bespoke geometry optional later",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-012",
+      "slug": "island-stories",
+      "name": "Island Stories",
+      "group": "foundation",
+      "theme": "place-culture",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "museum/kona/island-guide.json",
+        "bay-kona",
+        "wing-kona-light"
+      ],
+      "launch_depth": "STANDARD",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-013",
+      "slug": "archive",
+      "name": "The Archive",
+      "group": "foundation",
+      "theme": "history-provenance",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "refs",
+        "museum/catalog.json",
+        "docs/reference-canyon"
+      ],
+      "launch_depth": "STANDARD",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-014",
+      "slug": "lost-found",
+      "name": "Lost & Found",
+      "group": "foundation",
+      "theme": "secret-oddities",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "secret",
+        "sanctuary"
+      ],
+      "launch_depth": "STANDARD",
+      "launch_visible": true,
+      "unlock": "open",
+      "collectible_slots": 10,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "wire canonical room ID to existing/selected representation behind feature/config boundary",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-015",
+      "slug": "wind-room",
+      "name": "The Wind Room",
+      "group": "progressive",
+      "theme": "environment",
+      "current_state": "ACTUALLY_NEEDS_BUILDING",
+      "legacy_sources": [],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "finds>=20",
+          "quest:q-found-001"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "new room required, but start content-first and reuse shared room kit/environmental systems",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-016",
+      "slug": "heat",
+      "name": "Heat",
+      "group": "progressive",
+      "theme": "environment",
+      "current_state": "ACTUALLY_NEEDS_BUILDING",
+      "legacy_sources": [],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "finds>=25",
+          "challenge:first-heat"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "new room required, but start content-first and reuse shared room kit/environmental systems",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-017",
+      "slug": "fuel",
+      "name": "Fuel",
+      "group": "progressive",
+      "theme": "nutrition",
+      "current_state": "ACTUALLY_NEEDS_BUILDING",
+      "legacy_sources": [],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "room_collection:room-009>=6"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "new room required, but start content-first and reuse shared room kit/environmental systems",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-018",
+      "slug": "swim-lab",
+      "name": "Swim Lab",
+      "group": "progressive",
+      "theme": "engineering",
+      "current_state": "ACTUALLY_NEEDS_BUILDING",
+      "legacy_sources": [
+        "asset/next-100-3d-v1"
+      ],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "room_collection:room-002>=8"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "new room required, but start content-first and reuse shared room kit/environmental systems",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-019",
+      "slug": "run-lab",
+      "name": "Run Lab",
+      "group": "progressive",
+      "theme": "engineering",
+      "current_state": "EXISTS_NEEDS_QA",
+      "legacy_sources": [
+        "nike-running",
+        "asset/next-100-3d-v1"
+      ],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "room_collection:room-004>=8"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "use existing candidate lane only after provenance/visual/performance QA",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-020",
+      "slug": "age-group",
+      "name": "Age Group",
+      "group": "progressive",
+      "theme": "people",
+      "current_state": "ACTUALLY_NEEDS_BUILDING",
+      "legacy_sources": [],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "finds>=50"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "new room required, but start content-first and reuse shared room kit/environmental systems",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-021",
+      "slug": "women-of-kona",
+      "name": "Women of Kona",
+      "group": "progressive",
+      "theme": "history",
+      "current_state": "ACTUALLY_NEEDS_BUILDING",
+      "legacy_sources": [],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "quest:women-history"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "new room required, but start content-first and reuse shared room kit/environmental systems",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-022",
+      "slug": "volunteers",
+      "name": "The Volunteers",
+      "group": "progressive",
+      "theme": "people",
+      "current_state": "ACTUALLY_NEEDS_BUILDING",
+      "legacy_sources": [],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "quest:race-week-service"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "new room required, but start content-first and reuse shared room kit/environmental systems",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-023",
+      "slug": "before-saturday",
+      "name": "Before Saturday",
+      "group": "progressive",
+      "theme": "event",
+      "current_state": "VIRTUAL_CONFIG_ONLY",
+      "legacy_sources": [
+        "museum/events/kona-2026.json",
+        "companion"
+      ],
+      "launch_depth": "DEFINED_LOCKED",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "time_window:race-week"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "ship as data/event/portal state first; bespoke geometry optional later",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-024",
+      "slug": "makers",
+      "name": "The Makers",
+      "group": "progressive",
+      "theme": "engineering",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "atlas-kona-light-tunnel",
+        "docs/MUSEUM_WORKFLOW.md"
+      ],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "mastery:room-008",
+          "mastery:room-013"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-025",
+      "slug": "prototype-vault",
+      "name": "Prototype Vault",
+      "group": "progressive",
+      "theme": "future-machines",
+      "current_state": "EXISTS_NEEDS_QA",
+      "legacy_sources": [
+        "asset/next-100-3d-v1",
+        "atlas-studio-*"
+      ],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "finds>=75"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "use existing candidate lane only after provenance/visual/performance QA",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-026",
+      "slug": "athlete-rooms",
+      "name": "Athlete Rooms",
+      "group": "progressive",
+      "theme": "athlete-activation",
+      "current_state": "VIRTUAL_CONFIG_ONLY",
+      "legacy_sources": [],
+      "launch_depth": "DEFINED_LOCKED",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "entitlement:athlete-room"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "ship as data/event/portal state first; bespoke geometry optional later",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-027",
+      "slug": "makers-row",
+      "name": "Makers' Row",
+      "group": "progressive",
+      "theme": "brand-partner",
+      "current_state": "VIRTUAL_CONFIG_ONLY",
+      "legacy_sources": [
+        "brandroom"
+      ],
+      "launch_depth": "DEFINED_LOCKED",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "entitlement:partner-room"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "ship as data/event/portal state first; bespoke geometry optional later",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    },
+    {
+      "room_id": "room-028",
+      "slug": "elsewhere",
+      "name": "Elsewhere",
+      "group": "progressive",
+      "theme": "destinations",
+      "current_state": "EXISTS_RECOMPOSE",
+      "legacy_sources": [
+        "bay-st-george",
+        "bay-nice",
+        "bay-las-vegas"
+      ],
+      "launch_depth": "LOCKED_FUTURE",
+      "launch_visible": false,
+      "unlock": {
+        "all": [
+          "mastery:kona-world"
+        ]
+      },
+      "collectible_slots": 0,
+      "production_rule": "reuse existing environments/assets; compose through canonical registry rather than rebuild",
+      "m0_action": "none; carry stable ID and mapping only",
+      "post_m0_first_step": "keep locked registry entry; implement only when unlock/content is ready",
+      "quality_gates": [
+        "mobile portrait",
+        "short landscape",
+        "desktop",
+        "state persistence",
+        "no P0 interaction trap",
+        "performance budget",
+        "provenance where factual/branded"
+      ]
+    }
+  ],
+  "principle": "Room identity/progression is data authority; rendering is a replaceable projection. M0 carries IDs and mappings, not room rewrites."
+}

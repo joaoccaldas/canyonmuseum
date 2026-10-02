@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "contract_name": "renderer-lifecycle-v1",
+  "embedded_renderer": {
+    "mount": [
+      "create only on explicit intent or when surface is actually visible",
+      "choose low-power unless measured need says otherwise",
+      "cap DPR from device/profile policy",
+      "initialize fallback UI before async asset load"
+    ],
+    "active": [
+      "ResizeObserver or equivalent owns canvas sizing",
+      "no-op or pause when document.hidden",
+      "no-op or pause when parent surface is occluded/inactive",
+      "respect reduced-motion and profile motion settings",
+      "avoid continuous animation when a static render is sufficient"
+    ],
+    "teardown": [
+      "stop setAnimationLoop/requestAnimationFrame",
+      "disconnect observers",
+      "dispose controls",
+      "dispose geometries",
+      "dispose materials and owned textures",
+      "dispose renderer",
+      "forceContextLoss for repeatedly mounted renderer where safe",
+      "remove event listeners and script-owned references"
+    ],
+    "failure": [
+      "surface remains usable without 3D",
+      "report concise fallback state",
+      "never trap navigation because WebGL fails"
+    ]
+  },
+  "persistent_world_renderer": {
+    "active": [
+      "quality derived from profile/device",
+      "pause expensive simulation/render when 2D app panel or settings covers world",
+      "pause/no-op in background tab",
+      "cap delta time on resume",
+      "cull/LOD/shared geometry as world grows"
+    ],
+    "teardown": [
+      "page-lifetime renderer may not require component teardown, but navigation architecture must prevent duplicate world renderers/contexts"
+    ],
+    "performance": [
+      "track draw calls, triangles, asset memory and long-session thermals on physical phones"
+    ]
+  },
+  "current_pattern_assessment": [
+    {
+      "surface": "Race Self stage",
+      "assessment": "strong reference pattern",
+      "notes": [
+        "low-power",
+        "DPR cap",
+        "ResizeObserver",
+        "hidden/settings guard",
+        "explicit dispose",
+        "forceContextLoss"
+      ]
+    },
+    {
+      "surface": "Studio",
+      "assessment": "good persistent pattern",
+      "notes": [
+        "ResizeObserver",
+        "hidden/settings guard",
+        "profile quality/shadows/DPR"
+      ]
+    },
+    {
+      "surface": "Main Kona world",
+      "assessment": "good pause behavior, legacy complexity",
+      "notes": [
+        "no-op behind 2D panel/settings/hidden",
+        "needs post-M0 culling/LOD/shared geometry"
+      ]
+    },
+    {
+      "surface": "Admin asset preview",
+      "assessment": "efficient specialized pattern",
+      "notes": [
+        "single reused renderer",
+        "DPR 1",
+        "IntersectionObserver",
+        "temporary object disposal"
+      ]
+    },
+    {
+      "surface": "Collectible stage",
+      "assessment": "minor lifecycle gap",
+      "notes": [
+        "low-power",
+        "DPR cap",
+        "dispose",
+        "missing explicit hidden guard"
+      ]
+    },
+    {
+      "surface": "Hall/Heritage/standalone Experiences",
+      "assessment": "legacy page-lifetime pattern",
+      "notes": [
+        "continuous loop",
+        "hidden-tab consistency should improve post-M0"
+      ]
+    }
+  ],
+  "migration_rule": "M0 copies renderer behavior. Convergence is post-M0 and one surface at a time with visual/performance comparison."
+}
