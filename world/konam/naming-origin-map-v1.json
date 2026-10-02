@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "product": "Kona.m",
+  "purpose": "Classify identity/name/origin occurrences before M1. This prevents global search-and-replace mistakes.",
+  "observed": {
+    "canyon_public_origin_files": 22,
+    "android_legacy_appid_files": 5,
+    "direct_speedmax_reference_files": 28,
+    "canyon_museum_text_search_capped_at": 100,
+    "kona_text_search_capped_at": 100
+  },
+  "classes": [
+    "PRESERVE_BRAND_CONTENT",
+    "RENAME_M1_PRODUCT",
+    "RENAME_M1_ORIGIN",
+    "LEGACY_COMPATIBILITY",
+    "GENERATED_FROM_SOURCE",
+    "SCHEMA_ID",
+    "NATIVE_IDENTITY",
+    "HISTORICAL_DOC",
+    "REVIEW_MANUALLY"
+  ],
+  "mappings": [
+    {
+      "match": "https://joaoccaldas.github.io/canyonmuseum/",
+      "class": "RENAME_M1_ORIGIN",
+      "source_authorities": [
+        "tools/harden_pages.mjs",
+        "web/src/app-shell.js",
+        "supabase/functions/companion/providers.ts",
+        "schemas/**/*.json"
+      ],
+      "generated_or_derived": [
+        "index.html",
+        "Studio.html",
+        "Canyon_Collection.html",
+        "robots.txt",
+        "sitemap.xml",
+        "llms.txt",
+        "llms-full.txt",
+        "integrations/companion/rss.xml"
+      ],
+      "rule": "centralize one site-origin authority, then regenerate; keep redirects/compatibility for old public URLs"
+    },
+    {
+      "match": "com.caldasstudio.speedmaxmuseum",
+      "class": "NATIVE_IDENTITY",
+      "source_authorities": [
+        "app/native/capacitor.config.json",
+        "app/native/android/app/build.gradle",
+        "app/native/android/app/src/main/java/com/caldasstudio/speedmaxmuseum/MainActivity.java",
+        "app/native/android/app/src/main/res/values/strings.xml",
+        ".github/workflows/android.yml"
+      ],
+      "rule": "do not rename in M0; choose durable Kona.m identity before stable signing/public native release"
+    },
+    {
+      "match": "speedmax.* browser storage",
+      "class": "LEGACY_COMPATIBILITY",
+      "source_authorities": [
+        "web/src/engine/storage.js",
+        "web/src/engine/app-state.js",
+        "web/src/engine/passport-state.js",
+        "web/src/engine/progression.js"
+      ],
+      "rule": "retain reads/migration fixtures; new canonical writes must not introduce more direct legacy keys"
+    },
+    {
+      "match": "Canyon Museum / Speedmax inside products, sources, exhibits, provenance",
+      "class": "PRESERVE_BRAND_CONTENT",
+      "source_authorities": [
+        "museum/**",
+        "docs/reference-canyon/**",
+        "Canyon_Collection.html source/build inputs"
+      ],
+      "rule": "Canyon remains a real brand/museum/collection inside Kona.m; never global-rename these facts"
+    },
+    {
+      "match": "KONA consumer app name",
+      "class": "RENAME_M1_PRODUCT",
+      "source_authorities": [
+        "brand/**",
+        "README.md",
+        "STATUS.md",
+        "docs/PRODUCT.md",
+        "manifest.webmanifest",
+        "app/native/capacitor.config.json"
+      ],
+      "rule": "consumer-facing name becomes Kona.m in a bounded M1 rename after M0 equivalence; internal route IDs may remain stable"
+    },
+    {
+      "match": "generated HTML/meta KONA/Canyon URLs",
+      "class": "GENERATED_FROM_SOURCE",
+      "source_authorities": [
+        "tools/harden_pages.mjs",
+        "templates/builders"
+      ],
+      "rule": "never edit generated pages as the authority"
+    },
+    {
+      "match": "schema $id containing canyonmuseum origin",
+      "class": "SCHEMA_ID",
+      "source_authorities": [
+        "schemas/**/*.json"
+      ],
+      "rule": "treat as versioned identifier change, not cosmetic string replacement; decide redirect/compatibility policy before M1"
+    },
+    {
+      "match": "historical release docs and handovers",
+      "class": "HISTORICAL_DOC",
+      "source_authorities": [
+        "docs/launch/**",
+        "docs/HANDOVER*.md",
+        "HANDOVER.md",
+        "docs/*202609*.md"
+      ],
+      "rule": "preserve exact historical claims/SHAs; add archive labels rather than rewriting history"
+    },
+    {
+      "match": "Canyon/KONA strings in tests",
+      "class": "REVIEW_MANUALLY",
+      "source_authorities": [
+        "web/test/**",
+        "web/*audit*.mjs",
+        "tools/*smoke*.mjs"
+      ],
+      "rule": "classify whether assertion protects current compatibility or future product naming before changing"
+    }
+  ],
+  "migration_sequence": [
+    "M0 copy names/origins exactly enough to prove equivalent build/runtime",
+    "M1 add one product/site metadata authority",
+    "M1 change consumer display name and canonical origin from source authorities",
+    "regenerate all generated/public metadata",
+    "verify old URLs redirect or remain intentionally accessible",
+    "change schema IDs only with explicit compatibility/version decision",
+    "change Android identity only in its own native release stream"
+  ]
+}
