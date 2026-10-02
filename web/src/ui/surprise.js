@@ -2,7 +2,6 @@
 import { nextSurprise, markSurpriseShown, collectSurprise } from '../engine/surprise.js';
 import { esc } from '../engine/dom.js';
 
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function initSurpriseLayer({openProgress,admin=()=>false}={}){
   let active=null;
   const root=document.createElement('div');
