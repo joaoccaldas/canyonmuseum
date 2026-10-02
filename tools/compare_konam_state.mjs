@@ -94,6 +94,8 @@ for(const p of ['web/src/engine/profile.js','web/src/engine/app-state.js','web/s
   const t=show(base,p); if(t) legacySpeedmaxBefore += count(t,/['"`]speedmax\.[A-Za-z0-9_.:-]+['"`]/g)||0;
 }
 
+const changeContractChanged=changed.includes('docs/KONAM_CHANGE_CONTRACT.md');
+
 const report={
   schema_version:1,base_sha:base,head_sha:git(['rev-parse','HEAD']),
   changed_files:changed.length,buckets,protected_files_changed:protectedDiff,
@@ -110,7 +112,6 @@ const report={
 const problems=[];
 if(missingRoutes.length) problems.push('canonical route IDs disappeared: '+missingRoutes.join(', '));
 if(missingControls.length) problems.push('required release controls missing: '+missingControls.join(', '));
-const changeContractChanged=changed.includes('docs/KONAM_CHANGE_CONTRACT.md');
 if(buckets.runtime.length && !changeContractChanged)
   problems.push('runtime/source files changed without updating docs/KONAM_CHANGE_CONTRACT.md: '+buckets.runtime.join(', '));
 const depChanged=Object.values(dependencyDelta).some(x=>(x.added?.length||0)||(x.removed?.length||0)||(x.changed?.length||0));
