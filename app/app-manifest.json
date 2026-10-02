@@ -1,5 +1,5 @@
 {
- "version": "02184c6597f8",
+ "version": "e86e6d04c0c5",
  "core": [
   "index.html",
   "app/viewport.js",
@@ -57,8 +57,8 @@
   "app/world-shell.html": "8GKFuNhBIW6G4lkPOK+mLVjKkEXyLnSnpkOqpKMWzDw=",
   "app/admin-assets.json": "7kNpifQCXM8LfoM072ohERpFfibS3Hq9Efj4U7xxFuI=",
   "app/admin-asset-preview.js": "M7xUJvAtQ4yOnFKybfxmp0dq7tlx1Z9BU/O1ES36Er8=",
-  "web/styles/hall-web.css": "Q7W15Nren7SRgtjZXCjRLArwqwdMyqpAPCsC8xxU+GI=",
-  "web/styles/hall-mobile.css": "ObjpeKeGeJGEpvVmhqM630sQOvy0Nfdny+AWeQXBBXk=",
+  "web/styles/hall-web.css": "S5X8wp1+220hBftIu/D/FPECyASMAWLMmNheU0vdpjE=",
+  "web/styles/hall-mobile.css": "mtNR4NbxJYeHlyS1RTj2XS3NV7a74wfs2AId6bjMtl8=",
   "web/styles/studio.css": "22xbEc5Rc6+4jMlagQftm53lL6tjpy2tV2U/ejiZwK4=",
   "web/styles/experience.css": "AfmOkRKFxbC3GgvRj9fLfy6euyeAzf/1eMHIDxiqjXY=",
   "web/styles/collection.css": "VOT+lHFB3ry9TcR7aujWEXWT2coiISfeIt+OZC/aPIQ=",
