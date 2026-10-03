@@ -63,7 +63,7 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
         menuItem('progress','☆','Progress','Badges, milestones & history')+
         menuItem('share','↗','Share KONA','Progress card, WhatsApp & more')+
         menuItem('tour','?','Quick tour','Replay the 30-second KONA intro')+
-        menuItem('feed','≋','The Feed','News, YouTube & your RSS sources')+
+        menuItem('feed','≋',"What's going on in Kona",'Athletes, island signals & your sources')+
         menuItem('travel','⌁','Travel to Kona','Island guide, arrivals & local stops')+
         (isAdmin?menuItem('assets','▦','Asset Library','Bikes, gear, rooms, art & world assets'):'')+
         '<p class="studio-menu-note">Your history lives here.<br>The world stays out there.</p>'+
@@ -103,8 +103,8 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   const drawerKicker=root.querySelector('[data-hub-kicker]');
   let drawerTrigger=null;
   const siblings=[...root.querySelector('.race-self-experience').children].filter(x=>x!==drawer);
-  const openDrawer=()=>{drawerTrigger=document.activeElement;drawer.hidden=false;siblings.forEach(x=>x.inert=true);root.querySelector('[data-hub-close]').focus();};
-  const closeDrawer=()=>{drawer.hidden=true;siblings.forEach(x=>x.inert=false);drawerBody.replaceChildren();drawerTrigger?.focus?.();};
+  const openDrawer=()=>{drawerTrigger=document.activeElement;drawer.hidden=false;document.body.classList.add('studio-drawer-open');siblings.forEach(x=>x.inert=true);root.querySelector('[data-hub-close]').focus();};
+  const closeDrawer=()=>{drawer.hidden=true;document.body.classList.remove('studio-drawer-open');siblings.forEach(x=>x.inert=false);drawerBody.replaceChildren();drawerTrigger?.focus?.();};
   const handleKey=e=>{
     if(drawer.hidden)return;
     if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeDrawer();}
@@ -266,5 +266,5 @@ export async function renderAvatarHome(root,{profile,settings,onBack,openGarage,
   root.querySelector('[data-race-self-action="travel"]')?.addEventListener('click',()=>openTravel?.());
   root.querySelector('[data-race-self-action="assets"]')?.addEventListener('click',()=>openAssets?.());
   root.querySelector('[data-race-self-action="settings"]')?.addEventListener('click',()=>settings?.open?.());
-  return ()=>{disposed=true;stageApi?.dispose?.();script?.remove();document.removeEventListener('keydown',handleKey);};
+  return ()=>{disposed=true;document.body.classList.remove('studio-drawer-open');stageApi?.dispose?.();script?.remove();document.removeEventListener('keydown',handleKey);};
 }

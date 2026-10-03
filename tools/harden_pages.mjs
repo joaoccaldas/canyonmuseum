@@ -16,7 +16,7 @@ const CSP_BASE = [
   "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",       // hall and studio load app/*.js; meshopt decoder is WebAssembly
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org",
+  "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org https://i.ytimg.com",
   "connect-src 'self' data: blob: https://api.weather.gov https://mtvpnoqwjpoqaiocrklq.supabase.co https://upload.wikimedia.org https://thumb.wikimedia.org",
   "media-src 'self' data: blob:",
   "worker-src 'self' blob:",
